@@ -1,0 +1,17 @@
+texiteasy (0.2.4) unstable; urgency=low
+
+  * Improve completion engin + Bug fixe
+
+ -- Quentin BRAMAS <quentin@bramas.fr>  Wed, 04 Sep 2013 16:58:00 +0100
+
+texiteasy (0.2.2) unstable; urgency=low
+
+  * Too many things
+
+ -- Quentin BRAMAS <quentin@bramas.fr>  Sat, 20 Jul 2013 16:58:00 +0100
+
+texiteasy (0.1.10) unstable; urgency=low
+
+  * Initial package
+
+ -- Quentin BRAMAS <quentin@bramas.fr>  Sat, 20 Jul 2013 16:58:00 +0100

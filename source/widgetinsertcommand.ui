@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>WidgetInsertCommand</class>
+ <widget class="QWidget" name="WidgetInsertCommand">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>463</width>
+    <height>250</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QTabWidget" name="tabWidget">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>461</width>
+     <height>251</height>
+    </rect>
+   </property>
+   <property name="tabPosition">
+    <enum>QTabWidget::West</enum>
+   </property>
+   <property name="tabShape">
+    <enum>QTabWidget::Rounded</enum>
+   </property>
+   <property name="currentIndex">
+    <number>0</number>
+   </property>
+   <property name="tabsClosable">
+    <bool>false</bool>
+   </property>
+   <widget class="QWidget" name="tab">
+    <attribute name="title">
+     <string>Symboles</string>
+    </attribute>
+    <widget class="QTableWidget" name="tableWidget">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>431</width>
+       <height>251</height>
+      </rect>
+     </property>
+     <attribute name="horizontalHeaderVisible">
+      <bool>false</bool>
+     </attribute>
+     <attribute name="verticalHeaderVisible">
+      <bool>false</bool>
+     </attribute>
+     <row>
+      <property name="text">
+       <string>Nouvelle ligne</string>
+      </property>
+     </row>
+     <column>
+      <property name="text">
+       <string>Nouvelle colonne</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Nouvelle colonne</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Nouvelle colonne</string>
+      </property>
+     </column>
+     <item row="0" column="0">
+      <property name="text">
+       <string>\epsilon</string>
+      </property>
+     </item>
+     <item row="0" column="1">
+      <property name="text">
+       <string>\alpha</string>
+      </property>
+     </item>
+     <item row="0" column="2">
+      <property name="text">
+       <string>\beta</string>
+      </property>
+     </item>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="tab_2">
+    <attribute name="title">
+     <string>Tab 2</string>
+    </attribute>
+   </widget>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

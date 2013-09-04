@@ -1,0 +1,11 @@
+[General]
+command=" foreground(229, 30, 104)  background(250, 250, 250) "
+comment=" foreground(117, 113, 94)  background(250, 250, 250) "
+leftStructure="font(bold )  foreground(153, 152, 151)  background(235, 235, 235) "
+linenumber=" foreground(63, 62, 51)  background(220, 220, 220) "
+math="font(bold )  foreground(38, 133, 0)  background(250, 250, 250) "
+normal="font(\"Consolas\" 13 )  foreground(53, 52, 41)  background(250, 250, 250) "
+structure="font(bold )  foreground(209, 24, 94)  background(250, 250, 250) "
+textedit-border=" foreground(200, 200, 200)  background(220, 220, 220) "
+selected-line=" foreground(200, 200, 200)  background(230, 230, 230) "
+synced-line=" foreground(200, 200, 200)  background(220, 220, 220) "

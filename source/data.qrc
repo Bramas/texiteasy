@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file>data/icons/appicon.png</file>
+        <file>themes/dark.sim-theme</file>
+        <file>themes/light.sim-theme</file>
+        <file>data/fonts/consola.ttf</file>
+        <file>data/fonts/consolab.ttf</file>
+        <file>data/fonts/consolai.ttf</file>
+        <file>data/fonts/consolaz.ttf</file>
+    </qresource>
+</RCC>

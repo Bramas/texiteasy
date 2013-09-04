@@ -1,0 +1,12 @@
+Source: texiteasy
+Section: miscellaneous
+Priority: extra
+Maintainer: Quentin BRAMAS <quentin@bramas.fr>
+Build-Depends: debhelper (>= 6), libqt4-dev (>= 4.7), qt4-qmake (>= 4.7), libpoppler-qt4-dev, zlib1g-dev
+Standards-Version: 3.8.3
+Homepage: <https://github.com/Bramas/texiteasy>
+
+Package: texiteasy
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Simple and Powerful Latex Editor

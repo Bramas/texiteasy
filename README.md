@@ -1,4 +1,13 @@
-texiteasy
-=========
+TexItEasy
+======
 
-Simple and Powerful Latex Editor
+Simple Latex Editor
+
+Features
+========
+
+Autocompletion
+
+Customizable syntax highlighting
+
+Integrated PDF viewer with synctex and autoScroll
