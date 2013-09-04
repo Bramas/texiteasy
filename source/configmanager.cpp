@@ -48,9 +48,9 @@ ConfigManager::ConfigManager() :
     textCharFormats(new QMap<QString,QTextCharFormat>())
 {
 
-    QCoreApplication::setOrganizationName("Ultratools");
-    QCoreApplication::setOrganizationDomain("ultratools.org");
-    QCoreApplication::setApplicationName("texiteasy");
+    QCoreApplication::setOrganizationName("TexitEasy");
+    QCoreApplication::setOrganizationDomain("texiteasy.com");
+    QCoreApplication::setApplicationName("TexitEasy");
     QSettings::setDefaultFormat(QSettings::IniFormat);
  }
 
@@ -452,7 +452,7 @@ void ConfigManager::checkRevision()
     switch(fromVersion)
     {
         case 0:
-            qDebug()<<"First launch of texiteasy";
+            qDebug()<<"First launch of TexitEasy";
         if(dataLocation.isEmpty())
         {
             return;

@@ -14,7 +14,7 @@
    <bool>true</bool>
   </property>
   <property name="windowTitle">
-   <string>texiteasy</string>
+   <string>TexitEasy</string>
   </property>
   <property name="styleSheet">
    <string notr="true"/>
