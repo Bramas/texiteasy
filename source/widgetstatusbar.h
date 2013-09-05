@@ -6,8 +6,9 @@
 namespace Ui {
 class WidgetStatusBar;
 }
-class QPushButton;
+class QToolButton;
 class QSplitter;
+class QLabel;
 
 class WidgetStatusBar : public QStatusBar
 {
@@ -21,11 +22,15 @@ public slots:
     void onLeftSplitterMoved(int pos, int index);
     void toggleConsole();
     void toggleErrorTable();
+    void setPosition(int,int);
+    void setEncoding(QString encoding);
     
 private:
     Ui::WidgetStatusBar *ui;
-    QPushButton * _pushButtonConsole;
-    QPushButton * _pushButtonErreurs;
+    QToolButton * _pushButtonConsole;
+    QToolButton * _pushButtonErreurs;
+    QLabel * _positionLabel;
+    QLabel * _encodingLabel;
     QSplitter * _leftSplitter;
 };
 

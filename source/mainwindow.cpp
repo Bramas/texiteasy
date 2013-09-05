@@ -196,9 +196,6 @@ MainWindow::MainWindow(QWidget *parent) :
     _leftSplitter->setCollapsible(3,true);
     _leftSplitter->setCollapsible(2,true);
 
-    _widgetStatusBar = new WidgetStatusBar(this,_leftSplitter);
-    this->setStatusBar(_widgetStatusBar);
-
 
 
     //Display only the editor :
@@ -274,6 +271,13 @@ MainWindow::MainWindow(QWidget *parent) :
         //}
         dialogConfig->addEditableActions(actionsList);
     }
+
+
+
+
+    _widgetStatusBar = new WidgetStatusBar(this,_leftSplitter);
+    this->setStatusBar(_widgetStatusBar);
+    connect(widgetTextEdit, SIGNAL(cursorPositionChanged(int,int)), _widgetStatusBar, SLOT(setPosition(int,int)));
 
 
     this->newFile();
@@ -421,7 +425,8 @@ void MainWindow::open(QString filename)
     //udpate the widget
     //this->widgetTextEdit->setText(this->widgetTextEdit->getCurrentFile()->getData());
 
-    this->statusBar()->showMessage(basename+" - "+this->widgetTextEdit->getCurrentFile()->codec());
+    this->statusBar()->showMessage(basename,4000);
+    this->_widgetStatusBar->setEncoding(this->widgetTextEdit->getCurrentFile()->codec());
 
 }
 void MainWindow::clearLastOpened()
@@ -502,15 +507,16 @@ void MainWindow::initTheme()
         this->setPalette(Pal);
     }
     {
-        QPalette Pal(this->statusBar()->palette());
+        /*QPalette Pal(this->statusBar()->palette());
         // set black background
         Pal.setColor(QPalette::Background, ConfigManager::Instance.getTextCharFormats("normal").background().color());
         Pal.setColor(QPalette::Window, ConfigManager::Instance.getTextCharFormats("normal").background().color());
         Pal.setColor(QPalette::WindowText, ConfigManager::Instance.getTextCharFormats("normal").foreground().color());
         this->setAutoFillBackground(true);
-        this->statusBar()->setPalette(Pal);
-        this->statusBar()->setStyleSheet("QStatusBar {background: "+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color())+
-                                           "}");
+        this->statusBar()->setPalette(Pal);*/
+        this->statusBar()->setStyleSheet("QStatusBar {background: red"+//ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color())+
+                                         QString("} QStatusBar::item { border: 1px solid red; color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
+                                         "}");
     }
     this->widgetTextEdit->setStyleSheet(QString("QTextEdit { border: 1px solid ")+
                                         ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("textedit-border").foreground().color())+"; "+QString("color: ")+
