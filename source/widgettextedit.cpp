@@ -189,6 +189,8 @@ void WidgetTextEdit::onCursorPositionChange()
     this->currentFile->getViewer()->setLine(this->textCursor().blockNumber()+1);
 
     this->_widgetInsertCommand->setVisible(false);
+
+    emit cursorPositionChanged(this->textCursor().blockNumber() + 1, this->textCursor().positionInBlock() + 1);
 }
 
 void WidgetTextEdit::resizeEvent(QResizeEvent *event)
