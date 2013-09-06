@@ -14,7 +14,7 @@
 #cp /usr/local/lib/libtiff.5.dylib .
 
 
-dylibbundler -od -b -x ../../../texiteasy_Release/texiteasy.app/Contents/MacOS/texiteasy -d ../../../texiteasy_Release/texiteasy.app/Contents/libs/
-mkdir ../../../texiteasy_Release/texiteasy.app/Contents/Frameworks
-cp -r bunddleNeeds/Frameworks/libpng.framework ../../../texiteasy_Release/texiteasy.app/Contents/Frameworks/libpng.framework
-macdeployqt ../../../texiteasy_Release/texiteasy.app
+dylibbundler -od -b -x ../../../build/texiteasy-Desktop-Release/texiteasy.app/Contents/MacOS/texiteasy -d ../../../texiteasy_Release/texiteasy.app/Contents/libs/
+mkdir ../../../build/texiteasy-Desktop-Release/texiteasy.app/Contents/Frameworks
+cp -r bunddleNeeds/Frameworks/libpng.framework ../../../build/texiteasy-Desktop-Release/texiteasy.app/Contents/Frameworks/libpng.framework
+macdeployqt ../../../build/texiteasy-Desktop-Release/texiteasy.app
