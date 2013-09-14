@@ -23,6 +23,7 @@
 #define WIDGETINSERTCOMMAND_H
 
 #include <QWidget>
+#include <QStringList>
 
 class WidgetTextEdit;
 namespace Ui {
@@ -39,6 +40,8 @@ public:
     
 private:
     Ui::WidgetInsertCommand *ui;
+
+    QStringList _tabslabel;
 };
 
 #endif // WIDGETINSERTCOMMAND_H
