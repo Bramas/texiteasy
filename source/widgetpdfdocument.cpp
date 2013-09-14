@@ -25,6 +25,7 @@
 #include <QDebug>
 #include <QPainter>
 #include <QBrush>
+#include <QRectF>
 #include <QColor>
 #include "file.h"
 
@@ -112,7 +113,22 @@ void WidgetPdfDocument::paintEvent(QPaintEvent *)
             //painter.drawLine(_syncRect.x()*_zoom-50,_syncRect.y()*_zoom + cumulatedTop,_syncRect.x()*_zoom-20,_syncRect.y()*_zoom + cumulatedTop);
             //painter.drawLine(_syncRect.x()*_zoom-50,_syncRect.y()*_zoom + cumulatedTop,_syncRect.x()*_zoom-50,_syncRect.y()*_zoom + 20 + cumulatedTop);
         }
-        cumulatedTop += _document->page(i)->pageSize().height()*_zoom+WidgetPdfDocument::PageMargin;
+
+        int pageHeight = _document->page(i)->pageSize().height()*_zoom;
+        //Display page number:
+        QString pageNumString = QString::number(i+1)+"/"+QString::number(_document->numPages());
+        QFontMetrics fm(painter.font());
+        int widthPageNumString = fm.width(pageNumString);
+
+        painter.setBrush(QBrush(QColor(0,0,0,50)));
+        painter.setPen(QPen(Qt::transparent));
+        QRectF pageNumberDisp(max(0,-_painterTranslate.x()), min(cumulatedTop+pageHeight-22,max(-_painterTranslate.y(),cumulatedTop)),widthPageNumString+8,22);
+        painter.drawRect(pageNumberDisp);
+        painter.setPen(QPen(Qt::white));
+        painter.drawText(pageNumberDisp.translated(4,4), pageNumString);
+
+
+        cumulatedTop += pageHeight+WidgetPdfDocument::PageMargin;
         if(cumulatedTop > this->height() - this->_painterTranslate.y())
         {
             break;
