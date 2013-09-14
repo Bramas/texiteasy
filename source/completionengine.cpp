@@ -103,10 +103,10 @@ void CompletionEngine::proposeCommand(int left, int top, int lineHeight, QString
     this->setItemSelected(this->item(0),true);
     this->setCurrentRow(0,QItemSelectionModel::Rows);
 
-    QRect geo = this->geometry();
+    QRect geo(0,0,250,qMin(150,this->count()*this->sizeHintForRow(0)+5));
     left = qMin(left,parentWidget()->width()-geo.width());
     geo.moveTo(QPoint(left, top));
-    //qDebug()<<left<<" , "<<top;
+
     if(geo.bottom() > parentWidget()->height())
     {
         geo.translate(QPoint(0,-geo.height()-lineHeight-6));
