@@ -94,7 +94,7 @@ MainWindow::MainWindow(QWidget *parent) :
     widgetScroller->setWidgetTextEdit(widgetTextEdit);
     _widgetSimpleOutput->setWidgetTextEdit(widgetTextEdit);
     _widgetPdfViewer->widgetPdfDocument()->setWidgetTextEdit(widgetTextEdit);
-    _syntaxHighlighter = new SyntaxHighlighter(widgetTextEdit);
+    _syntaxHighlighter = new SyntaxHighlighter(widgetTextEdit->document());
     widgetTextEdit->setSyntaxHighlighter(_syntaxHighlighter);
     _widgetFindReplace = new WidgetFindReplace(widgetTextEdit);
 
@@ -527,7 +527,7 @@ void MainWindow::initTheme()
     QTextCursor cur = this->widgetTextEdit->textCursor();
     cur.setCharFormat(ConfigManager::Instance.getTextCharFormats("normal"));
     this->widgetTextEdit->setTextCursor(cur);
-    this->widgetTextEdit->setCurrentFont(ConfigManager::Instance.getTextCharFormats("normal").font());
+    //this->widgetTextEdit->setCurrentFont(ConfigManager::Instance.getTextCharFormats("normal").font());
 
     {
         QPalette Pal(palette());

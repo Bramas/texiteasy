@@ -26,7 +26,7 @@
 #include "blockdata.h"
 #include "configmanager.h"
 
-SyntaxHighlighter::SyntaxHighlighter(QTextEdit *parent) :
+SyntaxHighlighter::SyntaxHighlighter(QTextDocument *parent) :
     QSyntaxHighlighter(parent)
 {
 }

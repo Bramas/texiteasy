@@ -22,12 +22,14 @@
 #ifndef WIDGETTEXTEDIT_H
 #define WIDGETTEXTEDIT_H
 
-#include <QTextEdit>
+#include <QPlainTextEdit>
 #include <QTextBlock>
 #include <QTextLayout>
 #include <QMutex>
 #include <QAbstractTextDocumentLayout>
 #include "file.h"
+
+#define WIDGET_TEXT_EDIT_PARENT_CLASS QPlainTextEdit
 
 class FileStructure;
 class SyntaxHighlighter;
@@ -44,24 +46,24 @@ struct BlockInfo
 };
 
 
-class WidgetTextEdit : public QTextEdit
+class WidgetTextEdit : public WIDGET_TEXT_EDIT_PARENT_CLASS
 {
     Q_OBJECT
 public:
     explicit WidgetTextEdit(QWidget *parent);
     int blockHeight(int blockCount) { return blockHeight(this->document()->findBlockByNumber(blockCount)); }
-    int blockHeight(const QTextBlock &textBlock) { return textBlock.layout()->boundingRect().height(); }
+    int blockHeight(const QTextBlock &textBlock) { return this->blockGeometry(textBlock).height(); }
     int blockWidth(int blockCount) { return blockWidth(this->document()->findBlockByNumber(blockCount)); }
-    int blockWidth(const QTextBlock &textBlock) { return textBlock.layout()->boundingRect().width(); }
+    int blockWidth(const QTextBlock &textBlock) { return this->blockGeometry(textBlock).width(); }
     int blockTop(int blockCount) { return blockTop(this->document()->findBlockByNumber(blockCount)); }
-    int blockTop(const QTextBlock &textBlock) { return this->document()->documentLayout()->blockBoundingRect(textBlock).top(); }
+    int blockTop(const QTextBlock &textBlock) { return this->blockGeometry(textBlock).top(); }
     int blockBottom(int blockCount) { return blockBottom(this->document()->findBlockByNumber(blockCount)); }
-    int blockBottom(const QTextBlock &textBlock) { return this->document()->documentLayout()->blockBoundingRect(textBlock).bottom(); }
+    int blockBottom(const QTextBlock &textBlock) { return this->blockGeometry(textBlock).bottom(); }
 
-    QRectF blockGeometry(QTextBlock &textBlock) { return textBlock.layout()->boundingRect(); }
+    QRectF blockGeometry(const QTextBlock &textBlock) { return this->blockBoundingGeometry(textBlock); }
 
 
-    int textHeight() { return this->document()->documentLayout()->blockBoundingRect(this->document()->end()).bottom(); }
+    int textHeight() { return this->blockBottom(this->document()->end()); }
     File * getCurrentFile() { return this->currentFile; }
     void setText(const QString &text);
     void insertText(const QString &text);
@@ -86,8 +88,8 @@ public slots:
     void onCursorPositionChange(void);
     void matchCommand();
     void matchAll();
-    void setFocus() { QTextEdit::setFocus(); }
-    void setFocus(QKeyEvent * event) { QTextEdit::setFocus(); this->keyPressEvent(event); }
+    void setFocus() { WIDGET_TEXT_EDIT_PARENT_CLASS::setFocus(); }
+    void setFocus(QKeyEvent * event) { WIDGET_TEXT_EDIT_PARENT_CLASS::setFocus(); this->keyPressEvent(event); }
     void goToLine(int line, QString stringSelected = QString());
 protected:
     void insertFromMimeData(const QMimeData * source);

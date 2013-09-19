@@ -41,13 +41,14 @@
 #include "completionengine.h"
 #include <math.h>
 #include <QtCore>
+#include "QTextEdit"
 
 #define max(a,b) ((a) < (b) ? (b) : (a))
 #define min(a,b) ((a) > (b) ? (b) : (a))
 #define abs(a) ((a) > 0 ? (a) : (-(a)))
 
 WidgetTextEdit::WidgetTextEdit(QWidget * parent) :
-    QTextEdit(parent),
+    WIDGET_TEXT_EDIT_PARENT_CLASS(parent),
     _completionEngine(new CompletionEngine(this)),
     currentFile(new File(this)),
     fileStructure(new FileStructure(this)),
@@ -84,7 +85,7 @@ void WidgetTextEdit::scrollTo(int p)
 void WidgetTextEdit::setText(const QString &text)
 {
     this->_indentationInited = false;
-    QTextEdit::setPlainText(text);
+    WIDGET_TEXT_EDIT_PARENT_CLASS::setPlainText(text);
 /* TODO : Run initIndentation in a thread */
     //QtConcurrent::run(this,&WidgetTextEdit::initIndentation);
     this->initIndentation();
@@ -93,11 +94,11 @@ void WidgetTextEdit::setText(const QString &text)
 }
 void WidgetTextEdit::insertText(const QString &text)
 {
-    QTextEdit::insertPlainText(text);
+    WIDGET_TEXT_EDIT_PARENT_CLASS::insertPlainText(text);
 }
 void WidgetTextEdit::paintEvent(QPaintEvent *event)
 {
-    QTextEdit::paintEvent(event);
+    WIDGET_TEXT_EDIT_PARENT_CLASS::paintEvent(event);
     QPainter painter(viewport());
 
 
@@ -196,7 +197,7 @@ void WidgetTextEdit::onCursorPositionChange()
 void WidgetTextEdit::resizeEvent(QResizeEvent *event)
 {
     this->updateIndentation();
-    QTextEdit::resizeEvent(event);
+    WIDGET_TEXT_EDIT_PARENT_CLASS::resizeEvent(event);
     update();
     //this->updateGeometry();
     //this->update();
@@ -306,7 +307,7 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
         this->setTextCursor(cur);
         return;
     }
-    QTextEdit::keyPressEvent(e);
+    WIDGET_TEXT_EDIT_PARENT_CLASS::keyPressEvent(e);
     /*//qDebug()<<"ok"<<e->key()<<"  "<<Qt::Key_Enter;
     if(e->key() == Qt::Key_Enter || e->key() == Qt::Key_Enter - 1)
     {
@@ -354,7 +355,7 @@ void WidgetTextEdit::wheelEvent(QWheelEvent * event)
         this->setTextCursor(cur);
 
         this->setCurrentCharFormat(ConfigManager::Instance.getTextCharFormats("normal"));
-        this->setCurrentFont(ConfigManager::Instance.getTextCharFormats("normal").font());
+        //this->setCurrentFont(ConfigManager::Instance.getTextCharFormats("normal").font());
         this->setStyleSheet(QString("QTextEdit { border: 1px solid ")+
                                             ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("textedit-border").foreground().color())+"; "+QString("color: ")+
                                             ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+"; "+
@@ -388,7 +389,7 @@ void WidgetTextEdit::wheelEvent(QWheelEvent * event)
     }
     else
     {
-        QTextEdit::wheelEvent(event);
+        WIDGET_TEXT_EDIT_PARENT_CLASS::wheelEvent(event);
     }
     update();
 }
@@ -403,7 +404,7 @@ void WidgetTextEdit::setBlockLeftMargin(const QTextBlock &textBlock, int leftMar
 
 void WidgetTextEdit::initIndentation(void)
 {
-    if(this->updatingIndentation)
+/*    if(this->updatingIndentation)
     {
         return;
     }
@@ -446,7 +447,7 @@ void WidgetTextEdit::initIndentation(void)
     this->_indentationMutex.lock();
     this->_indentationInited = true;
     this->_indentationMutex.unlock();
-    this->updatingIndentation = false;
+    this->updatingIndentation = false;*/
 }
 
 void WidgetTextEdit::updateIndentation(void)
@@ -469,7 +470,7 @@ void WidgetTextEdit::updateIndentation(void)
 
     this->matchCommand();
 
-    this->_indentationMutex.lock();
+/*    this->_indentationMutex.lock();
     if(!this->_indentationInited)
     {
         this->_indentationMutex.unlock();
@@ -507,7 +508,7 @@ void WidgetTextEdit::updateIndentation(void)
             block = block.next();
         }
     this->updatingIndentation = false;
-
+*/
 
 }
 
