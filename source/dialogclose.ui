@@ -7,20 +7,44 @@
     <x>0</x>
     <y>0</y>
     <width>492</width>
-    <height>136</height>
+    <height>140</height>
    </rect>
   </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>492</width>
+    <height>140</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>16777215</width>
+    <height>140</height>
+   </size>
+  </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Quitter ?</string>
   </property>
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
      <x>30</x>
-     <y>50</y>
-     <width>311</width>
+     <y>60</y>
+     <width>411</width>
      <height>31</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>9</pointsize>
+    </font>
    </property>
    <property name="text">
     <string>Si vous n'enregistrez pas, les changements seront perdus.</string>
@@ -35,11 +59,12 @@
      <x>30</x>
      <y>10</y>
      <width>441</width>
-     <height>41</height>
+     <height>51</height>
     </rect>
    </property>
    <property name="font">
     <font>
+     <family>Arial</family>
      <pointsize>14</pointsize>
     </font>
    </property>
@@ -50,27 +75,20 @@
     <bool>true</bool>
    </property>
   </widget>
-  <widget class="QPushButton" name="confirmAndClose">
-   <property name="geometry">
-    <rect>
-     <x>20</x>
-     <y>100</y>
-     <width>141</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Ne pas sauvegarder</string>
-   </property>
-  </widget>
   <widget class="QPushButton" name="cancel">
    <property name="geometry">
     <rect>
      <x>240</x>
      <y>100</y>
      <width>111</width>
-     <height>21</height>
+     <height>31</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>10</pointsize>
+    </font>
    </property>
    <property name="text">
     <string>Annuler</string>
@@ -85,14 +103,39 @@
      <x>360</x>
      <y>100</y>
      <width>111</width>
-     <height>21</height>
+     <height>31</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>10</pointsize>
+    </font>
    </property>
    <property name="text">
     <string>Sauvegarder</string>
    </property>
    <property name="default">
     <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="quit">
+   <property name="geometry">
+    <rect>
+     <x>20</x>
+     <y>100</y>
+     <width>161</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>Arial</family>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>Ne pas sauvegarder</string>
    </property>
   </widget>
  </widget>

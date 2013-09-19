@@ -31,8 +31,9 @@ DialogClose::DialogClose(QWidget *parent) :
 {
     ui->setupUi(this);
 
+
     connect(this->ui->save, SIGNAL(clicked()), this, SLOT(saveAndClose()));
-    connect(this->ui->confirmAndClose, SIGNAL(clicked()), this, SLOT(confirmAndClose()));
+    connect(this->ui->quit, SIGNAL(clicked()), this, SLOT(confirmAndClose()));
     connect(this->ui->cancel, SIGNAL(clicked()), this, SLOT(close()));
 }
 

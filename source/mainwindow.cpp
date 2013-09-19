@@ -514,11 +514,11 @@ void MainWindow::initTheme()
         Pal.setColor(QPalette::WindowText, ConfigManager::Instance.getTextCharFormats("normal").foreground().color());
         this->setAutoFillBackground(true);
         this->statusBar()->setPalette(Pal);*/
-        this->statusBar()->setStyleSheet("QStatusBar {background: red"+//ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color())+
-                                         QString("} QStatusBar::item { border: 1px solid red; color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
+        this->statusBar()->setStyleSheet("QStatusBar {background: "+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color())+
+                                         QString("} QStatusBar::item { color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
                                          "}");
     }
-    this->widgetTextEdit->setStyleSheet(QString("QTextEdit { border: 1px solid ")+
+    this->widgetTextEdit->setStyleSheet(QString("QPlainTextEdit { border: 1px solid ")+
                                         ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("textedit-border").foreground().color())+"; "+QString("color: ")+
                                         ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+"; "+
                                         QString("background-color: ")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color())+
