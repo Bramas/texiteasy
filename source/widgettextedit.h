@@ -29,12 +29,14 @@
 #include <QAbstractTextDocumentLayout>
 #include "file.h"
 
+
 #define WIDGET_TEXT_EDIT_PARENT_CLASS QPlainTextEdit
 
 class FileStructure;
 class SyntaxHighlighter;
 class CompletionEngine;
 class WidgetInsertCommand;
+class WidgetLineNumber;
 
 struct BlockInfo
 {
@@ -67,10 +69,11 @@ public:
     File * getCurrentFile() { return this->currentFile; }
     void setText(const QString &text);
     void insertText(const QString &text);
-    int getFirstVisibleBlock() { return this->firstVisibleBlock; }
+    int firstVisibleBlockNumber() { this->firstVisibleBlock().blockNumber(); } // return this->firstVisibleBlock; }
 
     bool isCursorVisible();
     void setSyntaxHighlighter(SyntaxHighlighter * syntaxHighlighter) { this->_syntaxHighlighter = syntaxHighlighter; }
+    void setWidgetLineNumber(WidgetLineNumber * widgetLineNumber) { this->_widgetLineNumber = widgetLineNumber; }
     void displayWidgetInsertCommand();
 
     int centerBlockNumber();
@@ -117,7 +120,6 @@ private:
     CompletionEngine * _completionEngine;
     File * currentFile;
     FileStructure * fileStructure;
-    int firstVisibleBlock;
     QMutex _formatMutex;
     bool _indentationInited;
     QMutex _indentationMutex;
@@ -125,6 +127,7 @@ private:
     SyntaxHighlighter * _syntaxHighlighter;
     bool updatingIndentation;
     WidgetInsertCommand * _widgetInsertCommand;
+    WidgetLineNumber * _widgetLineNumber;
 
 
 };

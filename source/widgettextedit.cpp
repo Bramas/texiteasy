@@ -42,6 +42,7 @@
 #include <math.h>
 #include <QtCore>
 #include "QTextEdit"
+#include "widgetlinenumber.h"
 
 #define max(a,b) ((a) < (b) ? (b) : (a))
 #define min(a,b) ((a) > (b) ? (b) : (a))
@@ -52,12 +53,12 @@ WidgetTextEdit::WidgetTextEdit(QWidget * parent) :
     _completionEngine(new CompletionEngine(this)),
     currentFile(new File(this)),
     fileStructure(new FileStructure(this)),
-    firstVisibleBlock(0),
     _indentationInited(false),
     _lineCount(0),
     _syntaxHighlighter(0),
     updatingIndentation(false),
-    _widgetInsertCommand(new WidgetInsertCommand(this))
+    _widgetInsertCommand(new WidgetInsertCommand(this)),
+    _widgetLineNumber(0)
 
 {
 
@@ -98,6 +99,10 @@ void WidgetTextEdit::insertText(const QString &text)
 void WidgetTextEdit::paintEvent(QPaintEvent *event)
 {
     WIDGET_TEXT_EDIT_PARENT_CLASS::paintEvent(event);
+    if(_widgetLineNumber)
+    {
+        this->_widgetLineNumber->update();
+    }
     QPainter painter(viewport());
 
 
@@ -147,28 +152,6 @@ void WidgetTextEdit::paintEvent(QPaintEvent *event)
         painter.drawText(-top-height-20,25*(value->level-1),value->name);
     }
 
-
-
-
-    int lastFirstVisibleBlock = this->firstVisibleBlock;
-    this->firstVisibleBlock = -1;
-    for(int i=1; i< this->document()->blockCount(); ++i)
-    {
-        //qDebug()<<"block "<<i<<" top : "<<blocksInfo[i].top<<" height : "<<blocksInfo[i].height<<"  scroll : "<<this->verticalScrollBar()->value();
-        if(this->firstVisibleBlock == -1 && this->blockBottom(i) > this->verticalScrollBar()->value())
-        {
-            this->firstVisibleBlock = i;
-        }
-
-    }
-    if(lastFirstVisibleBlock != this->firstVisibleBlock)
-    {
-        emit updateFirstVisibleBlock(this->firstVisibleBlock,this->blockTop(this->firstVisibleBlock));
-    }
-    else
-    {
-        emit updatedWithSameFirstVisibleBlock();
-    }
 
 
 }
@@ -366,25 +349,6 @@ void WidgetTextEdit::wheelEvent(QWheelEvent * event)
             this->_syntaxHighlighter->rehighlight();
         }
 
-        int lastFirstVisibleBlock = this->firstVisibleBlock;
-        this->firstVisibleBlock = -1;
-        for(int i=1; i < this->document()->blockCount(); ++i)
-        {
-            if(this->firstVisibleBlock == -1 && this->blockBottom(i) > this->verticalScrollBar()->value())
-            {
-                this->firstVisibleBlock = i;
-            }
-
-        }
-        if(lastFirstVisibleBlock != this->firstVisibleBlock)
-        {
-            emit updateFirstVisibleBlock(this->firstVisibleBlock,this->blockTop(this->firstVisibleBlock));
-        }
-        else
-        {
-            emit updateFirstVisibleBlock(this->firstVisibleBlock,this->blockTop(this->firstVisibleBlock));
-            //emit updatedWithSameFirstVisibleBlock();
-        }
     }
     else
     {
@@ -441,9 +405,9 @@ void WidgetTextEdit::initIndentation(void)
         textBlock = this->document()->findBlockByNumber(idx);
         this->setBlockLeftMargin(textBlock, blocksInfo[idx].leftMargin);
     }
-
+*/
     this->currentFile->refreshLineNumber();
-    this->_indentationMutex.lock();
+ /*   this->_indentationMutex.lock();
     this->_indentationInited = true;
     this->_indentationMutex.unlock();
     this->updatingIndentation = false;*/
@@ -451,12 +415,13 @@ void WidgetTextEdit::initIndentation(void)
 
 void WidgetTextEdit::updateIndentation(void)
 {
+  /*
     if(this->updatingIndentation)
     {
         return;
     }
     this->updatingIndentation = true;
-
+*/
 
     if(this->document()->blockCount() != _lineCount)
     {
@@ -871,7 +836,7 @@ void WidgetTextEdit::highlightSyncedLine(int line)
 
 int WidgetTextEdit::centerBlockNumber()
 {
-    int centerBlockNumber = this->firstVisibleBlock;
+    int centerBlockNumber = this->firstVisibleBlockNumber();
     while(centerBlockNumber < this->document()->blockCount())
     {
         if(this->blockTop(centerBlockNumber) - this->verticalScrollBar()->value() > this->height() / 2)

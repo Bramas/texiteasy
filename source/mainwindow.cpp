@@ -113,8 +113,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Connect things that can update the widgetTextEdit
 
+
     connect(widgetTextEdit,SIGNAL(textChanged()),widgetLineNumber,SLOT(update()));
-    connect(widgetTextEdit,SIGNAL(setBlockRange(int,int)),widgetLineNumber,SLOT(setBlockRange(int,int)));
+    widgetTextEdit->setWidgetLineNumber(widgetLineNumber);
     //connect(widgetTextEdit->verticalScrollBar(),SIGNAL(valueChanged(int)),widgetLineNumber,SLOT(update()));
 
     //connect(widgetTextEdit,SIGNAL(textChanged()),widgetScroller,SLOT(updateText()));
