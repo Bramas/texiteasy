@@ -37,6 +37,7 @@
 #include "widgetfindreplace.h"
 #include "minisplitter.h"
 #include "widgetsimpleoutput.h"
+#include "widgetproject.h"
 
 #include <QAction>
 #include <QScrollBar>
@@ -178,8 +179,6 @@ MainWindow::MainWindow(QWidget *parent) :
     this->ui->menuOuvrir_R_cent->insertSeparator(lastAction);
 
     connect(_widgetConsole, SIGNAL(requestLine(int)), widgetTextEdit, SLOT(goToLine(int)));
-
-
 
     ui->gridLayout->addWidget(widgetLineNumber,0,0);
     ui->gridLayout->addWidget(_mainSplitter,0,1);
