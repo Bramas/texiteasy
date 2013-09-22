@@ -91,7 +91,6 @@ public slots:
     void goToLine(int line, QString stringSelected = QString());
 protected:
     void insertFromMimeData(const QMimeData * source);
-
 private:
     void initIndentation(void);
     void paintEvent(QPaintEvent *event);

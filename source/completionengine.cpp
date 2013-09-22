@@ -26,10 +26,15 @@
 #include <QDebug>
 #include <QTextStream>
 #include <QtCore/qmath.h>
+#include <QScrollBar>
 #include "widgettextedit.h"
+#include "widgettooltip.h"
+
 
 CompletionEngine::CompletionEngine(WidgetTextEdit *parent) :
     QListWidget(parent),
+    _widgetTextEdit(parent),
+    _widgetTooltip(0),
     _commandBegin(QString(""))
 {
     this->setVisible(false);
@@ -40,6 +45,7 @@ CompletionEngine::CompletionEngine(WidgetTextEdit *parent) :
     this->loadFile(":/completion/latex-mathsymbols.cwl");
     this->loadFile(":/completion/amsmath.cwl");
 
+    connect(this, SIGNAL(currentRowChanged(int)), this, SLOT(cellSelected(int)));
 
     _words.removeDuplicates();
     _words.sort();
@@ -87,12 +93,19 @@ void CompletionEngine::proposeCommand(int left, int top, int lineHeight, QString
     this->clear();
     this->setVisible(true);
     int idx = 0;
-    int dieseIndex;
+    int dieseIndex, tooltipIndex;
     foreach(const QString &word, found)
     {
         if((dieseIndex = word.indexOf(QRegExp("#"))) != -1)
         {
             this->insertItem(idx++,word.left(dieseIndex));
+        }
+        else
+        if((tooltipIndex = word.indexOf('?')) != -1)
+        {
+            QListWidgetItem * item = new QListWidgetItem(word.left(tooltipIndex));
+            item->setToolTip(word.right(word.size() - tooltipIndex - 1));
+            this->insertItem(idx++, item);
         }
         else
         {
@@ -112,6 +125,31 @@ void CompletionEngine::proposeCommand(int left, int top, int lineHeight, QString
         geo.translate(QPoint(0,-geo.height()-lineHeight-6));
     }
     this->setGeometry(geo);
+
+}
+
+void CompletionEngine::cellSelected(int row)
+{
+    if(_widgetTooltip)
+    {
+        delete _widgetTooltip;
+        _widgetTooltip = 0;
+    }
+    if(row < 0)
+    {
+        return;
+    }
+    if(this->item(row)->toolTip().isEmpty())
+    {
+        return;
+    }
+    _widgetTooltip = new WidgetTooltip(this->parentWidget());
+    _widgetTooltip->setTopLeft(this->geometry().left() + this->width(),
+                               this->geometry().top() +
+                               16 *
+                               (row-this->verticalScrollBar()->value()));
+    _widgetTooltip->setText(this->item(row)->toolTip());
+    _widgetTooltip->show();
 }
 
 QString CompletionEngine::acceptedWord()
@@ -179,4 +217,140 @@ void CompletionEngine::addCustomWordFromSource()
         _customWords.append("\\cite{"+patternBibitem.capturedTexts().last()+"}");
         index = source.indexOf(patternBibitem, index + 1);
     }
+    parseBibtexFile();
+}
+
+void CompletionEngine::parseBibtexFile()
+{
+    QString source = _widgetTextEdit->toPlainText();
+    QRegExp patternBib("\\\\bibliography\\{([^\\}]*)\\}");
+    int index = source.indexOf(patternBib);
+    if(index == -1)
+    {
+        return;
+    }
+
+    QString filename = this->_widgetTextEdit->getCurrentFile()->getPath();
+
+    filename += patternBib.capturedTexts().last();
+    filename += ".bib";
+    if(!QFile::exists(filename))
+    {
+        qDebug()<<"bibtex file does not exist : "<<filename;
+        return;
+    }
+
+    QFile bibFile(filename);
+
+    if(!bibFile.open(QFile::Text | QFile::ReadOnly))
+    {
+        qDebug()<<"failed to open bibtex file : "<<filename<<" "<<bibFile.errorString();
+        return;
+    }
+
+    QList<BibItem> bibItemList = this->parseBibtexSource(bibFile.readAll());
+    foreach(BibItem bibItem, bibItemList)
+    {
+        _customWords.append("\\cite{"+bibItem.key+"}?"+bibItem.title);
+    }
+
+}
+QList<BibItem> CompletionEngine::parseBibtexSource(QString source)
+{
+    // Regex cannot work because of the possible nested brackets
+    // So lets go with a little grammar parser that will keep the key and the title
+    // of each bibtex item.
+    enum{ OUTSIDE_ITEM, ITEM_TYPE, ITEM_KEY, FIELD_NAME, FIELD_VALUE, IGNORING_CHAR };
+
+    QChar ignoredChar;
+    QString::const_iterator currentChar = source.constBegin();
+    int numberOfOpened = 0;
+    int currentState = OUTSIDE_ITEM;
+
+    QString tempString("");
+    QString currentFieldName("");
+    BibItem tempBibItem;
+    QList<BibItem> bibItemList;
+
+    while(currentChar != source.constEnd())
+    {
+        switch(currentState)
+        {
+        case OUTSIDE_ITEM:
+            if((*currentChar) == '@')
+            {
+                currentState = ITEM_TYPE;
+            }
+        break;
+        case ITEM_TYPE:
+            if((*currentChar) == '{')
+            {
+                currentState = ITEM_KEY;
+            }
+        break;
+        case ITEM_KEY:
+            if((*currentChar) == ',')
+            {
+                currentState = FIELD_NAME;
+                tempBibItem.key = tempString.trimmed();
+                tempString.clear();
+                break;
+            }
+            tempString.append(*currentChar);
+        break;
+        case FIELD_NAME:
+            if((*currentChar) == '=')
+            {
+                currentFieldName = tempString.trimmed();
+                tempString.clear();
+                currentState = IGNORING_CHAR;
+                ignoredChar = '{';
+                break;
+            }
+            tempString.append(*currentChar);
+        break;
+        case FIELD_VALUE:
+
+            if((*currentChar) == '{')
+            {
+                ++numberOfOpened;
+            } else
+            if((*currentChar) == '}' && --numberOfOpened == 0)
+            {
+                if(!currentFieldName.compare("title"))
+                {
+                    tempBibItem.title = tempString.trimmed();
+                    bibItemList.append(tempBibItem);
+                }
+                tempString.clear();
+                currentState = IGNORING_CHAR;
+                ignoredChar = ',';
+                break;
+            }
+            tempString.append(*currentChar);
+        break;
+        case IGNORING_CHAR:
+            if((*currentChar) == ignoredChar)
+            {
+                if(ignoredChar == ',')
+                {
+                    currentState = FIELD_NAME;
+                }
+                else
+                {
+                    currentState = FIELD_VALUE;
+                    numberOfOpened = 1;
+                }
+                break;
+            }
+            if((*currentChar) == '}' && ',' == ignoredChar)
+            {
+                currentState = OUTSIDE_ITEM;
+            }
+        break;
+        }
+        ++currentChar;
+    }
+
+    return bibItemList;
 }

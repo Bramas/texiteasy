@@ -26,6 +26,14 @@
 #include <QString>
 
 class WidgetTextEdit;
+class WidgetTooltip;
+
+
+struct BibItem
+{
+    QString key;
+    QString title;
+};
 
 class CompletionEngine : public QListWidget
 {
@@ -38,17 +46,24 @@ public:
     QString acceptedWord();
 
     void addCustomWordFromSource();
+    void parseBibtexFile();
 public slots:
  //   void setFocus(void);
+    void cellSelected(int);
 
 protected:
     void keyPressEvent(QKeyEvent *event);
 
 private:
     void loadFile(QString filename);
+    QList<BibItem> parseBibtexSource(QString source);
+
     QStringList _words;
     QStringList _customWords;
     QString _commandBegin;
+    WidgetTextEdit * _widgetTextEdit;
+    WidgetTooltip * _widgetTooltip;
+
 };
 
 #endif // COMPLETIONENGINE_H

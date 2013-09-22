@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql
+QT       += core gui sql xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -48,7 +48,9 @@ SOURCES += main.cpp\
     minisplitter.cpp \
     widgetsimpleoutput.cpp \
     dialogkeysequence.cpp \
-    widgetstatusbar.cpp
+    widgetstatusbar.cpp \
+    widgettooltip.cpp \
+    widgetproject.cpp
 
 HEADERS  += mainwindow.h \
     widgetlinenumber.h \
@@ -78,7 +80,9 @@ HEADERS  += mainwindow.h \
     widgetsimpleoutput.h \
     zlib/zlib.h \
     dialogkeysequence.h \
-    widgetstatusbar.h
+    widgetstatusbar.h \
+    widgettooltip.h \
+    widgetproject.h
 
 FORMS    += mainwindow.ui \
     dialogwelcome.ui \
