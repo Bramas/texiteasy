@@ -123,8 +123,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(widgetTextEdit->verticalScrollBar(),SIGNAL(valueChanged(int)), _widgetPdfViewer->widgetPdfDocument(),SLOT(jumpToPdfFromSourceView(int)));
 
-    connect(widgetScroller,SIGNAL(changed(int)),widgetTextEdit,SLOT(scrollTo(int)));
-
     // Connect menubar Actions
 
     connect(this->ui->actionDeleteLastOpenFiles,SIGNAL(triggered()),this,SLOT(clearLastOpened()));

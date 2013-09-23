@@ -106,7 +106,7 @@ void WidgetTextEdit::paintEvent(QPaintEvent *event)
     QPainter painter(viewport());
 
 
-
+    return;
     painter.setBrush(ConfigManager::Instance.getTextCharFormats("leftStructure").background());
     painter.setPen(QPen(ConfigManager::Instance.getTextCharFormats("leftStructure").foreground().color()));
 
@@ -836,10 +836,10 @@ void WidgetTextEdit::highlightSyncedLine(int line)
 
 int WidgetTextEdit::centerBlockNumber()
 {
-    int centerBlockNumber = this->firstVisibleBlockNumber();
+    int centerBlockNumber = this->firstVisibleBlock().blockNumber();
     while(centerBlockNumber < this->document()->blockCount())
     {
-        if(this->blockTop(centerBlockNumber) - this->verticalScrollBar()->value() > this->height() / 2)
+        if(this->contentOffset().y() + this->blockTop(centerBlockNumber) > this->height() / 2)
         {
             break;
         }

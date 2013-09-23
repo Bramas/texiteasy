@@ -63,13 +63,14 @@ public:
     int blockBottom(const QTextBlock &textBlock) { return this->blockGeometry(textBlock).bottom(); }
 
     QRectF blockGeometry(const QTextBlock &textBlock) { return this->blockBoundingGeometry(textBlock); }
+    int contentOffsetTop() { return this->contentOffset().y(); }
 
 
     int textHeight() { return this->blockBottom(this->document()->end()); }
     File * getCurrentFile() { return this->currentFile; }
     void setText(const QString &text);
     void insertText(const QString &text);
-    int firstVisibleBlockNumber() { this->firstVisibleBlock().blockNumber(); } // return this->firstVisibleBlock; }
+    int firstVisibleBlockNumber() { return this->firstVisibleBlock().blockNumber(); } // return this->firstVisibleBlock; }
 
     bool isCursorVisible();
     void setSyntaxHighlighter(SyntaxHighlighter * syntaxHighlighter) { this->_syntaxHighlighter = syntaxHighlighter; }
