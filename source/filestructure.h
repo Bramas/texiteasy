@@ -24,7 +24,7 @@
 
 #include <QObject>
 
-class QList<class T>;
+template<class T> class QList;
 class WidgetTextEdit;
 
 struct FileStructureInfo
