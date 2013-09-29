@@ -143,9 +143,9 @@ void CompletionEngine::cellSelected(int row)
     {
         return;
     }
-    _widgetTooltip = new WidgetTooltip(this->parentWidget());
+    _widgetTooltip = new WidgetTooltip(this->parentWidget()->parentWidget()->parentWidget()->parentWidget());
     _widgetTooltip->setTopLeft(this->geometry().left() + this->width(),
-                               this->geometry().top() +
+                               this->geometry().top()+
                                16 *
                                (row-this->verticalScrollBar()->value()));
     _widgetTooltip->setText(this->item(row)->toolTip());

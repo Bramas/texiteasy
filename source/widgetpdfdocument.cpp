@@ -501,7 +501,6 @@ void WidgetPdfDocument::jumpToEditorFromAbsolutePos(const QPointF &pos)
 
 void WidgetPdfDocument::jumpToEditor(int page, const QPointF& pos)
 {
-    qDebug() << page << pos.x() << pos.y();
     if (scanner == NULL) return;
     if (synctex_edit_query(scanner, page+1, pos.x(), pos.y()) > 0)
     {
