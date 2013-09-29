@@ -44,29 +44,30 @@
 #include <QImage>
 #include <QBitmap>
 #include <QLayout>
+#include "QTextEdit"
+#include "widgetlinenumber.h"
 
 #define max(a,b) ((a) < (b) ? (b) : (a))
 #define min(a,b) ((a) > (b) ? (b) : (a))
 #define abs(a) ((a) > 0 ? (a) : (-(a)))
 
 WidgetTextEdit::WidgetTextEdit(QWidget * parent) :
-    QTextEdit(parent),
+    WIDGET_TEXT_EDIT_PARENT_CLASS(parent),
     _completionEngine(new CompletionEngine(this)),
     currentFile(new File(this)),
     fileStructure(new FileStructure(this)),
-    firstVisibleBlock(0),
     _indentationInited(false),
     _lineCount(0),
     _syntaxHighlighter(0),
     updatingIndentation(false),
-    _widgetInsertCommand(new WidgetInsertCommand(this))
+    _widgetInsertCommand(new WidgetInsertCommand(this)),
+    _widgetLineNumber(0)
 
 {
 
     connect(this,SIGNAL(textChanged()),this->currentFile,SLOT(setModified()));
     connect(this,SIGNAL(textChanged()),this,SLOT(updateIndentation()));
     connect(this,SIGNAL(cursorPositionChanged()), this, SLOT(onCursorPositionChange()));
-    //connect(this->verticalScrollBar(),SIGNAL(valueChanged(int)),this,SLOT(update()));
     connect(this->verticalScrollBar(),SIGNAL(valueChanged(int)),this->viewport(),SLOT(update()));
 
     //this->setCurrentFont(QFont("Consolas", 17));
@@ -88,7 +89,7 @@ void WidgetTextEdit::scrollTo(int p)
 void WidgetTextEdit::setText(const QString &text)
 {
     this->_indentationInited = false;
-    QTextEdit::setPlainText(text);
+    WIDGET_TEXT_EDIT_PARENT_CLASS::setPlainText(text);
 /* TODO : Run initIndentation in a thread */
     //QtConcurrent::run(this,&WidgetTextEdit::initIndentation);
     this->initIndentation();
@@ -97,15 +98,19 @@ void WidgetTextEdit::setText(const QString &text)
 }
 void WidgetTextEdit::insertText(const QString &text)
 {
-    QTextEdit::insertPlainText(text);
+    WIDGET_TEXT_EDIT_PARENT_CLASS::insertPlainText(text);
 }
 void WidgetTextEdit::paintEvent(QPaintEvent *event)
 {
-    QTextEdit::paintEvent(event);
+    WIDGET_TEXT_EDIT_PARENT_CLASS::paintEvent(event);
+    if(_widgetLineNumber)
+    {
+        this->_widgetLineNumber->update();
+    }
     QPainter painter(viewport());
 
 
-
+    return;
     painter.setBrush(ConfigManager::Instance.getTextCharFormats("leftStructure").background());
     painter.setPen(QPen(ConfigManager::Instance.getTextCharFormats("leftStructure").foreground().color()));
 
@@ -153,28 +158,6 @@ void WidgetTextEdit::paintEvent(QPaintEvent *event)
 
 
 
-
-    int lastFirstVisibleBlock = this->firstVisibleBlock;
-    this->firstVisibleBlock = -1;
-    for(int i=1; i< this->document()->blockCount(); ++i)
-    {
-        //qDebug()<<"block "<<i<<" top : "<<blocksInfo[i].top<<" height : "<<blocksInfo[i].height<<"  scroll : "<<this->verticalScrollBar()->value();
-        if(this->firstVisibleBlock == -1 && this->blockBottom(i) > this->verticalScrollBar()->value())
-        {
-            this->firstVisibleBlock = i;
-        }
-
-    }
-    if(lastFirstVisibleBlock != this->firstVisibleBlock)
-    {
-        emit updateFirstVisibleBlock(this->firstVisibleBlock,this->blockTop(this->firstVisibleBlock));
-    }
-    else
-    {
-        emit updatedWithSameFirstVisibleBlock();
-    }
-
-
 }
 
 bool WidgetTextEdit::isCursorVisible()
@@ -200,7 +183,7 @@ void WidgetTextEdit::onCursorPositionChange()
 void WidgetTextEdit::resizeEvent(QResizeEvent *event)
 {
     this->updateIndentation();
-    QTextEdit::resizeEvent(event);
+    WIDGET_TEXT_EDIT_PARENT_CLASS::resizeEvent(event);
     update();
     //this->updateGeometry();
     //this->update();
@@ -310,7 +293,7 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
         this->setTextCursor(cur);
         return;
     }
-    QTextEdit::keyPressEvent(e);
+    WIDGET_TEXT_EDIT_PARENT_CLASS::keyPressEvent(e);
     /*//qDebug()<<"ok"<<e->key()<<"  "<<Qt::Key_Enter;
     if(e->key() == Qt::Key_Enter || e->key() == Qt::Key_Enter - 1)
     {
@@ -358,7 +341,7 @@ void WidgetTextEdit::wheelEvent(QWheelEvent * event)
         this->setTextCursor(cur);
 
         this->setCurrentCharFormat(ConfigManager::Instance.getTextCharFormats("normal"));
-        this->setCurrentFont(ConfigManager::Instance.getTextCharFormats("normal").font());
+        //this->setCurrentFont(ConfigManager::Instance.getTextCharFormats("normal").font());
         this->setStyleSheet(QString("QTextEdit { border: 1px solid ")+
                                             ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("textedit-border").foreground().color())+"; "+QString("color: ")+
                                             ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+"; "+
@@ -370,29 +353,10 @@ void WidgetTextEdit::wheelEvent(QWheelEvent * event)
             this->_syntaxHighlighter->rehighlight();
         }
 
-        int lastFirstVisibleBlock = this->firstVisibleBlock;
-        this->firstVisibleBlock = -1;
-        for(int i=1; i < this->document()->blockCount(); ++i)
-        {
-            if(this->firstVisibleBlock == -1 && this->blockBottom(i) > this->verticalScrollBar()->value())
-            {
-                this->firstVisibleBlock = i;
-            }
-
-        }
-        if(lastFirstVisibleBlock != this->firstVisibleBlock)
-        {
-            emit updateFirstVisibleBlock(this->firstVisibleBlock,this->blockTop(this->firstVisibleBlock));
-        }
-        else
-        {
-            emit updateFirstVisibleBlock(this->firstVisibleBlock,this->blockTop(this->firstVisibleBlock));
-            //emit updatedWithSameFirstVisibleBlock();
-        }
     }
     else
     {
-        QTextEdit::wheelEvent(event);
+        WIDGET_TEXT_EDIT_PARENT_CLASS::wheelEvent(event);
     }
     update();
 }
@@ -407,7 +371,7 @@ void WidgetTextEdit::setBlockLeftMargin(const QTextBlock &textBlock, int leftMar
 
 void WidgetTextEdit::initIndentation(void)
 {
-    if(this->updatingIndentation)
+/*    if(this->updatingIndentation)
     {
         return;
     }
@@ -445,22 +409,23 @@ void WidgetTextEdit::initIndentation(void)
         textBlock = this->document()->findBlockByNumber(idx);
         this->setBlockLeftMargin(textBlock, blocksInfo[idx].leftMargin);
     }
-
+*/
     this->currentFile->refreshLineNumber();
-    this->_indentationMutex.lock();
+ /*   this->_indentationMutex.lock();
     this->_indentationInited = true;
     this->_indentationMutex.unlock();
-    this->updatingIndentation = false;
+    this->updatingIndentation = false;*/
 }
 
 void WidgetTextEdit::updateIndentation(void)
 {
+  /*
     if(this->updatingIndentation)
     {
         return;
     }
     this->updatingIndentation = true;
-
+*/
 
     if(this->document()->blockCount() != _lineCount)
     {
@@ -473,7 +438,7 @@ void WidgetTextEdit::updateIndentation(void)
 
     this->matchCommand();
 
-    this->_indentationMutex.lock();
+/*    this->_indentationMutex.lock();
     if(!this->_indentationInited)
     {
         this->_indentationMutex.unlock();
@@ -511,7 +476,7 @@ void WidgetTextEdit::updateIndentation(void)
             block = block.next();
         }
     this->updatingIndentation = false;
-
+*/
 
 }
 
@@ -562,7 +527,7 @@ void WidgetTextEdit::matchCommand()
         QTextLine line = this->textCursor().block().layout()->lineForTextPosition(this->textCursor().positionInBlock());
         qreal left = line.cursorToX(this->textCursor().positionInBlock());
         qreal top = line.position().y() + line.height() + 5;
-        this->_completionEngine->proposeCommand(left,top + this->blockTop(this->textCursor().block())-this->verticalScrollBar()->value(), line.height(),possibleCommand);
+        this->_completionEngine->proposeCommand(left,top + this->blockTop(this->textCursor().block()), line.height(),possibleCommand);
         if(this->_completionEngine->isVisible())// && e->key() == Qt::Key_Down)
         {
             this->_completionEngine->setFocus();
@@ -876,10 +841,10 @@ void WidgetTextEdit::highlightSyncedLine(int line)
 
 int WidgetTextEdit::centerBlockNumber()
 {
-    int centerBlockNumber = this->firstVisibleBlock;
+    int centerBlockNumber = this->firstVisibleBlock().blockNumber();
     while(centerBlockNumber < this->document()->blockCount())
     {
-        if(this->blockTop(centerBlockNumber) - this->verticalScrollBar()->value() > this->height() / 2)
+        if(this->contentOffset().y() + this->blockTop(centerBlockNumber) > this->height() / 2)
         {
             break;
         }

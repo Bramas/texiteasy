@@ -91,6 +91,7 @@ void WidgetLineNumber::paintEvent(QPaintEvent * /*event*/)
     //update info about the scroll position
     this->scrollOffset = -this->widgetTextEdit->verticalScrollBar()->value();
 
+    this->firstVisibleBlock = widgetTextEdit->firstVisibleBlockNumber();
 
     QPainter painter(this);
 
@@ -120,41 +121,13 @@ void WidgetLineNumber::paintEvent(QPaintEvent * /*event*/)
 
     int right = this->width()-5;
     int fontHeight = fm.height();
-    int cumulatedPosition = this->firstVisibleBlockTop;
-    //qDebug()<<this->firstVisibleBlock;
-    if(this->firstVisibleBlock <= 1)
-    {
-        painter.drawText(0, this->scrollOffset+5, right-9, fontHeight, Qt::AlignRight, QString::number(1));
-    }
-    for(l = this->firstVisibleBlock+1; l <= widgetTextEdit->document()->blockCount(); ++l)
-    {
-        //qDebug()<<l;//<<"  "<<this->widgetTextEdit->blockGeometry(textBlock).bottom();
-        //if(this->widgetTextEdit->blockBottom(textBlock) < this->widgetTextEdit->verticalScrollBar()->value())//  !textBlock.isVisible())
-        //{
-        //    textBlock = textBlock.next();
-        //    continue;
-        //}
-        if(!textBlock.isValid())
-        {
-            break;
-        }
-        painter.drawText(0,this->scrollOffset+cumulatedPosition+5, right-9, fontHeight, Qt::AlignRight, QString::number(l));
-        if(l == _startBlock + 1)
-        {
-            painter.setPen(blockRangePen);
-            painter.drawLine(right,this->scrollOffset+cumulatedPosition+15,right,this->scrollOffset+cumulatedPosition+widgetTextEdit->blockHeight(textBlock));
-            painter.drawRect(right-3,this->scrollOffset+cumulatedPosition+10,6,6);
-            painter.setPen(defaultPen);
-        }
-        if(l > _startBlock + 1 && l < _endBlock + 2)
-        {
-            painter.setPen(blockRangePen);
-            painter.drawLine(right, this->scrollOffset+cumulatedPosition, right, this->scrollOffset+cumulatedPosition+widgetTextEdit->blockHeight(textBlock));
-            painter.setPen(defaultPen);
-        }
+    l = this->firstVisibleBlock = this->widgetTextEdit->firstVisibleBlockNumber();
+    this->scrollOffset = this->widgetTextEdit->contentOffsetTop();
 
-        cumulatedPosition += widgetTextEdit->blockHeight(textBlock);
-        textBlock = textBlock.next();
+    while(l < widgetTextEdit->document()->blockCount() && this->widgetTextEdit->blockTop(l) + this->scrollOffset < height())
+    {
+        painter.drawText(0,this->scrollOffset+this->widgetTextEdit->blockTop(l), right-9, fontHeight, Qt::AlignRight, QString::number(l+1));
+        ++l;
     }
 
     // Block Range

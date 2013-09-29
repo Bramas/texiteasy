@@ -29,7 +29,7 @@ class QTextEdit;
 class SyntaxHighlighter : public QSyntaxHighlighter
 {
 public:
-    SyntaxHighlighter(QTextEdit * parent);
+    SyntaxHighlighter(QTextDocument *parent);
 
 protected:
     virtual void highlightBlock(const QString &text);

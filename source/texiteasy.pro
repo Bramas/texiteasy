@@ -111,7 +111,8 @@ INSTALLS = target
 
 RESOURCES += \
     data.qrc \
-    completion.qrc
+    completion.qrc \
+    commands.qrc
 
 win32 {
     LIBS += -LC:/dev/Tools/poppler/lib -lpoppler-qt4

@@ -95,7 +95,7 @@ MainWindow::MainWindow(QWidget *parent) :
     widgetScroller->setWidgetTextEdit(widgetTextEdit);
     _widgetSimpleOutput->setWidgetTextEdit(widgetTextEdit);
     _widgetPdfViewer->widgetPdfDocument()->setWidgetTextEdit(widgetTextEdit);
-    _syntaxHighlighter = new SyntaxHighlighter(widgetTextEdit);
+    _syntaxHighlighter = new SyntaxHighlighter(widgetTextEdit->document());
     widgetTextEdit->setSyntaxHighlighter(_syntaxHighlighter);
     _widgetFindReplace = new WidgetFindReplace(widgetTextEdit);
 
@@ -114,16 +114,15 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Connect things that can update the widgetTextEdit
 
+
     connect(widgetTextEdit,SIGNAL(textChanged()),widgetLineNumber,SLOT(update()));
-    connect(widgetTextEdit,SIGNAL(setBlockRange(int,int)),widgetLineNumber,SLOT(setBlockRange(int,int)));
+    widgetTextEdit->setWidgetLineNumber(widgetLineNumber);
     //connect(widgetTextEdit->verticalScrollBar(),SIGNAL(valueChanged(int)),widgetLineNumber,SLOT(update()));
 
     //connect(widgetTextEdit,SIGNAL(textChanged()),widgetScroller,SLOT(updateText()));
     //connect(widgetTextEdit->verticalScrollBar(),SIGNAL(valueChanged(int)),widgetScroller,SLOT(update()));
 
     connect(widgetTextEdit->verticalScrollBar(),SIGNAL(valueChanged(int)), _widgetPdfViewer->widgetPdfDocument(),SLOT(jumpToPdfFromSourceView(int)));
-
-    connect(widgetScroller,SIGNAL(changed(int)),widgetTextEdit,SLOT(scrollTo(int)));
 
     // Connect menubar Actions
 
@@ -513,11 +512,11 @@ void MainWindow::initTheme()
         Pal.setColor(QPalette::WindowText, ConfigManager::Instance.getTextCharFormats("normal").foreground().color());
         this->setAutoFillBackground(true);
         this->statusBar()->setPalette(Pal);*/
-        this->statusBar()->setStyleSheet("QStatusBar {background: red"+//ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color())+
-                                         QString("} QStatusBar::item { border: 1px solid red; color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
+        this->statusBar()->setStyleSheet("QStatusBar {background: "+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color())+
+                                         QString("} QStatusBar::item { color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
                                          "}");
     }
-    this->widgetTextEdit->setStyleSheet(QString("QTextEdit { border: 1px solid ")+
+    this->widgetTextEdit->setStyleSheet(QString("QPlainTextEdit { border: 1px solid ")+
                                         ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("textedit-border").foreground().color())+"; "+QString("color: ")+
                                         ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+"; "+
                                         QString("background-color: ")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color())+
@@ -526,7 +525,7 @@ void MainWindow::initTheme()
     QTextCursor cur = this->widgetTextEdit->textCursor();
     cur.setCharFormat(ConfigManager::Instance.getTextCharFormats("normal"));
     this->widgetTextEdit->setTextCursor(cur);
-    this->widgetTextEdit->setCurrentFont(ConfigManager::Instance.getTextCharFormats("normal").font());
+    //this->widgetTextEdit->setCurrentFont(ConfigManager::Instance.getTextCharFormats("normal").font());
 
     {
         QPalette Pal(palette());
