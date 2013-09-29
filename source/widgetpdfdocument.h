@@ -97,6 +97,8 @@ protected:
     void mouseReleaseEvent(QMouseEvent *);
     void wheelEvent(QWheelEvent *);
     void resizeEvent(QResizeEvent *);
+    void jumpToEditor(int page, const QPointF& pos);
+    void jumpToEditorFromAbsolutePos(const QPointF &pos);
 private:
     void initDocument();
     void initLinks();

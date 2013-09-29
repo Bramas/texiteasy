@@ -522,7 +522,7 @@ void WidgetTextEdit::matchCommand()
         QTextLine line = this->textCursor().block().layout()->lineForTextPosition(this->textCursor().positionInBlock());
         qreal left = line.cursorToX(this->textCursor().positionInBlock());
         qreal top = line.position().y() + line.height() + 5;
-        this->_completionEngine->proposeCommand(left,top + this->blockTop(this->textCursor().block())-this->verticalScrollBar()->value(), line.height(),possibleCommand);
+        this->_completionEngine->proposeCommand(left,top + this->blockTop(this->textCursor().block()), line.height(),possibleCommand);
         if(this->_completionEngine->isVisible())// && e->key() == Qt::Key_Down)
         {
             this->_completionEngine->setFocus();

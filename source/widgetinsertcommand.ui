@@ -50,8 +50,14 @@
        <height>251</height>
       </rect>
      </property>
+     <property name="columnCount">
+      <number>10</number>
+     </property>
      <attribute name="horizontalHeaderVisible">
       <bool>false</bool>
+     </attribute>
+     <attribute name="horizontalHeaderDefaultSectionSize">
+      <number>42</number>
      </attribute>
      <attribute name="verticalHeaderVisible">
       <bool>false</bool>
@@ -76,6 +82,13 @@
        <string>Nouvelle colonne</string>
       </property>
      </column>
+     <column/>
+     <column/>
+     <column/>
+     <column/>
+     <column/>
+     <column/>
+     <column/>
      <item row="0" column="0">
       <property name="text">
        <string>\epsilon</string>
