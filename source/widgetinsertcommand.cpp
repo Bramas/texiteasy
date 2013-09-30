@@ -21,13 +21,15 @@
 
 #include "widgetinsertcommand.h"
 #include "ui_widgetinsertcommand.h"
+#include "configmanager.h"
 #include "widgettextedit.h"
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QDebug>
-
+#include <QProcess>
+#include <QIcon>
 
 WidgetInsertCommand::WidgetInsertCommand(WidgetTextEdit *parent) :
     QWidget(parent),
@@ -36,6 +38,9 @@ WidgetInsertCommand::WidgetInsertCommand(WidgetTextEdit *parent) :
     ui->setupUi(this);
     this->setVisible(false);
 
+    mathEnvIndex = 2;
+    commandIndex = 0;
+    groupIndex = 1;
 
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setHostName("localhost");
@@ -134,12 +139,12 @@ WidgetInsertCommand::WidgetInsertCommand(WidgetTextEdit *parent) :
     this->ui->tabWidget->clear();
     int colCount = 0;
     while (query.next()) {
-        QString command = query.value(0).toString().trimmed();
-        QString group = query.value(1).toString().trimmed();
-        qDebug()<<command<<" "<<group;
+        QString command = query.value(commandIndex).toString().trimmed();
+        QString group = query.value(groupIndex).toString().trimmed();
         if(!_tabslabel.contains(group))
         {
-            QTableWidget * table = new QTableWidget(0,4);
+            QTableWidget * table = new QTableWidget(0,9);
+            table->horizontalHeader()->setDefaultSectionSize(43);
             table->horizontalHeader()->setStretchLastSection(true);
             table->horizontalHeader()->hide();
             table->verticalHeader()->hide();
@@ -150,20 +155,76 @@ WidgetInsertCommand::WidgetInsertCommand(WidgetTextEdit *parent) :
 
         QTableWidget * table = dynamic_cast<QTableWidget*>(this->ui->tabWidget->widget(_tabslabel.indexOf(group)));
 
-        if( ! ( colCount%5 ))
+        if( ! ( colCount%10 ))
         {
             table->insertRow(table->rowCount());
-            qDebug()<<(table->rowCount());
         }
-        QTableWidgetItem *newItem = new QTableWidgetItem(command);
+
+        QTableWidgetItem *newItem = new QTableWidgetItem();
+        QString commandName = command;
+        QString iconName=":/data/commands/"+command.replace(QRegExp("[^a-zA-Z]"),"_").replace(QRegExp("([A-Z])"),"-\\1")+".png";
         newItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-        table->setItem(table->rowCount() - 1, colCount%5, newItem);
+        newItem->setIcon(QIcon(iconName));
+        newItem->setToolTip(commandName);
+        //newItem->setText(commandName);
+        table->setItem(table->rowCount() - 1, colCount%10, newItem);
+
 
         ++colCount;
     }
+
+
+    //saveCommandsToPng();
 }
 
 WidgetInsertCommand::~WidgetInsertCommand()
 {
     delete ui;
+}
+
+void WidgetInsertCommand::saveCommandsToPng()
+{
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setHostName("localhost");
+    db.setDatabaseName("D:\\Projects\\texiteasy\\sourceRepository\\commands.sqlite");
+    if(!db.open())
+    {
+        qDebug()<<"Database commands.sqlite not found : "<<db.lastError();
+        return;
+    }
+
+    QSqlQuery query("SELECT command, command_group, math_environment FROM commands",db);
+
+    QDir().mkdir("commands");
+    QString tempTexFilename = "C:/tmp/tmp.tex";
+    QString tempDviFilename = "C:/tmp/tmp.dvi";
+    while (query.next()) {
+        QString command = query.value(commandIndex).toString().trimmed();
+        QString group = query.value(groupIndex).toString().trimmed();
+        bool mathEnv = query.value(mathEnvIndex).toInt();
+        qDebug()<<command<<" "<<group<<" "<<mathEnv;
+
+        {
+            QFile temp(tempTexFilename);
+            temp.open(QFile::WriteOnly | QFile::Text);
+            temp.write(QString(QString("\\documentclass{article}\\pagestyle{empty}\\usepackage{amsmath,textcomp,amssymb,makeidx,mathrsfs}\\begin{document}")+
+                       (mathEnv?QString("$"):QString())+
+                       command+
+                       (mathEnv?QString("$"):QString())+
+                       QString("\\end{document}")).toAscii().data());
+            temp.close();
+        }
+
+        QProcess process;
+        process.setWorkingDirectory("C:/tmp");
+        QString tempPngFilename = QDir().currentPath()+"/commands/"+command.replace(QRegExp("[^a-zA-Z]"),"_").replace(QRegExp("([A-Z])"),"-\\1")+".png";
+        QString commandLatex = ConfigManager::Instance.latexCommand().arg(tempTexFilename);
+        qDebug()<<commandLatex;
+        process.start(commandLatex);
+        qDebug()<<process.waitForFinished();
+        qDebug()<<process.readAll();
+        qDebug()<<"dvipng -T tight -x 1200 -z 9 \""+tempDviFilename+"\" -o \""+tempPngFilename+"\"";
+        process.start("dvipng -T tight -x 1200 -z 9 \""+tempDviFilename+"\" -o \""+tempPngFilename+"\"");
+        process.waitForFinished();
+    }
 }

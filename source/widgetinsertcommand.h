@@ -42,6 +42,11 @@ private:
     Ui::WidgetInsertCommand *ui;
 
     QStringList _tabslabel;
+
+    void saveCommandsToPng();
+    int mathEnvIndex;
+    int commandIndex;
+    int groupIndex;
 };
 
 #endif // WIDGETINSERTCOMMAND_H

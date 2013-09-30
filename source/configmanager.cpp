@@ -101,6 +101,14 @@ void ConfigManager::init()
     settings.setValue("pdflatex", "pdflatex -synctex=1 -shell-escape -interaction=nonstopmode -enable-write18 \"%1\"");
 #endif
     }
+    if(!settings.contains("latex"))
+    {
+#if OS_WINDOWS
+    settings.setValue("latex", "latex.exe -interaction=nonstopmode \"%1\"");
+#else
+    settings.setValue("latex", "latex -interaction=nonstopmode \"%1\"");
+#endif
+    }
     settings.endGroup();
     return;
 

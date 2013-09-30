@@ -104,7 +104,8 @@ void WidgetPdfDocument::paintEvent(QPaintEvent *)
                 //qDebug()<<"t "<<_lastUpdate.elapsed();
                 painter.drawRect(0, cumulatedTop - this->height(), this->width()*_zoom+1, this->height() + _syncRect.y() * _zoom);
                 painter.drawRect(0, _syncRect.y()*_zoom + cumulatedTop + _syncRect.height()*_zoom, this->width()*_zoom+1, this->height());
-                //painter.drawRect(_syncRect.x()*_zoom, _syncRect.y()*_zoom + cumulatedTop, _syncRect.width()*_zoom, _syncRect.height()*_zoom);
+                painter.drawRect(0, _syncRect.y()*_zoom + cumulatedTop, _syncRect.x()*_zoom, _syncRect.height()*_zoom);
+                painter.drawRect((_syncRect.x() + _syncRect.width())*_zoom, _syncRect.y()*_zoom + cumulatedTop, width(), _syncRect.height()*_zoom);
             }
             else
             {
@@ -375,6 +376,11 @@ void WidgetPdfDocument::mousePressEvent(QMouseEvent * event)
     {
         return;
     }
+    if(event->modifiers() == Qt::ControlModifier)
+    {
+        this->jumpToEditorFromAbsolutePos(event->posF());
+        return;
+    }
     this->_pressAt = event->pos();
     this->_painterTranslateWhenMousePressed = this->_painterTranslate;
     this->_mousePressed = true;
@@ -437,6 +443,7 @@ void WidgetPdfDocument::mouseMoveEvent(QMouseEvent * event)
     this->checkLinksOver(event->posF());
     if(this->_mousePressed)
     {
+        this->setCursor(Qt::ClosedHandCursor);
         this->_painterTranslate = this->_painterTranslateWhenMousePressed + (event->pos() - this->_pressAt);
         this->boundPainterTranslation();
         emit translated( - _painterTranslate.y());
@@ -470,6 +477,42 @@ void WidgetPdfDocument::updatePdf()
     this->initDocument();
 
     update();
+}
+
+void WidgetPdfDocument::jumpToEditorFromAbsolutePos(const QPointF &pos)
+{
+    if(!this->_document->numPages())
+    {
+        return;
+
+    }
+    QPointF absolute(pos - this->_painterTranslate);
+    qreal pageHeightWithMargin = _document->page(0)->pageSize().height()*_zoom+WidgetPdfDocument::PageMargin;
+
+    int page = absolute.y() / pageHeightWithMargin;
+    QPointF relative(absolute.x(), absolute.y() - page * pageHeightWithMargin);
+
+    if(relative.x() < 0 || relative.y() < 0)
+    {
+        return;
+    }
+    this->jumpToEditor(page, relative);
+}
+
+void WidgetPdfDocument::jumpToEditor(int page, const QPointF& pos)
+{
+    qDebug() << page << pos.x() << pos.y();
+    if (scanner == NULL) return;
+    if (synctex_edit_query(scanner, page+1, pos.x(), pos.y()) > 0)
+    {
+        synctex_node_t node;
+        while ((node = synctex_next_result(scanner)) != NULL)
+        {
+            QString filename = QString::fromUtf8(synctex_scanner_get_name(scanner, synctex_node_tag(node)));
+            this->_widgetTextEdit->goToLine(synctex_node_line(node));
+            break;
+        }
+    }
 }
 
 void WidgetPdfDocument::jumpToPdfFromSourceView(int /*top*/)
