@@ -13,7 +13,7 @@ TEMPLATE = app
 
 APPLICATION_NAME = \\\"'TexitEasy'\\\"
 DEFINES += "APPLICATION_NAME=$${APPLICATION_NAME}"
-VERSION = \\\"'0.2.4'\\\"
+VERSION = \\\"'0.4.0'\\\"
 DEFINES += "CURRENT_VERSION=$${VERSION}"
 
 # config_revision is used to make so task for migration

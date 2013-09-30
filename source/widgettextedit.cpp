@@ -162,8 +162,8 @@ void WidgetTextEdit::paintEvent(QPaintEvent *event)
 
 bool WidgetTextEdit::isCursorVisible()
 {
-    bool down = this->blockBottom(this->textCursor().block()) > this->verticalScrollBar()->value();
-    bool up = this->blockTop(this->textCursor().block()) < this->verticalScrollBar()->value()+this->height();
+    bool down = this->blockBottom(this->textCursor().block()) + this->contentOffsetTop() > 0;
+    bool up = this->blockTop(this->textCursor().block()) +this->contentOffsetTop() < this->height();
     return up && down;
 }
 
