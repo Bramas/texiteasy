@@ -113,10 +113,17 @@
     <addaction name="separator"/>
     <addaction name="actionFindReplace"/>
    </widget>
+   <widget class="QMenu" name="menuAide">
+    <property name="title">
+     <string>Aide</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
    <addaction name="menuFichier"/>
    <addaction name="menuEdition"/>
    <addaction name="menuBuild"/>
    <addaction name="menuOptions"/>
+   <addaction name="menuAide"/>
   </widget>
   <action name="actionOpen">
    <property name="text">
@@ -271,6 +278,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+B</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>A propos de TexitEasy</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::AboutRole</enum>
    </property>
   </action>
  </widget>

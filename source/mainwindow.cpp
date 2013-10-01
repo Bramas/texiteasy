@@ -52,6 +52,7 @@
 #include "configmanager.h"
 #include "widgetconsole.h"
 #include "widgetstatusbar.h"
+#include "dialogabout.h"
 
 
 #include <QList>
@@ -132,6 +133,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->ui->actionSave,SIGNAL(triggered()),this,SLOT(save()));
     connect(this->ui->actionSaveAs,SIGNAL(triggered()),this,SLOT(saveAs()));
     connect(this->ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
+    connect(this->ui->actionAbout, SIGNAL(triggered()), new DialogAbout(this), SLOT(show()));
     //connect(this->ui->actionOpenRecent, SIGNAL(triggered()), this, SLOT(openLast()));
     connect(this->ui->actionUndo, SIGNAL(triggered()), this->widgetTextEdit, SLOT(undo()));
     connect(this->ui->actionRedo, SIGNAL(triggered()), this->widgetTextEdit, SLOT(redo()));
