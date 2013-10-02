@@ -49,6 +49,7 @@
 #include <QMimeData>
 #include <QString>
 #include <QPalette>
+#include <QPixmap>
 #include "configmanager.h"
 #include "widgetconsole.h"
 #include "widgetstatusbar.h"
@@ -519,15 +520,31 @@ void MainWindow::initTheme()
                                          "}");
     }
     this->widgetTextEdit->setStyleSheet(QString("QPlainTextEdit { border: 1px solid ")+
-                                        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("textedit-border").foreground().color())+"; "+QString("color: ")+
+                                        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("textedit-border").foreground().color())+"; "+
+                                        QString("color: ")+
                                         ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+"; "+
-                                        QString("background-color: ")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color())+
+                                        QString("background-color: ")+
+                                        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color())+
                                 "; }");
     this->widgetTextEdit->setCurrentCharFormat(ConfigManager::Instance.getTextCharFormats("normal"));
     QTextCursor cur = this->widgetTextEdit->textCursor();
     cur.setCharFormat(ConfigManager::Instance.getTextCharFormats("normal"));
     this->widgetTextEdit->setTextCursor(cur);
     //this->widgetTextEdit->setCurrentFont(ConfigManager::Instance.getTextCharFormats("normal").font());
+
+
+#ifdef OS_MAC
+    if(ConfigManager::Instance.getTextCharFormats("normal").background().color().value()<100) // if it's a dark color
+    {
+        QPixmap whiteBeamPixmap("/Users/quentinbramas/Projects/texiteasy/texiteasy-repository/source/data/cursor/whiteBeam.png");
+        QCursor whiteBeam(whiteBeamPixmap);
+        this->widgetTextEdit->viewport()->setCursor(whiteBeam);
+    }
+    else
+    {
+        this->widgetTextEdit->viewport()->setCursor(Qt::IBeamCursor);
+    }
+#endif
 
     {
         QPalette Pal(palette());

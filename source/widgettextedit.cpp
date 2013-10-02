@@ -42,7 +42,6 @@
 #include <math.h>
 #include <QtCore>
 #include <QImage>
-#include <QBitmap>
 #include <QLayout>
 #include "QTextEdit"
 #include "widgetlinenumber.h"
@@ -72,8 +71,6 @@ WidgetTextEdit::WidgetTextEdit(QWidget * parent) :
 
     //this->setCurrentFont(QFont("Consolas", 17));
     //this->setCurrentFont(QFont("Consolas", 17));
-
-
 
     this->setText(" ");
     this->currentFile->setModified(false);
@@ -342,11 +339,11 @@ void WidgetTextEdit::wheelEvent(QWheelEvent * event)
 
         this->setCurrentCharFormat(ConfigManager::Instance.getTextCharFormats("normal"));
         //this->setCurrentFont(ConfigManager::Instance.getTextCharFormats("normal").font());
-        this->setStyleSheet(QString("QTextEdit { border: 1px solid ")+
+        /*this->setStyleSheet(QString("QTextEdit { border: 1px solid ")+
                                             ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("textedit-border").foreground().color())+"; "+QString("color: ")+
                                             ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+"; "+
                                             QString("background-color: ")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color())+
-                                    "; }");
+                                    "; }");*/
 
         if(this->_syntaxHighlighter)
         {

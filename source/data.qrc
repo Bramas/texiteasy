@@ -7,5 +7,6 @@
         <file>data/fonts/consolab.ttf</file>
         <file>data/fonts/consolai.ttf</file>
         <file>data/fonts/consolaz.ttf</file>
+        <file>data/cursor/whiteBeam.tiff</file>
     </qresource>
 </RCC>
