@@ -109,7 +109,6 @@ void WidgetTextEdit::paintEvent(QPaintEvent *event)
     }
     QPainter painter(viewport());
 
-
     return;
     painter.setBrush(ConfigManager::Instance.getTextCharFormats("leftStructure").background());
     painter.setPen(QPen(ConfigManager::Instance.getTextCharFormats("leftStructure").foreground().color()));
@@ -169,6 +168,7 @@ bool WidgetTextEdit::isCursorVisible()
 
 void WidgetTextEdit::onCursorPositionChange()
 {
+    _multipleEdit.clear();
     QList<QTextEdit::ExtraSelection> selections;
     setExtraSelections(selections);
     this->highlightCurrentLine();
@@ -188,6 +188,20 @@ void WidgetTextEdit::resizeEvent(QResizeEvent *event)
     //this->updateGeometry();
     //this->update();
     //this->viewport()->update();
+}
+
+void WidgetTextEdit::insertPlainText(const QString &text)
+{
+    if(_multipleEdit.count() && !text.contains(QRegExp("[^a-zA-Z0-9 ]")))
+    {
+        QTextCursor cur1 = this->textCursor();
+        QTextCursor cur2 = this->textCursor();
+        cur2.setPosition(_multipleEdit.first());
+        cur1.insertText(text);
+        cur2.insertText(text);
+        this->setTextCursor(cur1);
+        return;
+    }
 }
 
 void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
@@ -291,6 +305,44 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
             cur.movePosition(QTextCursor::Left);
         }
         this->setTextCursor(cur);
+        return;
+    }
+    if(_multipleEdit.count() && !e->text().contains(QRegExp("[^a-zA-Z0-9 ]")))
+    {
+        QTextCursor cur1 = this->textCursor();
+        QTextCursor cur2 = this->textCursor();
+        cur2.setPosition(_multipleEdit.first());
+        if(!cur1.selectedText().isEmpty())
+        {
+            cur2.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, cur1.selectedText().length());
+        }
+        cur1.insertText(e->text());
+        cur2.insertText(e->text());
+        this->setTextCursor(cur1);
+        return;
+    }
+    if(_multipleEdit.count() && (e->key() == Qt::Key_Delete || e->key() == Qt::Key_Backspace))
+    {
+        QTextCursor cur1 = this->textCursor();
+        QTextCursor cur2 = this->textCursor();
+        cur2.setPosition(_multipleEdit.first());
+        if(!cur1.selectedText().isEmpty())
+        {
+            cur2.setPosition(_multipleEdit.first());
+            cur2.movePosition(cur1.selectionStart() == cur1.position() ? QTextCursor::Right : QTextCursor::Left, QTextCursor::KeepAnchor, cur1.selectedText().length());
+        }
+        if(e->key() == Qt::Key_Delete)
+        {
+            cur1.deleteChar();
+            cur2.deleteChar();
+        }
+        else
+        {
+            cur1.deletePreviousChar();
+            cur2.deletePreviousChar();
+        }
+        this->setTextCursor(cur1);
+        this->onCursorPositionChange();
         return;
     }
     WIDGET_TEXT_EDIT_PARENT_CLASS::keyPressEvent(e);
@@ -668,8 +720,20 @@ void WidgetTextEdit::createParSelection( int pos )
 void WidgetTextEdit::matchLat()
 {
     QTextBlock textBlock = textCursor().block();
-    //if (foldableLines.keys().contains(textBlock.blockNumber())) createLatSelection(textBlock.blockNumber(),foldableLines[textBlock.blockNumber()]);
-    //else
+    QString lineBegining = textBlock.text().left(textCursor().positionInBlock());
+    int indexEnv;
+    QRegExp envBeginPattern(".*\\\\begin\\{[^\\}]*$");
+    QRegExp envEndPattern(".*\\\\end\\{[^\\}]*$");
+    int inEnv = -1;
+    if((indexEnv = lineBegining.indexOf(envBeginPattern)) != -1)
+    {
+        inEnv = envBeginPattern.matchedLength() - 7;
+    }
+    if((indexEnv = lineBegining.indexOf(envEndPattern)) != -1)
+    {
+        inEnv = envEndPattern.matchedLength() - 5;
+    }
+
     {
         BlockData *data = static_cast<BlockData *>( textBlock.userData() );
         if( data )
@@ -683,15 +747,55 @@ void WidgetTextEdit::matchLat()
             {
                 LatexBlockInfo *info = infos.at(i);
                 int curPos = textCursor().position() - textBlock.position();
-                if ( info->position <= curPos && info->character == 'b' ) matchLeftLat( textBlock, i+1, 0, textBlock.blockNumber());
-                if ( info->position <= curPos && info->character == 'e' ) matchRightLat( textBlock, i-1, 0,textBlock.blockNumber());
+                if ( info->position <= curPos && info->character == 'b' )
+                {
+                    int associatedEnv = matchLeftLat( textBlock, i+1, 0, textBlock.blockNumber());
+                    if(associatedEnv != -1)
+                    {
+                                QList<QTextEdit::ExtraSelection> selections = extraSelections();
+                                QTextEdit::ExtraSelection selection;
+                                QTextCharFormat format = selection.format;
+                                format.setBackground( QColor("#DDDDDD") );
+                                format.setForeground( QColor("#333333") );
+                                selection.format = format;
+
+                                QTextCursor cursor = textCursor();
+                                cursor.setPosition( associatedEnv + inEnv + 5);
+                                cursor.movePosition( QTextCursor::NextCharacter, QTextCursor::KeepAnchor );
+                                selection.cursor = cursor;
+                                selections.append( selection );
+                                setExtraSelections( selections );
+                                _multipleEdit.append(associatedEnv + inEnv + 5);
+                    }
+                }
+                if ( info->position <= curPos && info->character == 'e' )
+                {
+                    int associatedEnv =  matchRightLat( textBlock, i-1, 0,textBlock.blockNumber());
+                    if(associatedEnv != -1)
+                    {
+                                QList<QTextEdit::ExtraSelection> selections = extraSelections();
+                                QTextEdit::ExtraSelection selection;
+                                QTextCharFormat format = selection.format;
+                                format.setBackground( QColor("#DDDDDD") );
+                                format.setForeground( QColor("#333333") );
+                                selection.format = format;
+
+                                QTextCursor cursor = textCursor();
+                                cursor.setPosition( associatedEnv + inEnv + 7);
+                                cursor.movePosition( QTextCursor::NextCharacter, QTextCursor::KeepAnchor );
+                                selection.cursor = cursor;
+                                selections.append( selection );
+                                setExtraSelections( selections );
+                                _multipleEdit.append(associatedEnv + inEnv + 7);
+                    }
+                }
             }
         }
     }
 
 }
 
-bool WidgetTextEdit::matchLeftLat(	QTextBlock currentBlock, int index, int numLeftLat, int bpos )
+int WidgetTextEdit::matchLeftLat(	QTextBlock currentBlock, int index, int numLeftLat, int bpos )
 {
     BlockData *data = static_cast<BlockData *>( currentBlock.userData() );
     QVector<LatexBlockInfo *> infos = data->latexblocks();
@@ -707,7 +811,7 @@ bool WidgetTextEdit::matchLeftLat(	QTextBlock currentBlock, int index, int numLe
 
         if ( info->character == 'e' && numLeftLat == 0 ) {
             createLatSelection( bpos,currentBlock.blockNumber() );
-            return true;
+            return info->position + currentBlock.position();
         } else
             --numLeftLat;
     }
@@ -718,10 +822,10 @@ bool WidgetTextEdit::matchLeftLat(	QTextBlock currentBlock, int index, int numLe
         return matchLeftLat( currentBlock, 0, numLeftLat, bpos );
 
     // No match at all
-    return false;
+    return -1;
 }
 
-bool WidgetTextEdit::matchRightLat(QTextBlock currentBlock, int index, int numRightLat, int epos)
+int WidgetTextEdit::matchRightLat(QTextBlock currentBlock, int index, int numRightLat, int epos)
 {
 
     BlockData *data = static_cast<BlockData *>( currentBlock.userData() );
@@ -738,7 +842,7 @@ bool WidgetTextEdit::matchRightLat(QTextBlock currentBlock, int index, int numRi
 
         if ( info->character == 'b' && numRightLat == 0 ) {
             createLatSelection( epos, currentBlock.blockNumber() );
-            return true;
+            return info->position + currentBlock.position();
         } else
             --numRightLat;
     }
@@ -755,7 +859,7 @@ bool WidgetTextEdit::matchRightLat(QTextBlock currentBlock, int index, int numRi
     }
 
     // No match at all
-    return false;
+    return -1;
 }
 
 void WidgetTextEdit::createLatSelection( int start, int end )
