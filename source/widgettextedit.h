@@ -94,6 +94,7 @@ public slots:
     void matchAll();
     void setFocus() { WIDGET_TEXT_EDIT_PARENT_CLASS::setFocus(); }
     void setFocus(QKeyEvent * event) { WIDGET_TEXT_EDIT_PARENT_CLASS::setFocus(); this->keyPressEvent(event); }
+    void insertPlainText(const QString &text);
     void goToLine(int line, QString stringSelected = QString());
 protected:
     void insertFromMimeData(const QMimeData * source);
@@ -113,9 +114,11 @@ private:
     bool matchRightPar(QTextBlock currentBlock, int index, int numRightPar);
     void createParSelection(int pos );
     void matchLat();
-    bool matchLeftLat(QTextBlock currentBlock, int index, int numLeftLat, int bpos);
-    bool matchRightLat(QTextBlock currentBlock, int index, int numLeftLat, int bpos);
+    int matchLeftLat(QTextBlock currentBlock, int index, int numLeftLat, int bpos);
+    int matchRightLat(QTextBlock currentBlock, int index, int numLeftLat, int bpos);
     void createLatSelection(int start, int end);
+
+    QList<int> _multipleEdit;
 
     CompletionEngine * _completionEngine;
     File * currentFile;
