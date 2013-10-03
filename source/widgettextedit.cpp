@@ -199,6 +199,7 @@ void WidgetTextEdit::insertPlainText(const QString &text)
         this->setTextCursor(cur1);
         return;
     }
+    WIDGET_TEXT_EDIT_PARENT_CLASS::insertPlainText(text);
 }
 
 void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
@@ -304,18 +305,20 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
         this->setTextCursor(cur);
         return;
     }
-    if(_multipleEdit.count() && !e->text().contains(QRegExp("[^a-zA-Z0-9 ]")))
+    if(_multipleEdit.count() && !e->text().isEmpty() && !e->text().contains(QRegExp(QString::fromUtf8("[^a-zA-Z0-9èéàëêïîùüû&()\"'\\$§,;\\.+=\\-_*\\/\\\\!?%#@° ]"))))
     {
         QTextCursor cur1 = this->textCursor();
         QTextCursor cur2 = this->textCursor();
         cur2.setPosition(_multipleEdit.first());
         if(!cur1.selectedText().isEmpty())
         {
-            cur2.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, cur1.selectedText().length());
+            cur2.setPosition(_multipleEdit.first());
+            cur2.movePosition(cur1.selectionStart() == cur1.position() ? QTextCursor::Right : QTextCursor::Left, QTextCursor::KeepAnchor, cur1.selectedText().length());
         }
         cur1.insertText(e->text());
         cur2.insertText(e->text());
         this->setTextCursor(cur1);
+        this->onCursorPositionChange();
         return;
     }
     if(_multipleEdit.count() && (e->key() == Qt::Key_Delete || e->key() == Qt::Key_Backspace))
