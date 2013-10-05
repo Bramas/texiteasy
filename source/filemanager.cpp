@@ -14,25 +14,30 @@ FileManager::FileManager(QObject *parent) :
 {
 }
 
-void FileManager::newFile()
+bool FileManager::newFile()
 {
     if(this->currentWidgetFile())
     {
+        if(this->currentWidgetFile()->isEmpty())
+        {
+            return false;
+        }
         disconnect(this->currentWidgetFile()->widgetTextEdit(), SIGNAL(cursorPositionChanged(int,int)), this, SLOT(sendCursorPositionChanged(int,int)));
     }
-
-    _widgetFiles.append(new WidgetFile());
+    WidgetFile * newFile = new WidgetFile();
+    newFile->initTheme();
+    _widgetFiles.append(newFile);
     _currentWidgetFileId = _widgetFiles.count() - 1;
-
     connect(this->currentWidgetFile()->widgetTextEdit(), SIGNAL(cursorPositionChanged(int,int)), this, SLOT(sendCursorPositionChanged(int,int)));
+
+    qDebug()<<"NEW FILE "<<_widgetFiles.count();
+    return true;
 }
-void FileManager::open(QString filename)
+bool FileManager::open(QString filename)
 {
-    if(!this->currentWidgetFile()->isEmpty())
-    {
-        this->newFile();
-    }
+    bool newWidget = this->newFile();
     this->currentWidgetFile()->open(filename);
+    return newWidget;
 }
 void FileManager::undo()
 {

@@ -14,13 +14,13 @@ public:
 
     void initTheme();
 
-    void open(QString filename);
+    bool open(QString filename);
 
 signals:
     void cursorPositionChanged(int,int);
 
 public slots:
-    void newFile();
+    bool newFile();
 
     void save() { this->currentWidgetFile()->save(); }
     void saveAs() { this->currentWidgetFile()->saveAs(); }

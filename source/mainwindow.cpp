@@ -50,6 +50,7 @@
 #include <QString>
 #include <QPalette>
 #include <QPixmap>
+#include <QTableWidget>
 #include "configmanager.h"
 #include "widgetconsole.h"
 #include "widgetstatusbar.h"
@@ -84,7 +85,15 @@ MainWindow::MainWindow(QWidget *parent) :
     ConfigManager::Instance.init();
 
     FileManager::Instance.newFile();
-    this->setCentralWidget(FileManager::Instance.currentWidgetFile());
+
+    _tabWidget = new QTabWidget(this);
+    this->setCentralWidget(_tabWidget);
+    _tabWidget->addTab(FileManager::Instance.currentWidgetFile(),"untitled");
+    /*
+    _verticalLayout = new QVBoxLayout(this);
+    _verticalLayout->addWidget(FileManager::Instance.currentWidgetFile());
+    this->centralWidget()->setLayout(_verticalLayout);*/
+
     //FileManager::Instance.currentWidgetFile()->show();
 
 
@@ -116,7 +125,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->ui->actionSaveAs,SIGNAL(triggered()),&FileManager::Instance,SLOT(saveAs()));
     connect(this->ui->actionOpenConfigFolder, SIGNAL(triggered()), &ConfigManager::Instance, SLOT(openThemeFolder()));
     connect(this->ui->actionSettings,SIGNAL(triggered()),this->dialogConfig,SLOT(show()));
-
 
     connect(this->dialogConfig,SIGNAL(accepted()), &FileManager::Instance,SLOT(rehighlight()));
     connect(this->ui->actionUndo, SIGNAL(triggered()), &FileManager::Instance, SLOT(undo()));
@@ -310,7 +318,11 @@ void MainWindow::closeEvent(QCloseEvent * event)
 
 void MainWindow::newFile()
 {
-    FileManager::Instance.newFile();
+    if(FileManager::Instance.newFile())
+    {
+        _tabWidget->addTab(FileManager::Instance.currentWidgetFile(), "untitled");
+        _tabWidget->setCurrentIndex(_tabWidget->count()-1);
+    }
     return;
 }
 
@@ -348,7 +360,15 @@ void MainWindow::open(QString filename)
     }
     //open
 
-    FileManager::Instance.open(filename);
+    if(FileManager::Instance.open(filename))
+    {
+        _tabWidget->addTab(FileManager::Instance.currentWidgetFile(), FileManager::Instance.currentWidgetFile()->widgetTextEdit()->getCurrentFile()->fileInfo().baseName());
+        _tabWidget->setCurrentIndex(_tabWidget->count()-1);
+    }
+    else
+    {
+        _tabWidget->setTabText(_tabWidget->currentIndex(), FileManager::Instance.currentWidgetFile()->widgetTextEdit()->getCurrentFile()->fileInfo().baseName());
+    }
 
     this->statusBar()->showMessage(basename,4000);
     //this->_widgetStatusBar->setEncoding(this->widgetTextEdit->getCurrentFile()->codec());

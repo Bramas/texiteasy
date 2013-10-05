@@ -38,6 +38,7 @@ class QVBoxLayout;
 class SyntaxHighlighter;
 class WidgetFindReplace;
 class WidgetStatusBar;
+class QVBoxLayout;
 
 namespace Ui {
 class MainWindow;
@@ -71,6 +72,8 @@ private:
 
     DialogConfig * dialogConfig;
     DialogWelcome * dialogWelcome;
+    QTabWidget * _tabWidget;
+    QVBoxLayout * _verticalLayout;
     WidgetStatusBar * _widgetStatusBar;
 };
 
