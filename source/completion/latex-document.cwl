@@ -13,7 +13,7 @@
 \arabic{@counter}#*
 \author{@names}
 %<%:TEXSTUDIO-GENERIC-ENVIRONMENT-TEMPLATE%>
-\begin{@}
+\begin{@env}
 \begin{abstract}
 \begin{alltt}
 \begin{array}{@cols}#m

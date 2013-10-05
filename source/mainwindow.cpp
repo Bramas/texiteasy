@@ -143,6 +143,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->ui->actionPaste, SIGNAL(triggered()), this->widgetTextEdit, SLOT(paste()));
     connect(this->ui->actionOpenConfigFolder, SIGNAL(triggered()), &ConfigManager::Instance, SLOT(openThemeFolder()));
     connect(this->ui->actionFindReplace, SIGNAL(triggered()), this, SLOT(openFindReplaceWidget()));
+    connect(this->ui->actionEnvironment, SIGNAL(triggered()), this->widgetTextEdit, SLOT(wrapEnvironment()));
     connect(_widgetFindReplace->pushButtonClose(), SIGNAL(clicked()), this, SLOT(closeFindReplaceWidget()));
     this->closeFindReplaceWidget();
     connect(this->ui->actionPdfLatex,SIGNAL(triggered()),this,SLOT(pdflatex()));

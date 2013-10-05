@@ -541,7 +541,6 @@ void WidgetTextEdit::updateIndentation(void)
         }
     this->updatingIndentation = false;
 */
-
 }
 
 void WidgetTextEdit::insertFromMimeData(const QMimeData *source)
@@ -597,25 +596,6 @@ void WidgetTextEdit::matchCommand()
             this->_completionEngine->setFocus();
         }
     }
-    /*else if(possibleCommand.indexOf(beginCommand) != -1)
-    {
-        QString environment = beginCommand.capturedTexts().last();
-        QString endCommand(QString("\\end{")+environment+"}");
-        QTextCursor cur = this->textCursor();
-        int start = cur.selectionStart();
-        cur.clearSelection();
-        QTextBlock nextBlock = this->textCursor().block().next().next();
-        if(nextBlock.isValid() && nextBlock.text().contains(endCommand))
-        {
-            return;
-        }
-        cur.insertText("\n    ");
-        cur.beginEditBlock();
-        cur.insertText(QString("\n")+endCommand);
-        cur.setPosition(start+5);
-        cur.endEditBlock();
-        this->setTextCursor(cur);
-    }*/
 
 }
 
@@ -977,4 +957,44 @@ int WidgetTextEdit::centerBlockNumber()
     }
     return centerBlockNumber - 1;
 
+}
+
+QString WidgetTextEdit::wordOnLeft()
+{
+    QTextCursor cursor = textCursor();
+    if(cursor.hasSelection())
+    {
+        return cursor.selectedText();
+    }
+    QString lineBegining = cursor.block().text().left(cursor.positionInBlock());
+    QRegExp lastWordPatter("([a-zA-Z0-9èéàëêïîùüû\\-_*]+)$");
+    if(lineBegining.indexOf(lastWordPatter) != -1)
+    {
+        qDebug()<<lastWordPatter.capturedTexts().last();
+        return lastWordPatter.capturedTexts().last();
+    }
+    return QString();
+}
+
+void WidgetTextEdit::wrapEnvironment()
+{
+    QString word = this->wordOnLeft();
+    QTextCursor cursor = this->textCursor();
+    if(!word.isEmpty())
+    {
+        if(!cursor.hasSelection())
+        {
+            cursor.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor, word.length());
+        }
+        cursor.deleteChar();
+    }
+    else
+    {
+        word = "@env";
+    }
+    int pos = cursor.position();
+    cursor.insertText("\\begin{"+word+"}\n    @text\n\\end{"+word+"}");
+    cursor.setPosition(pos);
+    this->setTextCursor(cursor);
+    this->selectNextArgument();
 }

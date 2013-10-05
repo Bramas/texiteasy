@@ -87,6 +87,7 @@ signals:
     void lineCountChanged(int);
     void cursorPositionChanged(int, int);
 public slots:
+    void wrapEnvironment();
     void scrollTo(int);
     void updateIndentation(void);
     void onCursorPositionChange(void);
@@ -122,6 +123,8 @@ private:
     int matchLeftLat(QTextBlock currentBlock, int index, int numLeftLat, int bpos);
     int matchRightLat(QTextBlock currentBlock, int index, int numLeftLat, int bpos);
     void createLatSelection(int start, int end);
+
+    QString wordOnLeft();
 
     QList<QTextCursor> _multipleEdit;
 
