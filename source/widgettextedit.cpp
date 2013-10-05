@@ -69,13 +69,8 @@ WidgetTextEdit::WidgetTextEdit(QWidget * parent) :
     connect(this,SIGNAL(cursorPositionChanged()), this, SLOT(onCursorPositionChange()));
     connect(this->verticalScrollBar(),SIGNAL(valueChanged(int)),this->viewport(),SLOT(update()));
 
-    //this->setCurrentFont(QFont("Consolas", 17));
-    //this->setCurrentFont(QFont("Consolas", 17));
-
     this->setText(" ");
     this->currentFile->setModified(false);
-
-    this->setMouseTracking(true);
 }
 
 void WidgetTextEdit::scrollTo(int p)
@@ -105,6 +100,17 @@ void WidgetTextEdit::paintEvent(QPaintEvent *event)
         this->_widgetLineNumber->update();
     }
     QPainter painter(viewport());
+
+    if(_multipleEdit.count())
+    {
+        QTextLine line = _multipleEdit.first().block().layout()->lineForTextPosition(_multipleEdit.first().positionInBlock());
+        qreal left = line.cursorToX(_multipleEdit.first().positionInBlock());;
+        qreal top = line.position().y() + line.height() + this->blockTop(_multipleEdit.first().block()) + this->contentOffsetTop();
+        QPoint curPoint(left,top);
+        QPoint diff(0,line.height());
+        painter.drawLine(curPoint - diff, curPoint);
+    }
+
 
     return;
     painter.setBrush(ConfigManager::Instance.getTextCharFormats("leftStructure").background());
@@ -165,7 +171,6 @@ bool WidgetTextEdit::isCursorVisible()
 
 void WidgetTextEdit::onCursorPositionChange()
 {
-    _multipleEdit.clear();
     QList<QTextEdit::ExtraSelection> selections;
     setExtraSelections(selections);
     this->highlightCurrentLine();
@@ -192,10 +197,8 @@ void WidgetTextEdit::insertPlainText(const QString &text)
     if(_multipleEdit.count() && !text.contains(QRegExp("[^a-zA-Z0-9 ]")))
     {
         QTextCursor cur1 = this->textCursor();
-        QTextCursor cur2 = this->textCursor();
-        cur2.setPosition(_multipleEdit.first());
         cur1.insertText(text);
-        cur2.insertText(text);
+        _multipleEdit.first().insertText(text);
         this->setTextCursor(cur1);
         return;
     }
@@ -207,21 +210,25 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
     if(e->key() == Qt::Key_Space && (e->modifiers() & Qt::CTRL))
     {
         //this->matchCommand();
+        _multipleEdit.clear();
         this->displayWidgetInsertCommand();
         return;
     }
     if(this->_completionEngine->isVisible() && e->key() == Qt::Key_Down)
     {
+        _multipleEdit.clear();
         this->_completionEngine->setFocus();
         return;
     }
     if(this->_completionEngine->isVisible() && e->key() == Qt::Key_Up)
     {
+        _multipleEdit.clear();
         this->_completionEngine->setFocus();
         return;
     }
     if(e->key() == Qt::Key_Tab)
     {
+        _multipleEdit.clear();
         if(-1 == this->textCursor().block().text().left(this->textCursor().positionInBlock()).indexOf(QRegExp("^[ \t]*$")))
         {
             if(this->selectNextArgument())
@@ -233,6 +240,7 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
 
     if(this->focusWidget() != this)
     {
+        _multipleEdit.clear();
         QString insertWord = this->_completionEngine->acceptedWord();
         QRegExp command("\\\\[a-zA-Z\\{\\-_]+$");
         int pos = this->textCursor().positionInBlock();
@@ -286,6 +294,7 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
         }
         cur.endEditBlock();
         this->setTextCursor(cur);
+        _multipleEdit.clear();
         return;
     }
     if(e->key() == Qt::Key_BraceLeft)
@@ -303,20 +312,20 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
             cur.movePosition(QTextCursor::Left);
         }
         this->setTextCursor(cur);
+        _multipleEdit.clear();
         return;
     }
     if(_multipleEdit.count() && !e->text().isEmpty() && !e->text().contains(QRegExp(QString::fromUtf8("[^a-zA-Z0-9èéàëêïîùüû&()\"'\\$§,;\\.+=\\-_*\\/\\\\!?%#@° ]"))))
     {
         QTextCursor cur1 = this->textCursor();
-        QTextCursor cur2 = this->textCursor();
-        cur2.setPosition(_multipleEdit.first());
-        if(!cur1.selectedText().isEmpty())
+        QTextCursor cur2 = _multipleEdit.first();
+        /*if(!cur1.selectedText().isEmpty())
         {
             cur2.setPosition(_multipleEdit.first());
             cur2.movePosition(cur1.selectionStart() == cur1.position() ? QTextCursor::Right : QTextCursor::Left, QTextCursor::KeepAnchor, cur1.selectedText().length());
-        }
+        }*/
         cur1.insertText(e->text());
-        cur2.insertText(e->text());
+        _multipleEdit.first().insertText(e->text());
         this->setTextCursor(cur1);
         this->onCursorPositionChange();
         return;
@@ -324,26 +333,29 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
     if(_multipleEdit.count() && (e->key() == Qt::Key_Delete || e->key() == Qt::Key_Backspace))
     {
         QTextCursor cur1 = this->textCursor();
-        QTextCursor cur2 = this->textCursor();
-        cur2.setPosition(_multipleEdit.first());
-        if(!cur1.selectedText().isEmpty())
+        QTextCursor cur2 = _multipleEdit.first();
+        /*if(!cur1.selectedText().isEmpty())
         {
             cur2.setPosition(_multipleEdit.first());
             cur2.movePosition(cur1.selectionStart() == cur1.position() ? QTextCursor::Right : QTextCursor::Left, QTextCursor::KeepAnchor, cur1.selectedText().length());
-        }
+        }*/
         if(e->key() == Qt::Key_Delete)
         {
             cur1.deleteChar();
-            cur2.deleteChar();
+            _multipleEdit.first().deleteChar();
         }
         else
         {
             cur1.deletePreviousChar();
-            cur2.deletePreviousChar();
+            _multipleEdit.first().deletePreviousChar();
         }
         this->setTextCursor(cur1);
         this->onCursorPositionChange();
         return;
+    }
+    if(e->key() != Qt::Key_Control && e->key() != Qt::Key_Shift && e->key() != Qt::Key_Alt && e->key() != Qt::Key_AltGr && e->key() != Qt::Key_ApplicationLeft && e->key() != Qt::Key_ApplicationRight)
+    {
+        _multipleEdit.clear();
     }
     WIDGET_TEXT_EDIT_PARENT_CLASS::keyPressEvent(e);
     /*//qDebug()<<"ok"<<e->key()<<"  "<<Qt::Key_Enter;
@@ -585,7 +597,7 @@ void WidgetTextEdit::matchCommand()
             this->_completionEngine->setFocus();
         }
     }
-    else if(possibleCommand.indexOf(beginCommand) != -1)
+    /*else if(possibleCommand.indexOf(beginCommand) != -1)
     {
         QString environment = beginCommand.capturedTexts().last();
         QString endCommand(QString("\\end{")+environment+"}");
@@ -603,7 +615,7 @@ void WidgetTextEdit::matchCommand()
         cur.setPosition(start+5);
         cur.endEditBlock();
         this->setTextCursor(cur);
-    }
+    }*/
 
 }
 
@@ -720,19 +732,21 @@ void WidgetTextEdit::createParSelection( int pos )
 void WidgetTextEdit::matchLat()
 {
     QTextBlock textBlock = textCursor().block();
-    QString lineBegining = textBlock.text().left(textCursor().positionInBlock());
-    qDebug()<<lineBegining;
+    QString lineBegining = textBlock.text().left(textCursor().selectionEnd() - textBlock.position() + 1);
+    int envLength = textCursor().selectionEnd() - textCursor().selectionStart();
+    bool cursorIsAtTheStart = textCursor().selectionStart() == textCursor().position();
     int indexEnv;
-    QRegExp envBeginPattern("\\\\begin\\{[^\\}]*$");
-    QRegExp envEndPattern("\\\\end\\{[^\\}]*$");
+    QRegExp envBeginPattern("\\\\begin\\{[^\\}]{"+QString::number(envLength)+"}\\}$");
+    QRegExp envEndPattern("\\\\end\\{[^\\}]{"+QString::number(envLength)+"}\\}$");
+
     int inEnv = -1;
     if((indexEnv = lineBegining.indexOf(envBeginPattern)) != -1)
     {
-        inEnv = envBeginPattern.matchedLength() - 7;
+        inEnv = envBeginPattern.matchedLength() - 8;
     }
     if((indexEnv = lineBegining.indexOf(envEndPattern)) != -1)
     {
-        inEnv = envEndPattern.matchedLength() - 5;
+        inEnv = envEndPattern.matchedLength() - 6;
     }
 
     {
@@ -760,14 +774,17 @@ void WidgetTextEdit::matchLat()
                                 format.setBackground( QColor("#DDDDDD") );
                                 format.setForeground( QColor("#333333") );
                                 selection.format = format;
-
                                 QTextCursor cursor = textCursor();
-                                cursor.setPosition( associatedEnv + inEnv + 5);
-                                cursor.movePosition( QTextCursor::NextCharacter, QTextCursor::KeepAnchor );
+                                cursor.setPosition( associatedEnv + 5 + (cursorIsAtTheStart ? 0 : inEnv));
+                                cursor.movePosition( (cursorIsAtTheStart ? QTextCursor::NextCharacter : QTextCursor::PreviousCharacter), QTextCursor::KeepAnchor, inEnv );
                                 selection.cursor = cursor;
-                                selections.append( selection );
-                                setExtraSelections( selections );
-                                _multipleEdit.append(associatedEnv + inEnv + 5);
+                                if(!cursor.selectedText().compare(this->textCursor().selectedText()))
+                                {
+                                    selections.append( selection );
+                                    setExtraSelections( selections );
+                                    _multipleEdit.append(cursor);
+                                }
+
                     }
                 }
                 if ( info->position <= curPos && info->character == 'e' )
@@ -781,14 +798,16 @@ void WidgetTextEdit::matchLat()
                                 format.setBackground( QColor("#DDDDDD") );
                                 format.setForeground( QColor("#333333") );
                                 selection.format = format;
-
                                 QTextCursor cursor = textCursor();
-                                cursor.setPosition( associatedEnv + inEnv + 7);
-                                cursor.movePosition( QTextCursor::NextCharacter, QTextCursor::KeepAnchor );
+                                cursor.setPosition( associatedEnv + (cursorIsAtTheStart ? 0 : inEnv) + 7);
+                                cursor.movePosition( (cursorIsAtTheStart ? QTextCursor::NextCharacter : QTextCursor::PreviousCharacter), QTextCursor::KeepAnchor, inEnv );
                                 selection.cursor = cursor;
-                                selections.append( selection );
-                                setExtraSelections( selections );
-                                _multipleEdit.append(associatedEnv + inEnv + 7);
+                                if(!cursor.selectedText().compare(this->textCursor().selectedText()))
+                                {
+                                    selections.append( selection );
+                                    setExtraSelections( selections );
+                                    _multipleEdit.append(cursor);
+                                }
                     }
                 }
             }

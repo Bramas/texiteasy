@@ -98,6 +98,11 @@ public slots:
     void goToLine(int line, QString stringSelected = QString());
 protected:
     void insertFromMimeData(const QMimeData * source);
+    void mousePressEvent(QMouseEvent *e) {
+        _multipleEdit.clear();
+        WIDGET_TEXT_EDIT_PARENT_CLASS::mousePressEvent(e);
+    }
+
 private:
     void initIndentation(void);
     void paintEvent(QPaintEvent *event);
@@ -118,7 +123,7 @@ private:
     int matchRightLat(QTextBlock currentBlock, int index, int numLeftLat, int bpos);
     void createLatSelection(int start, int end);
 
-    QList<int> _multipleEdit;
+    QList<QTextCursor> _multipleEdit;
 
     CompletionEngine * _completionEngine;
     File * currentFile;

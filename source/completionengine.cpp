@@ -159,6 +159,23 @@ QString CompletionEngine::acceptedWord()
         return QString("");
     }
     QString word = this->selectedItems().first()->text();
+
+    QRegExp beginCommand("\\\\begin\\{([^\\}]+)\\}");
+    if(word.indexOf(beginCommand) != -1)
+    {
+        QString environment = beginCommand.capturedTexts().last();
+        QString endCommand(QString("\\end{")+environment+"}");
+
+        if(word.indexOf("{\\n}") != -1) //the command takes care of the content between begin and end.
+        {
+            word.replace("{\\n}","\n");
+            word += endCommand;
+        }
+        else
+        {
+            word += QString("\n    @text\n")+endCommand;
+        }
+    }
     return word;//.right(word.size() - _commandBegin.size());
 }
 
