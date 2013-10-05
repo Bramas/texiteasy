@@ -199,6 +199,9 @@ MainWindow::MainWindow(QWidget *parent) :
     _leftSplitter->setCollapsible(2,true);
 
 
+    _widgetStatusBar = new WidgetStatusBar(this,_leftSplitter);
+    this->setStatusBar(_widgetStatusBar);
+    connect(widgetTextEdit, SIGNAL(cursorPositionChanged(int,int)), _widgetStatusBar, SLOT(setPosition(int,int)));
 
     //Display only the editor :
     {
@@ -227,6 +230,10 @@ MainWindow::MainWindow(QWidget *parent) :
         if(settings.contains("leftSplitterSimpleOutputSize"))
         {
             sizes << settings.value("leftSplitterSimpleOutputSize").toInt();
+            if(sizes.last()>0)
+            {
+                _widgetStatusBar->toggleErrorTable();
+            }
         }
         else
         {
@@ -235,6 +242,10 @@ MainWindow::MainWindow(QWidget *parent) :
         if(settings.contains("leftSplitterConsoleSize"))
         {
             sizes << settings.value("leftSplitterConsoleSize").toInt();
+            if(sizes.last()>0)
+            {
+                _widgetStatusBar->toggleConsole();
+            }
         }
         else
         {
@@ -277,9 +288,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
 
-    _widgetStatusBar = new WidgetStatusBar(this,_leftSplitter);
-    this->setStatusBar(_widgetStatusBar);
-    connect(widgetTextEdit, SIGNAL(cursorPositionChanged(int,int)), _widgetStatusBar, SLOT(setPosition(int,int)));
 
 
     this->newFile();

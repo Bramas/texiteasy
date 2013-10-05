@@ -22,8 +22,11 @@ public slots:
     void onLeftSplitterMoved(int pos, int index);
     void toggleConsole();
     void toggleErrorTable();
+    void closeConsole();
+    void closeErrorTable();
     void setPosition(int,int);
     void setEncoding(QString encoding);
+
     
 private:
     Ui::WidgetStatusBar *ui;
@@ -32,6 +35,10 @@ private:
     QLabel * _positionLabel;
     QLabel * _encodingLabel;
     QSplitter * _leftSplitter;
+
+    QLabel * _labelConsole;
+    QLabel * _labelErrorTable;
+    bool _errorTableOpen, _consoleOpen;
 };
 
 #endif // WIDGETSTATUSBAR_H
