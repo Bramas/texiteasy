@@ -54,7 +54,8 @@
 #include "widgetconsole.h"
 #include "widgetstatusbar.h"
 #include "dialogabout.h"
-
+#include "widgetfile.h"
+#include "filemanager.h"
 
 #include <QList>
 
@@ -76,32 +77,21 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     dialogConfig(new DialogConfig(this)),
-    dialogWelcome(new DialogWelcome(this)),
-    _leftLayout(new QVBoxLayout()),
-    _mainSplitter(new MiniSplitter(Qt::Horizontal)),
-    _leftSplitter(new MiniSplitter(Qt::Vertical)),
-    _widgetConsole(new WidgetConsole()),
-    widgetLineNumber(new WidgetLineNumber(this)),
-    _widgetPdfViewer(new WidgetPdfViewer(this)),
-    widgetScroller(new WidgetScroller),
-    _widgetSimpleOutput(new WidgetSimpleOutput(this)),
-    widgetTextEdit(new WidgetTextEdit(this)),
-    _mousePressed(false),
-    _resizeConsole(false)
+    dialogWelcome(new DialogWelcome(this))
 {
     ui->setupUi(this);
     ConfigManager::Instance.setMainWindow(this);
     ConfigManager::Instance.init();
-    //setWindowFlags(Qt::FramelessWindowHint);
-    widgetLineNumber->setWidgetTextEdit(widgetTextEdit);
-    widgetScroller->setWidgetTextEdit(widgetTextEdit);
-    _widgetSimpleOutput->setWidgetTextEdit(widgetTextEdit);
-    _widgetPdfViewer->widgetPdfDocument()->setWidgetTextEdit(widgetTextEdit);
-    _syntaxHighlighter = new SyntaxHighlighter(widgetTextEdit->document());
-    widgetTextEdit->setSyntaxHighlighter(_syntaxHighlighter);
-    _widgetFindReplace = new WidgetFindReplace(widgetTextEdit);
 
-    // Load settings
+    FileManager::Instance.newFile();
+    this->setCentralWidget(FileManager::Instance.currentWidgetFile());
+    //FileManager::Instance.currentWidgetFile()->show();
+
+
+    _widgetStatusBar = new WidgetStatusBar(this,FileManager::Instance.currentWidgetFile()->verticalSplitter());
+    this->setStatusBar(_widgetStatusBar);
+    connect(&FileManager::Instance, SIGNAL(cursorPositionChanged(int,int)), _widgetStatusBar, SLOT(setPosition(int,int)));
+
 
     QSettings settings;
     settings.beginGroup("mainwindow");
@@ -110,48 +100,35 @@ MainWindow::MainWindow(QWidget *parent) :
         this->setGeometry(settings.value("geometry").toRect());
     }
 
-
     //define background
     this->initTheme();
 
-    // Connect things that can update the widgetTextEdit
 
-
-    connect(widgetTextEdit,SIGNAL(textChanged()),widgetLineNumber,SLOT(update()));
-    widgetTextEdit->setWidgetLineNumber(widgetLineNumber);
-    //connect(widgetTextEdit->verticalScrollBar(),SIGNAL(valueChanged(int)),widgetLineNumber,SLOT(update()));
-
-    //connect(widgetTextEdit,SIGNAL(textChanged()),widgetScroller,SLOT(updateText()));
-    //connect(widgetTextEdit->verticalScrollBar(),SIGNAL(valueChanged(int)),widgetScroller,SLOT(update()));
-
-    connect(widgetTextEdit->verticalScrollBar(),SIGNAL(valueChanged(int)), _widgetPdfViewer->widgetPdfDocument(),SLOT(jumpToPdfFromSourceView(int)));
 
     // Connect menubar Actions
 
     connect(this->ui->actionDeleteLastOpenFiles,SIGNAL(triggered()),this,SLOT(clearLastOpened()));
     connect(this->ui->actionNouveau,SIGNAL(triggered()),this,SLOT(newFile()));
-    connect(this->ui->actionOpen,SIGNAL(triggered()),this,SLOT(open()));
-    connect(this->ui->actionSave,SIGNAL(triggered()),this,SLOT(save()));
-    connect(this->ui->actionSaveAs,SIGNAL(triggered()),this,SLOT(saveAs()));
     connect(this->ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
     connect(this->ui->actionAbout, SIGNAL(triggered()), new DialogAbout(this), SLOT(show()));
-    //connect(this->ui->actionOpenRecent, SIGNAL(triggered()), this, SLOT(openLast()));
-    connect(this->ui->actionUndo, SIGNAL(triggered()), this->widgetTextEdit, SLOT(undo()));
-    connect(this->ui->actionRedo, SIGNAL(triggered()), this->widgetTextEdit, SLOT(redo()));
-    connect(this->ui->actionCopy, SIGNAL(triggered()), this->widgetTextEdit, SLOT(copy()));
-    connect(this->ui->actionCut, SIGNAL(triggered()), this->widgetTextEdit, SLOT(cut()));
-    connect(this->ui->actionPaste, SIGNAL(triggered()), this->widgetTextEdit, SLOT(paste()));
+    connect(this->ui->actionOpen,SIGNAL(triggered()),this,SLOT(open()));
+    connect(this->ui->actionSave,SIGNAL(triggered()),&FileManager::Instance,SLOT(save()));
+    connect(this->ui->actionSaveAs,SIGNAL(triggered()),&FileManager::Instance,SLOT(saveAs()));
     connect(this->ui->actionOpenConfigFolder, SIGNAL(triggered()), &ConfigManager::Instance, SLOT(openThemeFolder()));
-    connect(this->ui->actionFindReplace, SIGNAL(triggered()), this, SLOT(openFindReplaceWidget()));
-    connect(this->ui->actionEnvironment, SIGNAL(triggered()), this->widgetTextEdit, SLOT(wrapEnvironment()));
-    connect(_widgetFindReplace->pushButtonClose(), SIGNAL(clicked()), this, SLOT(closeFindReplaceWidget()));
-    this->closeFindReplaceWidget();
-    connect(this->ui->actionPdfLatex,SIGNAL(triggered()),this,SLOT(pdflatex()));
-    connect(this->ui->actionBibtex,SIGNAL(triggered()),this,SLOT(bibtex()));
-    connect(this->widgetTextEdit->getCurrentFile()->getBuilder(), SIGNAL(pdfChanged()),this->_widgetPdfViewer->widgetPdfDocument(),SLOT(updatePdf()));
-    connect(this->ui->actionView, SIGNAL(triggered()),this->_widgetPdfViewer->widgetPdfDocument(),SLOT(jumpToPdfFromSource()));
-    connect(this->widgetTextEdit->getCurrentFile()->getBuilder(), SIGNAL(statusChanged(QString)), this->statusBar(), SLOT(showMessage(QString)));
-    //connect(this->widgetTextEdit->getCurrentFile()->getViewer(), SIGNAL(finished()), this, SLOT(focus()));
+    connect(this->ui->actionSettings,SIGNAL(triggered()),this->dialogConfig,SLOT(show()));
+
+
+    connect(this->dialogConfig,SIGNAL(accepted()), &FileManager::Instance,SLOT(rehighlight()));
+    connect(this->ui->actionUndo, SIGNAL(triggered()), &FileManager::Instance, SLOT(undo()));
+    connect(this->ui->actionRedo, SIGNAL(triggered()), &FileManager::Instance, SLOT(redo()));
+    connect(this->ui->actionCopy, SIGNAL(triggered()), &FileManager::Instance, SLOT(copy()));
+    connect(this->ui->actionCut, SIGNAL(triggered()), &FileManager::Instance, SLOT(cut()));
+    connect(this->ui->actionPaste, SIGNAL(triggered()), &FileManager::Instance, SLOT(paste()));
+    connect(this->ui->actionFindReplace, SIGNAL(triggered()), &FileManager::Instance, SLOT(openFindReplaceWidget()));
+    connect(this->ui->actionEnvironment, SIGNAL(triggered()), &FileManager::Instance, SLOT(wrapEnvironment()));
+    connect(this->ui->actionPdfLatex,SIGNAL(triggered()), &FileManager::Instance,SLOT(pdflatex()));
+    connect(this->ui->actionBibtex,SIGNAL(triggered()), &FileManager::Instance,SLOT(bibtex()));
+    connect(this->ui->actionView, SIGNAL(triggered()), &FileManager::Instance,SLOT(jumpToPdfFromSource()));
 
 
     QAction * lastAction = this->ui->menuTh_me->actions().last();
@@ -181,27 +158,28 @@ MainWindow::MainWindow(QWidget *parent) :
     }
     this->ui->menuOuvrir_R_cent->insertSeparator(lastAction);
 
-    connect(_widgetConsole, SIGNAL(requestLine(int)), widgetTextEdit, SLOT(goToLine(int)));
-
-    ui->gridLayout->addWidget(widgetLineNumber,0,0);
-    ui->gridLayout->addWidget(_mainSplitter,0,1);
-
-    _mainSplitter->addWidget(_leftSplitter);
-    _mainSplitter->addWidget(_widgetPdfViewer);
 
 
-    _leftSplitter->addWidget(this->widgetTextEdit);
-    _leftSplitter->addWidget(this->_widgetFindReplace);
-    _leftSplitter->addWidget(this->_widgetSimpleOutput);
-    _leftSplitter->addWidget(this->_widgetConsole);
+    {
+        QList<QAction *> actionsList = this->findChildren<QAction *>();
+        QSettings settings;
+        settings.beginGroup("shortcuts");
+        //foreach(QAction * action, actionsList) {
+        //    if(settings.contains(action->text()))
+            {
+                //action->setShortcut(QKeySequence(settings.value(action->text()).toString()));
+            }
+        //}
+        dialogConfig->addEditableActions(actionsList);
+    }
 
-    _leftSplitter->setCollapsible(3,true);
-    _leftSplitter->setCollapsible(2,true);
+    return;
+/*
+    connect(this->widgetTextEdit->getCurrentFile()->getBuilder(), SIGNAL(statusChanged(QString)), this->statusBar(), SLOT(showMessage(QString)));//
+    connect(_widgetConsole, SIGNAL(requestLine(int)), widgetTextEdit, SLOT(goToLine(int)));//
 
 
-    _widgetStatusBar = new WidgetStatusBar(this,_leftSplitter);
-    this->setStatusBar(_widgetStatusBar);
-    connect(widgetTextEdit, SIGNAL(cursorPositionChanged(int,int)), _widgetStatusBar, SLOT(setPosition(int,int)));
+
 
     //Display only the editor :
     {
@@ -263,41 +241,13 @@ MainWindow::MainWindow(QWidget *parent) :
             mainSizes << width() / 2 << width() / 2;
         }
         _mainSplitter->setSizes(mainSizes);
-    }
-
-    ui->gridLayout->setColumnMinimumWidth(0,40);
-
-
-    connect(this->ui->actionSettings,SIGNAL(triggered()),this->dialogConfig,SLOT(show()));
-    connect(this->dialogConfig,SIGNAL(accepted()),_syntaxHighlighter,SLOT(rehighlight()));
-
-
-    {
-        QList<QAction *> actionsList = this->findChildren<QAction *>();
-        QSettings settings;
-        settings.beginGroup("shortcuts");
-        //foreach(QAction * action, actionsList) {
-        //    if(settings.contains(action->text()))
-            {
-                //action->setShortcut(QKeySequence(settings.value(action->text()).toString()));
-            }
-        //}
-        dialogConfig->addEditableActions(actionsList);
-    }
-
-
-
-
-
-
-    this->newFile();
+    }*/
 
 }
 
 MainWindow::~MainWindow()
 {
-    qRegisterMetaType<IntegerList>("IntegerList");
-     qRegisterMetaTypeStreamOperators<IntegerList>("IntegerList");
+    /*
     // Save settings
     {
         QSettings settings;
@@ -318,7 +268,7 @@ MainWindow::~MainWindow()
             settings.setValue("leftSplitterConsoleSize",iList[3]);
         }
         settings.endGroup();
-    }
+    }*/
     delete ui;
 }
 
@@ -328,7 +278,7 @@ void MainWindow::focus()
 }
 bool MainWindow::closeCurrentFile()
 {
-    if(!widgetTextEdit->getCurrentFile()->isModified())
+/*    if(!widgetTextEdit->getCurrentFile()->isModified())
     {
         return true;
     }
@@ -343,65 +293,34 @@ bool MainWindow::closeCurrentFile()
             return this->closeCurrentFile();
         }
         return true;
-    }
+    }*/
     return false;
 }
 
 void MainWindow::closeEvent(QCloseEvent * event)
 {
-
-    if(this->closeCurrentFile())
+    event->accept();
+/*    if(this->closeCurrentFile())
     {
         event->accept();
         return;
     }
-    event->ignore();
-
+    event->ignore();*/
 }
 
 void MainWindow::newFile()
 {
-    if(!this->closeCurrentFile())
-    {
-        return;
-    }
-    this->widgetTextEdit->getCurrentFile()->create();
-    this->widgetTextEdit->setText(" ");
-
-
-    this->_widgetPdfViewer->widgetPdfDocument()->setFile(this->widgetTextEdit->getCurrentFile());
-    this->_widgetConsole->setBuilder(this->widgetTextEdit->getCurrentFile()->getBuilder());
-    this->_widgetSimpleOutput->setBuilder(this->widgetTextEdit->getCurrentFile()->getBuilder());
-
-    int pos = this->widgetTextEdit->textCursor().position();
-    this->widgetTextEdit->selectAll();
-    this->widgetTextEdit->textCursor().setBlockCharFormat(ConfigManager::Instance.getTextCharFormats("normal"));
-    QTextCursor cur(this->widgetTextEdit->textCursor());
-    cur.deletePreviousChar();
-    this->widgetTextEdit->setTextCursor(cur);
-
-    this->widgetTextEdit->getCurrentFile()->setModified(false);
+    FileManager::Instance.newFile();
+    return;
 }
 
 void MainWindow::openLast()
 {
     QString filename = dynamic_cast<QAction*>(sender())->text();
-    /*load last file if it exists
-    {
-        QSettings settings;
-        if(settings.contains("files/filename"))
-        {
-            this->open(settings.value("files/filename").toString());
-        }
-    }*/
-    this->open(filename);
+    open(filename);
 }
 void MainWindow::open(QString filename)
 {
-    if(!this->closeCurrentFile())
-    {
-        return;
-    }
     QSettings settings;
     //get the filname
     if(filename.isEmpty())
@@ -428,15 +347,11 @@ void MainWindow::open(QString filename)
         settings.setValue("lastFiles", lastFiles);
     }
     //open
-    this->widgetTextEdit->getCurrentFile()->open(filename);
-    this->_widgetPdfViewer->widgetPdfDocument()->setFile(this->widgetTextEdit->getCurrentFile());
-    this->_widgetConsole->setBuilder(this->widgetTextEdit->getCurrentFile()->getBuilder());
 
-    //udpate the widget
-    //this->widgetTextEdit->setText(this->widgetTextEdit->getCurrentFile()->getData());
+    FileManager::Instance.open(filename);
 
     this->statusBar()->showMessage(basename,4000);
-    this->_widgetStatusBar->setEncoding(this->widgetTextEdit->getCurrentFile()->codec());
+    //this->_widgetStatusBar->setEncoding(this->widgetTextEdit->getCurrentFile()->codec());
 
 }
 void MainWindow::clearLastOpened()
@@ -447,42 +362,6 @@ void MainWindow::clearLastOpened()
     this->ui->menuOuvrir_R_cent->insertAction(0,this->ui->actionDeleteLastOpenFiles);
 }
 
-void MainWindow::pdflatex()
-{
-    this->save();
-    this->widgetTextEdit->getCurrentFile()->getBuilder()->pdflatex();
-}
-void MainWindow::bibtex()
-{
-    this->save();
-    this->widgetTextEdit->getCurrentFile()->getBuilder()->bibtex();
-}
-
-
-void MainWindow::save()
-{
-    if(this->widgetTextEdit->getCurrentFile()->getFilename().isEmpty())
-    {
-        return this->saveAs();
-    }
-    this->widgetTextEdit->getCurrentFile()->setData(this->widgetTextEdit->toPlainText());
-    this->widgetTextEdit->getCurrentFile()->save();
-    this->statusBar()->showMessage(tr(QString::fromUtf8("Sauvegardé").toLatin1()),2000);
-}
-
-void MainWindow::saveAs()
-{
-    //this->widgetTextEdit->getCurrentFile()->setData("sdfsdfg");
-    //return;
-    QString filename = QFileDialog::getSaveFileName(this,tr("Enregistrer un fichier"));
-    this->widgetTextEdit->getCurrentFile()->setData(this->widgetTextEdit->toPlainText());
-    if(filename.isEmpty())
-    {
-        return;
-    }
-    this->widgetTextEdit->getCurrentFile()->save(filename);
-    this->setWindowTitle(filename.replace(QRegExp("^.*[\\\\\\/]([^\\\\\\/]*)$"),"\\1")+" - texiteasy");
-}
 
 
 
@@ -503,79 +382,19 @@ void MainWindow::setTheme(QString theme)
 
     }
     ConfigManager::Instance.load(theme);
-    this->_syntaxHighlighter->rehighlight();
     this->initTheme();
-    this->widgetTextEdit->onCursorPositionChange();
+    FileManager::Instance.rehighlight();
+    FileManager::Instance.currentWidgetFile()->widgetTextEdit()->onCursorPositionChange();
 }
 
 void MainWindow::initTheme()
 {
-    {
-        QPalette Pal(palette());
-        Pal.setColor(QPalette::Background, ConfigManager::Instance.getTextCharFormats("linenumber").background().color());
-        this->setAutoFillBackground(true);
-        this->setPalette(Pal);
-    }
-    {
-        /*QPalette Pal(this->statusBar()->palette());
-        // set black background
-        Pal.setColor(QPalette::Background, ConfigManager::Instance.getTextCharFormats("normal").background().color());
-        Pal.setColor(QPalette::Window, ConfigManager::Instance.getTextCharFormats("normal").background().color());
-        Pal.setColor(QPalette::WindowText, ConfigManager::Instance.getTextCharFormats("normal").foreground().color());
-        this->setAutoFillBackground(true);
-        this->statusBar()->setPalette(Pal);*/
-        this->statusBar()->setStyleSheet("QStatusBar {background: "+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color())+
-                                         QString("} QStatusBar::item { color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
-                                         "}");
-    }
-    this->widgetTextEdit->setStyleSheet(QString("QPlainTextEdit { border: 1px solid ")+
-                                        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("textedit-border").foreground().color())+"; "+
-                                        QString("color: ")+
-                                        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+"; "+
-                                        QString("background-color: ")+
-                                        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color())+
-                                "; }");
-    this->widgetTextEdit->setCurrentCharFormat(ConfigManager::Instance.getTextCharFormats("normal"));
-    QTextCursor cur = this->widgetTextEdit->textCursor();
-    cur.setCharFormat(ConfigManager::Instance.getTextCharFormats("normal"));
-    this->widgetTextEdit->setTextCursor(cur);
-    //this->widgetTextEdit->setCurrentFont(ConfigManager::Instance.getTextCharFormats("normal").font());
-
-
-#ifdef OS_MAC
-    if(ConfigManager::Instance.getTextCharFormats("normal").background().color().value()<100) // if it's a dark color
-    {
-        QPixmap whiteBeamPixmap("/Users/quentinbramas/Projects/texiteasy/texiteasy-repository/source/data/cursor/whiteBeam.png");
-        QCursor whiteBeam(whiteBeamPixmap);
-        this->widgetTextEdit->viewport()->setCursor(whiteBeam);
-    }
-    else
-    {
-        this->widgetTextEdit->viewport()->setCursor(Qt::IBeamCursor);
-    }
-#endif
-
-    {
-        QPalette Pal(palette());
-        // set black background
-        QTextCharFormat format = ConfigManager::Instance.getTextCharFormats("linenumber");
-        QBrush brush = format.background();
-        Pal.setColor(QPalette::Background, brush.color());
-        this->widgetLineNumber->setAutoFillBackground(true);
-        this->widgetLineNumber->setPalette(Pal);
-    }
+    QPalette Pal(palette());
+    Pal.setColor(QPalette::Background, ConfigManager::Instance.getTextCharFormats("linenumber").background().color());
+    this->setAutoFillBackground(true);
+    this->setPalette(Pal);
+    this->statusBar()->setStyleSheet("QStatusBar {background: "+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color())+
+                                     QString("} QStatusBar::item { color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
+                                     "}");
+    FileManager::Instance.initTheme();
 }
-
-void MainWindow::openFindReplaceWidget()
-{
-    this->_widgetFindReplace->setMaximumHeight(110);
-    this->_widgetFindReplace->setMinimumHeight(110);
-    this->_widgetFindReplace->open();
-}
-
-void MainWindow::closeFindReplaceWidget()
-{
-    this->_widgetFindReplace->setMaximumHeight(0);
-    this->_widgetFindReplace->setMinimumHeight(0);
-}
-

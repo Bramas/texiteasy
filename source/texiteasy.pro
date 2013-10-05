@@ -51,7 +51,9 @@ SOURCES += main.cpp\
     widgetstatusbar.cpp \
     widgettooltip.cpp \
     widgetproject.cpp \
-    dialogabout.cpp
+    dialogabout.cpp \
+    widgetfile.cpp \
+    filemanager.cpp
 
 HEADERS  += mainwindow.h \
     widgetlinenumber.h \
@@ -84,7 +86,9 @@ HEADERS  += mainwindow.h \
     widgetstatusbar.h \
     widgettooltip.h \
     widgetproject.h \
-    dialogabout.h
+    dialogabout.h \
+    widgetfile.h \
+    filemanager.h
 
 FORMS    += mainwindow.ui \
     dialogwelcome.ui \

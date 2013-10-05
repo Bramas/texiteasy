@@ -57,17 +57,11 @@ public:
 public slots:
 
     void newFile(void);
-    void pdflatex(void);
-    void bibtex(void);
-    void save(void);
-    void saveAs(void);
     void open(QString filename = "");
     void openLast(void);
     void clearLastOpened(void);
     void focus(void);
     void changeTheme(void);
-    void openFindReplaceWidget(void);
-    void closeFindReplaceWidget(void);
 protected:
     void closeEvent(QCloseEvent *);
     
@@ -77,21 +71,7 @@ private:
 
     DialogConfig * dialogConfig;
     DialogWelcome * dialogWelcome;
-    QVBoxLayout * _leftLayout;
-    MiniSplitter * _mainSplitter;
-    MiniSplitter * _leftSplitter;
-    SyntaxHighlighter * _syntaxHighlighter;
-    WidgetConsole * _widgetConsole;
-    WidgetFindReplace * _widgetFindReplace;
-    WidgetLineNumber * widgetLineNumber;
-    WidgetPdfViewer * _widgetPdfViewer;
-    WidgetScroller * widgetScroller;
-    WidgetSimpleOutput * _widgetSimpleOutput;
     WidgetStatusBar * _widgetStatusBar;
-    WidgetTextEdit * widgetTextEdit;
-    int _editorWidth;
-    bool _mousePressed;
-    bool _resizeConsole;
 };
 
 #endif // MAINWINDOW_H
