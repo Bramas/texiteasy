@@ -721,9 +721,10 @@ void WidgetTextEdit::matchLat()
 {
     QTextBlock textBlock = textCursor().block();
     QString lineBegining = textBlock.text().left(textCursor().positionInBlock());
+    qDebug()<<lineBegining;
     int indexEnv;
-    QRegExp envBeginPattern(".*\\\\begin\\{[^\\}]*$");
-    QRegExp envEndPattern(".*\\\\end\\{[^\\}]*$");
+    QRegExp envBeginPattern("\\\\begin\\{[^\\}]*$");
+    QRegExp envEndPattern("\\\\end\\{[^\\}]*$");
     int inEnv = -1;
     if((indexEnv = lineBegining.indexOf(envBeginPattern)) != -1)
     {
@@ -750,8 +751,9 @@ void WidgetTextEdit::matchLat()
                 if ( info->position <= curPos && info->character == 'b' )
                 {
                     int associatedEnv = matchLeftLat( textBlock, i+1, 0, textBlock.blockNumber());
-                    if(associatedEnv != -1)
+                    if(inEnv != -1 && associatedEnv != -1)
                     {
+
                                 QList<QTextEdit::ExtraSelection> selections = extraSelections();
                                 QTextEdit::ExtraSelection selection;
                                 QTextCharFormat format = selection.format;
@@ -771,7 +773,7 @@ void WidgetTextEdit::matchLat()
                 if ( info->position <= curPos && info->character == 'e' )
                 {
                     int associatedEnv =  matchRightLat( textBlock, i-1, 0,textBlock.blockNumber());
-                    if(associatedEnv != -1)
+                    if(inEnv != -1 && associatedEnv != -1)
                     {
                                 QList<QTextEdit::ExtraSelection> selections = extraSelections();
                                 QTextEdit::ExtraSelection selection;
