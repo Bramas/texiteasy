@@ -15,11 +15,10 @@ class WidgetStatusBar : public QStatusBar
     Q_OBJECT
     
 public:
-    explicit WidgetStatusBar(QWidget *parent, QSplitter *leftSplitter);
+    explicit WidgetStatusBar(QWidget *parent);
     ~WidgetStatusBar();
 
 public slots:
-    void onLeftSplitterMoved(int pos, int index);
     void toggleConsole();
     void toggleErrorTable();
     void closeConsole();
@@ -34,7 +33,6 @@ private:
     QToolButton * _pushButtonErreurs;
     QLabel * _positionLabel;
     QLabel * _encodingLabel;
-    QSplitter * _leftSplitter;
 
     QLabel * _labelConsole;
     QLabel * _labelErrorTable;

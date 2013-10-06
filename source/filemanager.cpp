@@ -18,10 +18,10 @@ bool FileManager::newFile()
 {
     if(this->currentWidgetFile())
     {
-        if(this->currentWidgetFile()->isEmpty())
+        /*if(this->currentWidgetFile()->isEmpty())
         {
             return false;
-        }
+        }*/
         disconnect(this->currentWidgetFile()->widgetTextEdit(), SIGNAL(cursorPositionChanged(int,int)), this, SLOT(sendCursorPositionChanged(int,int)));
     }
     WidgetFile * newFile = new WidgetFile();
@@ -29,8 +29,6 @@ bool FileManager::newFile()
     _widgetFiles.append(newFile);
     _currentWidgetFileId = _widgetFiles.count() - 1;
     connect(this->currentWidgetFile()->widgetTextEdit(), SIGNAL(cursorPositionChanged(int,int)), this, SLOT(sendCursorPositionChanged(int,int)));
-
-    qDebug()<<"NEW FILE "<<_widgetFiles.count();
     return true;
 }
 bool FileManager::open(QString filename)
@@ -78,4 +76,10 @@ void FileManager::initTheme()
     {
         widgetFile->initTheme();
     }
+}
+
+void FileManager::close(WidgetFile *widget)
+{
+    _widgetFiles.removeOne(widget);
+    delete widget;
 }

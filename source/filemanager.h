@@ -15,6 +15,8 @@ public:
     void initTheme();
 
     bool open(QString filename);
+    void close(WidgetFile *widget);
+    int count() { return _widgetFiles.count(); }
 
 signals:
     void cursorPositionChanged(int,int);
@@ -35,6 +37,9 @@ public slots:
     void wrapEnvironment();
     void jumpToPdfFromSource();
     void rehighlight();
+
+    void setCurrent(WidgetFile * widget) { setCurrent(_widgetFiles.indexOf(widget)); }
+    void setCurrent(int index) { _currentWidgetFileId = index; }
 
 private slots:
     void sendCursorPositionChanged(int x, int y) { emit cursorPositionChanged(x, y); }

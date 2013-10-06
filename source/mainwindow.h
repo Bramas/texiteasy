@@ -38,12 +38,28 @@ class QVBoxLayout;
 class SyntaxHighlighter;
 class WidgetFindReplace;
 class WidgetStatusBar;
-class QVBoxLayout;
+class QGridLayout;
+class WidgetTab;
+class WidgetFile;
 
 namespace Ui {
 class MainWindow;
 }
 
+class WidgetEmpty : public QWidget
+{
+    Q_OBJECT
+
+public:
+    explicit WidgetEmpty(QWidget *parent = 0) : QWidget(parent) { }
+signals:
+    void mouseDoubleClick();
+protected:
+    void mouseDoubleClickEvent(QMouseEvent * event)
+    {
+        emit mouseDoubleClick();
+    }
+};
 
 class MainWindow : public QMainWindow
 {
@@ -57,24 +73,29 @@ public:
 
 public slots:
 
-    void newFile(void);
+    void newFile();
     void open(QString filename = "");
     void openLast(void);
     void clearLastOpened(void);
     void focus(void);
     void changeTheme(void);
+    void onCurrentFileChanged(WidgetFile * widget);
+    void closeTab(int);
 protected:
     void closeEvent(QCloseEvent *);
     
 private:
+    void closeCurrentWidgetFile();
+
     Ui::MainWindow *ui;
     void initTheme();
 
     DialogConfig * dialogConfig;
     DialogWelcome * dialogWelcome;
-    QTabWidget * _tabWidget;
+    WidgetTab * _tabWidget;
     QVBoxLayout * _verticalLayout;
     WidgetStatusBar * _widgetStatusBar;
+    WidgetEmpty * _emptyWidget;
 };
 
 #endif // MAINWINDOW_H

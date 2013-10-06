@@ -1,6 +1,8 @@
 #include "widgetstatusbar.h"
 #include "ui_widgetstatusbar.h"
 #include "configmanager.h"
+#include "filemanager.h"
+#include "minisplitter.h"
 
 #include <QPushButton>
 #include <QDebug>
@@ -9,16 +11,13 @@
 #include <QLabel>
 #include <QGraphicsDropShadowEffect>
 
-WidgetStatusBar::WidgetStatusBar(QWidget *parent, QSplitter * leftSplitter) :
+WidgetStatusBar::WidgetStatusBar(QWidget *parent) :
     QStatusBar(parent),
-    _leftSplitter(leftSplitter),
     ui(new Ui::WidgetStatusBar)
 {
     ui->setupUi(this);
     this->setContextMenuPolicy(Qt::PreventContextMenu);
 
-
-    QList<int> sizes = _leftSplitter->sizes();
 
    /* _pushButtonConsole = new QToolButton();
     _pushButtonConsole->setText(trUtf8("Console"));
@@ -31,7 +30,7 @@ WidgetStatusBar::WidgetStatusBar(QWidget *parent, QSplitter * leftSplitter) :
     _labelConsole = new QLabel(QString("<div style='margin:5px;'><a class='link' style='text-decoration:none; color:")+
                                 ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
                                "' href='#'>Console</a></div>");
-    _labelConsole->setStyleSheet(QString("QLabel { padding:5px; font-size:11px; }"));
+    _labelConsole->setStyleSheet(QString("QLabel {  font-size:11px; }"));
     QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect(this);
     effect->setBlurRadius(0);
     effect->setColor(QColor("#000000"));
@@ -93,7 +92,6 @@ WidgetStatusBar::WidgetStatusBar(QWidget *parent, QSplitter * leftSplitter) :
     _encodingLabel->setGraphicsEffect(effect);
     this->addPermanentWidget(_encodingLabel, 0);
 
-    connect(_leftSplitter, SIGNAL(splitterMoved(int,int)), this, SLOT(onLeftSplitterMoved(int,int)));
     //connect(_pushButtonConsole, SIGNAL(clicked()), this, SLOT(toggleConsole()));
     connect(_labelConsole, SIGNAL(linkActivated(QString)), this, SLOT(toggleConsole()));
     //connect(_pushButtonErreurs, SIGNAL(clicked()), this, SLOT(toggleErrorTable()));
@@ -103,12 +101,6 @@ WidgetStatusBar::WidgetStatusBar(QWidget *parent, QSplitter * leftSplitter) :
                                      "}");
 
     this->setMaximumHeight(20);
-
-
-    closeConsole();
-    closeErrorTable();
-
-
 }
 
 WidgetStatusBar::~WidgetStatusBar()
@@ -117,24 +109,20 @@ WidgetStatusBar::~WidgetStatusBar()
 }
 
 
-void WidgetStatusBar::onLeftSplitterMoved(int pos, int index)
-{
-    //_pushButtonErreurs->setChecked(sizes[2] != 0);
-    //_pushButtonConsole->setChecked(sizes[3] != 0);
-    QList<int> sizes = _leftSplitter->sizes();
-}
-
 void WidgetStatusBar::toggleConsole()
 {
-    QList<int> sizes = _leftSplitter->sizes();
+    if(!FileManager::Instance.currentWidgetFile())
+    {
+        return;
+    }
+    QList<int> sizes = FileManager::Instance.currentWidgetFile()->verticalSplitter()->sizes();
     if(sizes[3] == 0)
     {
         sizes.replace(0, sizes[0] - 60 + sizes[2]);
         sizes.replace(2, 0);
         sizes.replace(3, 60);
-        _leftSplitter->widget(3)->setMaximumHeight(460);
-        _consoleOpen = true;
-        _leftSplitter->setSizes(sizes);
+        FileManager::Instance.currentWidgetFile()->verticalSplitter()->widget(3)->setMaximumHeight(460);
+        FileManager::Instance.currentWidgetFile()->verticalSplitter()->setSizes(sizes);
         _labelConsole->setStyleSheet(QString("background-color:")+ ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color()));
         this->closeErrorTable();
     }
@@ -146,26 +134,32 @@ void WidgetStatusBar::toggleConsole()
 
 void WidgetStatusBar::closeConsole()
 {
-    QList<int> sizes = _leftSplitter->sizes();
+    if(!FileManager::Instance.currentWidgetFile())
+    {
+        return;
+    }
+    QList<int> sizes = FileManager::Instance.currentWidgetFile()->verticalSplitter()->sizes();
     sizes.replace(0, sizes[0] + sizes[3]);
     sizes.replace(3, 00);
-    _consoleOpen = false;
-    _leftSplitter->widget(3)->setMaximumHeight(0);
-    _leftSplitter->setSizes(sizes);
+    FileManager::Instance.currentWidgetFile()->verticalSplitter()->widget(3)->setMaximumHeight(0);
+    FileManager::Instance.currentWidgetFile()->verticalSplitter()->setSizes(sizes);
     _labelConsole->setStyleSheet(QString("background-color: transparent"));
 }
 
 void WidgetStatusBar::toggleErrorTable()
 {
-    QList<int> sizes = _leftSplitter->sizes();
+    if(!FileManager::Instance.currentWidgetFile())
+    {
+        return;
+    }
+    QList<int> sizes = FileManager::Instance.currentWidgetFile()->verticalSplitter()->sizes();
     if(sizes[2] == 0)
     {
         sizes.replace(0, sizes[0] - 60 + sizes[3]);
         sizes.replace(2, 60);
         sizes.replace(3, 0);
-        _leftSplitter->widget(2)->setMaximumHeight(460);
-        _errorTableOpen = true;
-        _leftSplitter->setSizes(sizes);
+        FileManager::Instance.currentWidgetFile()->verticalSplitter()->widget(2)->setMaximumHeight(460);
+        FileManager::Instance.currentWidgetFile()->verticalSplitter()->setSizes(sizes);
         _labelErrorTable->setStyleSheet(QString("background-color:")+ ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color()));
         this->closeConsole();
     }
@@ -176,12 +170,15 @@ void WidgetStatusBar::toggleErrorTable()
 }
 void WidgetStatusBar::closeErrorTable()
 {
-    QList<int> sizes = _leftSplitter->sizes();
+    if(!FileManager::Instance.currentWidgetFile())
+    {
+        return;
+    }
+    QList<int> sizes = FileManager::Instance.currentWidgetFile()->verticalSplitter()->sizes();
     sizes.replace(0, sizes[0] + sizes[2]);
     sizes.replace(2, 00);
-    _errorTableOpen = false;
-    _leftSplitter->widget(2)->setMaximumHeight(0);
-    _leftSplitter->setSizes(sizes);
+    FileManager::Instance.currentWidgetFile()->verticalSplitter()->widget(2)->setMaximumHeight(0);
+    FileManager::Instance.currentWidgetFile()->verticalSplitter()->setSizes(sizes);
     _labelErrorTable->setStyleSheet(QString("background-color: transparent"));
 }
 void WidgetStatusBar::setPosition(int row, int column)

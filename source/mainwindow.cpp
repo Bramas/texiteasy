@@ -57,47 +57,37 @@
 #include "dialogabout.h"
 #include "widgetfile.h"
 #include "filemanager.h"
+#include "widgettab.h"
 
 #include <QList>
 
 typedef QList<int> IntegerList;
-/*
-class IntegerList
-{
-public:
-    QList<int> list;
-};*/
-//QDataStream &operator<<(QDataStream &out, const IntegerList &myObj);
-//QDataStream &operator>>(QDataStream &in, IntegerList &myObj);
-
-//Q_DECLARE_METATYPE(IntegerList)
 Q_DECLARE_METATYPE(IntegerList)
-//qRegisterMetaType<IntegerList>("IntegerList");
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     dialogConfig(new DialogConfig(this)),
-    dialogWelcome(new DialogWelcome(this))
+    dialogWelcome(new DialogWelcome(this)),
+    _emptyWidget(new WidgetEmpty(0))
 {
     ui->setupUi(this);
     ConfigManager::Instance.setMainWindow(this);
     ConfigManager::Instance.init();
 
-    FileManager::Instance.newFile();
-
-    _tabWidget = new QTabWidget(this);
-    this->setCentralWidget(_tabWidget);
-    _tabWidget->addTab(FileManager::Instance.currentWidgetFile(),"untitled");
-    /*
-    _verticalLayout = new QVBoxLayout(this);
-    _verticalLayout->addWidget(FileManager::Instance.currentWidgetFile());
-    this->centralWidget()->setLayout(_verticalLayout);*/
-
-    //FileManager::Instance.currentWidgetFile()->show();
+    _tabWidget = new WidgetTab();
+    connect(_tabWidget, SIGNAL(currentChanged(WidgetFile*)), this, SLOT(onCurrentFileChanged(WidgetFile*)));
+    connect(_tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
+    ui->verticalLayout->setMargin(0);
+    ui->verticalLayout->setSpacing(0);
+    ui->verticalLayout->setContentsMargins(0,0,0,0);
+    ui->verticalLayout->addWidget(_tabWidget);
+    ui->verticalLayout->addWidget(_emptyWidget);
+    connect(_emptyWidget, SIGNAL(mouseDoubleClick()), this, SLOT(newFile()));
 
 
-    _widgetStatusBar = new WidgetStatusBar(this,FileManager::Instance.currentWidgetFile()->verticalSplitter());
+
+    _widgetStatusBar = new WidgetStatusBar(this);
     this->setStatusBar(_widgetStatusBar);
     connect(&FileManager::Instance, SIGNAL(cursorPositionChanged(int,int)), _widgetStatusBar, SLOT(setPosition(int,int)));
 
@@ -322,6 +312,8 @@ void MainWindow::newFile()
     {
         _tabWidget->addTab(FileManager::Instance.currentWidgetFile(), "untitled");
         _tabWidget->setCurrentIndex(_tabWidget->count()-1);
+        _widgetStatusBar->closeConsole();
+        _widgetStatusBar->closeErrorTable();
     }
     return;
 }
@@ -364,6 +356,8 @@ void MainWindow::open(QString filename)
     {
         _tabWidget->addTab(FileManager::Instance.currentWidgetFile(), FileManager::Instance.currentWidgetFile()->widgetTextEdit()->getCurrentFile()->fileInfo().baseName());
         _tabWidget->setCurrentIndex(_tabWidget->count()-1);
+        _widgetStatusBar->closeConsole();
+        _widgetStatusBar->closeErrorTable();
     }
     else
     {
@@ -374,6 +368,53 @@ void MainWindow::open(QString filename)
     //this->_widgetStatusBar->setEncoding(this->widgetTextEdit->getCurrentFile()->codec());
 
 }
+
+void MainWindow::onCurrentFileChanged(WidgetFile * widget)
+{
+    this->closeCurrentWidgetFile();
+    FileManager::Instance.setCurrent(widget);
+    if(!widget)
+    {
+
+        ui->verticalLayout->addWidget(_emptyWidget);
+        return;
+    }
+    ui->verticalLayout->addWidget(widget);
+
+}
+
+void MainWindow::closeTab(int index)
+{
+    WidgetFile * widget = _tabWidget->widget(index);
+
+    if(widget->widgetTextEdit()->getCurrentFile()->isModified())
+    {
+        DialogClose dialogClose(this);
+        dialogClose.setMessage(tr(QString::fromUtf8("Le fichier %1 n'a pas été enregistré.").toLatin1()).arg(widget->widgetTextEdit()->getCurrentFile()->getFilename()));
+        dialogClose.exec();
+        if(dialogClose.confirmed())
+        {
+            if(dialogClose.saved())
+            {
+                widget->save();
+            }
+        }
+        else
+        {
+            return;
+        }
+    }
+
+    _tabWidget->removeTab(index);
+    if(!_tabWidget->count())
+    {
+        // The following is also call by the tabWidget but maybe after so we
+        // make sure that it is call before closing the widget
+        this->onCurrentFileChanged(0);
+    }
+    FileManager::Instance.close(widget);
+}
+
 void MainWindow::clearLastOpened()
 {
     QSettings settings;
@@ -413,8 +454,15 @@ void MainWindow::initTheme()
     Pal.setColor(QPalette::Background, ConfigManager::Instance.getTextCharFormats("linenumber").background().color());
     this->setAutoFillBackground(true);
     this->setPalette(Pal);
-    this->statusBar()->setStyleSheet("QStatusBar {background: "+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color())+
-                                     QString("} QStatusBar::item { color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
-                                     "}");
     FileManager::Instance.initTheme();
+}
+
+void MainWindow::closeCurrentWidgetFile()
+{
+    if(ui->verticalLayout->count() > 1)
+    {
+        QWidget * w = ui->verticalLayout->itemAt(1)->widget();
+        ui->verticalLayout->removeWidget(FileManager::Instance.currentWidgetFile());
+        w->setParent(0);
+    }
 }
