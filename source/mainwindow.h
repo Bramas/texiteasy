@@ -58,6 +58,7 @@ protected:
     void mouseDoubleClickEvent(QMouseEvent * event)
     {
         emit mouseDoubleClick();
+        QWidget::mouseMoveEvent(event);
     }
 };
 
@@ -67,7 +68,6 @@ class MainWindow : public QMainWindow
     
 public:
     explicit MainWindow(QWidget *parent = 0);
-    bool closeCurrentFile();
     void setTheme(QString theme);
     ~MainWindow();
 
@@ -80,7 +80,7 @@ public slots:
     void focus(void);
     void changeTheme(void);
     void onCurrentFileChanged(WidgetFile * widget);
-    void closeTab(int);
+    bool closeTab(int);
 protected:
     void closeEvent(QCloseEvent *);
     

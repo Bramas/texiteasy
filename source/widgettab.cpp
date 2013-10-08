@@ -162,6 +162,16 @@ void WidgetTab::mouseMoveEvent(QMouseEvent * event)
     update();
 }
 
+void WidgetTab::removeAll()
+{
+    foreach(WidgetFile * widget, _widgets)
+    {
+        delete widget;
+    }
+    _widgets.clear();
+    _tabsName.clear();
+    this->setCurrentIndex(-1);
+}
 void WidgetTab::removeTab(WidgetFile *widget)
 {
     int index = _widgets.indexOf(widget);

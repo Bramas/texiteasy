@@ -105,7 +105,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     // Connect menubar Actions
-
     connect(this->ui->actionDeleteLastOpenFiles,SIGNAL(triggered()),this,SLOT(clearLastOpened()));
     connect(this->ui->actionNouveau,SIGNAL(triggered()),this,SLOT(newFile()));
     connect(this->ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
@@ -171,6 +170,7 @@ MainWindow::MainWindow(QWidget *parent) :
         dialogConfig->addEditableActions(actionsList);
     }
 
+
     return;
 /*
     connect(this->widgetTextEdit->getCurrentFile()->getBuilder(), SIGNAL(statusChanged(QString)), this->statusBar(), SLOT(showMessage(QString)));//
@@ -183,8 +183,6 @@ MainWindow::MainWindow(QWidget *parent) :
     {
         qRegisterMetaType<IntegerList>("IntegerList");
         qRegisterMetaTypeStreamOperators<IntegerList>("IntegerList");
-        QSettings settings;
-        settings.beginGroup("mainwindow");
 
         QList<int> sizes;
         if(settings.contains("leftSplitterEditorSize"))
@@ -245,12 +243,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    QSettings settings;
+    settings.beginGroup("mainwindow");
+    settings.setValue("geometry", this->geometry());
+
     /*
     // Save settings
     {
-        QSettings settings;
-        settings.beginGroup("mainwindow");
-        settings.setValue("geometry", this->geometry());
 
         {
             QList<int> iList;
@@ -274,29 +273,18 @@ void MainWindow::focus()
 {
     this->activateWindow();
 }
-bool MainWindow::closeCurrentFile()
-{
-/*    if(!widgetTextEdit->getCurrentFile()->isModified())
-    {
-        return true;
-    }
-    DialogClose dialogClose(this);
-    dialogClose.setMessage(tr(QString::fromUtf8("Le fichier %1 n'a pas été enregistré.").toLatin1()).arg(this->widgetTextEdit->getCurrentFile()->getFilename()));
-    dialogClose.exec();
-    if(dialogClose.confirmed())
-    {
-        if(dialogClose.saved())
-        {
-            this->save();
-            return this->closeCurrentFile();
-        }
-        return true;
-    }*/
-    return false;
-}
 
 void MainWindow::closeEvent(QCloseEvent * event)
 {
+
+    while(_tabWidget->count())
+    {
+        if(!this->closeTab(0))
+        {
+            event->ignore();
+            return;
+        }
+    }
     event->accept();
 /*    if(this->closeCurrentFile())
     {
@@ -380,10 +368,10 @@ void MainWindow::onCurrentFileChanged(WidgetFile * widget)
         return;
     }
     ui->verticalLayout->addWidget(widget);
-
+    widget->widgetTextEdit()->setFocus();
 }
 
-void MainWindow::closeTab(int index)
+bool MainWindow::closeTab(int index)
 {
     WidgetFile * widget = _tabWidget->widget(index);
 
@@ -401,7 +389,7 @@ void MainWindow::closeTab(int index)
         }
         else
         {
-            return;
+            return false;
         }
     }
 
@@ -413,7 +401,7 @@ void MainWindow::closeTab(int index)
         this->onCurrentFileChanged(0);
     }
     FileManager::Instance.close(widget);
-
+    return true;
 }
 
 void MainWindow::clearLastOpened()

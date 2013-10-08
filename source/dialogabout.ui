@@ -29,7 +29,7 @@
     <set>QDialogButtonBox::Ok</set>
    </property>
   </widget>
-  <widget class="QTextEdit" name="textEdit">
+  <widget class="QTextBrowser" name="textEdit">
    <property name="geometry">
     <rect>
      <x>10</x>

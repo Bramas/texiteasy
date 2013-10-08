@@ -36,7 +36,6 @@ WidgetFile::WidgetFile(QWidget *parent) :
     _horizontalSplitter = new MiniSplitter(Qt::Horizontal);
     _verticalSplitter = new MiniSplitter(Qt::Vertical);
 
-
     QGridLayout * layout = new QGridLayout();
     layout->addWidget(_widgetLineNumber,0,0);
     layout->addWidget(_horizontalSplitter,0,1);
@@ -45,7 +44,9 @@ WidgetFile::WidgetFile(QWidget *parent) :
 
     _horizontalSplitter->addWidget(_verticalSplitter);
     _horizontalSplitter->addWidget(_widgetPdfViewer);
-
+    QList<int> sizes;
+    sizes << width()/2 << width()/2;
+    _horizontalSplitter->setSizes(sizes);
 
     _verticalSplitter->addWidget(this->_widgetTextEdit);
     _verticalSplitter->addWidget(this->_widgetFindReplace);

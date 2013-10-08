@@ -59,7 +59,6 @@ WidgetTextEdit::WidgetTextEdit(QWidget * parent) :
     _lineCount(0),
     _syntaxHighlighter(0),
     updatingIndentation(false),
-    _widgetInsertCommand(new WidgetInsertCommand(this)),
     _widgetLineNumber(0)
 
 {
@@ -184,7 +183,7 @@ void WidgetTextEdit::onCursorPositionChange()
     matchAll();
     this->currentFile->getViewer()->setLine(this->textCursor().blockNumber()+1);
 
-    this->_widgetInsertCommand->setVisible(false);
+    WidgetInsertCommand::instance()->setVisible(false);
 
     emit cursorPositionChanged(this->textCursor().blockNumber() + 1, this->textCursor().positionInBlock() + 1);
 }
@@ -568,15 +567,16 @@ void WidgetTextEdit::displayWidgetInsertCommand()
 {
     QTextLine line = this->textCursor().block().layout()->lineForTextPosition(this->textCursor().positionInBlock());
     qreal top = line.position().y() + line.height() + 5  + this->blockTop(this->textCursor().block()) + this->contentOffsetTop();
-    QRect geo = _widgetInsertCommand->geometry();
+    QRect geo = WidgetInsertCommand::instance()->geometry();
     geo.moveTo(QPoint(0, top));
     if(geo.bottom() > this->height())
     {
         geo.translate(QPoint(0,-geo.height()-line.height()));
     }
-    _widgetInsertCommand->setGeometry(geo);
-    _widgetInsertCommand->setVisible(true);
-    this->_widgetInsertCommand->show();
+    WidgetInsertCommand::instance()->setParent(this);
+    WidgetInsertCommand::instance()->setGeometry(geo);
+    WidgetInsertCommand::instance()->setVisible(true);
+    WidgetInsertCommand::instance()->show();
 
 }
 

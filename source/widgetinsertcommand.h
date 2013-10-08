@@ -35,11 +35,14 @@ class WidgetInsertCommand : public QWidget
     Q_OBJECT
     
 public:
-    explicit WidgetInsertCommand(WidgetTextEdit *parent = 0);
     ~WidgetInsertCommand();
+
+    static WidgetInsertCommand * instance() { if(!_instance) _instance = new WidgetInsertCommand(); return _instance; }
     
 private:
+    explicit WidgetInsertCommand();
     Ui::WidgetInsertCommand *ui;
+    static WidgetInsertCommand * _instance;
 
     QStringList _tabslabel;
 

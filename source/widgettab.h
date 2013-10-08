@@ -25,8 +25,14 @@ public:
     WidgetFile * widget(int index) { return _widgets.at(index); }
     void removeTab(WidgetFile * widget);
     void removeTab(int index);
+    void removeAll();
+
     void setCurrentIndex(int index)
     {
+        if(index == _currentIndex)
+        {
+            return;
+        }
         _currentIndex =  index;
         if(index != -1)
         {

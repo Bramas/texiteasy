@@ -31,8 +31,10 @@
 #include <QProcess>
 #include <QIcon>
 
-WidgetInsertCommand::WidgetInsertCommand(WidgetTextEdit *parent) :
-    QWidget(parent),
+WidgetInsertCommand * WidgetInsertCommand::_instance = 0;
+
+WidgetInsertCommand::WidgetInsertCommand() :
+    QWidget(0),
     ui(new Ui::WidgetInsertCommand)
 {
     ui->setupUi(this);
