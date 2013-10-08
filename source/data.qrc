@@ -8,5 +8,6 @@
         <file>data/fonts/consolai.ttf</file>
         <file>data/fonts/consolaz.ttf</file>
         <file>data/cursor/whiteBeam.tiff</file>
+        <file>data/commands.sqlite</file>
     </qresource>
 </RCC>

@@ -44,10 +44,10 @@ WidgetInsertCommand::WidgetInsertCommand(WidgetTextEdit *parent) :
 
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setHostName("localhost");
-    db.setDatabaseName("D:\\Projects\\texiteasy\\sourceRepository\\commands.sqlite");
+    db.setDatabaseName(ConfigManager::Instance.commandDatabaseFilename());
     if(!db.open())
     {
-        qDebug()<<"Database commands.sqlite not found : "<<db.lastError();
+        qDebug()<<"Database "<<ConfigManager::Instance.commandDatabaseFilename()<<" not found : "<<db.lastError();
         return;
     }
     qDebug()<<db.tables();
@@ -182,14 +182,14 @@ WidgetInsertCommand::~WidgetInsertCommand()
 #ifdef DEBUG_DESTRUCTOR
     qDebug()<<"delete WidgetInsertCommand";
 #endif
-    for(int i=0; i < ui->tabWidget->count(); ++i)
+/*    for(int i=0; i < ui->tabWidget->count(); ++i)
     {
         QTableWidget * table = dynamic_cast<QTableWidget*>(this->ui->tabWidget->widget(i));
 
         table->clear();
         delete table;
     }
-
+*/
     delete ui;
 }
 
@@ -197,7 +197,7 @@ void WidgetInsertCommand::saveCommandsToPng()
 {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setHostName("localhost");
-    db.setDatabaseName("D:\\Projects\\texiteasy\\sourceRepository\\commands.sqlite");
+    db.setDatabaseName(ConfigManager::Instance.commandDatabaseFilename());
     if(!db.open())
     {
         qDebug()<<"Database commands.sqlite not found : "<<db.lastError();

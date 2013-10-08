@@ -77,6 +77,8 @@ public:
     QString latexCommand(bool fullPath = false) { QSettings settings; return (fullPath ? settings.value("builder/latexPath").toString() : QString(""))+settings.value("builder/latex").toString(); }
     QString latexPath() { QSettings settings; return settings.value("builder/latexPath").toString(); }
 
+    QString commandDatabaseFilename() { QSettings settings; return settings.value("commandDatabaseFilename").toString(); }
+
     void setBibtexCommand(QString command) { QSettings settings; settings.setValue("builder/bibtex", command); }
     void setPdflatexCommand(QString command) { QSettings settings; settings.setValue("builder/pdflatex", command); }
     void setLatexPath(QString path) { QSettings settings; settings.setValue("builder/latexPath", path); }

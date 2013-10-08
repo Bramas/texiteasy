@@ -214,7 +214,7 @@ void WidgetTextEdit::insertPlainText(const QString &text)
 
 void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
 {
-    if(e->key() == Qt::Key_Space && (e->modifiers() & Qt::CTRL))
+    if(e->key() == Qt::Key_Space && (e->modifiers() & (Qt::MetaModifier | Qt::ControlModifier)))
     {
         //this->matchCommand();
         _multipleEdit.clear();

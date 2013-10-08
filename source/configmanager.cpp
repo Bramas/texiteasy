@@ -460,70 +460,92 @@ void ConfigManager::checkRevision()
     switch(fromVersion)
     {
         case 0:
-            qDebug()<<"First launch of TexitEasy";
-        if(dataLocation.isEmpty())
         {
-            return;
-        }
-        settings.setValue("lastFolder",documentLocation);
-
-       {
-            QDir dir;
-            dir.mkpath(dataLocation);
-        }
-        case 1:
-        qDebug()<<"texiteasy 1=>2";
-        {
-            QDir dir;
-            //#ifdef OS_LINUX //do not know why but theme in the resource file does not work
-            //            QFile theme("./themes/dark.sim-theme");
-            //            QFile theme2("./themes/light.sim-theme");
-            //#else
-                        QFile theme(":/themes/dark.sim-theme");
-                        QFile theme2(":/themes/light.sim-theme");
-            //#endif
-            theme.copy(dataLocation+dir.separator()+"dark.sim-theme");
-            theme2.copy(dataLocation+dir.separator()+"light.sim-theme");
-        }
-
-        settings.setValue("bibtex","bibtex \"%1\"");
-        #if OS_WINDOWS
-            settings.setValue("pdflatex", "pdflatex.exe -synctex=1 -shell-escape -interaction=nonstopmode -enable-write18 \"%1\"");
-        #else
-            settings.setValue("pdflatex", "pdflatex -synctex=1 -shell-escape -interaction=nonstopmode -enable-write18 \"%1\"");
-        #endif
-
-
-        QString pdflatexCommand = "pdflatex";
-#ifdef OS_WINDOWS
-        pdflatexCommand = "pdflatex.exe";
-        {
-            QDir dir(programLocation);
-            if(!dir.exists())
+                qDebug()<<"First launch of TexitEasy";
+            if(dataLocation.isEmpty())
             {
-                QStringList miktexDirs = dir.entryList(QDir::Dirs).filter(QRegExp("miktex",Qt::CaseInsensitive));
-                if(!miktexDirs.isEmpty())
-                {
-                    if(dir.cd(miktexDirs.first()) && dir.cd("miktex") && dir.cd("bin"))
-                    {
-                        settings.setValue("builder/latexPath",dir.path()+dir.separator());
-                    }
+                return;
+            }
+            settings.setValue("lastFolder",documentLocation);
 
-                }
-
-
+           {
+                QDir dir;
+                dir.mkpath(dataLocation);
             }
         }
-#endif
-        if(-2 == QProcess::execute(settings.value("latexPath").toString()+pdflatexCommand+" --version"))
+        case 1:
         {
-            qDebug()<<"latex not found ask for a the path";
-            //this->_latexFound = false;
+            qDebug()<<"texiteasy 1=>2";
+            {
+                QDir dir;
+                //#ifdef OS_LINUX //do not know why but theme in the resource file does not work
+                //            QFile theme("./themes/dark.sim-theme");
+                //            QFile theme2("./themes/light.sim-theme");
+                //#else
+                            QFile theme(":/themes/dark.sim-theme");
+                            QFile theme2(":/themes/light.sim-theme");
+                //#endif
+                theme.copy(dataLocation+dir.separator()+"dark.sim-theme");
+                theme2.copy(dataLocation+dir.separator()+"light.sim-theme");
+            }
+
+            settings.setValue("bibtex","bibtex \"%1\"");
+            #if OS_WINDOWS
+                settings.setValue("pdflatex", "pdflatex.exe -synctex=1 -shell-escape -interaction=nonstopmode -enable-write18 \"%1\"");
+            #else
+                settings.setValue("pdflatex", "pdflatex -synctex=1 -shell-escape -interaction=nonstopmode -enable-write18 \"%1\"");
+            #endif
+
+
+            QString pdflatexCommand = "pdflatex";
+    #ifdef OS_WINDOWS
+            pdflatexCommand = "pdflatex.exe";
+            {
+                QDir dir(programLocation);
+                if(!dir.exists())
+                {
+                    QStringList miktexDirs = dir.entryList(QDir::Dirs).filter(QRegExp("miktex",Qt::CaseInsensitive));
+                    if(!miktexDirs.isEmpty())
+                    {
+                        if(dir.cd(miktexDirs.first()) && dir.cd("miktex") && dir.cd("bin"))
+                        {
+                            settings.setValue("builder/latexPath",dir.path()+dir.separator());
+                        }
+
+                    }
+
+
+                }
+            }
+    #endif
+            if(-2 == QProcess::execute(settings.value("latexPath").toString()+pdflatexCommand+" --version"))
+            {
+                qDebug()<<"latex not found ask for a the path";
+                //this->_latexFound = false;
+            }
+            else
+            {
+                qDebug()<<"latex found";
+                //qDebug()<<QFileDialog::getExistingDirectory(0, QObject::trUtf8("Choisir l'emplacement contenant l'executable latex."),programLocation);
+            }
         }
-        else
+        case 2:
         {
-            qDebug()<<"latex found";
-            //qDebug()<<QFileDialog::getExistingDirectory(0, QObject::trUtf8("Choisir l'emplacement contenant l'executable latex."),programLocation);
+            qDebug()<<"texiteasy 2=>3";
+            QDir dir;
+            QFile commandsSqllite(":/data/commands.sqlite");
+            commandsSqllite.copy(dataLocation+dir.separator()+"commands.sqlite");
+            QFile::setPermissions(dataLocation+dir.separator()+"commands.sqlite",
+                                  QFile::ReadOwner |
+                                  QFile::WriteOwner |
+                                  QFile::ReadGroup |
+                                  QFile::WriteGroup |
+                                  QFile::ReadOther |
+                                  QFile::WriteOther |
+                                  QFile::ReadUser |
+                                  QFile::WriteUser
+                                  );
+            settings.setValue("commandDatabaseFilename",dataLocation+dir.separator()+"commands.sqlite");
         }
      }
      settings.setValue("revision",CURRENT_CONFIG_REVISION);

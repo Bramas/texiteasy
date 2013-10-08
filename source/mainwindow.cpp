@@ -413,6 +413,7 @@ void MainWindow::closeTab(int index)
         this->onCurrentFileChanged(0);
     }
     FileManager::Instance.close(widget);
+
 }
 
 void MainWindow::clearLastOpened()

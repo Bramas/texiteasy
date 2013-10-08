@@ -29,6 +29,9 @@
 
 int main(int argc, char *argv[])
 {
+#ifdef OS_MAC
+    QCoreApplication::addLibraryPath("/Developer/Applications/Qt/plugins/sqldrivers");
+#endif
     QApplication a(argc, argv);
 
     QFontDatabase::addApplicationFont(":/data/fonts/consola.ttf");
