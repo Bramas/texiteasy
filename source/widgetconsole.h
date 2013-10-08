@@ -32,6 +32,7 @@ class WidgetConsole : public QPlainTextEdit
     Q_OBJECT
 public:
     explicit WidgetConsole();
+    ~WidgetConsole();
 
     void setBuilder(Builder * builder);
     

@@ -51,6 +51,12 @@ CompletionEngine::CompletionEngine(WidgetTextEdit *parent) :
     _words.sort();
     qDebug()<<"Completion engine Initialized : "<<_words.count()<<" words";
 }
+CompletionEngine::~CompletionEngine()
+{
+#ifdef DEBUG_DESTRUCTOR
+    qDebug()<<"delete CompletionEngine";
+#endif
+}
 void CompletionEngine::loadFile(QString filename)
 {
     QFile userTagsfile(filename);

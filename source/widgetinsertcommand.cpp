@@ -173,12 +173,23 @@ WidgetInsertCommand::WidgetInsertCommand(WidgetTextEdit *parent) :
         ++colCount;
     }
 
-
+    db.close();
     //saveCommandsToPng();
 }
 
 WidgetInsertCommand::~WidgetInsertCommand()
 {
+#ifdef DEBUG_DESTRUCTOR
+    qDebug()<<"delete WidgetInsertCommand";
+#endif
+    for(int i=0; i < ui->tabWidget->count(); ++i)
+    {
+        QTableWidget * table = dynamic_cast<QTableWidget*>(this->ui->tabWidget->widget(i));
+
+        table->clear();
+        delete table;
+    }
+
     delete ui;
 }
 

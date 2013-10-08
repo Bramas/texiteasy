@@ -31,6 +31,15 @@ FileStructure::FileStructure(WidgetTextEdit *parent) :
 {
 
 }
+FileStructure::~FileStructure()
+{
+#ifdef DEBUG_DESTRUCTOR
+    qDebug()<<"delete FileStructure";
+#endif
+    delete this->blockIndentations;
+    structureInfo->clear();
+    delete structureInfo;
+}
 
 void FileStructure::updateStructure()
 {

@@ -41,7 +41,7 @@ class CompletionEngine : public QListWidget
 
 public:
     CompletionEngine(WidgetTextEdit * parent);
-
+    ~CompletionEngine();
     void proposeCommand(int left, int top, int lineHeight, QString commandBegin);
     QString acceptedWord();
 

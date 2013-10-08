@@ -16,6 +16,8 @@ DEFINES += "APPLICATION_NAME=$${APPLICATION_NAME}"
 VERSION = \\\"'0.4.0'\\\"
 DEFINES += "CURRENT_VERSION=$${VERSION}"
 
+#DEFINES += DEBUG_DESTRUCTOR
+
 # config_revision is used to make so task for migration
 # we increment it each time we need to make a task for those who update the soft
 # see configManager::checkRevision() for more information

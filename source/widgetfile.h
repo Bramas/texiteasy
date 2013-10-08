@@ -20,6 +20,7 @@ class WidgetFile : public QWidget
     Q_OBJECT
 public:
     explicit WidgetFile(QWidget *parent = 0);
+    ~WidgetFile();
     void initTheme();
 
     void pdflatex(void);

@@ -51,6 +51,7 @@ class FileStructure : public QObject
     Q_OBJECT
 public:
     explicit FileStructure(WidgetTextEdit *parent = 0);
+    ~FileStructure();
     QList<FileStructureInfo*> * info() { return this->structureInfo; }
     BlockIndentation *  indentations() { return this->blockIndentations; }
 

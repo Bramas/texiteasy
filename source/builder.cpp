@@ -38,6 +38,13 @@ Builder::Builder(File * file) :
     connect(this->process,SIGNAL(readyReadStandardOutput()), this, SLOT(onStandartOutputReady()));
 }
 
+Builder::~Builder()
+{
+#ifdef DEBUG_DESTRUCTOR
+    qDebug()<<"delete Builder";
+#endif
+    delete process;
+}
 void Builder::pdflatex()
 {
     if(this->file->getFilename().isEmpty())

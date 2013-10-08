@@ -28,11 +28,15 @@ Viewer::Viewer(File * file) :
     process(new QProcess)
 {
     connect(this->process, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(onFinished(int,QProcess::ExitStatus)));
-
-
-
 }
 
+Viewer::~Viewer()
+{
+#ifdef DEBUG_DESTRUCTOR
+    qDebug()<<"delete Viewer";
+#endif
+    delete process;
+}
 void Viewer::view(QString)
 {
     process->start("sumatrapdf "+this->file->getFilename().replace(QRegExp("(.*)\\.tex$"),"\\1.pdf")+" -reuse-instance -forward-search "+this->file->getFilename()+" "+QString::number(this->currentLine));

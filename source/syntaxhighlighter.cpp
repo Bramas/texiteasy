@@ -30,6 +30,12 @@ SyntaxHighlighter::SyntaxHighlighter(QTextDocument *parent) :
     QSyntaxHighlighter(parent)
 {
 }
+SyntaxHighlighter::~SyntaxHighlighter()
+{
+#ifdef DEBUG_DESTRUCTOR
+    qDebug()<<"delete SyntaxHighlighter";
+#endif
+}
 
 void SyntaxHighlighter::highlightBlock(const QString &text)
 {

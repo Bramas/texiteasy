@@ -32,6 +32,7 @@ class Viewer : public QObject
     Q_OBJECT
 public:
     Viewer(File * file);
+    ~Viewer();
     void setLine(int line) { this->currentLine = line; }
 
 public slots:

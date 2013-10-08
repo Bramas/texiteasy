@@ -34,6 +34,7 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QSplitterHandle>
+#include <QDebug>
 
 class MiniSplitterHandle : public QSplitterHandle
 {
@@ -44,11 +45,17 @@ public:
         setMask(QRegion(contentsRect()));
         setAttribute(Qt::WA_MouseNoMask, true);
     }
+    ~MiniSplitterHandle();
 protected:
     void resizeEvent(QResizeEvent *event);
     void paintEvent(QPaintEvent *event);
 };
-
+MiniSplitterHandle::~MiniSplitterHandle()
+{
+#ifdef DEBUG_DESTRUCTOR
+    qDebug()<<"delete MiniSplitterHandle";
+#endif
+}
 void MiniSplitterHandle::resizeEvent(QResizeEvent *event)
 {
     if (orientation() == Qt::Horizontal)

@@ -39,7 +39,7 @@ class File : public QObject
     Q_OBJECT
 public:
     explicit File(WidgetTextEdit * widgetTextEdit, QString filename = "");
-
+    ~File();
     /**
      * @brief getData
      * @return the QString data

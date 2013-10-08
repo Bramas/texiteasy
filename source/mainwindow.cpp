@@ -462,7 +462,7 @@ void MainWindow::closeCurrentWidgetFile()
     if(ui->verticalLayout->count() > 1)
     {
         QWidget * w = ui->verticalLayout->itemAt(1)->widget();
-        ui->verticalLayout->removeWidget(FileManager::Instance.currentWidgetFile());
+        ui->verticalLayout->removeWidget(w);
         w->setParent(0);
     }
 }

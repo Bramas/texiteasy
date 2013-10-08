@@ -79,6 +79,23 @@ WidgetFile::WidgetFile(QWidget *parent) :
     _widgetTextEdit->getCurrentFile()->setModified(false);
 }
 
+WidgetFile::~WidgetFile()
+{
+#ifdef DEBUG_DESTRUCTOR
+    qDebug()<<"delete WidgetFile";
+#endif
+    //delete this->layout();
+    //delete _verticalSplitter;
+    //delete _horizontalSplitter;
+    //delete _widgetSimpleOutput;
+    //delete _widgetConsole;
+    //delete _widgetLineNumber;
+    //delete _widgetFindReplace;
+    //delete _widgetPdfViewer;
+    //delete _syntaxHighlighter;
+    //delete _widgetTextEdit;
+}
+
 void WidgetFile::initTheme()
 {
     QPalette Pal(palette());

@@ -43,6 +43,13 @@ WidgetConsole::WidgetConsole() :
     this->setReadOnly(true);
 
 }
+
+WidgetConsole::~WidgetConsole()
+{
+#ifdef DEBUG_DESTRUCTOR
+    qDebug()<<"delete WidgetConsole";
+#endif
+}
 /*
 void WidgetConsole::paintEvent(QPaintEvent *)
 {

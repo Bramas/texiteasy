@@ -66,6 +66,29 @@ WidgetPdfDocument::WidgetPdfDocument(QWidget *parent) :
     connect(this, SIGNAL(translated(int)), _scroll, SLOT(setValue(int)));
 
 }
+WidgetPdfDocument::~WidgetPdfDocument()
+{
+    if(_pages)
+    {
+        this->refreshPages();
+        delete _pages;
+    }
+    if(_document)
+    {
+        delete _document;
+    }
+    if(_loadedPages)
+    {
+        delete _loadedPages;
+    }
+    if(scanner != NULL)
+    {
+        delete scanner;
+    }
+#ifdef DEBUG_DESTRUCTOR
+    qDebug()<<"delete WidgetPdfDocument";
+#endif
+}
 
 void WidgetPdfDocument::paintEvent(QPaintEvent *)
 {
@@ -193,6 +216,10 @@ void WidgetPdfDocument::initDocument()
     QString syncFile = fileInfo.canonicalPath() + QDir().separator() + fileInfo.baseName();
     if(QFile::exists(syncFile+".synctex.gz"))
     {
+        if(scanner != NULL )
+        {
+            delete scanner;
+        }
         scanner = synctex_scanner_new_with_output_file(syncFile.toUtf8().data(), NULL, 1);
         if( scanner == NULL )
         {
@@ -321,6 +348,10 @@ void WidgetPdfDocument::goToPage(int page, int top, int height)
 
 void WidgetPdfDocument::refreshPages()
 {
+    if(!_document)
+    {
+        return;
+    }
     for(int idx = 0; idx < this->_document->numPages(); ++idx)
     {
         if(_loadedPages[idx])

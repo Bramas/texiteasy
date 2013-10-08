@@ -57,6 +57,7 @@ class WidgetPdfDocument : public QWidget
     Q_OBJECT
 public:
     explicit WidgetPdfDocument(QWidget *parent = 0);
+    ~WidgetPdfDocument();
     void setFile(File * file) { this->_file = file; this->initDocument(); }
     void setWidgetTextEdit(WidgetTextEdit * widgetTextEdit) { this->_widgetTextEdit = widgetTextEdit; }
 

@@ -41,6 +41,7 @@ public:
         QString message;
         QString line;
     };
+    ~Builder();
 
     const QList<Builder::Output> & simpleOutput() const { return _simpleOutPut; }
     static QString Error;

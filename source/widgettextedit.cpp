@@ -72,7 +72,14 @@ WidgetTextEdit::WidgetTextEdit(QWidget * parent) :
     this->setText(" ");
     this->currentFile->setModified(false);
 }
-
+WidgetTextEdit::~WidgetTextEdit()
+{
+    delete fileStructure;
+    delete currentFile;
+#ifdef DEBUG_DESTRUCTOR
+    qDebug()<<"delete WidgetTextEdit";
+#endif
+}
 void WidgetTextEdit::scrollTo(int p)
 {
     this->verticalScrollBar()->setSliderPosition(p);

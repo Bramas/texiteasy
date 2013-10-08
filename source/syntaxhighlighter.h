@@ -30,6 +30,7 @@ class SyntaxHighlighter : public QSyntaxHighlighter
 {
 public:
     SyntaxHighlighter(QTextDocument *parent);
+    ~SyntaxHighlighter();
 
 protected:
     virtual void highlightBlock(const QString &text);

@@ -38,7 +38,15 @@ public slots:
     void jumpToPdfFromSource();
     void rehighlight();
 
-    void setCurrent(WidgetFile * widget) { setCurrent(_widgetFiles.indexOf(widget)); }
+    void setCurrent(WidgetFile * widget)
+    {
+        if(!widget)
+        {
+            setCurrent(-1);
+            return;
+        }
+        setCurrent(_widgetFiles.indexOf(widget));
+    }
     void setCurrent(int index) { _currentWidgetFileId = index; }
 
 private slots:

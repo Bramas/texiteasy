@@ -41,6 +41,14 @@ File::File(WidgetTextEdit* widgetTextEdit,QString filename) :
 {
     connect(_autoSaveTimer, SIGNAL(timeout()), this, SLOT(autoSave()));
 }
+File::~File()
+{
+#ifdef DEBUG_DESTRUCTOR
+    qDebug()<<"delete File";
+#endif
+    delete builder;
+    delete _autoSaveTimer;
+}
 void File::save(QString filename)
 {
     //Check the filename
@@ -52,7 +60,6 @@ void File::save(QString filename)
     {
         return;
     }
-
     if(_modified)
     {
         this->data = this->_widgetTextEdit->toPlainText();
