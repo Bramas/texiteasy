@@ -44,6 +44,7 @@ public:
         }
         update();
     }
+    void initTheme();
     void setTabText(int index, QString name) { _tabsName.replace(index, name); update(); }
     int currentIndex() const { return _currentIndex; }
     int count() const { return _tabsName.count(); }

@@ -30,7 +30,7 @@ WidgetStatusBar::WidgetStatusBar(QWidget *parent) :
     _labelConsole = new QLabel(QString("<div style='margin:5px;'><a class='link' style='text-decoration:none; color:")+
                                 ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
                                "' href='#'>Console</a></div>");
-    _labelConsole->setStyleSheet(QString("QLabel {  font-size:11px; }"));
+    //_labelConsole->setStyleSheet(QString("QLabel {  font-size:11px; }"));
     QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect(this);
     effect->setBlurRadius(0);
     effect->setColor(QColor("#000000"));
@@ -41,11 +41,11 @@ WidgetStatusBar::WidgetStatusBar(QWidget *parent) :
     _labelErrorTable = new QLabel(QString("<div style='margin:5px;'><a style='text-decoration:none; color:")+
                                 ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
                                "' href='#'>Erreurs</a></div>");
-    _labelErrorTable->setStyleSheet(QString("a { font-size:11px; color:")+
+    /*_labelErrorTable->setStyleSheet(QString("a { font-size:11px; color:")+
                                  ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
                                  QString("; text-decoration:none;")+
                                  QString("}")
-                                 );
+                                 );*/
     effect= new QGraphicsDropShadowEffect(this);
     effect->setBlurRadius(0);
     effect->setColor(QColor("#000000"));
@@ -189,4 +189,22 @@ void WidgetStatusBar::setPosition(int row, int column)
 void WidgetStatusBar::setEncoding(QString encoding)
 {
     _encodingLabel->setText(encoding);
+}
+
+
+void WidgetStatusBar::initTheme()
+{
+    this->setStyleSheet("QStatusBar::item { border: none;} QStatusBar {padding:0; height:100px; background: "+
+                        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("linenumber").background().color())+
+                                     "}");
+
+    _labelConsole->setText(QString("<div style='margin:5px;'><a class='link' style='text-decoration:none; color:")+
+                                ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
+                               "' href='#'>Console</a></div>");
+    _labelErrorTable->setText(QString("<div style='margin:5px;'><a style='text-decoration:none; color:")+
+                                ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
+                               "' href='#'>Erreurs</a></div>");
+    _positionLabel->setStyleSheet(QString("font-size:11px; margin-right:5px; color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color()));
+
+
 }

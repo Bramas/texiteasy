@@ -30,8 +30,12 @@ void WidgetTab::paintEvent(QPaintEvent * event)
     QPainter painter(this);
     QFontMetrics fm(painter.font());
 
-    QPen defaultPen(QColor(180,180,180));
-    QPen hoverPen(QColor(220,220,220));
+    bool darkTheme = ConfigManager::Instance.getTextCharFormats("linenumber").background().color().value() < 150;
+
+    QPen defaultPen(darkTheme ? ConfigManager::Instance.getTextCharFormats("linenumber").foreground().color().darker(150) :
+                                ConfigManager::Instance.getTextCharFormats("linenumber").foreground().color());
+    QPen hoverPen(darkTheme ? ConfigManager::Instance.getTextCharFormats("linenumber").foreground().color() :
+                              ConfigManager::Instance.getTextCharFormats("linenumber").foreground().color().darker(150));
     QPen defaultClosePen(QColor(100,100,100));
     defaultClosePen.setWidth(2);
     QPen hoverClosePen(QColor(130,130,130));
@@ -41,8 +45,10 @@ void WidgetTab::paintEvent(QPaintEvent * event)
 
 
     QPen rectPen(QColor(0,0,0));
-    QBrush backgroundBrush(QColor(10,10,10));
-    QBrush defaultRectBrush(QColor(40,40,40));
+    QBrush backgroundBrush(ConfigManager::Instance.getTextCharFormats("linenumber").background().color().darker(200));
+    QBrush defaultRectBrush(darkTheme ?
+                                ConfigManager::Instance.getTextCharFormats("linenumber").background().color().lighter(160) :
+                                ConfigManager::Instance.getTextCharFormats("linenumber").background().color().darker(160));
     QBrush hoverRectBrush(ConfigManager::Instance.getTextCharFormats("linenumber").background().color());
 
 
@@ -182,8 +188,13 @@ void WidgetTab::removeTab(int index)
     _widgets.removeAt(index);
     _tabsName.removeAt(index);
 
-    if(this->currentIndex() != index)
+    if(this->currentIndex() < index)
     {
+        return;
+    }
+    if(this->currentIndex() > index)
+    {
+        this->setCurrentIndex(this->currentIndex() - 1);
         return;
     }
     if(!this->count())
@@ -197,4 +208,8 @@ void WidgetTab::removeTab(int index)
         return;
     }
     this->setCurrentIndex(index - 1);
+}
+
+void WidgetTab::initTheme()
+{
 }

@@ -17,6 +17,7 @@ class WidgetStatusBar : public QStatusBar
 public:
     explicit WidgetStatusBar(QWidget *parent);
     ~WidgetStatusBar();
+    void initTheme();
 
 public slots:
     void toggleConsole();

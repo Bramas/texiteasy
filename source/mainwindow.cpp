@@ -434,7 +434,6 @@ void MainWindow::setTheme(QString theme)
     ConfigManager::Instance.load(theme);
     this->initTheme();
     FileManager::Instance.rehighlight();
-    FileManager::Instance.currentWidgetFile()->widgetTextEdit()->onCursorPositionChange();
 }
 
 void MainWindow::initTheme()
@@ -444,6 +443,8 @@ void MainWindow::initTheme()
     this->setAutoFillBackground(true);
     this->setPalette(Pal);
     FileManager::Instance.initTheme();
+    _widgetStatusBar->initTheme();
+    _tabWidget->initTheme();
 }
 
 void MainWindow::closeCurrentWidgetFile()

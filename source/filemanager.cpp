@@ -68,7 +68,11 @@ void FileManager::jumpToPdfFromSource()
 }
 void FileManager::rehighlight()
 {
-    this->currentWidgetFile()->syntaxHighlighter()->rehighlight();
+    foreach(WidgetFile * widgetFile, _widgetFiles)
+    {
+        widgetFile->syntaxHighlighter()->rehighlight();
+        widgetFile->widgetTextEdit()->onCursorPositionChange();
+    }
 }
 void FileManager::initTheme()
 {
@@ -80,6 +84,11 @@ void FileManager::initTheme()
 
 void FileManager::close(WidgetFile *widget)
 {
+    int id = _widgetFiles.indexOf(widget);
+    if(_currentWidgetFileId > id)
+    {
+        --_currentWidgetFileId;
+    }
     _widgetFiles.removeOne(widget);
     delete widget;
 }

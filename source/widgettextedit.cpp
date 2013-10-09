@@ -62,7 +62,7 @@ WidgetTextEdit::WidgetTextEdit(QWidget * parent) :
     _widgetLineNumber(0)
 
 {
-
+    this->setContentsMargins(0,0,0,0);
     connect(this,SIGNAL(textChanged()),this->currentFile,SLOT(setModified()));
     connect(this,SIGNAL(textChanged()),this,SLOT(updateIndentation()));
     connect(this,SIGNAL(cursorPositionChanged()), this, SLOT(onCursorPositionChange()));

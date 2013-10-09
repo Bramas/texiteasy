@@ -40,7 +40,11 @@ WidgetFile::WidgetFile(QWidget *parent) :
     layout->addWidget(_widgetLineNumber,0,0);
     layout->addWidget(_horizontalSplitter,0,1);
     layout->setColumnMinimumWidth(0,40);
+    layout->setContentsMargins(0,0,0,0);
+    layout->setSpacing(0);
+    layout->setMargin(0);
     this->setLayout(layout);
+    this->setContentsMargins(0,0,0,0);
 
     _horizontalSplitter->addWidget(_verticalSplitter);
     _horizontalSplitter->addWidget(_widgetPdfViewer);
@@ -103,7 +107,7 @@ void WidgetFile::initTheme()
     Pal.setColor(QPalette::Background, ConfigManager::Instance.getTextCharFormats("linenumber").background().color());
     this->setAutoFillBackground(true);
     this->setPalette(Pal);
-    _widgetTextEdit->setStyleSheet(QString("QPlainTextEdit { border: 1px solid ")+
+    _widgetTextEdit->setStyleSheet(QString("QPlainTextEdit { border: 0px solid ")+
                                         ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("textedit-border").foreground().color())+"; "+
                                         QString("color: ")+
                                         ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+"; "+
