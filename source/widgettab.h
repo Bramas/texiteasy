@@ -52,12 +52,14 @@ public:
 signals:
     void currentChanged(WidgetFile*);
     void tabCloseRequested(int index);
+    void newTabRequested();
 public slots:
 
 protected:
     void paintEvent(QPaintEvent *);
     void mousePressEvent(QMouseEvent *);
     void mouseMoveEvent(QMouseEvent *);
+    void mouseDoubleClickEvent(QMouseEvent *);
     
 private:
 

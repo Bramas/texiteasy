@@ -27,6 +27,7 @@ public slots:
     void setPosition(int,int);
     void setEncoding(QString encoding);
 
+    void updateButtons();
     
 private:
     Ui::WidgetStatusBar *ui;

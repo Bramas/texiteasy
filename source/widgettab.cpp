@@ -33,7 +33,7 @@ void WidgetTab::paintEvent(QPaintEvent * event)
     bool darkTheme = ConfigManager::Instance.getTextCharFormats("linenumber").background().color().value() < 150;
 
     QPen defaultPen(darkTheme ? ConfigManager::Instance.getTextCharFormats("linenumber").foreground().color().darker(150) :
-                                ConfigManager::Instance.getTextCharFormats("linenumber").foreground().color());
+                                ConfigManager::Instance.getTextCharFormats("linenumber").foreground().color().lighter(160));
     QPen hoverPen(darkTheme ? ConfigManager::Instance.getTextCharFormats("linenumber").foreground().color() :
                               ConfigManager::Instance.getTextCharFormats("linenumber").foreground().color().darker(150));
     QPen defaultClosePen(QColor(100,100,100));
@@ -47,7 +47,7 @@ void WidgetTab::paintEvent(QPaintEvent * event)
     QPen rectPen(QColor(0,0,0));
     QBrush backgroundBrush(ConfigManager::Instance.getTextCharFormats("linenumber").background().color().darker(200));
     QBrush defaultRectBrush(darkTheme ?
-                                ConfigManager::Instance.getTextCharFormats("linenumber").background().color().lighter(160) :
+                                ConfigManager::Instance.getTextCharFormats("linenumber").background().color().lighter(130) :
                                 ConfigManager::Instance.getTextCharFormats("linenumber").background().color().darker(160));
     QBrush hoverRectBrush(ConfigManager::Instance.getTextCharFormats("linenumber").background().color());
 
@@ -187,7 +187,6 @@ void WidgetTab::removeTab(int index)
 {
     _widgets.removeAt(index);
     _tabsName.removeAt(index);
-
     if(this->currentIndex() < index)
     {
         return;
@@ -204,7 +203,7 @@ void WidgetTab::removeTab(int index)
     }
     if(index == 0)
     {
-        this->setCurrentIndex(0);
+        emit currentChanged(_widgets.at(index));
         return;
     }
     this->setCurrentIndex(index - 1);
@@ -212,4 +211,11 @@ void WidgetTab::removeTab(int index)
 
 void WidgetTab::initTheme()
 {
+}
+void WidgetTab::mouseDoubleClickEvent(QMouseEvent * event)
+{
+    if(_tabsName.empty() || event->pos().x() > _tabsNameWidth.last())
+    {
+        emit newTabRequested();
+    }
 }

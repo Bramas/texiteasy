@@ -85,7 +85,8 @@ void FileManager::initTheme()
 void FileManager::close(WidgetFile *widget)
 {
     int id = _widgetFiles.indexOf(widget);
-    if(_currentWidgetFileId > id)
+
+    if(_currentWidgetFileId >= id && _currentWidgetFileId != 0)
     {
         --_currentWidgetFileId;
     }

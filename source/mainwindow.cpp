@@ -78,6 +78,7 @@ MainWindow::MainWindow(QWidget *parent) :
     _tabWidget = new WidgetTab();
     connect(_tabWidget, SIGNAL(currentChanged(WidgetFile*)), this, SLOT(onCurrentFileChanged(WidgetFile*)));
     connect(_tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
+    connect(_tabWidget, SIGNAL(newTabRequested()), this, SLOT(newFile()));
     ui->verticalLayout->setMargin(0);
     ui->verticalLayout->setSpacing(0);
     ui->verticalLayout->setContentsMargins(0,0,0,0);
@@ -363,12 +364,12 @@ void MainWindow::onCurrentFileChanged(WidgetFile * widget)
     FileManager::Instance.setCurrent(widget);
     if(!widget)
     {
-
         ui->verticalLayout->addWidget(_emptyWidget);
         return;
     }
     ui->verticalLayout->addWidget(widget);
     widget->widgetTextEdit()->setFocus();
+    _widgetStatusBar->updateButtons();
 }
 
 bool MainWindow::closeTab(int index)
@@ -393,14 +394,23 @@ bool MainWindow::closeTab(int index)
         }
     }
 
-    _tabWidget->removeTab(index);
+    if(widget == FileManager::Instance.currentWidgetFile())
+    {
+        this->closeCurrentWidgetFile();
+        FileManager::Instance.close(widget);
+        _tabWidget->removeTab(index);
+    }
+    else
+    {
+        FileManager::Instance.close(widget);
+        _tabWidget->removeTab(index);
+    }
     if(!_tabWidget->count())
     {
         // The following is also call by the tabWidget but maybe after so we
         // make sure that it is call before closing the widget
         this->onCurrentFileChanged(0);
     }
-    FileManager::Instance.close(widget);
     return true;
 }
 

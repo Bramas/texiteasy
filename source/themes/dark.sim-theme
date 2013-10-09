@@ -2,7 +2,7 @@
 command=" foreground(249, 39, 114)  background(39, 40, 34) "
 comment=" foreground(117, 113, 94)  background(39, 40, 34) "
 leftStructure="font(bold )  foreground(158, 158, 152)  background(58, 60, 50) "
-linenumber=" foreground(248, 248, 242)  background(58, 60, 50) "
+linenumber=" foreground(128, 128, 115)  background(39, 40, 34) "
 math=" foreground(118, 227, 75)  background(39, 40, 34) "
 normal="font(\"Consolas\" 13 )  foreground(248, 248, 242)  background(39, 40, 34) "
 selected-line=" foreground(14, 16, 15)  background(48, 50, 44) "

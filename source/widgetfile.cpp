@@ -44,7 +44,7 @@ WidgetFile::WidgetFile(QWidget *parent) :
     layout->setSpacing(0);
     layout->setMargin(0);
     this->setLayout(layout);
-    this->setContentsMargins(0,0,0,0);
+    this->setContentsMargins(0,8,0,0);
 
     _horizontalSplitter->addWidget(_verticalSplitter);
     _horizontalSplitter->addWidget(_widgetPdfViewer);

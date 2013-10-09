@@ -30,27 +30,13 @@ WidgetStatusBar::WidgetStatusBar(QWidget *parent) :
     _labelConsole = new QLabel(QString("<div style='margin:5px;'><a class='link' style='text-decoration:none; color:")+
                                 ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
                                "' href='#'>Console</a></div>");
-    //_labelConsole->setStyleSheet(QString("QLabel {  font-size:11px; }"));
-    QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect(this);
-    effect->setBlurRadius(0);
-    effect->setColor(QColor("#000000"));
-    effect->setOffset(-1,-1);
-    _labelConsole->setGraphicsEffect(effect);
     this->addPermanentWidget(_labelConsole);
 
     _labelErrorTable = new QLabel(QString("<div style='margin:5px;'><a style='text-decoration:none; color:")+
                                 ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
                                "' href='#'>Erreurs</a></div>");
-    /*_labelErrorTable->setStyleSheet(QString("a { font-size:11px; color:")+
-                                 ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
-                                 QString("; text-decoration:none;")+
-                                 QString("}")
-                                 );*/
-    effect= new QGraphicsDropShadowEffect(this);
-    effect->setBlurRadius(0);
-    effect->setColor(QColor("#000000"));
-    effect->setOffset(-1,-1);
-    _labelErrorTable->setGraphicsEffect(effect);
+
+
     this->addPermanentWidget(_labelErrorTable);
 
 /*
@@ -64,32 +50,17 @@ WidgetStatusBar::WidgetStatusBar(QWidget *parent) :
 */
     _positionLabel = new QLabel(trUtf8("Ligne %1, Colonne %2").arg("1").arg("1"),this);
     _positionLabel->setStyleSheet(QString("font-size:11px; margin-right:5px; color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())); 
-    effect= new QGraphicsDropShadowEffect(this);
-    effect->setBlurRadius(0);
-    effect->setColor(QColor("#000000"));
-    effect->setOffset(-1,-1);
-    _positionLabel->setGraphicsEffect(effect);
     this->addPermanentWidget(_positionLabel, 0);
 
     QLabel* messageArea = new QLabel(this);
     messageArea->setStyleSheet(QString("font-size:11px; color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color()));
     connect(this, SIGNAL(messageChanged(QString)), messageArea, SLOT(setText(QString)));
 
-    effect= new QGraphicsDropShadowEffect(this);
-    effect->setBlurRadius(0);
-    effect->setColor(QColor("#000000"));
-    effect->setOffset(-1,-1);
-    messageArea->setGraphicsEffect(effect);
     this->addPermanentWidget(messageArea, 1);
 
 
     _encodingLabel = new QLabel(this);
     _encodingLabel->setStyleSheet(QString("font-size:11px; color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color()));
-    effect= new QGraphicsDropShadowEffect(this);
-    effect->setBlurRadius(0);
-    effect->setColor(QColor("#000000"));
-    effect->setOffset(-1,-1);
-    _encodingLabel->setGraphicsEffect(effect);
     this->addPermanentWidget(_encodingLabel, 0);
 
     //connect(_pushButtonConsole, SIGNAL(clicked()), this, SLOT(toggleConsole()));
@@ -123,7 +94,7 @@ void WidgetStatusBar::toggleConsole()
         sizes.replace(3, 60);
         FileManager::Instance.currentWidgetFile()->verticalSplitter()->widget(3)->setMaximumHeight(460);
         FileManager::Instance.currentWidgetFile()->verticalSplitter()->setSizes(sizes);
-        _labelConsole->setStyleSheet(QString("background-color:")+ ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color()));
+        _labelConsole->setStyleSheet(QString("background-color:")+ ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color().darker()));
         this->closeErrorTable();
     }
     else
@@ -160,7 +131,7 @@ void WidgetStatusBar::toggleErrorTable()
         sizes.replace(3, 0);
         FileManager::Instance.currentWidgetFile()->verticalSplitter()->widget(2)->setMaximumHeight(460);
         FileManager::Instance.currentWidgetFile()->verticalSplitter()->setSizes(sizes);
-        _labelErrorTable->setStyleSheet(QString("background-color:")+ ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color()));
+        _labelErrorTable->setStyleSheet(QString("background-color:")+ ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color().darker(200)));
         this->closeConsole();
     }
     else
@@ -191,6 +162,30 @@ void WidgetStatusBar::setEncoding(QString encoding)
     _encodingLabel->setText(encoding);
 }
 
+void WidgetStatusBar::updateButtons()
+{
+    if(!FileManager::Instance.currentWidgetFile())
+    {
+        return;
+    }
+    QList<int> sizes = FileManager::Instance.currentWidgetFile()->verticalSplitter()->sizes();
+    if(sizes[2] == 0)
+    {
+        _labelErrorTable->setStyleSheet(QString("background-color:transparent"));
+    }
+    else
+    {
+        _labelErrorTable->setStyleSheet(QString("background-color:")+ ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color().darker(200)));
+    }
+    if(sizes[3] == 0)
+    {
+        _labelConsole->setStyleSheet(QString("background-color:transparent"));
+    }
+    else
+    {
+        _labelConsole->setStyleSheet(QString("background-color:")+ ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color().darker(200)));
+    }
+}
 
 void WidgetStatusBar::initTheme()
 {
@@ -207,4 +202,22 @@ void WidgetStatusBar::initTheme()
     _positionLabel->setStyleSheet(QString("font-size:11px; margin-right:5px; color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color()));
 
 
+    bool darkTheme = ConfigManager::Instance.getTextCharFormats("normal").background().color().value() < 100;
+    QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect(this);
+    effect->setBlurRadius(0);
+    effect->setColor(ConfigManager::Instance.getTextCharFormats("normal").background().color().darker(darkTheme ? 400 : 130));
+    effect->setOffset(darkTheme ? -1 : 1, darkTheme ? -1 : 1);
+    _labelConsole->setGraphicsEffect(effect);
+    effect= new QGraphicsDropShadowEffect(this);
+    effect->setBlurRadius(0);
+    effect->setColor(ConfigManager::Instance.getTextCharFormats("normal").background().color().darker(darkTheme ? 400 : 130));
+    effect->setOffset(darkTheme ? -1 : 1, darkTheme ? -1 : 1);
+    _labelErrorTable->setGraphicsEffect(effect);
+    effect= new QGraphicsDropShadowEffect(this);
+    effect->setBlurRadius(0);
+    effect->setColor(ConfigManager::Instance.getTextCharFormats("normal").background().color().darker(darkTheme ? 400 : 130));
+    effect->setOffset(darkTheme ? -1 : 1, darkTheme ? -1 : 1);
+    _positionLabel->setGraphicsEffect(effect);
+
+    updateButtons();
 }
