@@ -547,6 +547,24 @@ void ConfigManager::checkRevision()
                                   );
             settings.setValue("commandDatabaseFilename",dataLocation+dir.separator()+"commands.sqlite");
         }
+    case 3:
+        qDebug()<<"texiteasy 3=>4";
+        {
+            QDir dir;
+            //#ifdef OS_LINUX //do not know why but theme in the resource file does not work
+            //            QFile theme("./themes/dark.sim-theme");
+            //            QFile theme2("./themes/light.sim-theme");
+            //#else
+                        QFile theme(":/themes/dark.sim-theme");
+                        QFile theme2(":/themes/light.sim-theme");
+            //#endif
+                        QFile localtheme(dataLocation+dir.separator()+"dark.sim-theme");
+                        QFile localtheme2(dataLocation+dir.separator()+"light.sim-theme");
+                        localtheme.remove();
+                        localtheme2.remove();
+            theme.copy(dataLocation+dir.separator()+"dark.sim-theme");
+            theme2.copy(dataLocation+dir.separator()+"light.sim-theme");
+        }
      }
      settings.setValue("revision",CURRENT_CONFIG_REVISION);
 }

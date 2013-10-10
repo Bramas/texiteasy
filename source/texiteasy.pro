@@ -21,7 +21,7 @@ DEFINES += "CURRENT_VERSION=$${VERSION}"
 # config_revision is used to make so task for migration
 # we increment it each time we need to make a task for those who update the soft
 # see configManager::checkRevision() for more information
-DEFINES += "CURRENT_CONFIG_REVISION=3"
+DEFINES += "CURRENT_CONFIG_REVISION=4"
 
 SOURCES += main.cpp\
         mainwindow.cpp \
