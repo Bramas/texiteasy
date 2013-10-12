@@ -83,6 +83,10 @@ public slots:
     bool closeTab(int);
 protected:
     void closeEvent(QCloseEvent *);
+    void dragEnterEvent(QDragEnterEvent *);
+    void dragMoveEvent(QDragMoveEvent *);
+    void dragLeaveEvent(QDragLeaveEvent *);
+    void dropEvent(QDropEvent *);
     
 private:
     void closeCurrentWidgetFile();

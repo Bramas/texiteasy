@@ -46,6 +46,7 @@
 #include <QSettings>
 #include <QPushButton>
 #include <QDebug>
+#include <QUrl>
 #include <QMimeData>
 #include <QString>
 #include <QPalette>
@@ -175,6 +176,7 @@ MainWindow::MainWindow(QWidget *parent) :
         dialogConfig->addEditableActions(actionsList);
     }
 
+    setAcceptDrops(true);
 
     return;
 /*
@@ -298,6 +300,36 @@ void MainWindow::closeEvent(QCloseEvent * event)
     }
     event->ignore();*/
 }
+void MainWindow::dragEnterEvent(QDragEnterEvent * event)
+{
+    event->acceptProposedAction();
+}
+void MainWindow::dragMoveEvent(QDragMoveEvent * event)
+{
+    event->acceptProposedAction();
+}
+void MainWindow::dragLeaveEvent(QDragLeaveEvent * event)
+{
+    event->accept();
+}
+
+void MainWindow::dropEvent(QDropEvent * event)
+{
+    const QMimeData* mimeData = event->mimeData();
+
+    // check for our needed mime type, here a file or a list of files
+    if (mimeData->hasUrls())
+    {
+        QList<QUrl> urlList = mimeData->urls();
+
+        // extract the local paths of the files
+        for (int i = 0; i < urlList.size() && i < 32; ++i)
+        {
+            open(urlList.at(i).toLocalFile());
+        }
+
+    }
+}
 
 void MainWindow::newFile()
 {
@@ -319,6 +351,7 @@ void MainWindow::openLast()
 void MainWindow::open(QString filename)
 {
     QSettings settings;
+
     //get the filname
     if(filename.isEmpty())
     {
