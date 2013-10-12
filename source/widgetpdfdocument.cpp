@@ -116,19 +116,43 @@ void WidgetPdfDocument::paintEvent(QPaintEvent *)
         {
             if(_lastUpdate.elapsed()<1200)
             {
-                painter.drawRect(0, cumulatedTop, this->width()*_zoom+1, this->height());
+                painter.setBrush(QBrush(QColor(0,0,0,min(50,(750-_lastUpdate.elapsed())*(2250-_lastUpdate.elapsed())*50/(750*750) + 50))));
+                painter.setPen(Qt::NoPen);
+                painter.drawRect(-_painterTranslate.x(), cumulatedTop, this->width()+1, this->height());
             }
         }
+        int pageHeight = _document->page(i)->pageSize().height()*_zoom;
         if(i == _syncPage)
         {
             if(_lastUpdate.elapsed()<1200)
             {
                 painter.setBrush(QBrush(QColor(0,0,0,min(50,(750-_lastUpdate.elapsed())*(2250-_lastUpdate.elapsed())*50/(750*750) + 50))));
-                //qDebug()<<"t "<<_lastUpdate.elapsed();
-                painter.drawRect(0, cumulatedTop - this->height(), this->width()*_zoom+1, this->height() + _syncRect.y() * _zoom);
-                painter.drawRect(0, _syncRect.y()*_zoom + cumulatedTop + _syncRect.height()*_zoom, this->width()*_zoom+1, this->height());
-                painter.drawRect(0, _syncRect.y()*_zoom + cumulatedTop, _syncRect.x()*_zoom, _syncRect.height()*_zoom);
-                painter.drawRect((_syncRect.x() + _syncRect.width())*_zoom, _syncRect.y()*_zoom + cumulatedTop, width(), _syncRect.height()*_zoom);
+                painter.setPen(Qt::NoPen);
+                int rightMost = -_painterTranslate.y() + this->width() + 1;
+                int bottomMost = cumulatedTop + pageHeight + 1;
+
+                QPoint p[10];
+                p[0].setX(0);
+                p[0].setY( cumulatedTop - this->height());
+                p[1].setX(0);
+                p[1].setY(bottomMost);
+                p[2].setX(rightMost);
+                p[2].setY(bottomMost);
+                p[3].setX(rightMost);
+                p[3].setY( _syncRect.y()*_zoom + cumulatedTop);
+                p[4].setX((_syncRect.x() + _syncRect.width())*_zoom);
+                p[4].setY( _syncRect.y()*_zoom + cumulatedTop);
+                p[5].setX((_syncRect.x() + _syncRect.width())*_zoom);
+                p[5].setY( _syncRect.y()*_zoom + cumulatedTop + _syncRect.height()*_zoom);
+                p[6].setX(_syncRect.x()*_zoom);
+                p[6].setY( _syncRect.y()*_zoom + cumulatedTop + _syncRect.height()*_zoom);
+                p[7].setX(_syncRect.x()*_zoom);
+                p[7].setY( _syncRect.y()*_zoom + cumulatedTop);
+                p[8].setX(rightMost);
+                p[8].setY( _syncRect.y()*_zoom + cumulatedTop);
+                p[9].setX(rightMost);
+                p[9].setY(0);
+                painter.drawPolygon(p, 10, Qt::WindingFill);
             }
             else
             {
@@ -138,7 +162,6 @@ void WidgetPdfDocument::paintEvent(QPaintEvent *)
             //painter.drawLine(_syncRect.x()*_zoom-50,_syncRect.y()*_zoom + cumulatedTop,_syncRect.x()*_zoom-50,_syncRect.y()*_zoom + 20 + cumulatedTop);
         }
 
-        int pageHeight = _document->page(i)->pageSize().height()*_zoom;
         //Display page number:
         QString pageNumString = QString::number(i+1)+"/"+QString::number(_document->numPages());
         QFontMetrics fm(painter.font());

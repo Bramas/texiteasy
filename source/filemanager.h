@@ -35,6 +35,7 @@ public slots:
     void cut();
     void paste();
     void wrapEnvironment();
+    void setPdfSynchronized(bool pdfSynchronized);
     void jumpToPdfFromSource();
     void rehighlight();
 
@@ -56,6 +57,7 @@ private:
     explicit FileManager(QObject *parent = 0);
     QList<WidgetFile *> _widgetFiles;
     int _currentWidgetFileId;
+    bool _pdfSynchronized;
 };
 
 #endif // FILEMANAGER_H
