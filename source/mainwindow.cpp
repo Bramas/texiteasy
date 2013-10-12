@@ -302,6 +302,7 @@ void MainWindow::closeEvent(QCloseEvent * event)
 }
 void MainWindow::dragEnterEvent(QDragEnterEvent * event)
 {
+    /* TODO : reject files that are not .tex */
     event->acceptProposedAction();
 }
 void MainWindow::dragMoveEvent(QDragMoveEvent * event)
