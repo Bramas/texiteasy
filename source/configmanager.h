@@ -42,7 +42,7 @@ public:
 
     static ConfigManager Instance;
 
-    QTextCharFormat getTextCharFormats(QString key)
+    QTextCharFormat getTextCharFormats(QString key = QString("normal"))
     {
         //_charFormatMutex.lock();
         QTextCharFormat format(this->textCharFormats->value(key,this->textCharFormats->value("normal")));
@@ -51,6 +51,8 @@ public:
     }
 
     ~ConfigManager();
+
+    bool darkTheme() { return 120 > this->getTextCharFormats().background().color().value(); }
 
     void changePointSizeBy(int delta);
     void setPointSize(int size);
@@ -83,8 +85,11 @@ public:
     void setPdflatexCommand(QString command) { QSettings settings; settings.setValue("builder/pdflatex", command); }
     void setLatexPath(QString path) { QSettings settings; settings.setValue("builder/latexPath", path); }
 
+    bool isPdfSynchronized() { QSettings settings; return settings.value("pdfSynchronized", true).toBool(); }
+
     void init();
 public slots:
+    void setPdfSynchronized(bool pdfSynchronized) { QSettings settings; settings.setValue("pdfSynchronized", pdfSynchronized); }
     void openThemeFolder();
 
 private:

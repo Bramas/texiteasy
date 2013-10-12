@@ -3,6 +3,7 @@
 #include "widgetpdfdocument.h"
 #include "widgetpdfviewer.h"
 #include "syntaxhighlighter.h"
+#include "configmanager.h"
 #include <QDebug>
 
 
@@ -12,6 +13,7 @@ FileManager::FileManager(QObject *parent) :
     QObject(parent),
     _currentWidgetFileId(-1)
 {
+    _pdfSynchronized = ConfigManager::Instance.isPdfSynchronized();
 }
 
 bool FileManager::newFile()
@@ -28,6 +30,11 @@ bool FileManager::newFile()
     newFile->initTheme();
     _widgetFiles.append(newFile);
     _currentWidgetFileId = _widgetFiles.count() - 1;
+
+    if(_pdfSynchronized)
+    {
+        connect(this->currentWidgetFile()->widgetTextEdit()->verticalScrollBar(),SIGNAL(valueChanged(int)), this->currentWidgetFile()->widgetPdfViewer()->widgetPdfDocument(),SLOT(jumpToPdfFromSourceView(int)));
+    }
     connect(this->currentWidgetFile()->widgetTextEdit(), SIGNAL(cursorPositionChanged(int,int)), this, SLOT(sendCursorPositionChanged(int,int)));
     return true;
 }
@@ -92,4 +99,26 @@ void FileManager::close(WidgetFile *widget)
     }
     _widgetFiles.removeOne(widget);
     delete widget;
+}
+void FileManager::setPdfSynchronized(bool pdfSynchronized)
+{
+    if(_pdfSynchronized != pdfSynchronized)
+    {
+        if(pdfSynchronized)
+        {
+            foreach(WidgetFile * widgetFile, _widgetFiles)
+            {
+                connect(widgetFile->widgetTextEdit()->verticalScrollBar(),SIGNAL(valueChanged(int)), widgetFile->widgetPdfViewer()->widgetPdfDocument(),SLOT(jumpToPdfFromSourceView(int)));
+            }
+        }
+        else
+        {
+            foreach(WidgetFile * widgetFile, _widgetFiles)
+            {
+                disconnect(widgetFile->widgetTextEdit()->verticalScrollBar(),SIGNAL(valueChanged(int)), widgetFile->widgetPdfViewer()->widgetPdfDocument(),SLOT(jumpToPdfFromSourceView(int)));
+            }
+        }
+    }
+    _pdfSynchronized = pdfSynchronized;
+
 }

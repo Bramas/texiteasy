@@ -89,6 +89,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     _widgetStatusBar = new WidgetStatusBar(this);
+    ui->actionLinkSync->setChecked(ConfigManager::Instance.isPdfSynchronized());
+    _widgetStatusBar->setLinkSyncAction(ui->actionLinkSync);
     this->setStatusBar(_widgetStatusBar);
     connect(&FileManager::Instance, SIGNAL(cursorPositionChanged(int,int)), _widgetStatusBar, SLOT(setPosition(int,int)));
 
@@ -106,6 +108,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     // Connect menubar Actions
+    connect(this->ui->actionLinkSync, SIGNAL(toggled(bool)), &FileManager::Instance, SLOT(setPdfSynchronized(bool)));
+    connect(this->ui->actionLinkSync, SIGNAL(toggled(bool)), &ConfigManager::Instance, SLOT(setPdfSynchronized(bool)));
     connect(this->ui->actionDeleteLastOpenFiles,SIGNAL(triggered()),this,SLOT(clearLastOpened()));
     connect(this->ui->actionNouveau,SIGNAL(triggered()),this,SLOT(newFile()));
     connect(this->ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));

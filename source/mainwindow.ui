@@ -24,6 +24,9 @@
     <bool>false</bool>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
+    <property name="spacing">
+     <number>0</number>
+    </property>
     <property name="leftMargin">
      <number>9</number>
     </property>
@@ -34,9 +37,6 @@
      <number>0</number>
     </property>
     <property name="bottomMargin">
-     <number>0</number>
-    </property>
-    <property name="spacing">
      <number>0</number>
     </property>
    </layout>
@@ -82,6 +82,7 @@
     <addaction name="separator"/>
     <addaction name="actionAutoView"/>
     <addaction name="actionView"/>
+    <addaction name="actionLinkSync"/>
    </widget>
    <widget class="QMenu" name="menuOptions">
     <property name="title">
@@ -292,6 +293,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+E</string>
+   </property>
+  </action>
+  <action name="actionLinkSync">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Synchroniser le pdf</string>
    </property>
   </action>
  </widget>

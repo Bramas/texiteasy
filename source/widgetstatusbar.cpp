@@ -9,6 +9,7 @@
 #include <QSplitter>
 #include <QToolButton>
 #include <QLabel>
+#include <QBitmap>
 #include <QGraphicsDropShadowEffect>
 
 WidgetStatusBar::WidgetStatusBar(QWidget *parent) :
@@ -63,6 +64,28 @@ WidgetStatusBar::WidgetStatusBar(QWidget *parent) :
     _encodingLabel->setStyleSheet(QString("font-size:11px; color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color()));
     this->addPermanentWidget(_encodingLabel, 0);
 
+
+
+
+
+
+
+    _labelLinkSync = new WidgetStatusBarButton(this);
+    QImage linkImage(":/data/img/linkSync.png");
+    QImage  unlinkImage(":/data/img/unlinkSync.png");
+    if(ConfigManager::Instance.darkTheme())
+    {
+        linkImage.invertPixels();
+        unlinkImage.invertPixels();
+    }
+    _labelLinkSync->setCheckable(true);
+    _labelLinkSync->setPixmaps(new QPixmap(QPixmap::fromImage(unlinkImage)), new QPixmap(QPixmap::fromImage(linkImage)));
+    this->addPermanentWidget(_labelLinkSync);
+
+
+
+
+
     //connect(_pushButtonConsole, SIGNAL(clicked()), this, SLOT(toggleConsole()));
     connect(_labelConsole, SIGNAL(linkActivated(QString)), this, SLOT(toggleConsole()));
     //connect(_pushButtonErreurs, SIGNAL(clicked()), this, SLOT(toggleErrorTable()));
@@ -70,6 +93,8 @@ WidgetStatusBar::WidgetStatusBar(QWidget *parent) :
 
     this->setStyleSheet("QStatusBar::item { border: none;} QStatusBar {padding:0; height:100px; background: "+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("linenumber").background().color())+
                                      "}");
+
+
 
     this->setMaximumHeight(20);
 }
@@ -220,4 +245,65 @@ void WidgetStatusBar::initTheme()
     _positionLabel->setGraphicsEffect(effect);
 
     updateButtons();
+}
+/***************************************************
+ *
+ *          WidgetStatusBarButton
+ *
+ **************************/
+
+void WidgetStatusBarButton::leaveEvent(QEvent *)
+{
+    if(_defaultPixmap)
+    {
+        _label->setPixmap(*_defaultPixmap);
+    }
+}
+
+void WidgetStatusBarButton::enterEvent(QEvent *)
+{
+    if(_hoverPixmap)
+    {
+        _label->setPixmap(*_hoverPixmap);
+    }
+}
+void WidgetStatusBarButton::toggleChecked()
+{
+    _checked = ! _checked;
+    QPixmap * s = _defaultPixmap;
+    _defaultPixmap = _hoverPixmap;
+    _hoverPixmap = s;
+    if(this->action())
+    {
+        this->action()->trigger();
+    }
+}
+
+void WidgetStatusBarButton::toggleCheckedWithoutTriggeringAction()
+{
+    _checked = ! _checked;
+    QPixmap * s = _defaultPixmap;
+    _defaultPixmap = _hoverPixmap;
+    _hoverPixmap = s;
+    if(_defaultPixmap)
+    {
+        _label->setPixmap(*_defaultPixmap);
+    }
+}
+void WidgetStatusBarButton::mousePressEvent(QMouseEvent *)
+{
+    if(this->isCheckable())
+    {
+        this->action()->toggle();
+    }
+}
+void WidgetStatusBarButton::setAction(QAction *action)
+{
+    _action = action;
+    this->setCheckable(_action->isCheckable());
+    if(this->isCheckable())
+    {
+        this->setChecked(_action->isChecked());
+        connect(_action, SIGNAL(toggled(bool)), this, SLOT(setChecked(bool)));
+    }
 }
