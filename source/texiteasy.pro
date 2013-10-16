@@ -109,11 +109,14 @@ FORMS    += mainwindow.ui \
     widgetstatusbar.ui \
     dialogabout.ui
 
-#LIBS         += -LG:\poppler -lpoppler-qt4
-#LIBS         += -LG:\poppler\cpp\bin -lpoppler-cpp
-#LIBS         += -LG:\poppler\cpp\bin -lpoppler-cpp
-#LIBS         += G:\poppler\bin\poppler-cpp.dll
-#LIBS         += G:\poppler\bin\libpng14-14.dll
+TRANSLATIONS += texiteasy_fr.ts \
+                texiteasy_en.ts \
+                texiteasy_es.ts \
+                texiteasy_ja.ts \
+                texiteasy_vi.ts \
+                texiteasy_zh.ts
+
+CODECFORTR = UTF-8
 
 isEmpty( PREFIX ) {
     PREFIX=/usr
