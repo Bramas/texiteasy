@@ -1,10 +1,12 @@
 #include "application.h"
 #include <QFileOpenEvent>
+#include "updatechecker.h"
 
 Application::Application(int argc, char *argv[]) :
     QApplication(argc, argv)
 {
 
+    UpdateChecker * updateChecker = new UpdateChecker();
 }
 
 #ifdef OS_MAC

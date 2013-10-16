@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql xml
+QT       += core gui sql xml network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -57,7 +57,8 @@ SOURCES += main.cpp\
     widgetfile.cpp \
     filemanager.cpp \
     widgettab.cpp \
-    application.cpp
+    application.cpp \
+    updatechecker.cpp
 
 HEADERS  += mainwindow.h \
     widgetlinenumber.h \
@@ -94,7 +95,8 @@ HEADERS  += mainwindow.h \
     widgetfile.h \
     filemanager.h \
     widgettab.h \
-    application.h
+    application.h \
+    updatechecker.h
 
 FORMS    += mainwindow.ui \
     dialogwelcome.ui \

@@ -431,13 +431,27 @@ QStringList ConfigManager::themesList()
 #endif
     if(dataLocation.isEmpty())
     {
-        //QMessageBox::warning(this->mainWindow,QObject::tr("Attention"), QObject::tr("QStandardPaths::DataLocation est introuvable."));
         return QStringList();
     }
     QDir dir(dataLocation);
     return dir.entryList(QDir::Files | QDir::Readable, QDir::Name).filter(QRegExp("\\.sim-theme"));
 }
 
+bool ConfigManager::isThisVersionHaveToBeReminded(QString version)
+{
+    QSettings settings;
+    if(settings.value("lastDetectedUpdate", CURRENT_VERSION).toString().compare(version))
+    {
+        return true;
+    }
+    return false;
+}
+void ConfigManager::dontRemindMeThisVersion(QString version)
+{
+    QSettings settings;
+    settings.setValue("lastDetectedUpdate",version);
+
+}
 
 void ConfigManager::checkRevision()
 {
@@ -478,13 +492,9 @@ void ConfigManager::checkRevision()
             qDebug()<<"texiteasy 1=>2";
             {
                 QDir dir;
-                //#ifdef OS_LINUX //do not know why but theme in the resource file does not work
-                //            QFile theme("./themes/dark.sim-theme");
-                //            QFile theme2("./themes/light.sim-theme");
-                //#else
-                            QFile theme(":/themes/dark.sim-theme");
-                            QFile theme2(":/themes/light.sim-theme");
-                //#endif
+
+                QFile theme(":/themes/dark.sim-theme");
+                QFile theme2(":/themes/light.sim-theme");
                 theme.copy(dataLocation+dir.separator()+"dark.sim-theme");
                 theme2.copy(dataLocation+dir.separator()+"light.sim-theme");
             }
@@ -521,7 +531,6 @@ void ConfigManager::checkRevision()
             if(-2 == QProcess::execute(settings.value("latexPath").toString()+pdflatexCommand+" --version"))
             {
                 qDebug()<<"latex not found ask for a the path";
-                //this->_latexFound = false;
             }
             else
             {
@@ -551,17 +560,12 @@ void ConfigManager::checkRevision()
         qDebug()<<"texiteasy 3=>4";
         {
             QDir dir;
-            //#ifdef OS_LINUX //do not know why but theme in the resource file does not work
-            //            QFile theme("./themes/dark.sim-theme");
-            //            QFile theme2("./themes/light.sim-theme");
-            //#else
-                        QFile theme(":/themes/dark.sim-theme");
-                        QFile theme2(":/themes/light.sim-theme");
-            //#endif
-                        QFile localtheme(dataLocation+dir.separator()+"dark.sim-theme");
-                        QFile localtheme2(dataLocation+dir.separator()+"light.sim-theme");
-                        localtheme.remove();
-                        localtheme2.remove();
+            QFile theme(":/themes/dark.sim-theme");
+            QFile theme2(":/themes/light.sim-theme");
+            QFile localtheme(dataLocation+dir.separator()+"dark.sim-theme");
+            QFile localtheme2(dataLocation+dir.separator()+"light.sim-theme");
+            localtheme.remove();
+            localtheme2.remove();
             theme.copy(dataLocation+dir.separator()+"dark.sim-theme");
             theme2.copy(dataLocation+dir.separator()+"light.sim-theme");
         }

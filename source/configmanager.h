@@ -87,6 +87,8 @@ public:
 
     bool isPdfSynchronized() { QSettings settings; return settings.value("pdfSynchronized", true).toBool(); }
 
+    bool isThisVersionHaveToBeReminded(QString version);
+    void dontRemindMeThisVersion(QString version);
     void init();
 public slots:
     void setPdfSynchronized(bool pdfSynchronized) { QSettings settings; settings.setValue("pdfSynchronized", pdfSynchronized); }
