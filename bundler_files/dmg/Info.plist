@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>tex</string>
+				<string>TEX</string>
+				<string>bib</string>
+				<string>BIB</string>
+				<string>sty</string>
+				<string>STY</string>
+				<string>cls</string>
+				<string>CLS</string>
+				<string>mp</string>
+				<string>MP</string>
+				<string>asy</string>
+				<string>ASY</string>
+				<string>Rnw</string>
+			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string>texiteasy.icns</string>
+			<key>CFBundleTypeName</key>
+			<string>TeX Document</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>LSIsAppleDefaultForType</key>
+			<true/>
+		</dict>
+	</array>
+	<key>CFBundleIconFile</key>
+	<string>texiteasy.icns</string>
+	<key>CFBundleExecutable</key>
+	<string>texiteasy</string>
+	<key>CFBundleGetInfoString</key>
+	<string>Copyright (c) 20013, Quentin BRAMAS</string>
+	<key>CFBundleIdentifier</key>
+	<string>texiteasy</string>
+	<key>CFBundleName</key>
+	<string>texiteasy</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.5.3</string>
+	<key>CFBundleVersion</key>
+	<string>0.5.3</string>
+	<key>NSHighResolutionCapable</key>
+	<string>True</string>
+</dict>
+</plist>

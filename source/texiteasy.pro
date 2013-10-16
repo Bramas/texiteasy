@@ -13,7 +13,7 @@ TEMPLATE = app
 
 APPLICATION_NAME = \\\"'TexitEasy'\\\"
 DEFINES += "APPLICATION_NAME=$${APPLICATION_NAME}"
-VERSION = \\\"'0.5.2'\\\"
+VERSION = \\\"'0.5.3'\\\"
 DEFINES += "CURRENT_VERSION=$${VERSION}"
 
 #DEFINES += DEBUG_DESTRUCTOR
@@ -56,7 +56,8 @@ SOURCES += main.cpp\
     dialogabout.cpp \
     widgetfile.cpp \
     filemanager.cpp \
-    widgettab.cpp
+    widgettab.cpp \
+    application.cpp
 
 HEADERS  += mainwindow.h \
     widgetlinenumber.h \
@@ -92,7 +93,8 @@ HEADERS  += mainwindow.h \
     dialogabout.h \
     widgetfile.h \
     filemanager.h \
-    widgettab.h
+    widgettab.h \
+    application.h
 
 FORMS    += mainwindow.ui \
     dialogwelcome.ui \

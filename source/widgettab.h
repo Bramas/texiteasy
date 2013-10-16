@@ -45,7 +45,6 @@ public:
         update();
     }
     void initTheme();
-    void setTabText(int index, QString name) { _tabsName.replace(index, name); update(); }
     int currentIndex() const { return _currentIndex; }
     int count() const { return _tabsName.count(); }
     
@@ -54,6 +53,19 @@ signals:
     void tabCloseRequested(int index);
     void newTabRequested();
 public slots:
+    void setTabText(int index, QString name)
+    {
+        if(index >= _tabsName.count())
+            return;
+        _tabsName.replace(index, name);
+        update();
+    }
+    void setTabText(WidgetFile* tab, QString name)
+    {
+        name.replace(QRegExp("^.*[\\\\\\/]([^\\\\\\/]*)$"),"\\1");
+        int index = _widgets.indexOf(tab);
+        setTabText(index, name);
+    }
 
 protected:
     void paintEvent(QPaintEvent *);

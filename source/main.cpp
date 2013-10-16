@@ -22,7 +22,7 @@
 
 
 #include "mainwindow.h"
-#include <QApplication>
+#include "application.h"
 #include <QSettings>
 #include <QFontDatabase>
 #include <QDebug>
@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 #ifdef OS_MAC
     QCoreApplication::addLibraryPath("/Developer/Applications/Qt/plugins/sqldrivers");
 #endif
-    QApplication a(argc, argv);
+    Application a(argc, argv);
 
     QFontDatabase::addApplicationFont(":/data/fonts/consola.ttf");
     QFontDatabase::addApplicationFont(":/data/fonts/consolab.ttf");
@@ -41,6 +41,7 @@ int main(int argc, char *argv[])
 
     qDebug()<<QString("Start ")+APPLICATION_NAME+QString(" version ")+CURRENT_VERSION;
     MainWindow w;
+    a.connect(&a, SIGNAL(requestOpenFile(QString)), &w, SLOT(open(QString)));
 
     if(argc > 1)
     {

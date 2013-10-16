@@ -81,6 +81,7 @@ public slots:
     void changeTheme(void);
     void onCurrentFileChanged(WidgetFile * widget);
     bool closeTab(int);
+    void addFilenameToLastOpened(QString filename);
 protected:
     void closeEvent(QCloseEvent *);
     void dragEnterEvent(QDragEnterEvent *);

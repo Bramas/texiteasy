@@ -20,10 +20,13 @@ public:
 
 signals:
     void cursorPositionChanged(int,int);
+    void filenameChanged(QString);
+    void filenameChanged(WidgetFile*, QString);
 
 public slots:
     bool newFile();
 
+    void sendFilenameChanged(WidgetFile* w, QString name) { emit filenameChanged(w,name); emit filenameChanged(name); }
     void save() { this->currentWidgetFile()->save(); }
     void saveAs() { this->currentWidgetFile()->saveAs(); }
     void pdflatex(void){ this->currentWidgetFile()->pdflatex(); }

@@ -9,6 +9,7 @@
 #include "widgetlinenumber.h"
 #include "syntaxhighlighter.h"
 #include "file.h"
+#include "filemanager.h"
 #include "builder.h"
 #include "configmanager.h"
 #include <QPushButton>
@@ -189,13 +190,18 @@ void WidgetFile::saveAs()
     //this->widgetTextEdit->getCurrentFile()->setData("sdfsdfg");
     //return;
     QString filename = QFileDialog::getSaveFileName(this,tr("Enregistrer un fichier"));
-    _widgetTextEdit->getCurrentFile()->setData(_widgetTextEdit->toPlainText());
     if(filename.isEmpty())
     {
         return;
     }
+    QString oldFilename = _widgetTextEdit->getCurrentFile()->getFilename();
+    _widgetTextEdit->getCurrentFile()->setData(_widgetTextEdit->toPlainText());
     _widgetTextEdit->getCurrentFile()->save(filename);
-    this->setWindowTitle(filename.replace(QRegExp("^.*[\\\\\\/]([^\\\\\\/]*)$"),"\\1")+" - texiteasy");
+
+    if(oldFilename.compare(filename))
+    {
+        emit FileManager::Instance.sendFilenameChanged(this, filename);
+    }
 }
 
 void WidgetFile::open(QString filename)

@@ -134,6 +134,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->ui->actionView, SIGNAL(triggered()), &FileManager::Instance,SLOT(jumpToPdfFromSource()));
 
 
+    connect(&FileManager::Instance, SIGNAL(filenameChanged(WidgetFile*, QString)), _tabWidget, SLOT(setTabText(WidgetFile*,QString)));
+    connect(&FileManager::Instance, SIGNAL(filenameChanged(QString)), this, SLOT(addFilenameToLastOpened(QString)));
+
     QAction * lastAction = this->ui->menuTh_me->actions().last();
     foreach(const QString& theme, ConfigManager::Instance.themesList())
     {
@@ -343,6 +346,24 @@ void MainWindow::newFile()
     }
     return;
 }
+void MainWindow::addFilenameToLastOpened(QString filename)
+{
+    QSettings settings;
+    QFileInfo info(filename);
+    settings.setValue("lastFolder",info.path());
+    QString basename = info.baseName();
+    //window title
+    this->setWindowTitle(basename+" - texiteasy");
+    //udpate the settings
+    {
+        QSettings settings;
+        QStringList lastFiles = settings.value("lastFiles",QStringList()).toStringList();
+        lastFiles.prepend(filename);
+        lastFiles.removeDuplicates();
+        while(lastFiles.count()>10) { lastFiles.pop_back(); }
+        settings.setValue("lastFiles", lastFiles);
+    }
+}
 
 void MainWindow::openLast()
 {
@@ -363,20 +384,7 @@ void MainWindow::open(QString filename)
             return;
         }
     }
-    QFileInfo info(filename);
-    settings.setValue("lastFolder",info.path());
-    QString basename = info.baseName();
-    //window title
-    this->setWindowTitle(basename+" - texiteasy");
-    //udpate the settings
-    {
-        QSettings settings;
-        QStringList lastFiles = settings.value("lastFiles",QStringList()).toStringList();
-        lastFiles.prepend(filename);
-        lastFiles.removeDuplicates();
-        while(lastFiles.count()>10) { lastFiles.pop_back(); }
-        settings.setValue("lastFiles", lastFiles);
-    }
+    this->addFilenameToLastOpened(filename);
     //open
 
     if(FileManager::Instance.open(filename))
@@ -391,7 +399,7 @@ void MainWindow::open(QString filename)
         _tabWidget->setTabText(_tabWidget->currentIndex(), FileManager::Instance.currentWidgetFile()->widgetTextEdit()->getCurrentFile()->fileInfo().baseName());
     }
 
-    this->statusBar()->showMessage(basename,4000);
+    this->statusBar()->showMessage(filename,4000);
     //this->_widgetStatusBar->setEncoding(this->widgetTextEdit->getCurrentFile()->codec());
 
 }
