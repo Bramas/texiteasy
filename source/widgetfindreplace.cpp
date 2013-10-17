@@ -119,3 +119,12 @@ void WidgetFindReplace::replaceAll()
         while(find(-1, false));
     }
 }
+
+void WidgetFindReplace::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::LanguageChange) {
+           this->ui->retranslateUi(this);
+    } else
+        QWidget::changeEvent(event);
+}
+

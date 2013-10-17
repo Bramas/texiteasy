@@ -27,7 +27,7 @@
 #include <QList>
 
 namespace Ui {
-class DialogConfig;
+    class DialogConfig;
 }
 class QListWidgetItem;
 class MainWindow;
@@ -48,6 +48,8 @@ public slots:
     void changePage(int currentRow);
     void configureShortCut(QTableWidgetItem *item);
     
+protected:
+    void changeEvent(QEvent *event);
 private:
     QList<QAction*> _actionsList;
     Ui::DialogConfig *ui;

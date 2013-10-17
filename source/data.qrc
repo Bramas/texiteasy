@@ -11,5 +11,11 @@
         <file>data/commands.sqlite</file>
         <file>data/img/linkSync.png</file>
         <file>data/img/unlinkSync.png</file>
+        <file>translations/texiteasy_en.qm</file>
+        <file>translations/texiteasy_es.qm</file>
+        <file>translations/texiteasy_fr.qm</file>
+        <file>translations/texiteasy_ja.qm</file>
+        <file>translations/texiteasy_vi.qm</file>
+        <file>translations/texiteasy_zh.qm</file>
     </qresource>
 </RCC>

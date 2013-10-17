@@ -74,7 +74,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     ConfigManager::Instance.setMainWindow(this);
-    ConfigManager::Instance.init();
 
     _tabWidget = new WidgetTab();
     connect(_tabWidget, SIGNAL(currentChanged(WidgetFile*)), this, SLOT(onCurrentFileChanged(WidgetFile*)));
@@ -137,6 +136,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&FileManager::Instance, SIGNAL(filenameChanged(WidgetFile*, QString)), _tabWidget, SLOT(setTabText(WidgetFile*,QString)));
     connect(&FileManager::Instance, SIGNAL(filenameChanged(QString)), this, SLOT(addFilenameToLastOpened(QString)));
 
+    connect(&ConfigManager::Instance, SIGNAL(versionIsOutdated()), this, SLOT(addUpdateMenu()));
+
     QAction * lastAction = this->ui->menuTh_me->actions().last();
     foreach(const QString& theme, ConfigManager::Instance.themesList())
     {
@@ -182,73 +183,6 @@ MainWindow::MainWindow(QWidget *parent) :
     setAcceptDrops(true);
 
     return;
-/*
-    connect(this->widgetTextEdit->getCurrentFile()->getBuilder(), SIGNAL(statusChanged(QString)), this->statusBar(), SLOT(showMessage(QString)));//
-    connect(_widgetConsole, SIGNAL(requestLine(int)), widgetTextEdit, SLOT(goToLine(int)));//
-
-
-
-
-    //Display only the editor :
-    {
-        qRegisterMetaType<IntegerList>("IntegerList");
-        qRegisterMetaTypeStreamOperators<IntegerList>("IntegerList");
-
-        QList<int> sizes;
-        if(settings.contains("leftSplitterEditorSize"))
-        {
-            sizes << settings.value("leftSplitterEditorSize").toInt();
-        }
-        else
-        {
-            sizes<<800;
-        }
-        if(settings.contains("leftSplitterReplaceSize"))
-        {
-            sizes << settings.value("leftSplitterReplaceSize").toInt();
-        }
-        else
-        {
-            sizes<<0;
-        }
-        if(settings.contains("leftSplitterSimpleOutputSize"))
-        {
-            sizes << settings.value("leftSplitterSimpleOutputSize").toInt();
-            if(sizes.last()>0)
-            {
-                _widgetStatusBar->toggleErrorTable();
-            }
-        }
-        else
-        {
-            sizes<<0;
-        }
-        if(settings.contains("leftSplitterConsoleSize"))
-        {
-            sizes << settings.value("leftSplitterConsoleSize").toInt();
-            if(sizes.last()>0)
-            {
-                _widgetStatusBar->toggleConsole();
-            }
-        }
-        else
-        {
-            sizes<<0;
-        }
-        _leftSplitter->setSizes(sizes);
-        QList<int> mainSizes;
-        if(settings.contains("mainSplitterEditorSize"))
-        {
-            mainSizes << settings.value("mainSplitterEditorSize").toInt();
-            mainSizes << width() - settings.value("mainSplitterEditorSize").toInt();
-        }
-        else
-        {
-            mainSizes << width() / 2 << width() / 2;
-        }
-        _mainSplitter->setSizes(mainSizes);
-    }*/
-
 }
 
 MainWindow::~MainWindow()
@@ -256,26 +190,6 @@ MainWindow::~MainWindow()
     QSettings settings;
     settings.beginGroup("mainwindow");
     settings.setValue("geometry", this->geometry());
-
-    /*
-    // Save settings
-    {
-
-        {
-            QList<int> iList;
-            iList = _mainSplitter->sizes();
-            settings.setValue("mainSplitterEditorSize",iList[0]);
-        }
-        {
-            QList<int> iList;
-            iList = _leftSplitter->sizes();
-            settings.setValue("leftSplitterEditorSize",iList[0]);
-            settings.setValue("leftSplitterReplaceSize",iList[1]);
-            settings.setValue("leftSplitterSimpleOutputSize",iList[2]);
-            settings.setValue("leftSplitterConsoleSize",iList[3]);
-        }
-        settings.endGroup();
-    }*/
     delete ui;
 }
 
@@ -296,12 +210,6 @@ void MainWindow::closeEvent(QCloseEvent * event)
         }
     }
     event->accept();
-/*    if(this->closeCurrentFile())
-    {
-        event->accept();
-        return;
-    }
-    event->ignore();*/
 }
 void MainWindow::dragEnterEvent(QDragEnterEvent * event)
 {
@@ -334,6 +242,13 @@ void MainWindow::dropEvent(QDropEvent * event)
 
     }
 }
+void MainWindow::changeEvent(QEvent *event)
+ {
+     if (event->type() == QEvent::LanguageChange) {
+         this->ui->retranslateUi(this);
+     } else
+         QWidget::changeEvent(event);
+ }
 
 void MainWindow::newFile()
 {
@@ -511,4 +426,10 @@ void MainWindow::closeCurrentWidgetFile()
         ui->verticalLayout->removeWidget(w);
         w->setParent(0);
     }
+}
+void MainWindow::addUpdateMenu()
+{
+    QAction * openWebsiteAction = new QAction(trUtf8("Mettre à jour TexitEasy"), this->menuBar());
+    this->menuBar()->addAction(openWebsiteAction);
+    connect(openWebsiteAction, SIGNAL(triggered()), &ConfigManager::Instance, SLOT(openUpdateWebsite()));
 }

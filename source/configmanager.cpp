@@ -26,6 +26,8 @@
 #include <QDesktopServices>
 #include <QProcess>
 #include <QFileDialog>
+#include <QTranslator>
+#include <QApplication>
 #if QT_VERSION < 0x050000
     #include <QDesktopServices>
 #else
@@ -66,6 +68,11 @@ void ConfigManager::init()
 
 
 
+    if(!settings.contains("language"))
+    {
+        QString locale = QLocale::system().name().section('_', 0, 0);
+        settings.setValue("language",locale);
+    }
     if(!settings.contains("theme"))
     {
         settings.setValue("theme",QString("dark"));
@@ -110,6 +117,8 @@ void ConfigManager::init()
 #endif
     }
     settings.endGroup();
+
+    this->applyTranslation();
     return;
 
 }
@@ -435,6 +444,21 @@ QStringList ConfigManager::themesList()
     }
     QDir dir(dataLocation);
     return dir.entryList(QDir::Files | QDir::Readable, QDir::Name).filter(QRegExp("\\.sim-theme"));
+}
+
+QStringList ConfigManager::languagesList()
+{
+    QDir dir(":/translations");
+    return dir.entryList(QDir::Files | QDir::Readable, QDir::Name).replaceInStrings(QRegExp("^texiteasy_([a-zA-Z0-9]+)\\.qm$"), "\\1");
+}
+void ConfigManager::applyTranslation()
+{
+    QTranslator * translator = new QTranslator();
+    if(!translator->load(":/translations/texiteasy_"+this->language()))
+    {
+        translator->load(":/translations/texiteasy_en");
+    }
+    QApplication::installTranslator(translator);
 }
 
 bool ConfigManager::isThisVersionHaveToBeReminded(QString version)

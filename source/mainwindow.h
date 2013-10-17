@@ -82,12 +82,15 @@ public slots:
     void onCurrentFileChanged(WidgetFile * widget);
     bool closeTab(int);
     void addFilenameToLastOpened(QString filename);
+private slots:
+    void addUpdateMenu();
 protected:
     void closeEvent(QCloseEvent *);
     void dragEnterEvent(QDragEnterEvent *);
     void dragMoveEvent(QDragMoveEvent *);
     void dragLeaveEvent(QDragLeaveEvent *);
     void dropEvent(QDropEvent *);
+    void changeEvent(QEvent *event);
     
 private:
     void closeCurrentWidgetFile();

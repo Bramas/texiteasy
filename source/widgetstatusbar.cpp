@@ -19,36 +19,19 @@ WidgetStatusBar::WidgetStatusBar(QWidget *parent) :
     ui->setupUi(this);
     this->setContextMenuPolicy(Qt::PreventContextMenu);
 
-
-   /* _pushButtonConsole = new QToolButton();
-    _pushButtonConsole->setText(trUtf8("Console"));
-    _pushButtonConsole->setCheckable(true);
-    _pushButtonConsole->setChecked(sizes[3] != 0);
-    _pushButtonConsole->setAutoRaise(true);
-    _pushButtonConsole->setStyleSheet(QString("font-size:11px; color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color()));
-    this->addPermanentWidget(_pushButtonConsole, 0);
-*/
     _labelConsole = new QLabel(QString("<div style='margin:5px;'><a class='link' style='text-decoration:none; color:")+
                                 ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
-                               "' href='#'>Console</a></div>");
+                               "' href='#'>"+trUtf8("Console")+"</a></div>");
     this->addPermanentWidget(_labelConsole);
 
     _labelErrorTable = new QLabel(QString("<div style='margin:5px;'><a style='text-decoration:none; color:")+
                                 ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
-                               "' href='#'>Erreurs</a></div>");
+                               "' href='#'>"+trUtf8("Erreurs")+"</a></div>");
 
 
     this->addPermanentWidget(_labelErrorTable);
 
-/*
-    _pushButtonErreurs = new QToolButton();
-    _pushButtonErreurs->setText(trUtf8("Erreurs"));
-    _pushButtonErreurs->setCheckable(true);
-    _pushButtonErreurs->setChecked(sizes[2] != 0);
-    _pushButtonErreurs->setAutoRaise(true);
-    _pushButtonErreurs->setStyleSheet(QString("font-size:11px; color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color()));
-    this->addPermanentWidget(_pushButtonErreurs, 0);
-*/
+
     _positionLabel = new QLabel(trUtf8("Ligne %1, Colonne %2").arg("1").arg("1"),this);
     _positionLabel->setStyleSheet(QString("font-size:11px; margin-right:5px; color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())); 
     this->addPermanentWidget(_positionLabel, 0);
@@ -86,9 +69,7 @@ WidgetStatusBar::WidgetStatusBar(QWidget *parent) :
 
 
 
-    //connect(_pushButtonConsole, SIGNAL(clicked()), this, SLOT(toggleConsole()));
     connect(_labelConsole, SIGNAL(linkActivated(QString)), this, SLOT(toggleConsole()));
-    //connect(_pushButtonErreurs, SIGNAL(clicked()), this, SLOT(toggleErrorTable()));
     connect(_labelErrorTable, SIGNAL(linkActivated(QString)), this, SLOT(toggleErrorTable()));
 
     this->setStyleSheet("QStatusBar::item { border: none;} QStatusBar {padding:0; height:100px; background: "+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("linenumber").background().color())+
@@ -220,10 +201,10 @@ void WidgetStatusBar::initTheme()
 
     _labelConsole->setText(QString("<div style='margin:5px;'><a class='link' style='text-decoration:none; color:")+
                                 ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
-                               "' href='#'>Console</a></div>");
+                               "' href='#'>"+trUtf8("Console")+"</a></div>");
     _labelErrorTable->setText(QString("<div style='margin:5px;'><a style='text-decoration:none; color:")+
                                 ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
-                               "' href='#'>Erreurs</a></div>");
+                               "' href='#'>"+trUtf8("Erreurs")+"</a></div>");
     _positionLabel->setStyleSheet(QString("font-size:11px; margin-right:5px; color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color()));
 
 

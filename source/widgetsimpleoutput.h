@@ -2,6 +2,7 @@
 #define WIDGETSIMPLEOUTPUT_H
 
 #include <QTableWidget>
+#include <QEvent>
 
 class Builder;
 class WidgetTextEdit;
@@ -21,7 +22,15 @@ public slots:
     void onSuccess(void);
     void onCellSelected(int,int);
     
-private:
+protected:
+    void changeEvent(QEvent *event)
+    {
+        if (event->type() == QEvent::LanguageChange) {
+               //TODO
+        } else
+            QWidget::changeEvent(event);
+    }
+    private:
     Builder * _builder;
     WidgetTextEdit * _widgetTextEdit;
 };

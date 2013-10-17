@@ -43,6 +43,18 @@ DialogConfig::DialogConfig(MainWindow *parent) :
     connect(this->ui->listWidget, SIGNAL(currentRowChanged( int )), this, SLOT(changePage( int )));
     connect(this->ui->checkBox_replaceDefaultFont, SIGNAL(toggled(bool)), this->ui->comboBox_fontFamilly, SLOT(setEnabled(bool)));
     connect(this->ui->tableWidget_keyBinding, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(configureShortCut(QTableWidgetItem*)));
+
+    // Page General
+    QString currentLanguage = ConfigManager::Instance.language();
+    foreach(QString language, ConfigManager::Instance.languagesList())
+    {
+        this->ui->comboBoxLanguages->addItem(language);
+        if(!currentLanguage.compare(language,Qt::CaseInsensitive))
+        {
+            this->ui->comboBoxLanguages->setCurrentIndex(this->ui->comboBoxLanguages->count()-1);
+        }
+    }
+
 }
 
 DialogConfig::~DialogConfig()
@@ -66,6 +78,10 @@ void DialogConfig::saveAndClose()
 }
 void DialogConfig::save()
 {
+
+    // Page General
+    ConfigManager::Instance.setLanguage(this->ui->comboBoxLanguages->currentText());
+
     // Page Editor
     //
 
@@ -100,16 +116,6 @@ void DialogConfig::show()
     QSettings settings;
     settings.beginGroup("theme");
 
-    /*if(!settings.value("theme",QString("dark")).toString().compare("dark"))
-    {
-        this->ui->radioButtonDarkTheme->setChecked(true);
-        this->ui->radioButtonLightTheme->setChecked(false);
-    }
-    else
-    {
-        this->ui->radioButtonDarkTheme->setChecked(false);
-        this->ui->radioButtonLightTheme->setChecked(true);
-    }*/
 
 
     // Page Builder:
@@ -195,4 +201,11 @@ void DialogConfig::configureShortCut(QTableWidgetItem *item)
             delete (keydlg);
         }
     }
+}
+void DialogConfig::changeEvent(QEvent *event)
+{
+    if (event->type() == QEvent::LanguageChange) {
+           this->ui->retranslateUi(this);
+    } else
+        QWidget::changeEvent(event);
 }

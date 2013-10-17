@@ -23,9 +23,12 @@
 
 #include "mainwindow.h"
 #include "application.h"
+#include "configmanager.h"
 #include <QSettings>
 #include <QFontDatabase>
 #include <QDebug>
+
+
 
 int main(int argc, char *argv[])
 {
@@ -33,6 +36,7 @@ int main(int argc, char *argv[])
     QCoreApplication::addLibraryPath("/Developer/Applications/Qt/plugins/sqldrivers");
 #endif
     Application a(argc, argv);
+    ConfigManager::Instance.init();
 
     QFontDatabase::addApplicationFont(":/data/fonts/consola.ttf");
     QFontDatabase::addApplicationFont(":/data/fonts/consolab.ttf");

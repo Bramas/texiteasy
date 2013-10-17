@@ -27,6 +27,7 @@ public slots:
     void replaceAll();
 
 protected:
+    void changeEvent(QEvent *event);
 private:
     Ui::WidgetFindReplace *ui;
 

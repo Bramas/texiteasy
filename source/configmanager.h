@@ -30,7 +30,8 @@
 #include <QSettings>
 #include <QDebug>
 #include <QMutex>
-
+#include <QDesktopServices>
+#include <QUrl>
 
 class QWidget;
 
@@ -72,6 +73,11 @@ public:
     QStringList themesList();
     const QString& theme() { return _theme; }
 
+    QStringList languagesList();
+    const QString& language() { QSettings settings; return settings.value("language").toString(); }
+    void setLanguage(QString language) { QSettings settings; settings.setValue("language", language); applyTranslation(); }
+    void applyTranslation();
+
     void checkRevision();
 
     QString bibtexCommand(bool fullPath = false) { QSettings settings; return (fullPath ? settings.value("builder/latexPath").toString() : QString(""))+settings.value("builder/bibtex").toString(); }
@@ -89,15 +95,31 @@ public:
 
     bool isThisVersionHaveToBeReminded(QString version);
     void dontRemindMeThisVersion(QString version);
+
+    /**
+     * @brief signalVersionIsOutdated
+     * call this function to emit the versionIsOutdated() signal
+     */
+    void signalVersionIsOutdated() { emit versionIsOutdated(); }
+
     void init();
 public slots:
     void setPdfSynchronized(bool pdfSynchronized) { QSettings settings; settings.setValue("pdfSynchronized", pdfSynchronized); }
     void openThemeFolder();
+    void openUpdateWebsite() { QString link = TEXITEASY_UPDATE_WEBSITE;
+                               QDesktopServices::openUrl(QUrl(link)); }
 
+signals:
+    /**
+     * @brief versionIsOutdated [signal]
+     * emitted when we detect that the version is outdated
+     */
+    void versionIsOutdated();
 private:
     void replaceDefaultFont();
     ConfigManager();
 
+    QApplication * _application;
     QMutex _charFormatMutex;
     QWidget * mainWindow;
     QMap<QString,QTextCharFormat> * textCharFormats;

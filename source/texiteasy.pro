@@ -13,6 +13,8 @@ TEMPLATE = app
 
 APPLICATION_NAME = \\\"'TexitEasy'\\\"
 DEFINES += "APPLICATION_NAME=$${APPLICATION_NAME}"
+TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com'\\\"
+DEFINES += "TEXITEASY_UPDATE_WEBSITE=$${TEXITEASY_UPDATE_WEBSITE}"
 VERSION = \\\"'0.5.3'\\\"
 DEFINES += "CURRENT_VERSION=$${VERSION}"
 
@@ -109,12 +111,13 @@ FORMS    += mainwindow.ui \
     widgetstatusbar.ui \
     dialogabout.ui
 
-TRANSLATIONS += texiteasy_fr.ts \
-                texiteasy_en.ts \
-                texiteasy_es.ts \
-                texiteasy_ja.ts \
-                texiteasy_vi.ts \
-                texiteasy_zh.ts
+TRANSLATIONS += translations/texiteasy_ar.ts \
+                translations/texiteasy_fr.ts \
+                translations/texiteasy_en.ts \
+                translations/texiteasy_es.ts \
+                translations/texiteasy_ja.ts \
+                translations/texiteasy_vi.ts \
+                translations/texiteasy_zh.ts
 
 CODECFORTR = UTF-8
 

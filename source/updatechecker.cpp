@@ -25,11 +25,12 @@ void UpdateChecker::onFinished(QNetworkReply *reply)
     {
         return;
     }
+    ConfigManager::Instance.signalVersionIsOutdated();
     //if there is a new version
     if(ConfigManager::Instance.isThisVersionHaveToBeReminded(version))
     {
         if( 1 == QMessageBox::information(0, trUtf8("Nouvelle version"), trUtf8("Un nouvelle version est disponnible, vous pouvez la télécharger depuis le site officiel")+
-                                 " "+QString("<a href='http://texiteasy.com'>texiteasy.com</a><br><br>")+
+                                 " "+QString("<a href='")+TEXITEASY_UPDATE_WEBSITE+QString("'>texiteasy.com</a><br><br>")+
                                  trUtf8("Votre version: ")+CURRENT_VERSION+QString("<br>")+trUtf8("Nouvelle version:")+version,
                                  trUtf8("La prochaine fois"),trUtf8("Ne plus me prevenir de cette mise à jour")
                                  ))
