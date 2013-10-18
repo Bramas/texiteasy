@@ -14,8 +14,12 @@ bool Application::event(QEvent *event)
 {
     switch (event->type()) {
     case QEvent::FileOpen:
-        emit requestOpenFile(static_cast<QFileOpenEvent *>(
+        if(!static_cast<QFileOpenEvent *>(
+                    event)->file().isEmpty())
+        {
+            emit requestOpenFile(static_cast<QFileOpenEvent *>(
                  event)->file());
+        }
         return true;
     default:
         return QApplication::event(event);

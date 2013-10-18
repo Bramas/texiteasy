@@ -67,7 +67,9 @@ WidgetTextEdit::WidgetTextEdit(QWidget * parent) :
     connect(this,SIGNAL(textChanged()),this,SLOT(updateIndentation()));
     connect(this,SIGNAL(cursorPositionChanged()), this, SLOT(onCursorPositionChange()));
     connect(this->verticalScrollBar(),SIGNAL(valueChanged(int)),this->viewport(),SLOT(update()));
-
+#ifdef OS_MAC
+    _wierdCircumflexCursor = false;
+#endif
     this->setText(" ");
     this->currentFile->setModified(false);
 }
@@ -213,6 +215,9 @@ void WidgetTextEdit::insertPlainText(const QString &text)
 
 void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
 {
+#ifdef OS_MAC
+    _wierdCircumflexCursor = false;
+#endif
     if(e->key() == Qt::Key_Space && (e->modifiers() & (Qt::MetaModifier | Qt::ControlModifier)))
     {
         //this->matchCommand();
@@ -582,6 +587,12 @@ void WidgetTextEdit::displayWidgetInsertCommand()
 
 void WidgetTextEdit::matchCommand()
 {
+#ifdef OS_MAC
+    if(_wierdCircumflexCursor)
+    {
+        return;
+    }
+#endif
     QRegExp command("\\\\[a-zA-Z\\{\\-_]+$");
     QRegExp beginCommand("\\\\begin\\{([^\\}]+)\\}$");
     int pos = this->textCursor().positionInBlock();

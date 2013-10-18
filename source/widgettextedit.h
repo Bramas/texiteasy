@@ -28,6 +28,9 @@
 #include <QMutex>
 #include <QAbstractTextDocumentLayout>
 #include "file.h"
+#include <QInputMethodEvent>
+
+#include <QDebug>
 
 
 #define WIDGET_TEXT_EDIT_PARENT_CLASS QPlainTextEdit
@@ -38,6 +41,7 @@ class CompletionEngine;
 class WidgetInsertCommand;
 class WidgetLineNumber;
 
+class QInputMethodEvent;
 struct BlockInfo
 {
     int top;
@@ -113,6 +117,25 @@ private:
     void wheelEvent(QWheelEvent * event);
     void highlightCurrentLine(void);
     bool selectNextArgument(void);
+
+#ifdef OS_MAC
+    /**
+     *  On mac, when the circumflex key is pressed, there is a wierd circumflex key that wait
+     *  another key. This wierd circumflex may cause an error in matchCommand()
+     */
+    void inputMethodEvent(QInputMethodEvent * event)
+    {
+        if(event->attributes().count())
+        {
+            if(QInputMethodEvent::Cursor == event->attributes().first().type)
+            {
+                _wierdCircumflexCursor = true;
+            }
+        }
+        WIDGET_TEXT_EDIT_PARENT_CLASS::inputMethodEvent(event);
+    }
+    bool _wierdCircumflexCursor;
+#endif
 
     void setBlockLeftMargin(const QTextBlock & textBlock, int leftMargin);
 

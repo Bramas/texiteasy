@@ -74,7 +74,7 @@ public:
     const QString& theme() { return _theme; }
 
     QStringList languagesList();
-    const QString& language() { QSettings settings; return settings.value("language").toString(); }
+    QString language() { QSettings settings; return settings.value("language").toString(); }
     void setLanguage(QString language) { QSettings settings; settings.setValue("language", language); applyTranslation(); }
     void applyTranslation();
 

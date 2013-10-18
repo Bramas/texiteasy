@@ -454,6 +454,7 @@ QStringList ConfigManager::languagesList()
 void ConfigManager::applyTranslation()
 {
     QTranslator * translator = new QTranslator();
+    qDebug()<<this->language();
     if(!translator->load(":/translations/texiteasy_"+this->language()))
     {
         translator->load(":/translations/texiteasy_en");
