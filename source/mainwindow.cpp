@@ -306,6 +306,15 @@ void MainWindow::open(QString filename)
         return;
     }
     this->addFilenameToLastOpened(filename);
+
+    //check if it is already open
+    int index = _tabWidget->indexOf(filename);
+    if(index != -1)
+    {
+        _tabWidget->setCurrentIndex(index);
+        return;
+    }
+
     //open
 
     if(FileManager::Instance.open(filename))
@@ -319,7 +328,7 @@ void MainWindow::open(QString filename)
     }
 
     this->statusBar()->showMessage(filename,4000);
-    //this->_widgetStatusBar->setEncoding(this->widgetTextEdit->getCurrentFile()->codec());
+    this->_widgetStatusBar->setEncoding(FileManager::Instance.currentWidgetFile()->widgetTextEdit()->getCurrentFile()->codec());
 
 }
 void MainWindow::onCurrentFileChanged(WidgetFile * widget)

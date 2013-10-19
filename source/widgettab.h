@@ -23,6 +23,19 @@ public:
         update();
     }
     WidgetFile * widget(int index) { return _widgets.at(index); }
+    /**
+     * @brief widget
+     * @param filename
+     * @return the widgetFile associated with the filename. return -1 if filename is not open.
+     */
+    WidgetFile * widget(QString filename);
+    /**
+     * @brief indexOf
+     * @param filename
+     * @return the index of the widgetFile associated with the filename. return -1 if filename is not open.
+     */
+    int indexOf(QString filename);
+
     void removeTab(WidgetFile * widget);
     void removeTab(int index);
     void removeAll();
@@ -47,7 +60,6 @@ public:
     void initTheme();
     int currentIndex() const { return _currentIndex; }
     int count() const { return _tabsName.count(); }
-    
 signals:
     void currentChanged(WidgetFile*);
     void tabCloseRequested(int index);

@@ -28,6 +28,9 @@
 #include <QTextStream>
 #include <QTextCodec>
 #include <QTimer>
+#include <QDebug>
+#include <QRegExp>
+
 #define AUTO_SAVE 120000
 
 File::File(WidgetTextEdit* widgetTextEdit,QString filename) :
@@ -128,6 +131,7 @@ const QString File::open(QString filename, QString codec)
     }
     this->_codec = in.codec()->name();
     this->_widgetTextEdit->setText(this->data);
+    this->lookForAssociatedFiles();
     this->refreshLineNumber();
     _modified = false;
     _autoSaveTimer->stop();
@@ -178,4 +182,47 @@ void File::autoSave()
     out.setCodec(_codec.toLatin1());
     //out.setGenerateByteOrderMark(true);
     out << this->data;
+}
+
+void File::lookForAssociatedFiles()
+{
+    if(this->data.isEmpty())
+    {
+        return;
+    }
+
+    // Look for bibtex Files
+
+    QRegExp patternBib("\\\\bibliography\\{([^\\}]*)\\}");
+    int index = this->data.indexOf(patternBib);
+    if(index == -1)
+    {
+        return;
+    }
+    QString bibFilename = this->getPath();
+
+    bibFilename += patternBib.capturedTexts().last();
+    bibFilename += ".bib";
+    if(!QFile::exists(bibFilename))
+    {
+        qDebug()<<"bibtex file does not exist : "<<bibFilename;
+        return;
+    }
+    AssociatedFile asso;
+    asso.type = AssociatedFile::BIBTEX;
+    asso.filename = bibFilename;
+    _associatedFiles.append(asso);
+}
+
+QStringList File::bibtexFiles() const
+{
+    QStringList list;
+    foreach(AssociatedFile file, _associatedFiles)
+    {
+        if(file.type == AssociatedFile::BIBTEX)
+        {
+            list.append(file.filename);
+        }
+    }
+    return list;
 }

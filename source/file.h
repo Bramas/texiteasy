@@ -28,12 +28,21 @@
 #include <QDebug>
 #include <QRegExp>
 #include <QMap>
+#include <QList>
+#include <QStringList>
 #include <QFileInfo>
 
 class Viewer;
 class Builder;
 class WidgetTextEdit;
 class QTimer;
+struct AssociatedFile
+{
+    typedef enum Type {BIBTEX, INPUT, FIGURE} Type;
+    AssociatedFile::Type type;
+    QString filename;
+};
+
 class File : public QObject
 {
     Q_OBJECT
@@ -85,7 +94,6 @@ public:
      * @return the line number corresponding to the file when it was builded
      */
     int getBuildedLine(int block) {
-        //qDebug()<<"getLine : "<<block<<" : "<<this->_lineNumberSinceLastBuild.value(block,-1);
         // convert block to line : + 1
         return this->_lineNumberSinceLastBuild.value(block, block) + 1;
     }
@@ -94,19 +102,19 @@ public:
      * @brief getFilename
      * @return the current full filename
      */
-    QString getFilename() { return this->filename; }
+    QString getFilename() const { return this->filename; }
 
     /**
      * @brief getPath
      * @return the path of the current file
      */
-    QString getPath() { QString s(this->filename); return s.replace(QRegExp("^(([^\\\\\\/]*[\\\\\\/])*)[^\\\\\\/]*$"),"\\1"); }
+    QString getPath() const { QString s(this->filename); return s.replace(QRegExp("^(([^\\\\\\/]*[\\\\\\/])*)[^\\\\\\/]*$"),"\\1"); }
 
     /**
      * @brief getAuxPath
      * @return the auxilary directory
      */
-    QString getAuxPath() {
+    QString getAuxPath() const {
         QDir dir;
         if(!dir.exists(this->getPath()+".texiteasy"))
         {
@@ -115,7 +123,7 @@ public:
         return this->getPath()+".texiteasy";//+dir.separator();
     }
 
-    QString getAutoSaveFilename()
+    QString getAutoSaveFilename() const
     {
         QDir dir;
         return this->getAuxPath()+dir.separator()+this->fileInfo().baseName()+"_autosave.tex";
@@ -131,7 +139,7 @@ public:
      * @brief getPdfFilename
      * @return the path where the pdf is located (filename but .tex is replaced by .pdf)
      */
-    QString getPdfFilename(){
+    QString getPdfFilename() const {
         QString s(this->filename); return s.replace(QRegExp("\\.tex$"),".pdf");
     }
 
@@ -151,6 +159,7 @@ public:
 
     bool isModified() { return this->_modified; }
 
+    QStringList bibtexFiles() const;
 
 public slots:
     /**
@@ -171,7 +180,13 @@ public slots:
     }
 
 private:
+    /**
+     * @brief lookForAssociatedFiles parse the source, and find if there is some \input{} files or bitex, or figures
+     */
+    void lookForAssociatedFiles();
+
     QTimer * _autoSaveTimer;
+    QList<AssociatedFile> _associatedFiles;
     Builder * builder;
     QString _codec;
     QString data;

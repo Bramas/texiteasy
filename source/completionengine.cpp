@@ -245,24 +245,12 @@ void CompletionEngine::addCustomWordFromSource()
 
 void CompletionEngine::parseBibtexFile()
 {
-    QString source = _widgetTextEdit->toPlainText();
-    QRegExp patternBib("\\\\bibliography\\{([^\\}]*)\\}");
-    int index = source.indexOf(patternBib);
-    if(index == -1)
+    QStringList bibtexFiles = this->_widgetTextEdit->getCurrentFile()->bibtexFiles();
+    if(bibtexFiles.isEmpty())
     {
         return;
     }
-
-    QString filename = this->_widgetTextEdit->getCurrentFile()->getPath();
-
-    filename += patternBib.capturedTexts().last();
-    filename += ".bib";
-    if(!QFile::exists(filename))
-    {
-        qDebug()<<"bibtex file does not exist : "<<filename;
-        return;
-    }
-
+    QString filename = bibtexFiles.first();
     QFile bibFile(filename);
 
     if(!bibFile.open(QFile::Text | QFile::ReadOnly))

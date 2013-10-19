@@ -7,6 +7,7 @@
 #include <QDebug>
 #include <QFontMetrics>
 #include "configmanager.h"
+#include "widgettextedit.h"
 #include "widgetfile.h"
 
 WidgetTab::WidgetTab(QWidget *parent) :
@@ -131,6 +132,31 @@ void WidgetTab::mousePressEvent(QMouseEvent * event)
         ++idx;
     }
     return;
+}
+
+WidgetFile * WidgetTab::widget(QString filename)
+{
+    foreach(WidgetFile * widget, _widgets)
+    {
+        if(!filename.compare(widget->widgetTextEdit()->getCurrentFile()->getFilename()))
+        {
+            return widget;
+        }
+    }
+    return 0;
+}
+int WidgetTab::indexOf(QString filename)
+{
+    int index = 0;
+    foreach(WidgetFile * widget, _widgets)
+    {
+        if(!filename.compare(widget->widgetTextEdit()->getCurrentFile()->getFilename()))
+        {
+            return index;
+        }
+        ++index;
+    }
+    return -1;
 }
 
 bool WidgetTab::overCloseButton(QPoint mousePos, int left)
