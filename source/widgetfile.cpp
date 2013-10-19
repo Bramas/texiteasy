@@ -290,7 +290,7 @@ void WidgetFile::saveAs()
 {
     //this->widgetTextEdit->getCurrentFile()->setData("sdfsdfg");
     //return;
-    QString filename = QFileDialog::getSaveFileName(this,tr("Enregistrer un fichier"));
+    QString filename = QFileDialog::getSaveFileName(this,tr("Enregistrer un fichier"), ConfigManager::Instance.lastFolder(),ConfigManager::Extensions);
     if(filename.isEmpty())
     {
         return;

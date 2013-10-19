@@ -4,7 +4,9 @@
 #include <QWidget>
 #include <QList>
 #include <QStringList>
+#include <QFont>
 class WidgetFile;
+class QPainter;
 
 class WidgetTab : public QWidget
 {
@@ -90,6 +92,9 @@ protected:
 private:
     bool overCloseButton(QPoint mousePos, int left);
     bool overMoreButton(QPoint mousePos, int left);
+    int tabWidth(int index,const QFont & font);
+    void drawMoreButton(QPainter * painter, int index);
+
     QStringList _tabsName;
     QList<WidgetFile *> _widgets;
     QList<int> _tabsNameWidth;

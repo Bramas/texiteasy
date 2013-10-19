@@ -45,6 +45,8 @@
 
 ConfigManager ConfigManager::Instance;
 
+QString ConfigManager::Extensions = trUtf8("Latex (*.tex *.latex);;BibTex(*.bib)");
+
 ConfigManager::ConfigManager() :
     mainWindow(0),
     textCharFormats(new QMap<QString,QTextCharFormat>())

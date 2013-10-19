@@ -52,11 +52,6 @@ void WidgetTab::paintEvent(QPaintEvent * event)
     QPen overClosePen(QColor(160,160,160));
     overClosePen.setWidth(2);
 
-    QBrush defaultMoreBrush(QColor(100,100,100));
-    QBrush hoverMoreBrush(QColor(130,130,130));
-    QBrush overMoreBrush(QColor(160,160,160));
-
-
     QPen rectPen(QColor(0,0,0));
     QBrush backgroundBrush(ConfigManager::Instance.getTextCharFormats("linenumber").background().color().darker(200));
     QBrush defaultRectBrush(darkTheme ?
@@ -70,12 +65,14 @@ void WidgetTab::paintEvent(QPaintEvent * event)
 
     int index = 0;
     int cummulatedWidth = 10;
+    painter.translate(10,0);
     _tabsNameWidth.clear();
     _tabsNameWidth.append(cummulatedWidth);
+    int xBegin, yBegin, xEnd, yEnd;
 
     foreach(QString tabName, _tabsName)
     {
-
+        painter.transform().map(0, 0, &xBegin, &yBegin);
         if(index == this->currentIndex())
         {
             painter.setBrush(hoverRectBrush);
@@ -85,7 +82,9 @@ void WidgetTab::paintEvent(QPaintEvent * event)
             painter.setBrush(defaultRectBrush);
         }
         painter.setPen(rectPen);
-        painter.drawRoundedRect(cummulatedWidth, 5, fm.width(tabName) + _moreWidth + _moreRightMargin + _padding * 2 + _closeLeftMargin + _closeWidth, 30, 5, 5);
+        painter.drawRoundedRect(0, 5, tabWidth(index, painter.font()), 30, 5, 5);
+        painter.translate(_padding, 0);
+        this->drawMoreButton(&painter, index);
 
         if(index == this->currentIndex())
         {
@@ -95,7 +94,8 @@ void WidgetTab::paintEvent(QPaintEvent * event)
         {
             painter.setPen(defaultPen);
         }
-        painter.drawText(cummulatedWidth + _moreWidth + _moreRightMargin + _padding, 22, tabName);
+        painter.drawText(0, 22, tabName);
+        painter.translate(fm.width(tabName),0);
 
         if(index == _overCloseId)
         {
@@ -110,37 +110,65 @@ void WidgetTab::paintEvent(QPaintEvent * event)
         {
             painter.setPen(defaultClosePen);
         }
-        painter.drawLine(cummulatedWidth + fm.width(tabName) + _moreWidth + _moreRightMargin + _padding + _closeLeftMargin, 15, cummulatedWidth + fm.width(tabName) + _moreWidth + _moreRightMargin + _padding + _closeLeftMargin + _closeWidth, 15 + _closeWidth);
-        painter.drawLine(cummulatedWidth + fm.width(tabName) + _moreWidth + _moreRightMargin + _padding + _closeLeftMargin, 15 + _closeWidth, cummulatedWidth + fm.width(tabName) + _moreWidth + _moreRightMargin + _padding + _closeLeftMargin + _closeWidth, 15);
+        painter.translate(_closeLeftMargin, 0);
+        painter.drawLine(0, 15, _closeWidth, 15 + _closeWidth);
+        painter.drawLine(0, 15 + _closeWidth, _closeWidth, 15);
+        painter.translate(_closeWidth + _padding, 0);
 
-        painter.setPen(Qt::NoPen);
-        if(index == _overMoreId)
-        {
-            painter.setBrush(overMoreBrush);
-        }
-        else
-        if(index == this->currentIndex())
-        {
-            painter.setBrush(hoverMoreBrush);
-        }
-        else
-        {
-            painter.setBrush(defaultMoreBrush);
-        }
-        QVector<QPointF> pol;
-        pol.append(QPointF(cummulatedWidth + _padding, 15));
-        pol.append(QPointF(cummulatedWidth + _padding + qreal(_moreWidth)/2.0, 20));
-        pol.append(QPointF(cummulatedWidth + _padding + _moreWidth, 15));
-        QPolygonF polF(pol);
-        painter.drawConvexPolygon(polF);
+        painter.translate(_margin, 0);
 
 
-        cummulatedWidth += fm.width(tabName) + _padding * 2 + _moreRightMargin + _closeLeftMargin + _moreWidth + _closeWidth + _margin;
+        painter.transform().map(0, 0, &xEnd, &yEnd);
+
+        cummulatedWidth += (xEnd - xBegin);
         _tabsNameWidth.append(cummulatedWidth);
         ++index;
     }
 
 
+}
+int WidgetTab::tabWidth(int index, const QFont &font)
+{
+    QFontMetrics fm(font);
+    int width = fm.width(_tabsName.at(index)) + _padding * 2 + _closeLeftMargin + _closeWidth;
+    if(this->widget(index)->actions().isEmpty())
+    {
+        return width;
+    }
+    return width + _moreWidth + _moreRightMargin;
+}
+
+void WidgetTab::drawMoreButton(QPainter *painter, int index)
+{
+    if(this->widget(index)->actions().isEmpty())
+    {
+        return;
+    }
+    QBrush defaultMoreBrush(QColor(100,100,100));
+    QBrush hoverMoreBrush(QColor(130,130,130));
+    QBrush overMoreBrush(QColor(160,160,160));
+
+    painter->setPen(Qt::NoPen);
+    if(index == _overMoreId)
+    {
+        painter->setBrush(overMoreBrush);
+    }
+    else
+    if(index == this->currentIndex())
+    {
+        painter->setBrush(hoverMoreBrush);
+    }
+    else
+    {
+        painter->setBrush(defaultMoreBrush);
+    }
+    QVector<QPointF> pol;
+    pol.append(QPointF(0, 15));
+    pol.append(QPointF(qreal(_moreWidth)/2.0, 20));
+    pol.append(QPointF(_moreWidth, 15));
+    QPolygonF polF(pol);
+    painter->drawConvexPolygon(polF);
+    painter->translate(_moreWidth + _moreRightMargin, 0);
 }
 
 void WidgetTab::mousePressEvent(QMouseEvent * event)

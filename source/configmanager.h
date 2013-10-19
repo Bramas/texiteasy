@@ -96,6 +96,9 @@ public:
     bool isThisVersionHaveToBeReminded(QString version);
     void dontRemindMeThisVersion(QString version);
 
+    QString lastFolder() { QSettings settings; return settings.value("lastFolder").toString(); }
+
+    static QString Extensions;
 
     void init();
 public slots:
