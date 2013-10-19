@@ -66,6 +66,8 @@ WidgetFile::WidgetFile(QWidget *parent) :
     connect(_widgetFindReplace->pushButtonClose(), SIGNAL(clicked()), this, SLOT(closeFindReplaceWidget()));
     connect(_widgetTextEdit,SIGNAL(textChanged()),_widgetLineNumber,SLOT(update()));
     connect(_widgetTextEdit->getCurrentFile()->getBuilder(), SIGNAL(pdfChanged()),_widgetPdfViewer->widgetPdfDocument(),SLOT(updatePdf()));
+    connect(_widgetTextEdit->getCurrentFile()->getBuilder(), SIGNAL(error()),this,SLOT(openErrorTable()));
+    connect(_widgetTextEdit->getCurrentFile()->getBuilder(), SIGNAL(success()),this,SLOT(closeErrorTable()));
     connect(_widgetConsole, SIGNAL(requestLine(int)), _widgetTextEdit, SLOT(goToLine(int)));
 
 
@@ -74,7 +76,9 @@ WidgetFile::WidgetFile(QWidget *parent) :
 
     _widgetPdfViewer->widgetPdfDocument()->setFile(_widgetTextEdit->getCurrentFile());
     _widgetConsole->setBuilder(_widgetTextEdit->getCurrentFile()->getBuilder());
+    _widgetConsole->setMaximumHeight(0);
     _widgetSimpleOutput->setBuilder(_widgetTextEdit->getCurrentFile()->getBuilder());
+    _widgetSimpleOutput->setMaximumHeight(0);
     int pos = _widgetTextEdit->textCursor().position();
     _widgetTextEdit->selectAll();
     _widgetTextEdit->textCursor().setBlockCharFormat(ConfigManager::Instance.getTextCharFormats("normal"));
@@ -89,16 +93,6 @@ WidgetFile::~WidgetFile()
 #ifdef DEBUG_DESTRUCTOR
     qDebug()<<"delete WidgetFile";
 #endif
-    //delete this->layout();
-    //delete _verticalSplitter;
-    //delete _horizontalSplitter;
-    //delete _widgetSimpleOutput;
-    //delete _widgetConsole;
-    //delete _widgetLineNumber;
-    //delete _widgetFindReplace;
-    //delete _widgetPdfViewer;
-    //delete _syntaxHighlighter;
-    //delete _widgetTextEdit;
 }
 
 void WidgetFile::initTheme()
@@ -145,6 +139,91 @@ void WidgetFile::initTheme()
     }
 }
 
+
+bool WidgetFile::isConsoleOpen()
+{
+    QList<int> sizes = this->verticalSplitter()->sizes();
+    if(sizes[3] > 0)
+    {
+        return true;
+    }
+    return false;
+}
+bool WidgetFile::isErrorTableOpen()
+{
+    QList<int> sizes = this->verticalSplitter()->sizes();
+    if(sizes[2] > 0)
+    {
+        return true;
+    }
+    return false;
+}
+void WidgetFile::openConsole()
+{
+    if(isConsoleOpen())
+    {
+        return;
+    }
+    if(isErrorTableOpen())
+    {
+        closeErrorTable();
+    }
+    QList<int> sizes = this->verticalSplitter()->sizes();
+    sizes.replace(0, sizes[0] - 60 + sizes[3]);
+    sizes.replace(2, 0);
+    sizes.replace(3, 60);
+    this->verticalSplitter()->widget(3)->setMaximumHeight(height()*2/3);
+    this->verticalSplitter()->setSizes(sizes);
+    emit verticalSplitterChanged();
+}
+
+void WidgetFile::openErrorTable()
+{
+    if(isErrorTableOpen())
+    {
+        return;
+    }
+    if(isConsoleOpen())
+    {
+        closeConsole();
+    }
+    QList<int> sizes = this->verticalSplitter()->sizes();
+    sizes.replace(0, sizes[0] - 60 + sizes[3]);
+    sizes.replace(2, 60);
+    sizes.replace(3, 0);
+    this->verticalSplitter()->widget(2)->setMaximumHeight(height()*2/3);
+    this->verticalSplitter()->setSizes(sizes);
+    emit verticalSplitterChanged();
+}
+
+void WidgetFile::closeConsole()
+{
+    if(!isConsoleOpen())
+    {
+        return;
+    }
+    QList<int> sizes = this->verticalSplitter()->sizes();
+    sizes.replace(0, sizes[0] + sizes[3]);
+    sizes.replace(3, 0);
+    this->verticalSplitter()->widget(3)->setMaximumHeight(0);
+    this->verticalSplitter()->setSizes(sizes);
+    emit verticalSplitterChanged();
+}
+
+void WidgetFile::closeErrorTable()
+{
+    if(!isErrorTableOpen())
+    {
+        return;
+    }
+    QList<int> sizes = this->verticalSplitter()->sizes();
+    sizes.replace(0, sizes[0] + sizes[2]);
+    sizes.replace(2, 0);
+    this->verticalSplitter()->widget(2)->setMaximumHeight(0);
+    this->verticalSplitter()->setSizes(sizes);
+    emit verticalSplitterChanged();
+}
+
 void WidgetFile::openFindReplaceWidget()
 {
     this->_widgetFindReplace->setMaximumHeight(110);
@@ -158,7 +237,28 @@ void WidgetFile::closeFindReplaceWidget()
     this->_widgetFindReplace->setMinimumHeight(0);
 }
 
-
+void WidgetFile::toggleConsole()
+{
+    if(isConsoleOpen())
+    {
+        closeConsole();
+    }
+    else
+    {
+        openConsole();
+    }
+}
+void WidgetFile::toggleErrorTable()
+{
+    if(isErrorTableOpen())
+    {
+        closeErrorTable();
+    }
+    else
+    {
+        openErrorTable();
+    }
+}
 void WidgetFile::pdflatex()
 {
     this->save();

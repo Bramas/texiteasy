@@ -39,6 +39,7 @@
 #include "widgetsimpleoutput.h"
 #include "widgetproject.h"
 
+#include <QMenu>
 #include <QAction>
 #include <QScrollBar>
 #include <QFileDialog>
@@ -93,7 +94,7 @@ MainWindow::MainWindow(QWidget *parent) :
     _widgetStatusBar->setLinkSyncAction(ui->actionLinkSync);
     this->setStatusBar(_widgetStatusBar);
     connect(&FileManager::Instance, SIGNAL(cursorPositionChanged(int,int)), _widgetStatusBar, SLOT(setPosition(int,int)));
-
+    connect(&FileManager::Instance, SIGNAL(messageFromCurrentFile(QString)), _widgetStatusBar, SLOT(showTemporaryMessage(QString)));
 
     QSettings settings;
     settings.beginGroup("mainwindow");
@@ -243,12 +244,13 @@ void MainWindow::dropEvent(QDropEvent * event)
     }
 }
 void MainWindow::changeEvent(QEvent *event)
- {
-     if (event->type() == QEvent::LanguageChange) {
-         this->ui->retranslateUi(this);
-     } else
-         QWidget::changeEvent(event);
- }
+{
+    if (event->type() == QEvent::LanguageChange) {
+        this->ui->retranslateUi(this);
+    }
+    else
+        QWidget::changeEvent(event);
+}
 
 void MainWindow::newFile()
 {
@@ -256,8 +258,6 @@ void MainWindow::newFile()
     {
         _tabWidget->addTab(FileManager::Instance.currentWidgetFile(), "untitled");
         _tabWidget->setCurrentIndex(_tabWidget->count()-1);
-        _widgetStatusBar->closeConsole();
-        _widgetStatusBar->closeErrorTable();
     }
     return;
 }
@@ -279,25 +279,31 @@ void MainWindow::addFilenameToLastOpened(QString filename)
         settings.setValue("lastFiles", lastFiles);
     }
 }
-
 void MainWindow::openLast()
 {
     QString filename = dynamic_cast<QAction*>(sender())->text();
+    open(filename);
+}
+void MainWindow::open()
+{
+    QSettings settings;
+    //get the filname
+
+    QString filename = QFileDialog::getOpenFileName(this,tr("Ouvrir un fichier"),settings.value("lastFolder").toString(),tr("Latex (*.tex *.latex);;BibTex(*.bib)"));
+    if(filename.isEmpty())
+    {
+        return;
+    }
     open(filename);
 }
 void MainWindow::open(QString filename)
 {
     QSettings settings;
 
-    //get the filname
+    //check the filename
     if(filename.isEmpty())
     {
-        filename = QFileDialog::getOpenFileName(this,tr("Ouvrir un fichier"),settings.value("lastFolder").toString(),tr("Latex (*.tex *.latex);;BibTex(*.bib)"));
-
-        if(filename.isEmpty())
-        {
-            return;
-        }
+        return;
     }
     this->addFilenameToLastOpened(filename);
     //open
@@ -306,8 +312,6 @@ void MainWindow::open(QString filename)
     {
         _tabWidget->addTab(FileManager::Instance.currentWidgetFile(), FileManager::Instance.currentWidgetFile()->widgetTextEdit()->getCurrentFile()->fileInfo().baseName());
         _tabWidget->setCurrentIndex(_tabWidget->count()-1);
-        _widgetStatusBar->closeConsole();
-        _widgetStatusBar->closeErrorTable();
     }
     else
     {
@@ -318,7 +322,6 @@ void MainWindow::open(QString filename)
     //this->_widgetStatusBar->setEncoding(this->widgetTextEdit->getCurrentFile()->codec());
 
 }
-
 void MainWindow::onCurrentFileChanged(WidgetFile * widget)
 {
     this->closeCurrentWidgetFile();
@@ -332,7 +335,6 @@ void MainWindow::onCurrentFileChanged(WidgetFile * widget)
     widget->widgetTextEdit()->setFocus();
     _widgetStatusBar->updateButtons();
 }
-
 bool MainWindow::closeTab(int index)
 {
     WidgetFile * widget = _tabWidget->widget(index);
@@ -374,7 +376,6 @@ bool MainWindow::closeTab(int index)
     }
     return true;
 }
-
 void MainWindow::clearLastOpened()
 {
     QSettings settings;
@@ -382,10 +383,6 @@ void MainWindow::clearLastOpened()
     this->ui->menuOuvrir_R_cent->clear();
     this->ui->menuOuvrir_R_cent->insertAction(0,this->ui->actionDeleteLastOpenFiles);
 }
-
-
-
-
 void MainWindow::changeTheme()
 {
     QString text = dynamic_cast<QAction*>(this->sender())->text();
@@ -406,7 +403,6 @@ void MainWindow::setTheme(QString theme)
     this->initTheme();
     FileManager::Instance.rehighlight();
 }
-
 void MainWindow::initTheme()
 {
     QPalette Pal(palette());
@@ -417,7 +413,6 @@ void MainWindow::initTheme()
     _widgetStatusBar->initTheme();
     _tabWidget->initTheme();
 }
-
 void MainWindow::closeCurrentWidgetFile()
 {
     if(ui->verticalLayout->count() > 1)
@@ -429,7 +424,20 @@ void MainWindow::closeCurrentWidgetFile()
 }
 void MainWindow::addUpdateMenu()
 {
-    QAction * openWebsiteAction = new QAction(trUtf8("Mettre à jour TexitEasy"), this->menuBar());
-    this->menuBar()->addAction(openWebsiteAction);
+    QAction * openWebsiteAction = new QAction(trUtf8("Mettre à jour TexitEasy"), this->ui->menuBar);
+
+#ifdef OS_MAC
+    /* I don't know why but on mac we cannot add an action directly in the menu Bar
+     * So lets add a menu with the action
+     */
+    QMenu * m = new QMenu(trUtf8("Mettre à jour TexitEasy"), this->ui->menuBar);
+    m->addAction(openWebsiteAction);
+    this->ui->menuBar->addMenu(m);
+#else
+    /* On the other platform we can add an action directly in the menu Bar
+     */
+    this->ui->menuBar->addAction(openWebsiteAction);
+#endif
     connect(openWebsiteAction, SIGNAL(triggered()), &ConfigManager::Instance, SLOT(openUpdateWebsite()));
+
 }

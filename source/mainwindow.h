@@ -74,7 +74,8 @@ public:
 public slots:
 
     void newFile();
-    void open(QString filename = "");
+    void open();
+    void open(QString filename);
     void openLast(void);
     void clearLastOpened(void);
     void focus(void);

@@ -59,12 +59,13 @@ protected:
 
 QAction * _action;
 
+bool _checkable;
+bool _checked;
+
 QPixmap * _defaultPixmap;
 QPixmap * _hoverPixmap;
 QLabel  * _label;
 
-bool _checkable;
-bool _checked;
 
 };
 
@@ -78,15 +79,13 @@ public:
     void initTheme();
 
 public slots:
-    void toggleConsole();
-    void toggleErrorTable();
-    void closeConsole();
-    void closeErrorTable();
     void setPosition(int,int);
     void setEncoding(QString encoding);
 
     void updateButtons();
     void setLinkSyncAction(QAction * action) { _labelLinkSync->setAction(action); }
+
+    void showTemporaryMessage(QString message) { this->showMessage(message, 4000); }
     
 private:
     Ui::WidgetStatusBar *ui;

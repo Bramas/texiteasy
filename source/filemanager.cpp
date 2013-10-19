@@ -4,6 +4,7 @@
 #include "widgetpdfviewer.h"
 #include "syntaxhighlighter.h"
 #include "configmanager.h"
+#include "builder.h"
 #include <QDebug>
 
 
@@ -18,26 +19,35 @@ FileManager::FileManager(QObject *parent) :
 
 bool FileManager::newFile()
 {
-    if(this->currentWidgetFile())
-    {
-        /*if(this->currentWidgetFile()->isEmpty())
-        {
-            return false;
-        }*/
-        disconnect(this->currentWidgetFile()->widgetTextEdit(), SIGNAL(cursorPositionChanged(int,int)), this, SLOT(sendCursorPositionChanged(int,int)));
-    }
+    WidgetFile * oldFile = this->currentWidgetFile();
     WidgetFile * newFile = new WidgetFile();
     newFile->initTheme();
     _widgetFiles.append(newFile);
     _currentWidgetFileId = _widgetFiles.count() - 1;
+    changeConnexions(oldFile);
+    return true;
+}
+void FileManager::changeConnexions(WidgetFile * oldFile)
+{
+    // Disconnect
+    if(oldFile)
+    {
+        disconnect(oldFile, SIGNAL(verticalSplitterChanged()), this, SLOT(sendVerticalSplitterChanged()));
+        disconnect(oldFile->widgetTextEdit(), SIGNAL(cursorPositionChanged(int,int)), this, SLOT(sendCursorPositionChanged(int,int)));
+        disconnect(oldFile->widgetTextEdit()->getCurrentFile()->getBuilder(), SIGNAL(statusChanged(QString)), this, SLOT(sendMessageFromCurrentFile(QString)));
+    }
 
+    // Connect
     if(_pdfSynchronized)
     {
         connect(this->currentWidgetFile()->widgetTextEdit()->verticalScrollBar(),SIGNAL(valueChanged(int)), this->currentWidgetFile()->widgetPdfViewer()->widgetPdfDocument(),SLOT(jumpToPdfFromSourceView(int)));
     }
+    connect(this->currentWidgetFile(), SIGNAL(verticalSplitterChanged()), this, SLOT(sendVerticalSplitterChanged()));
     connect(this->currentWidgetFile()->widgetTextEdit(), SIGNAL(cursorPositionChanged(int,int)), this, SLOT(sendCursorPositionChanged(int,int)));
-    return true;
+    connect(this->currentWidgetFile()->widgetTextEdit()->getCurrentFile()->getBuilder(), SIGNAL(statusChanged(QString)), this, SLOT(sendMessageFromCurrentFile(QString)));
+
 }
+
 bool FileManager::open(QString filename)
 {
     bool newWidget = this->newFile();
@@ -79,6 +89,20 @@ void FileManager::rehighlight()
     {
         widgetFile->syntaxHighlighter()->rehighlight();
         widgetFile->widgetTextEdit()->onCursorPositionChange();
+    }
+}
+void FileManager::toggleConsole()
+{
+    if(this->currentWidgetFile())
+    {
+        this->currentWidgetFile()->toggleConsole();
+    }
+}
+void FileManager::toggleErrorTable()
+{
+    if(this->currentWidgetFile())
+    {
+        this->currentWidgetFile()->toggleErrorTable();
     }
 }
 void FileManager::initTheme()

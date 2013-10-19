@@ -102,19 +102,9 @@ void WidgetLineNumber::paintEvent(QPaintEvent * /*event*/)
     QFontMetrics fm(font);
     painter.setFont(font);
 
-    QTextBlock textBlock = widgetTextEdit->document()->findBlockByNumber(this->firstVisibleBlock);
-
-    //qDebug()<<"line";
     int l;
 
-   /* BlockInfo * blocksInfo = this->widgetTextEdit->getBlocksInfo();
-    for(int i=0; i < this->widgetTextEdit->document()->blockCount(); ++i)
-    {
-        if(blocksInfo[i].top > this->widgetTextEdit->verticalScrollBar()->value())
-        {
-            qDebug()<<i;
-        }
-    }*/
+
     QPen defaultPen(ConfigManager::Instance.getTextCharFormats("linenumber").foreground().color(),1);
     QPen blockRangePen(QColor(160,10,10),4);
     painter.setPen(defaultPen);

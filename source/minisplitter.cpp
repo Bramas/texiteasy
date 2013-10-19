@@ -66,7 +66,7 @@ void MiniSplitterHandle::resizeEvent(QResizeEvent *event)
     QSplitterHandle::resizeEvent(event);
 }
 
-void MiniSplitterHandle::paintEvent(QPaintEvent *event)
+void MiniSplitterHandle::paintEvent(QPaintEvent * /*event*/)
 {
     QPainter painter(this);
     //painter.fillRect(event->rect(), StyleHelper::borderColor());

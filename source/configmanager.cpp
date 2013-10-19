@@ -67,7 +67,6 @@ void ConfigManager::init()
 
 
 
-
     if(!settings.contains("language"))
     {
         QString locale = QLocale::system().name().section('_', 0, 0);
@@ -117,7 +116,6 @@ void ConfigManager::init()
 #endif
     }
     settings.endGroup();
-
     this->applyTranslation();
     return;
 
@@ -454,7 +452,6 @@ QStringList ConfigManager::languagesList()
 void ConfigManager::applyTranslation()
 {
     QTranslator * translator = new QTranslator();
-    qDebug()<<this->language();
     if(!translator->load(":/translations/texiteasy_"+this->language()))
     {
         translator->load(":/translations/texiteasy_en");

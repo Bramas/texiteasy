@@ -35,9 +35,22 @@ public:
 
     void open(QString filename);
 
+    bool isConsoleOpen(void);
+    bool isErrorTableOpen(void);
 signals:
-    
+    void verticalSplitterChanged();
+
 public slots:
+
+    void openConsole(void);
+    void openErrorTable(void);
+
+    void closeErrorTable(void);
+    void closeConsole(void);
+
+    void toggleErrorTable(void);
+    void toggleConsole(void);
+
     void openFindReplaceWidget(void);
     void closeFindReplaceWidget(void);
 

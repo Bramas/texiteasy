@@ -58,11 +58,11 @@ private:
     void loadFile(QString filename);
     QList<BibItem> parseBibtexSource(QString source);
 
-    QStringList _words;
-    QStringList _customWords;
     QString _commandBegin;
+    QStringList _customWords;
     WidgetTextEdit * _widgetTextEdit;
     WidgetTooltip * _widgetTooltip;
+    QStringList _words;
 
 };
 

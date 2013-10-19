@@ -45,15 +45,14 @@ int main(int argc, char *argv[])
 
     qDebug()<<QString("Start ")+APPLICATION_NAME+QString(" version ")+CURRENT_VERSION;
     MainWindow w;
+    w.show();
     a.connect(&a, SIGNAL(requestOpenFile(QString)), &w, SLOT(open(QString)));
 
+/*
     if(argc > 1)
     {
         QString filename = argv[1];
         w.open(filename);
-    }
-
-    w.show();
-    
+    }*/
     return a.exec();
 }

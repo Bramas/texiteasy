@@ -33,8 +33,8 @@
 
 DialogConfig::DialogConfig(MainWindow *parent) :
     QDialog(parent),
-    _parent(parent),
-    ui(new Ui::DialogConfig)
+    ui(new Ui::DialogConfig),
+    _parent(parent)
 {
     ui->setupUi(this);
     connect(this->ui->pushButton_saveAndQuit,SIGNAL(clicked()),this,SLOT(saveAndClose()));

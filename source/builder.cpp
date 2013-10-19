@@ -139,7 +139,7 @@ bool Builder::checkOutput()
         {
             errorMessage = line;
             errorState = true;
-            firsLineError = false;//true;
+            firsLineError = false;
         }
         else
         if(errorState)

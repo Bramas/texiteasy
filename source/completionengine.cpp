@@ -33,9 +33,9 @@
 
 CompletionEngine::CompletionEngine(WidgetTextEdit *parent) :
     QListWidget(parent),
+    _commandBegin(QString("")),
     _widgetTextEdit(parent),
-    _widgetTooltip(0),
-    _commandBegin(QString(""))
+    _widgetTooltip(0)
 {
     this->setVisible(false);
 

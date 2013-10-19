@@ -96,20 +96,22 @@ public:
     bool isThisVersionHaveToBeReminded(QString version);
     void dontRemindMeThisVersion(QString version);
 
+
+    void init();
+public slots:
     /**
      * @brief signalVersionIsOutdated
      * call this function to emit the versionIsOutdated() signal
      */
     void signalVersionIsOutdated() { emit versionIsOutdated(); }
 
-    void init();
-public slots:
     void setPdfSynchronized(bool pdfSynchronized) { QSettings settings; settings.setValue("pdfSynchronized", pdfSynchronized); }
     void openThemeFolder();
     void openUpdateWebsite() { QString link = TEXITEASY_UPDATE_WEBSITE;
                                QDesktopServices::openUrl(QUrl(link)); }
 
 signals:
+
     /**
      * @brief versionIsOutdated [signal]
      * emitted when we detect that the version is outdated

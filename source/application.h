@@ -17,6 +17,10 @@ public slots:
 protected:
 #ifdef OS_MAC
     bool event(QEvent *);
+public slots:
+    void sendRequestFile();
+private:
+    QString _filename;
 #endif
 
 };

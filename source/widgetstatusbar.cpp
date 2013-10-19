@@ -69,9 +69,9 @@ WidgetStatusBar::WidgetStatusBar(QWidget *parent) :
 
 
 
-    connect(_labelConsole, SIGNAL(linkActivated(QString)), this, SLOT(toggleConsole()));
-    connect(_labelErrorTable, SIGNAL(linkActivated(QString)), this, SLOT(toggleErrorTable()));
-
+    connect(_labelConsole, SIGNAL(linkActivated(QString)), &FileManager::Instance, SLOT(toggleConsole()));
+    connect(_labelErrorTable, SIGNAL(linkActivated(QString)), &FileManager::Instance, SLOT(toggleErrorTable()));
+    connect(&FileManager::Instance, SIGNAL(verticalSplitterChanged()), this, SLOT(updateButtons()));
     this->setStyleSheet("QStatusBar::item { border: none;} QStatusBar {padding:0; height:100px; background: "+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("linenumber").background().color())+
                                      "}");
 
@@ -85,79 +85,6 @@ WidgetStatusBar::~WidgetStatusBar()
     delete ui;
 }
 
-
-void WidgetStatusBar::toggleConsole()
-{
-    if(!FileManager::Instance.currentWidgetFile())
-    {
-        return;
-    }
-    QList<int> sizes = FileManager::Instance.currentWidgetFile()->verticalSplitter()->sizes();
-    if(sizes[3] == 0)
-    {
-        sizes.replace(0, sizes[0] - 60 + sizes[2]);
-        sizes.replace(2, 0);
-        sizes.replace(3, 60);
-        FileManager::Instance.currentWidgetFile()->verticalSplitter()->widget(3)->setMaximumHeight(460);
-        FileManager::Instance.currentWidgetFile()->verticalSplitter()->setSizes(sizes);
-        _labelConsole->setStyleSheet(QString("background-color:")+ ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color().darker()));
-        this->closeErrorTable();
-    }
-    else
-    {
-        closeConsole();
-    }
-}
-
-void WidgetStatusBar::closeConsole()
-{
-    if(!FileManager::Instance.currentWidgetFile())
-    {
-        return;
-    }
-    QList<int> sizes = FileManager::Instance.currentWidgetFile()->verticalSplitter()->sizes();
-    sizes.replace(0, sizes[0] + sizes[3]);
-    sizes.replace(3, 00);
-    FileManager::Instance.currentWidgetFile()->verticalSplitter()->widget(3)->setMaximumHeight(0);
-    FileManager::Instance.currentWidgetFile()->verticalSplitter()->setSizes(sizes);
-    _labelConsole->setStyleSheet(QString("background-color: transparent"));
-}
-
-void WidgetStatusBar::toggleErrorTable()
-{
-    if(!FileManager::Instance.currentWidgetFile())
-    {
-        return;
-    }
-    QList<int> sizes = FileManager::Instance.currentWidgetFile()->verticalSplitter()->sizes();
-    if(sizes[2] == 0)
-    {
-        sizes.replace(0, sizes[0] - 60 + sizes[3]);
-        sizes.replace(2, 60);
-        sizes.replace(3, 0);
-        FileManager::Instance.currentWidgetFile()->verticalSplitter()->widget(2)->setMaximumHeight(460);
-        FileManager::Instance.currentWidgetFile()->verticalSplitter()->setSizes(sizes);
-        _labelErrorTable->setStyleSheet(QString("background-color:")+ ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color().darker(200)));
-        this->closeConsole();
-    }
-    else
-    {
-        this->closeErrorTable();
-    }
-}
-void WidgetStatusBar::closeErrorTable()
-{
-    if(!FileManager::Instance.currentWidgetFile())
-    {
-        return;
-    }
-    QList<int> sizes = FileManager::Instance.currentWidgetFile()->verticalSplitter()->sizes();
-    sizes.replace(0, sizes[0] + sizes[2]);
-    sizes.replace(2, 00);
-    FileManager::Instance.currentWidgetFile()->verticalSplitter()->widget(2)->setMaximumHeight(0);
-    FileManager::Instance.currentWidgetFile()->verticalSplitter()->setSizes(sizes);
-    _labelErrorTable->setStyleSheet(QString("background-color: transparent"));
-}
 void WidgetStatusBar::setPosition(int row, int column)
 {
     _positionLabel->setText(trUtf8("Ligne %1, Colonne %2").arg(QString::number(row)).arg(QString::number(column)));

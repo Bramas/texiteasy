@@ -22,11 +22,21 @@ signals:
     void cursorPositionChanged(int,int);
     void filenameChanged(QString);
     void filenameChanged(WidgetFile*, QString);
+    /**
+     * @brief verticalSplitterChanged signal is send if the console or the errortable (simpleoutput)
+     *        is open or close but not every time the splitter is moved
+     */
+    void verticalSplitterChanged();
+    void messageFromCurrentFile(QString);
 
 public slots:
     bool newFile();
 
     void sendFilenameChanged(WidgetFile* w, QString name) { emit filenameChanged(w,name); emit filenameChanged(name); }
+
+    /**
+     * The main parts of the slots are just used to call the same slots on the current file
+     */
     void save() { this->currentWidgetFile()->save(); }
     void saveAs() { this->currentWidgetFile()->saveAs(); }
     void pdflatex(void){ this->currentWidgetFile()->pdflatex(); }
@@ -41,6 +51,8 @@ public slots:
     void setPdfSynchronized(bool pdfSynchronized);
     void jumpToPdfFromSource();
     void rehighlight();
+    void toggleConsole();
+    void toggleErrorTable();
 
     void setCurrent(WidgetFile * widget)
     {
@@ -55,8 +67,13 @@ public slots:
 
 private slots:
     void sendCursorPositionChanged(int x, int y) { emit cursorPositionChanged(x, y); }
+    void sendVerticalSplitterChanged() { emit verticalSplitterChanged(); }
+    void sendMessageFromCurrentFile(QString message) { emit messageFromCurrentFile(message); }
 
 private:
+
+    void changeConnexions(WidgetFile *oldFile);
+
     explicit FileManager(QObject *parent = 0);
     QList<WidgetFile *> _widgetFiles;
     int _currentWidgetFileId;

@@ -22,7 +22,6 @@ void WidgetSimpleOutput::setBuilder(Builder *builder)
     {
         return;
     }
-
     connect(_builder, SIGNAL(error()),this, SLOT(onError()));
     connect(_builder, SIGNAL(success()),this, SLOT(onSuccess()));
     connect(_builder, SIGNAL(started()), this, SLOT(clear()));
@@ -48,7 +47,6 @@ void WidgetSimpleOutput::onError()
         this->item(row,2)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         ++row;
     }
-
 }
 void WidgetSimpleOutput::onSuccess()
 {

@@ -1,5 +1,6 @@
 #include "application.h"
 #include <QFileOpenEvent>
+#include <QTimer>
 #include "updatechecker.h"
 
 Application::Application(int argc, char *argv[]) :
@@ -14,15 +15,17 @@ bool Application::event(QEvent *event)
 {
     switch (event->type()) {
     case QEvent::FileOpen:
-        if(!static_cast<QFileOpenEvent *>(
-                    event)->file().isEmpty())
-        {
-            emit requestOpenFile(static_cast<QFileOpenEvent *>(
-                 event)->file());
-        }
+        _filename = static_cast<QFileOpenEvent *>(
+                    event)->file();
+        QTimer::singleShot(200,this,SLOT(sendRequestFile()));
         return true;
     default:
         return QApplication::event(event);
     }
 }
+void Application::sendRequestFile()
+{
+    emit requestOpenFile(_filename);
+}
+
 #endif
