@@ -81,24 +81,28 @@ public slots:
 
 protected:
     void paintEvent(QPaintEvent *);
+    void mouseReleaseEvent(QMouseEvent *);
     void mousePressEvent(QMouseEvent *);
     void mouseMoveEvent(QMouseEvent *);
     void mouseDoubleClickEvent(QMouseEvent *);
+    void contextMenuEvent(QContextMenuEvent *);
     
 private:
-
     bool overCloseButton(QPoint mousePos, int left);
-
+    bool overMoreButton(QPoint mousePos, int left);
     QStringList _tabsName;
     QList<WidgetFile *> _widgets;
     QList<int> _tabsNameWidth;
     int _currentIndex;
-
+    int _widgetOverId;
     int _overCloseId;
+    int _overMoreId;
     int _padding;
     int _margin;
     int _closeLeftMargin ;
+    int _moreRightMargin;
     int _closeWidth;
+    int _moreWidth;
 };
 
 #endif // WIDGETTAB_H

@@ -5,6 +5,8 @@
 #include <QPen>
 #include <QColor>
 #include <QDebug>
+#include <QAction>
+#include <QMenu>
 #include <QFontMetrics>
 #include "configmanager.h"
 #include "widgettextedit.h"
@@ -14,6 +16,7 @@ WidgetTab::WidgetTab(QWidget *parent) :
     QWidget(parent)
 {
     _currentIndex = -1;
+    _widgetOverId = -1;
     this->setMinimumHeight(30);
     this->setMaximumHeight(30);
     this->setMouseTracking(true);
@@ -23,7 +26,12 @@ WidgetTab::WidgetTab(QWidget *parent) :
     _padding = 10;
     _margin = 5;
     _closeLeftMargin = 7;
+    _moreRightMargin = 7;
     _closeWidth = 5;
+    _moreWidth = 5;
+
+    this->setContextMenuPolicy(Qt::NoContextMenu);
+    this->addAction(new QAction("tesssst", this));
 }
 
 void WidgetTab::paintEvent(QPaintEvent * event)
@@ -44,6 +52,10 @@ void WidgetTab::paintEvent(QPaintEvent * event)
     QPen overClosePen(QColor(160,160,160));
     overClosePen.setWidth(2);
 
+    QBrush defaultMoreBrush(QColor(100,100,100));
+    QBrush hoverMoreBrush(QColor(130,130,130));
+    QBrush overMoreBrush(QColor(160,160,160));
+
 
     QPen rectPen(QColor(0,0,0));
     QBrush backgroundBrush(ConfigManager::Instance.getTextCharFormats("linenumber").background().color().darker(200));
@@ -56,10 +68,10 @@ void WidgetTab::paintEvent(QPaintEvent * event)
     painter.setBrush(backgroundBrush);
     painter.drawRect(-1, -1, width() + 2, height() + 2);
 
-    _tabsNameWidth.clear();
-    _tabsNameWidth.append(0);
     int index = 0;
     int cummulatedWidth = 10;
+    _tabsNameWidth.clear();
+    _tabsNameWidth.append(cummulatedWidth);
 
     foreach(QString tabName, _tabsName)
     {
@@ -73,7 +85,7 @@ void WidgetTab::paintEvent(QPaintEvent * event)
             painter.setBrush(defaultRectBrush);
         }
         painter.setPen(rectPen);
-        painter.drawRoundedRect(cummulatedWidth, 5, fm.width(tabName) + _padding * 2 + _closeLeftMargin + _closeWidth, 30, 5, 5);
+        painter.drawRoundedRect(cummulatedWidth, 5, fm.width(tabName) + _moreWidth + _moreRightMargin + _padding * 2 + _closeLeftMargin + _closeWidth, 30, 5, 5);
 
         if(index == this->currentIndex())
         {
@@ -83,7 +95,7 @@ void WidgetTab::paintEvent(QPaintEvent * event)
         {
             painter.setPen(defaultPen);
         }
-        painter.drawText(cummulatedWidth + _padding, 22, tabName);
+        painter.drawText(cummulatedWidth + _moreWidth + _moreRightMargin + _padding, 22, tabName);
 
         if(index == _overCloseId)
         {
@@ -98,11 +110,32 @@ void WidgetTab::paintEvent(QPaintEvent * event)
         {
             painter.setPen(defaultClosePen);
         }
-        painter.drawLine(cummulatedWidth + fm.width(tabName) + _padding + _closeLeftMargin, 15, cummulatedWidth + fm.width(tabName) + _padding + _closeLeftMargin + _closeWidth, 15 + _closeWidth);
-        painter.drawLine(cummulatedWidth + fm.width(tabName) + _padding + _closeLeftMargin, 15 + _closeWidth, cummulatedWidth + fm.width(tabName) + _padding + _closeLeftMargin + _closeWidth, 15);
+        painter.drawLine(cummulatedWidth + fm.width(tabName) + _moreWidth + _moreRightMargin + _padding + _closeLeftMargin, 15, cummulatedWidth + fm.width(tabName) + _moreWidth + _moreRightMargin + _padding + _closeLeftMargin + _closeWidth, 15 + _closeWidth);
+        painter.drawLine(cummulatedWidth + fm.width(tabName) + _moreWidth + _moreRightMargin + _padding + _closeLeftMargin, 15 + _closeWidth, cummulatedWidth + fm.width(tabName) + _moreWidth + _moreRightMargin + _padding + _closeLeftMargin + _closeWidth, 15);
+
+        painter.setPen(Qt::NoPen);
+        if(index == _overMoreId)
+        {
+            painter.setBrush(overMoreBrush);
+        }
+        else
+        if(index == this->currentIndex())
+        {
+            painter.setBrush(hoverMoreBrush);
+        }
+        else
+        {
+            painter.setBrush(defaultMoreBrush);
+        }
+        QVector<QPointF> pol;
+        pol.append(QPointF(cummulatedWidth + _padding, 15));
+        pol.append(QPointF(cummulatedWidth + _padding + qreal(_moreWidth)/2.0, 20));
+        pol.append(QPointF(cummulatedWidth + _padding + _moreWidth, 15));
+        QPolygonF polF(pol);
+        painter.drawConvexPolygon(polF);
 
 
-        cummulatedWidth += fm.width(tabName) + _padding * 2 + _closeLeftMargin + _closeWidth + _margin;
+        cummulatedWidth += fm.width(tabName) + _padding * 2 + _moreRightMargin + _closeLeftMargin + _moreWidth + _closeWidth + _margin;
         _tabsNameWidth.append(cummulatedWidth);
         ++index;
     }
@@ -112,7 +145,22 @@ void WidgetTab::paintEvent(QPaintEvent * event)
 
 void WidgetTab::mousePressEvent(QMouseEvent * event)
 {
+    QWidget::mousePressEvent(event);
+}
+
+void WidgetTab::mouseReleaseEvent(QMouseEvent * event)
+{
+    if(event->button() == Qt::RightButton)
+    {
+        return;
+    }
+    if(_overCloseId != -1)
+    {
+        emit tabCloseRequested(_overCloseId);
+        return;
+    }
     int idx = -1;
+    int lastWidth = 0;
     foreach(int w, _tabsNameWidth)
     {
         if(idx == -1 && event->pos().x() < w)
@@ -121,17 +169,84 @@ void WidgetTab::mousePressEvent(QMouseEvent * event)
         }
         if(event->pos().x() < w)
         {
-            if(this->overCloseButton(event->pos(), w))
+            if(this->overMoreButton(event->pos(), lastWidth))
             {
-                emit tabCloseRequested(idx);
+                _overMoreId = idx;
+                this->contextMenuEvent(new QContextMenuEvent(QContextMenuEvent::Mouse,event->pos()));
                 return;
             }
             setCurrentIndex(idx);
             return;
         }
+        lastWidth = w;
         ++idx;
     }
     return;
+}
+
+bool WidgetTab::overCloseButton(QPoint mousePos, int left)
+{
+    return mousePos.x() <= left - _padding - _margin + 2 &&
+           mousePos.x() >= left - _padding - _margin - _closeWidth - 2 &&
+           mousePos.y() >= 15 - 2 &&
+           mousePos.y() <= 15 + _closeWidth + 2;
+}
+bool WidgetTab::overMoreButton(QPoint mousePos, int left)
+{
+    return mousePos.x() <= left + _padding + _moreWidth + 2 &&
+           mousePos.x() >= left + _padding - 2 &&
+           mousePos.y() >= 15 - 2 &&
+           mousePos.y() <= 15 + 5 + 2;
+}
+
+void WidgetTab::mouseMoveEvent(QMouseEvent * event)
+{
+    _overCloseId = -1;
+    _overMoreId = -1;
+    this->setCursor(Qt::ArrowCursor);
+    int idx = -1;
+    int lastWidth = 0;
+    foreach(int w, _tabsNameWidth)
+    {
+        if(idx == -1 && event->pos().x() < w)
+        {
+            break;
+        }
+        if(event->pos().x() < w)
+        {
+            if(this->overMoreButton(event->pos(), lastWidth))
+            {
+                this->setCursor(Qt::PointingHandCursor);
+                _overMoreId = idx;
+                update();
+                return;
+            }
+            if(this->overCloseButton(event->pos(), w))
+            {
+                this->setCursor(Qt::PointingHandCursor);
+                _overCloseId = idx;
+                update();
+                return;
+            }
+            update();
+            return;
+        }
+        lastWidth = w;
+        ++idx;
+    }
+}
+void WidgetTab::contextMenuEvent(QContextMenuEvent * event)
+{
+    if(_overMoreId == -1)
+    {
+        return;
+    }
+    QPoint p(_tabsNameWidth.at(_overMoreId), 30);
+    QMenu * m = new QMenu(this);
+    m->addActions(this->widget(_overMoreId)->actions());
+    _overMoreId = -1;
+    m->exec(this->mapToGlobal(p));
+    delete m;
 }
 
 WidgetFile * WidgetTab::widget(QString filename)
@@ -157,41 +272,6 @@ int WidgetTab::indexOf(QString filename)
         ++index;
     }
     return -1;
-}
-
-bool WidgetTab::overCloseButton(QPoint mousePos, int left)
-{
-    return mousePos.x() <= left - _padding - _margin + 2 &&
-           mousePos.x() >= left - _padding - _margin - _closeWidth - 2 &&
-           mousePos.y() >= 15 - 2 &&
-           mousePos.y() <= 15 + _closeWidth + 2;
-}
-
-void WidgetTab::mouseMoveEvent(QMouseEvent * event)
-{
-    _overCloseId = -1;
-    this->setCursor(Qt::ArrowCursor);
-    int idx = -1;
-    foreach(int w, _tabsNameWidth)
-    {
-        if(idx == -1 && event->pos().x() < w)
-        {
-            break;
-        }
-        if(event->pos().x() < w)
-        {
-            if(this->overCloseButton(event->pos(), w))
-            {
-                this->setCursor(Qt::PointingHandCursor);
-                _overCloseId = idx;
-                break;
-            }
-            break;
-        }
-        ++idx;
-    }
-
-    update();
 }
 
 void WidgetTab::removeAll()

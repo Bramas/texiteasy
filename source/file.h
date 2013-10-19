@@ -160,6 +160,7 @@ public:
     bool isModified() { return this->_modified; }
 
     QStringList bibtexFiles() const;
+    const QList<AssociatedFile> & associatedFiles() const { return _associatedFiles; }
 
 public slots:
     /**

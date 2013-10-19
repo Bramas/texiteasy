@@ -15,6 +15,7 @@
 #include <QPushButton>
 #include <QGridLayout>
 #include <QFileDialog>
+#include <QAction>
 #include <QDebug>
 
 WidgetFile::WidgetFile(QWidget *parent) :
@@ -309,4 +310,13 @@ void WidgetFile::open(QString filename)
     _widgetTextEdit->getCurrentFile()->open(filename);
     _widgetPdfViewer->widgetPdfDocument()->setFile(_widgetTextEdit->getCurrentFile());
     _widgetConsole->setBuilder(_widgetTextEdit->getCurrentFile()->getBuilder());
+    foreach(AssociatedFile associatedfile,  _widgetTextEdit->getCurrentFile()->associatedFiles())
+    {
+        QString basename = associatedfile.filename;
+        basename.replace(QRegExp("^.*[\\\\\\//]([^\\\\\\//]+)$"), "\\1");
+        QAction * a = new QAction(trUtf8("Ouvrir ") + basename, this);
+        a->setProperty("filename", associatedfile.filename);
+        connect(a, SIGNAL(triggered()), &FileManager::Instance, SLOT(openAssociatedFile()));
+        this->addAction(a);
+    }
 }

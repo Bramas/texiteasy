@@ -5,6 +5,7 @@
 #include "syntaxhighlighter.h"
 #include "configmanager.h"
 #include "builder.h"
+#include <QAction>
 #include <QDebug>
 
 
@@ -54,6 +55,17 @@ bool FileManager::open(QString filename)
     this->currentWidgetFile()->open(filename);
     return newWidget;
 }
+void FileManager::openAssociatedFile()
+{
+    QAction * action = dynamic_cast<QAction*>(sender());
+    QString filename = action->property("filename").toString();
+    if(!filename.isEmpty())
+    {
+        emit requestOpenFile(filename);
+    }
+
+}
+
 void FileManager::undo()
 {
     this->currentWidgetFile()->widgetTextEdit()->undo();

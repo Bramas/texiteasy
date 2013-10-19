@@ -95,7 +95,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setStatusBar(_widgetStatusBar);
     connect(&FileManager::Instance, SIGNAL(cursorPositionChanged(int,int)), _widgetStatusBar, SLOT(setPosition(int,int)));
     connect(&FileManager::Instance, SIGNAL(messageFromCurrentFile(QString)), _widgetStatusBar, SLOT(showTemporaryMessage(QString)));
-
+    connect(&FileManager::Instance, SIGNAL(requestOpenFile(QString)), this, SLOT(open(QString)));
     QSettings settings;
     settings.beginGroup("mainwindow");
     if(settings.contains("geometry"))

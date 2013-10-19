@@ -20,6 +20,7 @@ public:
 
 signals:
     void cursorPositionChanged(int,int);
+    void requestOpenFile(QString);
     void filenameChanged(QString);
     void filenameChanged(WidgetFile*, QString);
     /**
@@ -31,6 +32,7 @@ signals:
 
 public slots:
     bool newFile();
+    void openAssociatedFile();
 
     void sendFilenameChanged(WidgetFile* w, QString name) { emit filenameChanged(w,name); emit filenameChanged(name); }
 
