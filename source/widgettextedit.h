@@ -79,7 +79,11 @@ public:
 
     bool isCursorVisible();
     void setSyntaxHighlighter(SyntaxHighlighter * syntaxHighlighter) { this->_syntaxHighlighter = syntaxHighlighter; }
-    void setWidgetLineNumber(WidgetLineNumber * widgetLineNumber) { this->_widgetLineNumber = widgetLineNumber; }
+    void setWidgetLineNumber(WidgetLineNumber * widgetLineNumber)
+    {
+        this->_widgetLineNumber = widgetLineNumber;
+        connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateLineNumber(QRect,int)));
+    }
     void displayWidgetInsertCommand();
 
     int centerBlockNumber();
@@ -91,6 +95,9 @@ signals:
     void setBlockRange(int,int);
     void lineCountChanged(int);
     void cursorPositionChanged(int, int);
+private slots:
+    void updateLineNumber(const QRect &rect, int dy);
+
 public slots:
     void wrapEnvironment();
     void scrollTo(int);

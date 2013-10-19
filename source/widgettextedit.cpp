@@ -103,10 +103,6 @@ void WidgetTextEdit::insertText(const QString &text)
 void WidgetTextEdit::paintEvent(QPaintEvent *event)
 {
     WIDGET_TEXT_EDIT_PARENT_CLASS::paintEvent(event);
-    if(_widgetLineNumber)
-    {
-        this->_widgetLineNumber->update();
-    }
     QPainter painter(viewport());
 
     if(_multipleEdit.count())
@@ -118,58 +114,16 @@ void WidgetTextEdit::paintEvent(QPaintEvent *event)
         QPoint diff(0,line.height());
         painter.drawLine(curPoint - diff, curPoint);
     }
-
-
     return;
-    painter.setBrush(ConfigManager::Instance.getTextCharFormats("leftStructure").background());
-    painter.setPen(QPen(ConfigManager::Instance.getTextCharFormats("leftStructure").foreground().color()));
-
-    QFont font(ConfigManager::Instance.getTextCharFormats("leftStructure").font().family(),ConfigManager::Instance.getTextCharFormats("leftStructure").font().pointSize());
-    font.setBold(ConfigManager::Instance.getTextCharFormats("leftStructure").font().bold());
-    QFontMetrics fm(font);
-    painter.setFont(font);
-
-
-
-    QListIterator<FileStructureInfo*> iterator(*this->fileStructure->info());
-    FileStructureInfo * value;
-    int top = 0;
-    int height = 0;
-    //qDebug()<<"--------------------";
-
-
-
-    painter.translate(15,0);
-    painter.rotate(-90);
-    while(iterator.hasNext())
-    {
-
-        value = iterator.next();
-        if(value->top + value->height < this->verticalScrollBar()->value() ||
-           this->verticalScrollBar()->value() + this->height() < value->top   )
-        {
-            continue;
-        }
-        top = max(value->top - this->verticalScrollBar()->value(),0);
-        height = fm.width(value->name);
-        //qDebug()<<value->top<<","<<value->endBlock<<"    "<<(value->height + value->top - this->verticalScrollBar()->value())<<" , "<<(height + 30);
-        if(value->height + value->top - this->verticalScrollBar()->value() <  height + 30)
-        {
-            top = value->top + value->height -30 -height - this->verticalScrollBar()->value();
-            //qDebug()<<"pas assez "<<(value->height + value->top - this->verticalScrollBar()->value())<<" > "<<(height + 30);
-        }
-
-        painter.setPen(QPen(ConfigManager::Instance.getTextCharFormats("leftStructure").background().color()));
-        painter.drawRect(- value->top - value->height -4  + this->verticalScrollBar()->value(),25*(value->level-2)+5,value->height-2,25);
-
-        painter.setPen(QPen(ConfigManager::Instance.getTextCharFormats("leftStructure").foreground().color()));
-        painter.drawText(-top-height-20,25*(value->level-1),value->name);
-    }
-
-
-
 }
-
+void WidgetTextEdit::updateLineNumber(const QRect &rect, int dy)
+{
+    if(!_widgetLineNumber)
+    {
+        return;
+    }
+    _widgetLineNumber->update(0, rect.y(), _widgetLineNumber->width(), rect.height());
+}
 bool WidgetTextEdit::isCursorVisible()
 {
     bool down = this->blockBottom(this->textCursor().block()) + this->contentOffsetTop() > 0;
