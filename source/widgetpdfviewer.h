@@ -39,7 +39,7 @@ public:
     ~WidgetPdfViewer();
 
     WidgetPdfDocument * widgetPdfDocument() { return this->_widgetPdfDocument; }
-    
+    void restorPdfDocumentParent();
 private:
     Ui::WidgetPdfViewer *ui;
 

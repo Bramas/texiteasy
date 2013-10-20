@@ -43,6 +43,7 @@ File::File(WidgetFile *widgetFile, WidgetTextEdit* widgetTextEdit, QString filen
     _widgetTextEdit(widgetTextEdit),
     _widgetFile(widgetFile)
 {
+    _format = UNKNOWN;
     connect(_autoSaveTimer, SIGNAL(timeout()), this, SLOT(autoSave()));
 }
 File::~File()
@@ -144,6 +145,16 @@ const QString File::open(QString filename, QString codec)
         return QString("");
     }
     this->_codec = in.codec()->name();
+
+    if(!fileInfo().suffix().compare("tex"))
+    {
+        this->_format = TEX;
+    }
+    else if(!fileInfo().suffix().compare("bib"))
+    {
+        this->_format = BIBTEX;
+    }
+
     this->_widgetTextEdit->setText(this->data);
     this->lookForAssociatedFiles();
     this->refreshLineNumber();
@@ -206,26 +217,42 @@ void File::lookForAssociatedFiles()
     }
 
     // Look for bibtex Files
-
     QRegExp patternBib("\\\\bibliography\\{([^\\}]*)\\}");
     int index = this->data.indexOf(patternBib);
-    if(index == -1)
+    if(index != -1)
     {
-        return;
-    }
-    QString bibFilename = this->getPath();
+        QString bibFilename = this->getPath();
 
-    bibFilename += patternBib.capturedTexts().last();
-    bibFilename += ".bib";
-    if(!QFile::exists(bibFilename))
-    {
-        qDebug()<<"bibtex file does not exist : "<<bibFilename;
-        return;
+        bibFilename += patternBib.capturedTexts().last();
+        bibFilename += ".bib";
+        if(QFile::exists(bibFilename))
+        {
+            AssociatedFile asso;
+            asso.type = AssociatedFile::BIBTEX;
+            asso.filename = bibFilename;
+            _associatedFiles.append(asso);
+        }
     }
-    AssociatedFile asso;
-    asso.type = AssociatedFile::BIBTEX;
-    asso.filename = bibFilename;
-    _associatedFiles.append(asso);
+
+    // Look for input tex Files
+    QRegExp patternInput("\\\\input\\{([^\\}]*)\\}");
+    index = -1;
+    while((index = this->data.indexOf(patternInput, index + 1)) != -1)
+    {
+        QString texFilename = this->getPath();
+        texFilename += patternInput.capturedTexts().last();
+        if(!texFilename.contains(QRegExp("\\.[a-zA-Z]{1,4}$")))
+        {
+            texFilename += ".tex";
+        }
+        if(QFile::exists(texFilename))
+        {
+            AssociatedFile asso;
+            asso.type = AssociatedFile::INPUT;
+            asso.filename = texFilename;
+            _associatedFiles.append(asso);
+        }
+    }
 }
 
 QStringList File::bibtexFiles() const
@@ -255,3 +282,8 @@ void File::addOpenAssociatedFile(File * openAssocitedFile)
 {
     _openAssociatedFiles.append(openAssocitedFile);
 }
+void File::removeOpenAssociatedFile(File * openAssocitedFile)
+{
+    _openAssociatedFiles.removeAll(openAssocitedFile);
+}
+

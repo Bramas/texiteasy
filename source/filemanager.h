@@ -20,6 +20,7 @@ public:
     int reverseAssociatedFileIndex(QString filename);
 
     File * file(int index);
+    WidgetFile * widgetFile(QString filename);
     WidgetFile * widgetFile(int index) { return _widgetFiles.at(index); }
 
 signals:
@@ -63,6 +64,7 @@ public slots:
     void setCurrent(WidgetFile * widget);
     void setCurrent(int index);
 
+
 private slots:
     void sendCursorPositionChanged(int x, int y) { emit cursorPositionChanged(x, y); }
     void sendVerticalSplitterChanged() { emit verticalSplitterChanged(); }
@@ -70,6 +72,8 @@ private slots:
 
 private:
 
+    void createMasterConnexions(WidgetFile * widget, WidgetFile * master);
+    void deleteMasterConnexions(WidgetFile * widget);
     void changeConnexions(WidgetFile *oldFile);
 
     explicit FileManager(QObject *parent = 0);

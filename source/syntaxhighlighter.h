@@ -25,16 +25,19 @@
 #include <QSyntaxHighlighter>
 
 class QTextEdit;
+class WidgetFile;
 
 class SyntaxHighlighter : public QSyntaxHighlighter
 {
 public:
-    SyntaxHighlighter(QTextDocument *parent);
+    SyntaxHighlighter(WidgetFile * widgetFile);
     ~SyntaxHighlighter();
 
 protected:
     virtual void highlightBlock(const QString &text);
     void highlightExpression(const QString &text, const QString &pattern, const QTextCharFormat &format);
+private:
+    WidgetFile * _widgetFile;
 };
 
 #endif // SYNTAXHIGHLIGHTER_H

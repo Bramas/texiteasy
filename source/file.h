@@ -50,6 +50,7 @@ class File : public QObject
 public:
     explicit File(WidgetFile * widgetFile, WidgetTextEdit * widgetTextEdit, QString filename = "");
     ~File();
+    typedef enum Format {UNKNOWN, BIBTEX, TEX} Format;
     /**
      * @brief getData
      * @return the QString data
@@ -150,13 +151,15 @@ public:
     bool isModified() { return this->_modified; }
 
     void addOpenAssociatedFile(File * openAssocitedFile);
-
+    Format format() { return _format; }
     const QList<File*> & openAssociatedFiles() { return _openAssociatedFiles; }
 
-    QStringList bibtexFiles() const;
     const QList<AssociatedFile> & associatedFiles() const { return _associatedFiles; }
+    QStringList bibtexFiles() const;
     bool isAssociatedWith(QString filename);
+    void removeOpenAssociatedFile(File * openAssocitedFile);
     WidgetFile * widgetFile() { return _widgetFile; }
+
 
 public slots:
     /**
@@ -193,6 +196,8 @@ private:
     Viewer * viewer;
     WidgetTextEdit * _widgetTextEdit;
     WidgetFile * _widgetFile;
+    Format _format;
+
 
     QMap<int,int> _lineNumberSinceLastBuild;
 };

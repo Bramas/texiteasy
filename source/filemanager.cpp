@@ -8,7 +8,6 @@
 #include <QAction>
 #include <QDebug>
 
-
 FileManager FileManager::Instance;
 
 FileManager::FileManager(QObject *parent) :
@@ -49,6 +48,59 @@ void FileManager::changeConnexions(WidgetFile * oldFile)
 
 }
 
+WidgetFile * FileManager::widgetFile(QString filename)
+{
+    foreach(WidgetFile * widget, _widgetFiles)
+    {
+        if(!filename.compare(widget->file()->getFilename()))
+        {
+            return widget;
+        }
+    }
+    return 0;
+}
+
+void FileManager::createMasterConnexions(WidgetFile * widget, WidgetFile * master)
+{
+    master->file()->addOpenAssociatedFile(widget->file());
+
+    // update the child
+    widget->setMasterFile(master);
+    widget->file()->getBuilder()->setFile(master->file());
+
+    // update the parent
+    connect(widget->file()->getBuilder(), SIGNAL(pdfChanged()),master->widgetPdfViewer()->widgetPdfDocument(),SLOT(updatePdf()));
+}
+
+void FileManager::deleteMasterConnexions(WidgetFile *widget)
+{
+    // if it has a master file
+    // remove connexion with the master file
+    if(widget->masterFile())
+    {
+        widget->masterFile()->file()->removeOpenAssociatedFile(widget->file());
+        disconnect(widget->file()->getBuilder(), SIGNAL(pdfChanged()),widget->masterFile()->widgetPdfViewer()->widgetPdfDocument(),SLOT(updatePdf()));
+
+        // the widget maybe own the pdfDocument of the master file
+        // in this case we have to remove it as a child because
+        // if the widget is deleted, all children are deleted
+        if(widget->masterFile()->widgetPdfViewer()->widgetPdfDocument()->parent()
+                == widget->widgetPdfViewer())
+        {
+            widget->masterFile()->widgetPdfViewer()->restorPdfDocumentParent();
+        }
+    }
+
+    // if it is a master file
+    // restore everything with the open associatedFiles
+    foreach(File * openAssoc, widget->file()->openAssociatedFiles())
+    {
+        openAssoc->widgetFile()->setMasterFile(0);
+        openAssoc->getBuilder()->setFile(openAssoc);
+    }
+
+}
+
 bool FileManager::open(QString filename)
 {
     bool newWidget = this->newFile();
@@ -59,15 +111,17 @@ bool FileManager::open(QString filename)
     if(masterId != -1)
     {
         WidgetFile * masterFile = this->widgetFile(masterId);
-        masterFile->file()->addOpenAssociatedFile(this->currentWidgetFile()->file());
+        createMasterConnexions(this->currentWidgetFile(), masterFile);
+    }
 
-        // update the child
-        this->currentWidgetFile()->setMasterFile(masterFile);
-        this->currentWidgetFile()->file()->getBuilder()->setFile(this->file(masterId));
-
-        // update the parent
-        connect(this->currentWidgetFile()->file()->getBuilder(), SIGNAL(pdfChanged()),masterFile->widgetPdfViewer()->widgetPdfDocument(),SLOT(updatePdf()));
-
+    // is there already an opened associated file
+    WidgetFile * associatedWidget;
+    foreach(AssociatedFile associatedFile, this->currentWidgetFile()->file()->associatedFiles())
+    {
+        if(associatedWidget = this->widgetFile(associatedFile.filename))
+        {
+            createMasterConnexions(associatedWidget, this->currentWidgetFile());
+        }
     }
 
 
@@ -195,17 +249,8 @@ void FileManager::close(WidgetFile *widget)
 {
     int id = _widgetFiles.indexOf(widget);
 
-    // remove connexion with the master file
-    if(widget->masterFile())
-    {
-        connect(widget->file()->getBuilder(), SIGNAL(pdfChanged()),widget->masterFile()->widgetPdfViewer()->widgetPdfDocument(),SLOT(updatePdf()));
-    }
-    // restore everything with the open associatedFiles
-    foreach(File * openAssoc, widget->file()->openAssociatedFiles())
-    {
-        openAssoc->widgetFile()->setMasterFile(0);
-        openAssoc->getBuilder()->setFile(openAssoc);
-    }
+    deleteMasterConnexions(widget);
+
     if(_currentWidgetFileId >= id && _currentWidgetFileId != 0)
     {
         --_currentWidgetFileId;

@@ -23,7 +23,7 @@ WidgetFile::WidgetFile(QWidget *parent) :
 {
     _masterFile = 0;
     _widgetTextEdit = new WidgetTextEdit(this);
-    _syntaxHighlighter = new SyntaxHighlighter(_widgetTextEdit->document());
+    _syntaxHighlighter = new SyntaxHighlighter(this);
     _widgetTextEdit->setSyntaxHighlighter(_syntaxHighlighter);
     _widgetPdfViewer = new WidgetPdfViewer(this);
     _widgetPdfViewer->widgetPdfDocument()->setWidgetTextEdit(_widgetTextEdit);

@@ -57,3 +57,8 @@ WidgetPdfViewer::~WidgetPdfViewer()
 {
     delete ui;
 }
+
+void WidgetPdfViewer::restorPdfDocumentParent()
+{
+    widgetPdfDocument()->setParent(this);
+}

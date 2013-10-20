@@ -25,10 +25,14 @@
 #include <QDebug>
 #include "blockdata.h"
 #include "configmanager.h"
+#include "widgetfile.h"
+#include "widgettextedit.h"
+#include "file.h"
 
-SyntaxHighlighter::SyntaxHighlighter(QTextDocument *parent) :
-    QSyntaxHighlighter(parent)
+SyntaxHighlighter::SyntaxHighlighter(WidgetFile *widgetFile) :
+    QSyntaxHighlighter(widgetFile->widgetTextEdit()->document())
 {
+    _widgetFile = widgetFile;
 }
 SyntaxHighlighter::~SyntaxHighlighter()
 {
@@ -39,6 +43,42 @@ SyntaxHighlighter::~SyntaxHighlighter()
 
 void SyntaxHighlighter::highlightBlock(const QString &text)
 {
+    if(_widgetFile->file()->format() == File::BIBTEX)
+    {
+        QTextCharFormat formatBibTitle = ConfigManager::Instance.getTextCharFormats("bibtex_command");
+        QTextCharFormat formatBibKeywords = ConfigManager::Instance.getTextCharFormats("bibtex_keyword");
+        QTextCharFormat formatBibString = ConfigManager::Instance.getTextCharFormats("bibtex_string");
+        QTextCharFormat formatBibQuotes = ConfigManager::Instance.getTextCharFormats("bibtex_quote");
+        QTextCharFormat formatComment = ConfigManager::Instance.getTextCharFormats("comment");
+
+        QString patternBibTitle = "@[a-zA-Z\\-_]+";
+        QString patternBibString = "\\\"[^\\\"]+\\\"";
+        QString patternBibQuotes = "\\\"";
+        QString patternBibKeywords = "author|title|year|publisher";
+        this->highlightExpression(text,patternBibTitle,formatBibTitle);
+        this->highlightExpression(text,patternBibKeywords, formatBibKeywords);
+        this->highlightExpression(text,patternBibString, formatBibString);
+        this->highlightExpression(text,patternBibQuotes, formatBibQuotes);
+
+
+        int commentIndex = text.size();
+        {
+            QString patternComment =  "\\%.*$";
+            QRegExp expression(patternComment);
+            int index = text.indexOf(expression);
+            int length=0;
+            if(index >= 0)
+            {
+                length = expression.matchedLength();
+                setFormat(index, length, formatComment);
+                commentIndex = index;
+            }
+        }
+        setFormat(commentIndex, text.size() - commentIndex, formatComment);
+
+        return;
+    }
+
     BlockData *blockData = new BlockData;
     if(this->previousBlockState() == 1)
     {
@@ -115,7 +155,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
      setFormat(0, text.size(), formatNormal);
 
 
-     QString patternCommand = "\\\\[a(-zA-Z]+";
+     QString patternCommand = "\\\\[a-zA-Z]+";
      QString patternStructure = "\\\\(sub){0,3}section\\{[^\\}]*\\}";
 
      this->highlightExpression(text,patternCommand,formatCommand);
