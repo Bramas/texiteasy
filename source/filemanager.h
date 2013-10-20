@@ -60,16 +60,8 @@ public slots:
     void toggleConsole();
     void toggleErrorTable();
 
-    void setCurrent(WidgetFile * widget)
-    {
-        if(!widget)
-        {
-            setCurrent(-1);
-            return;
-        }
-        setCurrent(_widgetFiles.indexOf(widget));
-    }
-    void setCurrent(int index) { _currentWidgetFileId = index; }
+    void setCurrent(WidgetFile * widget);
+    void setCurrent(int index);
 
 private slots:
     void sendCursorPositionChanged(int x, int y) { emit cursorPositionChanged(x, y); }

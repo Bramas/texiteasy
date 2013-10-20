@@ -96,6 +96,38 @@ int FileManager::reverseAssociatedFileIndex(QString filename)
     }
     return -1;
 }
+
+void FileManager::setCurrent(WidgetFile *widget)
+{
+    if(!widget)
+    {
+        setCurrent(-1);
+        return;
+    }
+    setCurrent(_widgetFiles.indexOf(widget));
+}
+void FileManager::setCurrent(int index)
+{
+     _currentWidgetFileId = index;
+     if(index == -1)
+     {
+         return;
+     }
+
+     if(this->currentWidgetFile()->masterFile())
+     {
+         this->currentWidgetFile()->masterFile()->widgetPdfViewer()->widgetPdfDocument()->setParent(
+                     this->currentWidgetFile()->widgetPdfViewer()
+               );
+     }
+     if(!this->currentWidgetFile()->file()->openAssociatedFiles().isEmpty())
+     {
+         this->currentWidgetFile()->widgetPdfViewer()->widgetPdfDocument()->setParent(
+                     this->currentWidgetFile()->widgetPdfViewer()
+               );
+     }
+}
+
 File * FileManager::file(int index)
 {
     return _widgetFiles.at(index)->file();
