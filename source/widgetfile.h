@@ -14,6 +14,7 @@ class WidgetPdfDocument;
 class WidgetSimpleOutput;
 class WidgetLineNumber;
 class SyntaxHighlighter;
+class File;
 
 class WidgetFile : public QWidget
 {
@@ -25,8 +26,10 @@ public:
 
     void pdflatex(void);
     void bibtex(void);
-    void save(void);
+    WidgetFile * masterFile() { return _masterFile; }
+    void save();
     void saveAs(void);
+    void setMasterFile(WidgetFile * master) { _masterFile = master; }
     bool isEmpty();
     WidgetTextEdit * widgetTextEdit() { return _widgetTextEdit; }
     WidgetPdfViewer * widgetPdfViewer() { return _widgetPdfViewer; }
@@ -37,6 +40,11 @@ public:
 
     bool isConsoleOpen(void);
     bool isErrorTableOpen(void);
+
+    File * file();
+
+    void setFileToBuild(File * file);
+
 signals:
     void verticalSplitterChanged();
 
@@ -66,6 +74,7 @@ private:
     WidgetLineNumber * _widgetLineNumber;
     SyntaxHighlighter * _syntaxHighlighter;
     
+    WidgetFile * _masterFile;
 };
 
 #endif // WIDGETFILE_H

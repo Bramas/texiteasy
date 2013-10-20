@@ -42,6 +42,7 @@ public:
         QString line;
     };
     ~Builder();
+    void setFile(File * file);
 
     const QList<Builder::Output> & simpleOutput() const { return _simpleOutPut; }
     static QString Error;

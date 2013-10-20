@@ -45,6 +45,12 @@ Builder::~Builder()
 #endif
     delete process;
 }
+
+void Builder::setFile(File *file)
+{
+    this->file = file;
+}
+
 void Builder::pdflatex()
 {
     if(this->file->getFilename().isEmpty())

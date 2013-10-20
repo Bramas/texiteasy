@@ -17,6 +17,10 @@ public:
     bool open(QString filename);
     void close(WidgetFile *widget);
     int count() { return _widgetFiles.count(); }
+    int reverseAssociatedFileIndex(QString filename);
+
+    File * file(int index);
+    WidgetFile * widgetFile(int index) { return _widgetFiles.at(index); }
 
 signals:
     void cursorPositionChanged(int,int);

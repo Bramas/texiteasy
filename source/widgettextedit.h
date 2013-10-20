@@ -56,7 +56,7 @@ class WidgetTextEdit : public WIDGET_TEXT_EDIT_PARENT_CLASS
 {
     Q_OBJECT
 public:
-    explicit WidgetTextEdit(QWidget *parent);
+    explicit WidgetTextEdit(WidgetFile *parent);
     ~WidgetTextEdit();
     int blockHeight(int blockCount) { return blockHeight(this->document()->findBlockByNumber(blockCount)); }
     int blockHeight(const QTextBlock &textBlock) { return this->blockGeometry(textBlock).height(); }

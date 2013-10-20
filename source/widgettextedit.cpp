@@ -45,15 +45,16 @@
 #include <QLayout>
 #include "QTextEdit"
 #include "widgetlinenumber.h"
+#include "widgetfile.h"
 
 #define max(a,b) ((a) < (b) ? (b) : (a))
 #define min(a,b) ((a) > (b) ? (b) : (a))
 #define abs(a) ((a) > 0 ? (a) : (-(a)))
 
-WidgetTextEdit::WidgetTextEdit(QWidget * parent) :
-    WIDGET_TEXT_EDIT_PARENT_CLASS(parent),
+WidgetTextEdit::WidgetTextEdit(WidgetFile * parent) :
+    WIDGET_TEXT_EDIT_PARENT_CLASS(dynamic_cast<QWidget*>(parent)),
     _completionEngine(new CompletionEngine(this)),
-    currentFile(new File(this)),
+    currentFile(new File(parent, this)),
     fileStructure(new FileStructure(this)),
     _indentationInited(false),
     _lineCount(0),

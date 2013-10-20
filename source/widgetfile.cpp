@@ -21,6 +21,7 @@
 WidgetFile::WidgetFile(QWidget *parent) :
     QWidget(parent)
 {
+    _masterFile = 0;
     _widgetTextEdit = new WidgetTextEdit(this);
     _syntaxHighlighter = new SyntaxHighlighter(_widgetTextEdit->document());
     _widgetTextEdit->setSyntaxHighlighter(_syntaxHighlighter);
@@ -138,6 +139,11 @@ void WidgetFile::initTheme()
         _widgetLineNumber->setAutoFillBackground(true);
         _widgetLineNumber->setPalette(Pal);
     }
+}
+
+File * WidgetFile::file()
+{
+     return widgetTextEdit()->getCurrentFile();
 }
 
 
@@ -262,13 +268,27 @@ void WidgetFile::toggleErrorTable()
 }
 void WidgetFile::pdflatex()
 {
-    this->save();
-    _widgetTextEdit->getCurrentFile()->getBuilder()->pdflatex();
+    if(this->masterFile())
+    {
+        this->masterFile()->file()->save(true);
+    }
+    else
+    {
+        save();
+    }
+    file()->getBuilder()->pdflatex();
 }
 void WidgetFile::bibtex()
 {
-    this->save();
-    _widgetTextEdit->getCurrentFile()->getBuilder()->bibtex();
+    if(this->masterFile())
+    {
+        this->masterFile()->file()->save(true);
+    }
+    else
+    {
+        save();
+    }
+    file()->getBuilder()->bibtex();
 }
 bool WidgetFile::isEmpty()
 {
@@ -281,23 +301,19 @@ void WidgetFile::save()
     {
         return this->saveAs();
     }
-    _widgetTextEdit->getCurrentFile()->setData(_widgetTextEdit->toPlainText());
-    _widgetTextEdit->getCurrentFile()->save();
+    file()->save();
     //this->statusBar()->showMessage(tr(QString::fromUtf8("Sauvegardé").toLatin1()),2000);
 }
 
 void WidgetFile::saveAs()
 {
-    //this->widgetTextEdit->getCurrentFile()->setData("sdfsdfg");
-    //return;
     QString filename = QFileDialog::getSaveFileName(this,tr("Enregistrer un fichier"), ConfigManager::Instance.lastFolder(),ConfigManager::Extensions);
     if(filename.isEmpty())
     {
         return;
     }
     QString oldFilename = _widgetTextEdit->getCurrentFile()->getFilename();
-    _widgetTextEdit->getCurrentFile()->setData(_widgetTextEdit->toPlainText());
-    _widgetTextEdit->getCurrentFile()->save(filename);
+    file()->save(filename);
 
     if(oldFilename.compare(filename))
     {
@@ -319,4 +335,9 @@ void WidgetFile::open(QString filename)
         connect(a, SIGNAL(triggered()), &FileManager::Instance, SLOT(openAssociatedFile()));
         this->addAction(a);
     }
+}
+
+void WidgetFile::setFileToBuild(File *file)
+{
+    widgetTextEdit()->getCurrentFile()->getBuilder()->setFile(file);
 }

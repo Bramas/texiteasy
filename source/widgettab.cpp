@@ -173,18 +173,13 @@ void WidgetTab::drawMoreButton(QPainter *painter, int index)
 
 void WidgetTab::mousePressEvent(QMouseEvent * event)
 {
-    QWidget::mousePressEvent(event);
+    //QWidget::mousePressEvent(event);
 }
 
 void WidgetTab::mouseReleaseEvent(QMouseEvent * event)
 {
     if(event->button() == Qt::RightButton)
     {
-        return;
-    }
-    if(_overCloseId != -1)
-    {
-        emit tabCloseRequested(_overCloseId);
         return;
     }
     int idx = -1;
@@ -197,10 +192,17 @@ void WidgetTab::mouseReleaseEvent(QMouseEvent * event)
         }
         if(event->pos().x() < w)
         {
-            if(this->overMoreButton(event->pos(), lastWidth))
+            if(!this->widget(idx)->actions().isEmpty() && this->overMoreButton(event->pos(), lastWidth))
             {
                 _overMoreId = idx;
                 this->contextMenuEvent(new QContextMenuEvent(QContextMenuEvent::Mouse,event->pos()));
+                return;
+            }
+            if(this->overCloseButton(event->pos(), w))
+            {
+                _overCloseId = idx;
+                emit tabCloseRequested(_overCloseId);
+                update();
                 return;
             }
             setCurrentIndex(idx);
@@ -242,7 +244,7 @@ void WidgetTab::mouseMoveEvent(QMouseEvent * event)
         }
         if(event->pos().x() < w)
         {
-            if(this->overMoreButton(event->pos(), lastWidth))
+            if(!this->widget(idx)->actions().isEmpty() && this->overMoreButton(event->pos(), lastWidth))
             {
                 this->setCursor(Qt::PointingHandCursor);
                 _overMoreId = idx;
@@ -323,6 +325,7 @@ void WidgetTab::removeTab(int index)
     _tabsName.removeAt(index);
     if(this->currentIndex() < index)
     {
+        update();
         return;
     }
     if(this->currentIndex() > index)

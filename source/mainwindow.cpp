@@ -316,7 +316,6 @@ void MainWindow::open(QString filename)
     }
 
     //open
-
     if(FileManager::Instance.open(filename))
     {
         _tabWidget->addTab(FileManager::Instance.currentWidgetFile(), FileManager::Instance.currentWidgetFile()->widgetTextEdit()->getCurrentFile()->fileInfo().baseName());
@@ -329,7 +328,6 @@ void MainWindow::open(QString filename)
 
     this->statusBar()->showMessage(filename,4000);
     this->_widgetStatusBar->setEncoding(FileManager::Instance.currentWidgetFile()->widgetTextEdit()->getCurrentFile()->codec());
-
 }
 void MainWindow::onCurrentFileChanged(WidgetFile * widget)
 {

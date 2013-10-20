@@ -53,6 +53,24 @@ bool FileManager::open(QString filename)
 {
     bool newWidget = this->newFile();
     this->currentWidgetFile()->open(filename);
+
+    // is it an associated file?
+    int masterId = this->reverseAssociatedFileIndex(filename);
+    if(masterId != -1)
+    {
+        WidgetFile * masterFile = this->widgetFile(masterId);
+        masterFile->file()->addOpenAssociatedFile(this->currentWidgetFile()->file());
+
+        // update the child
+        this->currentWidgetFile()->setMasterFile(masterFile);
+        this->currentWidgetFile()->file()->getBuilder()->setFile(this->file(masterId));
+
+        // update the parent
+        connect(this->currentWidgetFile()->file()->getBuilder(), SIGNAL(pdfChanged()),masterFile->widgetPdfViewer()->widgetPdfDocument(),SLOT(updatePdf()));
+
+    }
+
+
     return newWidget;
 }
 void FileManager::openAssociatedFile()
@@ -65,7 +83,23 @@ void FileManager::openAssociatedFile()
     }
 
 }
-
+int FileManager::reverseAssociatedFileIndex(QString filename)
+{
+    int index = 0;
+    foreach(WidgetFile * widgetFile, _widgetFiles)
+    {
+        if(widgetFile->file()->isAssociatedWith(filename))
+        {
+            return index;
+        }
+        ++index;
+    }
+    return -1;
+}
+File * FileManager::file(int index)
+{
+    return _widgetFiles.at(index)->file();
+}
 void FileManager::undo()
 {
     this->currentWidgetFile()->widgetTextEdit()->undo();
@@ -129,6 +163,17 @@ void FileManager::close(WidgetFile *widget)
 {
     int id = _widgetFiles.indexOf(widget);
 
+    // remove connexion with the master file
+    if(widget->masterFile())
+    {
+        connect(widget->file()->getBuilder(), SIGNAL(pdfChanged()),widget->masterFile()->widgetPdfViewer()->widgetPdfDocument(),SLOT(updatePdf()));
+    }
+    // restore everything with the open associatedFiles
+    foreach(File * openAssoc, widget->file()->openAssociatedFiles())
+    {
+        openAssoc->widgetFile()->setMasterFile(0);
+        openAssoc->getBuilder()->setFile(openAssoc);
+    }
     if(_currentWidgetFileId >= id && _currentWidgetFileId != 0)
     {
         --_currentWidgetFileId;

@@ -36,6 +36,7 @@ class Viewer;
 class Builder;
 class WidgetTextEdit;
 class QTimer;
+class WidgetFile;
 struct AssociatedFile
 {
     typedef enum Type {BIBTEX, INPUT, FIGURE} Type;
@@ -47,7 +48,7 @@ class File : public QObject
 {
     Q_OBJECT
 public:
-    explicit File(WidgetTextEdit * widgetTextEdit, QString filename = "");
+    explicit File(WidgetFile * widgetFile, WidgetTextEdit * widgetTextEdit, QString filename = "");
     ~File();
     /**
      * @brief getData
@@ -70,15 +71,16 @@ public:
      * if filename is not empty, it will replace the current filename.
      */
     const QString open(QString filename = "", QString codec = "");
+
+    void save(bool recursively = false);
     /**
      * @brief save the file
      * @param filename
+     * @param recursively
+     * if recursively is true, then all opened associted files are also saved
      */
-    void save(QString filename = "");
+    void save(QString filename, bool recursively = false);
 
-    /**
-     * @brief refreshLineNumber
-     */
     void refreshLineNumber();
 
     /**
@@ -104,14 +106,10 @@ public:
      */
     QString getFilename() const { return this->filename; }
 
-    /**
-     * @brief getPath
-     * @return the path of the current file
-     */
     QString getPath() const { QString s(this->filename); return s.replace(QRegExp("^(([^\\\\\\/]*[\\\\\\/])*)[^\\\\\\/]*$"),"\\1"); }
 
     /**
-     * @brief getAuxPath
+     * @brief getAuxPath (not used)
      * @return the auxilary directory
      */
     QString getAuxPath() const {
@@ -129,10 +127,6 @@ public:
         return this->getAuxPath()+dir.separator()+this->fileInfo().baseName()+"_autosave.tex";
     }
 
-    /**
-     * @brief fileInfo
-     * @return the file info
-     */
     QFileInfo fileInfo() const { return QFileInfo(this->filename); }
 
     /**
@@ -143,10 +137,6 @@ public:
         QString s(this->filename); return s.replace(QRegExp("\\.tex$"),".pdf");
     }
 
-    /**
-     * @brief getBuilder
-     * @return the Builder used to compile the file
-     */
     Builder * getBuilder() { return this->builder; }
 
     /**
@@ -159,8 +149,14 @@ public:
 
     bool isModified() { return this->_modified; }
 
+    void addOpenAssociatedFile(File * openAssocitedFile);
+
+    const QList<File*> & openAssociatedFiles() { return _openAssociatedFiles; }
+
     QStringList bibtexFiles() const;
     const QList<AssociatedFile> & associatedFiles() const { return _associatedFiles; }
+    bool isAssociatedWith(QString filename);
+    WidgetFile * widgetFile() { return _widgetFile; }
 
 public slots:
     /**
@@ -188,6 +184,7 @@ private:
 
     QTimer * _autoSaveTimer;
     QList<AssociatedFile> _associatedFiles;
+    QList<File*> _openAssociatedFiles;
     Builder * builder;
     QString _codec;
     QString data;
@@ -195,6 +192,7 @@ private:
     bool _modified;
     Viewer * viewer;
     WidgetTextEdit * _widgetTextEdit;
+    WidgetFile * _widgetFile;
 
     QMap<int,int> _lineNumberSinceLastBuild;
 };

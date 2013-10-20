@@ -33,14 +33,15 @@
 
 #define AUTO_SAVE 120000
 
-File::File(WidgetTextEdit* widgetTextEdit,QString filename) :
+File::File(WidgetFile *widgetFile, WidgetTextEdit* widgetTextEdit, QString filename) :
     _autoSaveTimer(new QTimer),
     builder(new Builder(this)),
     _codec(QTextCodec::codecForLocale()->name()),
     filename(filename),
     _modified(false),
     viewer(new Viewer(this)),
-    _widgetTextEdit(widgetTextEdit)
+    _widgetTextEdit(widgetTextEdit),
+    _widgetFile(widgetFile)
 {
     connect(_autoSaveTimer, SIGNAL(timeout()), this, SLOT(autoSave()));
 }
@@ -52,7 +53,12 @@ File::~File()
     delete builder;
     delete _autoSaveTimer;
 }
-void File::save(QString filename)
+void File::save(bool recursively)
+{
+    this->save(QString(""), recursively);
+}
+
+void File::save(QString filename, bool recursively)
 {
     //Check the filename
     if(!filename.isEmpty())
@@ -75,8 +81,16 @@ void File::save(QString filename)
 
     QTextStream out(&file);
     out.setCodec(_codec.toLatin1());
-    //out.setGenerateByteOrderMark(true);
     out << this->data;
+    file.close();
+
+    if(recursively)
+    {
+        foreach(File* associtedFile, _openAssociatedFiles)
+        {
+            associtedFile->save(true);
+        }
+    }
 
     _modified = false;
     _autoSaveTimer->stop();
@@ -225,4 +239,19 @@ QStringList File::bibtexFiles() const
         }
     }
     return list;
+}
+bool File::isAssociatedWith(QString filename)
+{
+    foreach(AssociatedFile assoc, _associatedFiles)
+    {
+        if(!assoc.filename.compare(filename))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+void File::addOpenAssociatedFile(File * openAssocitedFile)
+{
+    _openAssociatedFiles.append(openAssocitedFile);
 }
