@@ -27,6 +27,7 @@
 #include <QBrush>
 #include <QRectF>
 #include <QColor>
+#include <QtCore>
 #include "file.h"
 
 
@@ -106,7 +107,6 @@ void WidgetPdfDocument::paintEvent(QPaintEvent *)
     {
         if(cumulatedTop + _document->page(i)->pageSize().height()*_zoom < -this->_painterTranslate.y())
         {
-            //qDebug()<<cumulatedTop<<","<<_document->page(i)->pageSize().height();
             cumulatedTop += _document->page(i)->pageSize().height()*_zoom+WidgetPdfDocument::PageMargin;
             continue;
         }
@@ -128,7 +128,7 @@ void WidgetPdfDocument::paintEvent(QPaintEvent *)
             {
                 painter.setBrush(QBrush(QColor(0,0,0,min(50,(750-_lastUpdate.elapsed())*(2250-_lastUpdate.elapsed())*50/(750*750) + 50))));
                 painter.setPen(Qt::NoPen);
-                int rightMost = -_painterTranslate.y() + this->width() + 1;
+                int rightMost = -_painterTranslate.x() + this->width() + 1;
                 int bottomMost = cumulatedTop + pageHeight + 1;
 
                 QPoint p[10];
@@ -450,7 +450,8 @@ void WidgetPdfDocument::wheelEvent(QWheelEvent * event)
 {
     if(event->modifiers() & (Qt::ControlModifier | Qt::AltModifier | Qt::ShiftModifier))
     {
-        qreal factor =  event->delta() > 0 ? 1.1 : 0.90;
+        qreal factor = log(1 + _zoom) / 30.0;
+        factor =  event->delta() > 0 ? 1 + factor : 1 - factor;
         this->zoom(factor, event->pos());
     }
     else if(event->orientation() == Qt::Vertical)
@@ -470,7 +471,10 @@ void WidgetPdfDocument::wheelEvent(QWheelEvent * event)
 }
 void WidgetPdfDocument::zoom(qreal factor, QPoint target)
 {
+    qreal oldZoom = _zoom;
     this->_zoom *= factor;
+    this->_zoom = _zoom > 3 ? 3 : _zoom; // limit the zoom to 3
+    factor = _zoom / oldZoom; // calculate the real factor;
     this->_painterTranslate *= factor;
     this->_painterTranslate += target - target*factor;
     this->boundPainterTranslation();
@@ -484,12 +488,12 @@ void WidgetPdfDocument::zoom(qreal factor, QPoint target)
 }
 void WidgetPdfDocument::zoomIn()
 {
-    this->zoom(1.1);
+    this->zoom(1.08);
 }
 
 void WidgetPdfDocument::zoomOut()
 {
-    this->zoom(0.9);
+    this->zoom(0.92);
 }
 
 void WidgetPdfDocument::mouseMoveEvent(QMouseEvent * event)
@@ -520,7 +524,7 @@ void WidgetPdfDocument::boundPainterTranslation()
 
     this->_painterTranslate.setY(max(this->_painterTranslate.y(), this->height() - this->documentHeight() - 30));
     this->_painterTranslate.setY(min(this->_painterTranslate.y(), 10));
-    if(this->documentHeight() < this->width())
+    if(this->documentHeight() < this->height())
     {
         this->_painterTranslate.setY(-this->documentHeight()/2+this->height()/2);
     }
