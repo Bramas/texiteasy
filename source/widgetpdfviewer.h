@@ -39,6 +39,9 @@ public:
     ~WidgetPdfViewer();
 
     WidgetPdfDocument * widgetPdfDocument() { return this->_widgetPdfDocument; }
+
+    void setWidgetPdfDocument(WidgetPdfDocument * widgetPdfDocument);
+
     void restorPdfDocumentParent();
 private:
     Ui::WidgetPdfViewer *ui;

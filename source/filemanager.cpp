@@ -170,15 +170,11 @@ void FileManager::setCurrent(int index)
 
      if(this->currentWidgetFile()->masterFile())
      {
-         this->currentWidgetFile()->masterFile()->widgetPdfViewer()->widgetPdfDocument()->setParent(
-                     this->currentWidgetFile()->widgetPdfViewer()
-               );
+         this->currentWidgetFile()->widgetPdfViewer()->setWidgetPdfDocument(this->currentWidgetFile()->masterFile()->widgetPdfViewer()->widgetPdfDocument());
      }
      if(!this->currentWidgetFile()->file()->openAssociatedFiles().isEmpty())
      {
-         this->currentWidgetFile()->widgetPdfViewer()->widgetPdfDocument()->setParent(
-                     this->currentWidgetFile()->widgetPdfViewer()
-               );
+         this->currentWidgetFile()->widgetPdfViewer()->restorPdfDocumentParent();
      }
 }
 

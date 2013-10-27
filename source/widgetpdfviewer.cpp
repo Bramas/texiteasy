@@ -60,5 +60,24 @@ WidgetPdfViewer::~WidgetPdfViewer()
 
 void WidgetPdfViewer::restorPdfDocumentParent()
 {
-    widgetPdfDocument()->setParent(this);
+    setWidgetPdfDocument(widgetPdfDocument());
 }
+
+void WidgetPdfViewer::setWidgetPdfDocument(WidgetPdfDocument * widgetPdfDocument)
+{
+    while(this->ui->verticalLayout->count())
+    {
+        this->ui->verticalLayout->removeItem(this->ui->verticalLayout->itemAt(0));
+    }
+    if(widgetPdfDocument == _widgetPdfDocument)
+    {
+        _widgetPdfDocument->setVisible(true);
+    }
+    else
+    {
+        _widgetPdfDocument->setVisible(false);
+    }
+    widgetPdfDocument->setParent(this);
+    this->ui->verticalLayout->addWidget(widgetPdfDocument);
+}
+
