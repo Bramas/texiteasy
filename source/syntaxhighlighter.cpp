@@ -54,7 +54,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
         QString patternBibTitle = "@[a-zA-Z\\-_]+";
         QString patternBibString = "\\\"[^\\\"]+\\\"";
         QString patternBibQuotes = "\\\"";
-        QString patternBibKeywords = "author|title|year|publisher";
+        QString patternBibKeywords = "(author|title|year|publisher|booktitle|editor|series|volume|isbn|bibsource|number|pages|ee|journal|crossref)[ ]*=";
         this->highlightExpression(text,patternBibTitle,formatBibTitle);
         this->highlightExpression(text,patternBibKeywords, formatBibKeywords);
         this->highlightExpression(text,patternBibString, formatBibString);
