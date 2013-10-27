@@ -88,6 +88,8 @@ public:
 
     int centerBlockNumber();
     void highlightSyncedLine(int line);
+    void newLine();
+    void deletePreviousTab();
 
 signals:
     void updateFirstVisibleBlock(int,int);
@@ -109,6 +111,7 @@ public slots:
     void setFocus(QKeyEvent * event) { WIDGET_TEXT_EDIT_PARENT_CLASS::setFocus(); this->keyPressEvent(event); }
     void insertPlainText(const QString &text);
     void goToLine(int line, QString stringSelected = QString());
+    void updateTabWidth();
 protected:
     void insertFromMimeData(const QMimeData * source);
     void mousePressEvent(QMouseEvent *e) {

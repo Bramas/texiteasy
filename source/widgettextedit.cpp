@@ -73,6 +73,8 @@ WidgetTextEdit::WidgetTextEdit(WidgetFile * parent) :
 #endif
     this->setText(" ");
     this->currentFile->setModified(false);
+    this->updateTabWidth();
+    connect(&ConfigManager::Instance, SIGNAL(tabWidthChanged()), this, SLOT(updateTabWidth()));
 }
 WidgetTextEdit::~WidgetTextEdit()
 {
@@ -150,9 +152,6 @@ void WidgetTextEdit::resizeEvent(QResizeEvent *event)
     this->updateIndentation();
     WIDGET_TEXT_EDIT_PARENT_CLASS::resizeEvent(event);
     update();
-    //this->updateGeometry();
-    //this->update();
-    //this->viewport()->update();
 }
 
 void WidgetTextEdit::insertPlainText(const QString &text)
@@ -202,8 +201,9 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
                 return;
             }
         }
+        insertPlainText(ConfigManager::Instance.tabToString());
+        return;
     }
-
     if(this->focusWidget() != this)
     {
         _multipleEdit.clear();
@@ -262,7 +262,7 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
         this->setTextCursor(cur);
         _multipleEdit.clear();
         return;
-    }
+    } else
     if(e->key() == Qt::Key_BraceLeft)
     {
 
@@ -279,6 +279,13 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
         }
         this->setTextCursor(cur);
         _multipleEdit.clear();
+        return;
+    }
+    else if ((e->key()==Qt::Key_Enter)||(e->key()==Qt::Key_Return))
+    {
+        QPlainTextEdit::keyPressEvent(e);
+        // add exactly the same  space and tabulation as the previous line.
+        newLine();
         return;
     }
     if(_multipleEdit.count() && !e->text().isEmpty() && !e->text().contains(QRegExp(QString::fromUtf8("[^a-zA-Z0-9èéàëêïîùüû&()\"'\\$§,;\\.+=\\-_*\\/\\\\!?%#@° ]"))))
@@ -322,6 +329,19 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
     if(e->key() != Qt::Key_Control && e->key() != Qt::Key_Shift && e->key() != Qt::Key_Alt && e->key() != Qt::Key_AltGr && e->key() != Qt::Key_ApplicationLeft && e->key() != Qt::Key_ApplicationRight)
     {
         _multipleEdit.clear();
+    }
+
+    if (e->key() ==  Qt::Key_Backspace && !textCursor().hasSelection())
+    {
+        if(ConfigManager::Instance.isUsingSpaceIndentation())
+        {
+            QTextCursor cursor = textCursor();
+            if(cursor.block().text().left(cursor.positionInBlock()).contains(QRegExp("^[ ]*$")))
+            {
+                deletePreviousTab();
+                return;
+            }
+        }
     }
     WIDGET_TEXT_EDIT_PARENT_CLASS::keyPressEvent(e);
     /*//qDebug()<<"ok"<<e->key()<<"  "<<Qt::Key_Enter;
@@ -844,6 +864,12 @@ void WidgetTextEdit::createLatSelection( int start, int end )
     //endBlock=e;
 }
 
+void WidgetTextEdit::updateTabWidth()
+{
+    QFontMetrics fm(ConfigManager::Instance.getTextCharFormats("normal").font());
+    WIDGET_TEXT_EDIT_PARENT_CLASS::setTabStopWidth(ConfigManager::Instance.tabWidth() * fm.width(" "));
+}
+
 void WidgetTextEdit::goToLine(int line, QString stringSelected)
 {
     QTextCursor cursor(this->textCursor());
@@ -948,11 +974,46 @@ QString WidgetTextEdit::wordOnLeft()
     }
     return QString();
 }
+void WidgetTextEdit::deletePreviousTab()
+{
+    QTextCursor cursor = textCursor();
+    if(cursor.block().text().left(cursor.positionInBlock()).contains(QRegExp("^[ ]*$")))
+    {
+        cursor.joinPreviousEditBlock();
+        cursor.deletePreviousChar(); //delete at least one char
+        while(cursor.positionInBlock() % ConfigManager::Instance.tabWidth())
+        {
+            cursor.deletePreviousChar();
+        }
+        cursor.endEditBlock();
+    }
+}
+
+void WidgetTextEdit::newLine()
+{
+    QTextCursor cursor = textCursor();
+    cursor.joinPreviousEditBlock();
+    QTextBlock block=cursor.block();
+    QTextBlock blockprev=block.previous();
+    if(blockprev.isValid())
+    {
+        QString txt=blockprev.text();
+        int j=0;
+        while ( (j<txt.count()) && ((txt[j]==' ') || txt[j]=='\t') )
+        {
+            cursor.insertText(QString(txt[j]));
+            j++;
+        }
+
+    }
+    cursor.endEditBlock();
+}
 
 void WidgetTextEdit::wrapEnvironment()
 {
     QString word = this->wordOnLeft();
     QTextCursor cursor = this->textCursor();
+    cursor.beginEditBlock();
     if(!word.isEmpty())
     {
         if(!cursor.hasSelection())
@@ -966,8 +1027,20 @@ void WidgetTextEdit::wrapEnvironment()
         word = "@env";
     }
     int pos = cursor.position();
-    cursor.insertText("\\begin{"+word+"}\n    @text\n\\end{"+word+"}");
+    cursor.insertText("\\begin{"+word+"}\n");
+    cursor.endEditBlock();
+    newLine();
+    cursor = textCursor();
+    cursor.joinPreviousEditBlock();
+    cursor.insertText(ConfigManager::Instance.tabToString()+"@text\n");
+    cursor.endEditBlock();
+    newLine();
+    deletePreviousTab();
+    cursor = textCursor();
+    cursor.joinPreviousEditBlock();
+    cursor.insertText("\\end{"+word+"}");
     cursor.setPosition(pos);
+    cursor.endEditBlock();
     this->setTextCursor(cursor);
     this->selectNextArgument();
 }

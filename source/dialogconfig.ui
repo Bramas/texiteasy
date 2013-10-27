@@ -53,7 +53,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="pageGeneral">
     <widget class="QWidget" name="formLayoutWidget_2">
@@ -139,6 +139,30 @@
            </widget>
           </item>
          </layout>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="label_8">
+          <property name="text">
+           <string>Indentation avec des espaces</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QCheckBox" name="checkBoxIndentationUsingSpace">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="label_9">
+          <property name="text">
+           <string>Lageur d'une tabulation</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="QSpinBox" name="spinBoxTabWidth"/>
         </item>
        </layout>
       </item>

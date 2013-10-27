@@ -92,6 +92,8 @@ void DialogConfig::save()
     {
         ConfigManager::Instance.setFontFamily(this->ui->comboBox_fontFamilly->currentText());
     }
+    ConfigManager::Instance.setUsingSpaceIndentation(this->ui->checkBoxIndentationUsingSpace->isChecked());
+    ConfigManager::Instance.setTabWidth(this->ui->spinBoxTabWidth->value());
 
 
     // Page Builder:
@@ -149,6 +151,8 @@ void DialogConfig::show()
     }
     this->ui->spinBoxPointSize->setValue(ConfigManager::Instance.getTextCharFormats("normal").font().pointSize());
 
+    this->ui->spinBoxTabWidth->setValue(ConfigManager::Instance.tabWidth());
+    this->ui->checkBoxIndentationUsingSpace->setChecked(ConfigManager::Instance.isUsingSpaceIndentation());
 
 
     QDialog::show();

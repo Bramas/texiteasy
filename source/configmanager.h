@@ -53,6 +53,21 @@ public:
 
     ~ConfigManager();
 
+    int tabWidth() { QSettings settings; return settings.value("tabWidth", 4).toInt(); }
+    void setTabWidth(int tabW) { QSettings settings; settings.setValue("tabWidth", tabW); emit tabWidthChanged(); }
+
+    bool isUsingSpaceIndentation() { QSettings settings; return settings.value("spaceIndentation", true).toBool(); }
+    void setUsingSpaceIndentation(bool use) { QSettings settings; settings.setValue("spaceIndentation", use); }
+    QString tabToString()
+    {
+        QSettings settings;
+        if(settings.value("spaceIndentation", true).toBool())
+        {
+            return QString().fill(' ',settings.value("tabWidth", 4).toInt());
+        }
+        return QString("\t");
+    }
+
     bool darkTheme() { return 120 > this->getTextCharFormats().background().color().value(); }
 
     void changePointSizeBy(int delta);
@@ -120,6 +135,7 @@ signals:
      * emitted when we detect that the version is outdated
      */
     void versionIsOutdated();
+    void tabWidthChanged();
 private:
     void replaceDefaultFont();
     ConfigManager();
