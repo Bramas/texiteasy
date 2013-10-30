@@ -41,6 +41,16 @@ SyntaxHighlighter::~SyntaxHighlighter()
 #endif
 }
 
+
+SyntaxHighlighter::State intToState(int in) {
+    switch(in) {
+        default:
+        case SyntaxHighlighter::Text: return SyntaxHighlighter::Text;
+        case SyntaxHighlighter::Math: return SyntaxHighlighter::Math;
+        case SyntaxHighlighter::Comment: return SyntaxHighlighter::Comment;
+    }
+}
+
 void SyntaxHighlighter::highlightBlock(const QString &text)
 {
     if(_widgetFile->file()->format() == File::BIBTEX)
@@ -50,6 +60,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
         QTextCharFormat formatBibString = ConfigManager::Instance.getTextCharFormats("bibtex_string");
         QTextCharFormat formatBibQuotes = ConfigManager::Instance.getTextCharFormats("bibtex_quote");
         QTextCharFormat formatComment = ConfigManager::Instance.getTextCharFormats("comment");
+
 
         QString patternBibTitle = "@[a-zA-Z\\-_]+";
         QString patternBibString = "\\\"[^\\\"]+\\\"";
@@ -80,6 +91,12 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
     }
 
     BlockData *blockData = new BlockData;
+    blockData->misspelled = new bool[text.size()];
+    for(int i = 0; i < text.size(); ++i)
+    {
+        blockData->misspelled = false;
+    }
+
     if(this->previousBlockState() == 1)
     {
         blockData->insertDollar(-1);
@@ -141,7 +158,10 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 
 
 
-
+    QTextCharFormat spellingErrorFormat = ConfigManager::Instance.getTextCharFormats("normal");
+    spellingErrorFormat.setFontUnderline(true);
+    spellingErrorFormat.setUnderlineColor(QColor(Qt::red));
+    spellingErrorFormat.setUnderlineStyle(QTextCharFormat::SpellCheckUnderline);
 
 
 
@@ -155,86 +175,91 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
      setFormat(0, text.size(), formatNormal);
 
 
-     QString patternCommand = "\\\\[a-zA-Z]+";
-     QString patternStructure = "\\\\(sub){0,3}section\\{[^\\}]*\\}";
+State state = intToState(previousBlockState());
+State previousState = state;
 
-     this->highlightExpression(text,patternCommand,formatCommand);
-     this->highlightExpression(text,patternStructure,formatStructure);
-
-
-
-    int length=0;
-    int lastindex = 0;
-    int index=-1;
-    int commentIndex = text.size();
+int index = 0;
+QChar currentChar;
+QChar nextChar;
+//qDebug()<<"state ";
+while(index < text.length())
+{
+    //qDebug()<<state;
+    QChar currentChar = text.at(index);
+    if(index < text.length() - 1)
     {
-        QString patternComment =  "\\%.*$";
-        QRegExp expression(patternComment);
-        index = text.indexOf(expression);
-        if(index >= 0)
-        {
-            length = expression.matchedLength();
-            setFormat(index, length, formatComment);
-            commentIndex = index;
-        }
-    }
-
-
-
-    length=0;
-    lastindex = 0;
-    index=-1;
-
-
-
-    QString mathLeftDelimiters = "\\$\\$|\\$|\\\\\\[";
-    QString mathRightDelimiters = "\\$\\$|\\$|\\\\\\]";
-
-    if(this->previousBlockState() == 1)
-    {
-        QString patternMathStart = "^((?!("+mathRightDelimiters+"|\\%)).)*("+mathRightDelimiters+")";
-        QRegExp expression(patternMathStart);
-        index = text.indexOf(expression);
-        if(index >= 0 && index < commentIndex)
-        {
-            length = expression.matchedLength();
-            setFormat(0, length, formatMath);
-        }
-        else
-        {
-            setFormat(0, text.length(), formatMath);
-            this->setCurrentBlockState(1);
-            return;
-        }
-    }
-
-    QString patternMath = "("+mathLeftDelimiters+")((?!("+mathRightDelimiters+"|\\%)).)*("+mathRightDelimiters+")";
-    lastindex = index = length;
-    length = 0;
-    {
-        QRegExp expression(patternMath);
-        index = text.indexOf(expression,index);
-        while (index >= 0 && index < commentIndex) {
-            lastindex = index;
-            length = expression.matchedLength();
-            setFormat(index, length, formatMath);
-            index = text.indexOf(expression, index + length);
-        }
-    }
-    QString patternMathEnd =  "("+mathLeftDelimiters+")((?!("+mathRightDelimiters+")).)*([\\%].*){0,1}$";
-    QRegExp expression(patternMathEnd);
-    index = text.indexOf(expression,lastindex+length);
-    if(index >= 0 && index < commentIndex)
-    {
-        setFormat(index, text.length() - index, formatMath);
-        this->setCurrentBlockState(1);
+        nextChar = text.at(index + 1);
     }
     else
     {
-        this->setCurrentBlockState(-1);
+        nextChar == QChar::Null;
     }
-
-    setFormat(commentIndex, text.size() - commentIndex, formatComment);
+    // if the end of line is commented, we break the loop and we keep the current state (we do not save state = Comment)
+    if(currentChar == '%')
+    {
+        setFormat(index, text.size() - index, formatComment);
+        break;
+    }
+    switch(state)
+    {
+    case Text:
+        if(      currentChar == '$'
+             ||  currentChar == '\\' && nextChar == '[')
+        {
+            state = Math;
+            setFormat(index, 1, formatMath);
+            if(currentChar == '$' && nextChar == '$')
+            {
+                setFormat(index + 1, 1, formatMath);
+                ++index;
+            }
+        }
+        else
+        if(currentChar == '\\')
+        {
+            previousState = Text;
+            state = Command;
+            setFormat(index, 1, formatCommand);
+        }
+        break;
+    case Math:
+        setFormat(index, 1, formatMath);
+        if(   currentChar == '\\' && nextChar == ']'
+           || currentChar == '$' && nextChar == '$')
+        {
+            state = Text;
+            setFormat(index + 1, 1, formatMath);
+            ++index;
+        }
+        else
+        if(currentChar == '$')
+        {
+            state = Text;
+        }
+        else
+        if(currentChar == '\\')
+        {
+            previousState = Math;
+            state = Command;
+            setFormat(index, 1, formatCommand);
+        }
+        break;
+    case Command:
+        if(QString(currentChar).contains(QRegExp("[^a-zA-Z]")))
+        {
+            state = previousState;
+            --index;
+        }
+        else
+        {
+            setFormat(index, 1, formatCommand);
+        }
+        break;
+    }
+    ++index;
+}
+qDebug()<<"finish with "<<state;
+setCurrentBlockState(state);
 
 }
 void SyntaxHighlighter::highlightExpression(const QString &text, const QString &pattern, const QTextCharFormat &format)

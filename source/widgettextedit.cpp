@@ -336,7 +336,7 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
         if(ConfigManager::Instance.isUsingSpaceIndentation())
         {
             QTextCursor cursor = textCursor();
-            if(cursor.block().text().left(cursor.positionInBlock()).contains(QRegExp("^[ ]*$")))
+            if(cursor.block().text().left(cursor.positionInBlock()).contains(QRegExp("^[ ]+$")))
             {
                 deletePreviousTab();
                 return;

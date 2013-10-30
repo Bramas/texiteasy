@@ -33,6 +33,9 @@ public:
     SyntaxHighlighter(WidgetFile * widgetFile);
     ~SyntaxHighlighter();
 
+
+    typedef enum State { Text, Math, Command, Comment } State;
+
 protected:
     virtual void highlightBlock(const QString &text);
     void highlightExpression(const QString &text, const QString &pattern, const QTextCharFormat &format);
