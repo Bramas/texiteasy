@@ -17,5 +17,33 @@
         <file>translations/texiteasy_ja.qm</file>
         <file>translations/texiteasy_vi.qm</file>
         <file>translations/texiteasy_zh.qm</file>
+        <file>data/dictionaries/cs_CZ.aff</file>
+        <file>data/dictionaries/cs_CZ.dic</file>
+        <file>data/dictionaries/de_DE.aff</file>
+        <file>data/dictionaries/de_DE.dic</file>
+        <file>data/dictionaries/en_GB.aff</file>
+        <file>data/dictionaries/en_GB.dic</file>
+        <file>data/dictionaries/en_US.aff</file>
+        <file>data/dictionaries/en_US.dic</file>
+        <file>data/dictionaries/es_ES.aff</file>
+        <file>data/dictionaries/es_ES.dic</file>
+        <file>data/dictionaries/fr_FR.aff</file>
+        <file>data/dictionaries/fr_FR.dic</file>
+        <file>data/dictionaries/hu_HU.aff</file>
+        <file>data/dictionaries/hu_HU.dic</file>
+        <file>data/dictionaries/it_IT.aff</file>
+        <file>data/dictionaries/it_IT.dic</file>
+        <file>data/dictionaries/it_IT_README.txt</file>
+        <file>data/dictionaries/nl_NL.aff</file>
+        <file>data/dictionaries/nl_NL.dic</file>
+        <file>data/dictionaries/pl_PL.aff</file>
+        <file>data/dictionaries/pl_PL.dic</file>
+        <file>data/dictionaries/README_cs_CZ.txt</file>
+        <file>data/dictionaries/README_de_DE_frami.txt</file>
+        <file>data/dictionaries/README_DIC_fr_FR.txt</file>
+        <file>data/dictionaries/README_en_US.txt</file>
+        <file>data/dictionaries/README_es_ES.txt</file>
+        <file>data/dictionaries/README_hu_HU.txt</file>
+        <file>data/dictionaries/README_pl.txt</file>
     </qresource>
 </RCC>

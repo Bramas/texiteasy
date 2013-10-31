@@ -1,4 +1,5 @@
 #include "widgetfile.h"
+#include "hunspell/hunspell.hxx"
 #include "minisplitter.h"
 #include "widgettextedit.h"
 #include "widgetconsole.h"
@@ -63,7 +64,8 @@ WidgetFile::WidgetFile(QWidget *parent) :
     _verticalSplitter->setCollapsible(3,true);
     _verticalSplitter->setCollapsible(2,true);
 
-
+    _spellChecker = new Hunspell(ConfigManager::Instance.currentDictionaryFilename().toLatin1()+".aff",
+                                 ConfigManager::Instance.currentDictionaryFilename().toLatin1()+".dic");
 
     connect(_widgetFindReplace->pushButtonClose(), SIGNAL(clicked()), this, SLOT(closeFindReplaceWidget()));
     connect(_widgetTextEdit,SIGNAL(textChanged()),_widgetLineNumber,SLOT(update()));
@@ -104,6 +106,8 @@ void WidgetFile::initTheme()
     this->setAutoFillBackground(true);
     this->setPalette(Pal);
     _widgetTextEdit->setStyleSheet(QString("QPlainTextEdit { border: 0px solid ")+
+                                        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("textedit-border").foreground().color())+"; "+
+                                        QString("border-right: 1px solid ")+
                                         ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("textedit-border").foreground().color())+"; "+
                                         QString("color: ")+
                                         ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+"; "+
@@ -340,4 +344,15 @@ void WidgetFile::open(QString filename)
 void WidgetFile::setFileToBuild(File *file)
 {
     widgetTextEdit()->getCurrentFile()->getBuilder()->setFile(file);
+}
+
+
+Hunspell * WidgetFile::spellChecker()
+{
+    return _spellChecker;
+}
+
+QString WidgetFile::spellCheckerEncoding()
+{
+    return spellChecker()->get_dic_encoding();
 }

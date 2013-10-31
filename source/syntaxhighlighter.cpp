@@ -19,10 +19,14 @@
  *                                                                         *
  ***************************************************************************/
 
+
+#include "hunspell/hunspell.hxx"
+
 #include "syntaxhighlighter.h"
 #include <QTextCharFormat>
 #include <QTextDocument>
 #include <QDebug>
+#include <QTextCodec>
 #include "blockdata.h"
 #include "configmanager.h"
 #include "widgetfile.h"
@@ -53,6 +57,10 @@ SyntaxHighlighter::State intToState(int in) {
 
 void SyntaxHighlighter::highlightBlock(const QString &text)
 {
+    BlockData *blockData = new BlockData(text.length());
+    setCurrentBlockUserData(blockData);
+
+
     if(_widgetFile->file()->format() == File::BIBTEX)
     {
         QTextCharFormat formatBibTitle = ConfigManager::Instance.getTextCharFormats("bibtex_command");
@@ -90,17 +98,6 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
         return;
     }
 
-    BlockData *blockData = new BlockData;
-    blockData->misspelled = new bool[text.size()];
-    for(int i = 0; i < text.size(); ++i)
-    {
-        blockData->misspelled = false;
-    }
-
-    if(this->previousBlockState() == 1)
-    {
-        blockData->insertDollar(-1);
-    }
 
     int dollarPos = text.indexOf( '$' );
     while ( dollarPos != -1 )
@@ -154,7 +151,6 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
       rightPos = text.indexOf("\\end{", rightPos+1 );
       }
 
-    setCurrentBlockUserData(blockData);
 
 
 
@@ -181,11 +177,11 @@ State previousState = state;
 int index = 0;
 QChar currentChar;
 QChar nextChar;
-//qDebug()<<"state ";
+//qDebug()<<"previous state "<<state;
 while(index < text.length())
 {
     //qDebug()<<state;
-    QChar currentChar = text.at(index);
+    currentChar = text.at(index);
     if(index < text.length() - 1)
     {
         nextChar = text.at(index + 1);
@@ -256,9 +252,58 @@ while(index < text.length())
         }
         break;
     }
+    blockData->state[index] = state;
     ++index;
 }
-qDebug()<<"finish with "<<state;
+
+
+if (_widgetFile->spellChecker())
+{
+    QString buffer;
+    QChar ch;
+    int i=0;
+    int check;
+    QByteArray encodedString;
+    QTextCodec *codec = QTextCodec::codecForName(_widgetFile->spellCheckerEncoding().toLatin1());
+
+    while (i < text.length())
+    {
+        buffer = QString::null;
+        ch = text.at( i );
+        while ((blockData->state[i] == Text) && (!isWordSeparator(ch)))
+        {
+              buffer += ch;
+              i++;
+              if (i < text.length()) ch = text.at( i );
+              else break;
+        }
+        if ((buffer.length() > 1))// && (!ignoredwordList.contains(buffer)) && (!hardignoredwordList.contains(buffer)))
+        {
+            encodedString = codec->fromUnicode(buffer);
+            check = _widgetFile->spellChecker()->spell(encodedString.data());
+            if (!check)
+            {
+                for(int buffer_idx = 0; buffer_idx < buffer.length(); ++buffer_idx)
+                {
+                    QTextCharFormat f = format(i - buffer.length() + buffer_idx);
+                    f.setFontUnderline(true);
+                    f.setUnderlineColor(QColor(Qt::red));
+                    setFormat(i - buffer.length() + buffer_idx, 1, f);
+                    blockData->misspelled[i - buffer.length() + buffer_idx] = true;
+                }
+            }
+        }
+        i++;
+    }
+}
+
+
+
+//DO NOT set current block state to Command -> this may cause out of range index in array. (see case Command in the main switch above)
+if(state == Command)
+{
+    state = previousState;
+}
 setCurrentBlockState(state);
 
 }
@@ -273,4 +318,51 @@ void SyntaxHighlighter::highlightExpression(const QString &text, const QString &
     }
 }
 
+bool SyntaxHighlighter::isWordSeparator(QChar c) const
+{
+/*    switch (c.toLatin1()) {
+    case '.':
+    case ',':
+    case '?':
+    case '!':
+    case ':':
+    case ';':
+    case '+':
+    case '<':
+    case '>':
+    case '[':
+    case ']':
+    case '(':
+    case ')':
+    case '{':
+    case '}':
+    case '=':
+    case '/':
+    case '+':
+    case '%':
+    case '&':
+    case '^':
+    case '`':
+    case '*':
+    case '_':
+    case '\\':
+    case '\'':
+    case '\t':
+    case '\n':
+    case '"':
+    case '~':
+    case '$':
+    case '|':
+    case '#':
+    case '£':
+    case '@':
+    case 'µ':
+    case '=':
+    case '¨':
+        return true;
+    default:
+        return false;
+    }*/
+    return QString(c).contains(QRegExp(QString::fromUtf8("[^a-zâãäåæçèéêëìíîïðñòóôõøùúûüýþÿı]"),Qt::CaseInsensitive));
+}
 

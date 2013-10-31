@@ -23,7 +23,7 @@ DEFINES += "CURRENT_VERSION=$${VERSION}"
 # config_revision is used to make so task for migration
 # we increment it each time we need to make a task for those who update the soft
 # see configManager::checkRevision() for more information
-DEFINES += "CURRENT_CONFIG_REVISION=4"
+DEFINES += "CURRENT_CONFIG_REVISION=5"
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -60,7 +60,19 @@ SOURCES += main.cpp\
     filemanager.cpp \
     widgettab.cpp \
     application.cpp \
-    updatechecker.cpp
+    updatechecker.cpp \
+    hunspell/utf_info.cxx \
+    hunspell/suggestmgr.cxx \
+    hunspell/replist.cxx \
+    hunspell/phonet.cxx \
+    hunspell/hunzip.cxx \
+    hunspell/hunspell.cxx \
+    hunspell/hashmgr.cxx \
+    hunspell/filemgr.cxx \
+    hunspell/dictmgr.cxx \
+    hunspell/csutil.cxx \
+    hunspell/affixmgr.cxx \
+    hunspell/affentry.cxx
 
 HEADERS  += mainwindow.h \
     widgetlinenumber.h \
@@ -98,7 +110,24 @@ HEADERS  += mainwindow.h \
     filemanager.h \
     widgettab.h \
     application.h \
-    updatechecker.h
+    updatechecker.h \
+    hunspell/w_char.hxx \
+    hunspell/suggestmgr.hxx \
+    hunspell/replist.hxx \
+    hunspell/phonet.hxx \
+    hunspell/langnum.hxx \
+    hunspell/hunzip.hxx \
+    hunspell/hunspell.hxx \
+    hunspell/hunspell.h \
+    hunspell/htypes.hxx \
+    hunspell/hashmgr.hxx \
+    hunspell/filemgr.hxx \
+    hunspell/dictmgr.hxx \
+    hunspell/csutil.hxx \
+    hunspell/baseaffix.hxx \
+    hunspell/atypes.hxx \
+    hunspell/affixmgr.hxx \
+    hunspell/affentry.hxx
 
 FORMS    += mainwindow.ui \
     dialogwelcome.ui \
@@ -152,3 +181,7 @@ mac{
     DEFINES += OS_MAC
     #CONFIG += x86 x86_64
 }
+
+OTHER_FILES += \
+    hunspell/license.myspell \
+    hunspell/license.hunspell

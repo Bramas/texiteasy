@@ -32,6 +32,7 @@
 #include <QMutex>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QDir>
 
 class QWidget;
 
@@ -77,21 +78,31 @@ public:
     int pointSize() { QSettings settings; return settings.value("theme/pointSize").toInt(); }
     void setFontFamily(QString family);
 
-    void setMainWindow(QWidget * mainWindow);
-    void save(void);
-    bool load(QString theme = QString());
-    QString colorToString(const QColor & color) { return "rgb("+QString::number(color.red())+","+QString::number(color.green())+","+QString::number(color.blue())+")";}
+    void            setMainWindow(QWidget * mainWindow);
+    void            save(void);
+    bool            load(QString theme = QString());
+    QString         colorToString(const QColor & color) { return "rgb("+QString::number(color.red())+","+QString::number(color.green())+","+QString::number(color.blue())+")";}
 
-    QString textCharFormatToString(QTextCharFormat charFormat, QTextCharFormat defaultFormat = QTextCharFormat());
+    QString         textCharFormatToString(QTextCharFormat charFormat, QTextCharFormat defaultFormat = QTextCharFormat());
     QTextCharFormat stringToTextCharFormat(QString string, QTextCharFormat defaultFormat = QTextCharFormat());
 
-    QStringList themesList();
-    const QString& theme() { return _theme; }
+    QStringList     themesList();
+    const QString&  theme() { return _theme; }
 
-    QStringList languagesList();
-    QString language() { QSettings settings; return settings.value("language").toString(); }
-    void setLanguage(QString language) { QSettings settings; settings.setValue("language", language); applyTranslation(); }
-    void applyTranslation();
+    QStringList     languagesList();
+    QString         language()                      { QSettings settings; return settings.value("language").toString(); }
+    void            setLanguage(QString language)   { QSettings settings; settings.setValue("language", language); applyTranslation(); }
+    void            applyTranslation();
+
+    QStringList     dictionnaries();
+    QString         currentDictionaryFilename()     { return dictionaryPath()+currentDictionary(); }
+    QString         currentDictionary()             { QSettings settings; return settings.value("defaultDictionary").toString(); }
+    /**
+     * @brief dictionnaryPath end with a separator character
+     * @return
+     */
+    QString dictionaryPath();
+
 
     void checkRevision();
 

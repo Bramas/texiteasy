@@ -184,32 +184,39 @@ File * FileManager::file(int index)
 }
 void FileManager::undo()
 {
-    this->currentWidgetFile()->widgetTextEdit()->undo();
+    if(this->currentWidgetFile())
+        this->currentWidgetFile()->widgetTextEdit()->undo();
 }
 
 void FileManager::redo()
 {
-    this->currentWidgetFile()->widgetTextEdit()->redo();
+    if(this->currentWidgetFile())
+        this->currentWidgetFile()->widgetTextEdit()->redo();
 }
 void FileManager::copy()
 {
-    this->currentWidgetFile()->widgetTextEdit()->copy();
+    if(this->currentWidgetFile())
+        this->currentWidgetFile()->widgetTextEdit()->copy();
 }
 void FileManager::cut()
 {
-    this->currentWidgetFile()->widgetTextEdit()->cut();
+    if(this->currentWidgetFile())
+        this->currentWidgetFile()->widgetTextEdit()->cut();
 }
 void FileManager::paste()
 {
-    this->currentWidgetFile()->widgetTextEdit()->paste();
+    if(this->currentWidgetFile())
+        this->currentWidgetFile()->widgetTextEdit()->paste();
 }
 void FileManager::wrapEnvironment()
 {
-    this->currentWidgetFile()->widgetTextEdit()->wrapEnvironment();
+    if(this->currentWidgetFile())
+        this->currentWidgetFile()->widgetTextEdit()->wrapEnvironment();
 }
 void FileManager::jumpToPdfFromSource()
 {
-    this->currentWidgetFile()->widgetPdfViewer()->widgetPdfDocument()->jumpToPdfFromSource();
+    if(this->currentWidgetFile())
+        this->currentWidgetFile()->widgetPdfViewer()->widgetPdfDocument()->jumpToPdfFromSource();
 }
 void FileManager::rehighlight()
 {

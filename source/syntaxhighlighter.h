@@ -35,11 +35,12 @@ public:
 
 
     typedef enum State { Text, Math, Command, Comment } State;
-
+    bool isWordSeparator(QChar c) const;
 protected:
     virtual void highlightBlock(const QString &text);
     void highlightExpression(const QString &text, const QString &pattern, const QTextCharFormat &format);
 private:
+
     WidgetFile * _widgetFile;
 };
 

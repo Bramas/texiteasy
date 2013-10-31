@@ -90,6 +90,7 @@ public:
     void highlightSyncedLine(int line);
     void newLine();
     void deletePreviousTab();
+    WidgetFile * widgetFile() { return _widgetFile; }
 
 signals:
     void updateFirstVisibleBlock(int,int);
@@ -99,6 +100,7 @@ signals:
     void cursorPositionChanged(int, int);
 private slots:
     void updateLineNumber(const QRect &rect, int dy);
+    void correctWord();
 
 public slots:
     void wrapEnvironment();
@@ -127,6 +129,7 @@ private:
     void wheelEvent(QWheelEvent * event);
     void highlightCurrentLine(void);
     bool selectNextArgument(void);
+    void contextMenuEvent(QContextMenuEvent *event);
 
 #ifdef OS_MAC
     /**
@@ -173,6 +176,7 @@ private:
     bool updatingIndentation;
     WidgetInsertCommand * _widgetInsertCommand;
     WidgetLineNumber * _widgetLineNumber;
+    WidgetFile * _widgetFile;
 
 
 };
