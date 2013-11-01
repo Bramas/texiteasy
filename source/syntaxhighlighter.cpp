@@ -201,10 +201,10 @@ int index = 0;
 QChar currentChar;
 QChar nextChar;
 QString commandBuffer;
-//qDebug()<<"previous state "<<state;
+qDebug()<<"previous state "<<state;
 while(index < text.length())
 {
-    //qDebug()<<state;
+    qDebug()<<state;
     currentChar = text.at(index);
     if(index < text.length() - 1)
     {
@@ -224,9 +224,23 @@ while(index < text.length())
         }
         break;
     }
+    if(currentChar == '{')
+    {
+        blockData->parenthesisLevel.top() += 1;
+    }
+    else if(currentChar == '}')
+    {
+        blockData->parenthesisLevel.top() -= 1;
+    }
     switch(state)
     {
     case Text:
+        if(currentChar != ' ' && currentChar != '\t' && blockData->parenthesisLevel.top() == 0 && blockData->parenthesisLevel.count() > 1)
+        {
+            state = previousState;
+            blockData->parenthesisLevel.pop();
+        }
+        else
         if(      currentChar == '$'
              ||  currentChar == '\\' && nextChar == '[')
         {
@@ -245,11 +259,6 @@ while(index < text.length())
             state = Command;
             commandBuffer = QString::null;
             setFormat(index, 1, formatCommand);
-        }
-        else
-        if(currentChar == '}')
-        {
-            state = previousState;
         }
         break;
     case TextBlock:
@@ -270,8 +279,9 @@ while(index < text.length())
         }
         break;
     case Other:
-        if(currentChar == '}')
+        if(currentChar != ' ' && currentChar != '\t' && blockData->parenthesisLevel.top() == 0)
         {
+            blockData->parenthesisLevel.pop();
             state = previousState;
         }
         /*else
@@ -304,7 +314,7 @@ while(index < text.length())
         if(      currentChar == ' '
              ||  currentChar == '\t')
         {
-            ++index;
+            //nothing
         }
         else
         if(currentChar != '{')
@@ -314,6 +324,8 @@ while(index < text.length())
         }
         else
         {
+            blockData->parenthesisLevel.top() -= 1;
+            blockData->parenthesisLevel.push(1);
             state = Other;
         }
         break;
@@ -367,12 +379,26 @@ while(index < text.length())
         {
             if(textBlockCommands.contains(commandBuffer))
             {
+                blockData->parenthesisLevel.push(0);
                 state = Text;
+                --index;
             }
             else
             if(otherBlockCommands.contains(commandBuffer))
             {
-                state = OtherBlock;
+                /*if(currentChar == ' ' || currentChar == '\t')
+                {
+                    state = OtherBlock;
+                }
+                else
+                {
+                    blockData->parenthesisLevel.top() -= 1;
+                    blockData->parenthesisLevel.push(1);
+                    state = Other;
+                }*/
+                blockData->parenthesisLevel.push(0);
+                state = Other;
+                --index;
             }
             else
             {
@@ -383,10 +409,9 @@ while(index < text.length())
                 else
                 {
                     state = Math;
+                    setFormat(index, 1, formatMath);
                 }
             }
-
-            --index;
         }
         else
         {
@@ -404,6 +429,10 @@ while(index < text.length())
     }
     blockData->state[index] = state;
     ++index;
+    if(blockData->parenthesisLevel.top() < 0)
+    {
+        blockData->parenthesisLevel.top() = 0;
+    }
 }
 
 

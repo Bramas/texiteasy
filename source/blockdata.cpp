@@ -26,6 +26,7 @@ BlockData::BlockData(int length)
     _length = length;
     misspelled = new bool[length];
     state = new char[length];
+    parenthesisLevel.push(0);
     for(int i = 0; i < length; ++i)
     {
         misspelled[i] = false;

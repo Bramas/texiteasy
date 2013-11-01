@@ -46,6 +46,7 @@ public:
     //QList<int> code;
     char * state;
     bool * misspelled;
+    QStack<int> parenthesisLevel;
     QVector<ParenthesisInfo *> parentheses();
     QVector<LatexBlockInfo *> latexblocks();
     void insertPar( ParenthesisInfo *info );
@@ -53,6 +54,7 @@ public:
     void insertDollar(int pos ) { this->_dollars.append(pos); }
     bool isAClosingDollar(int position);
     int length() { return _length; }
+
 private:
     QVector<ParenthesisInfo *> _parentheses;
     QVector<LatexBlockInfo *> _latexblocks;
