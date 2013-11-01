@@ -23,6 +23,7 @@
 #define BLOCKDATA_H
 
 #include <QTextBlock>
+#include <QStack>
 #include <QTextBlockUserData>
 
 struct ParenthesisInfo {

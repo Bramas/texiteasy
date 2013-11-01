@@ -33,10 +33,33 @@
 #include "widgettextedit.h"
 #include "file.h"
 
+QStringList initTextBlockCommands()
+{
+    QStringList list;
+    list << "text"
+    << "textbf"
+    << "textit"
+    << "textrm"
+    << "emph"
+    << "section" << "subsection" << "subsubsection" << "paragraph";
+    return list;
+}
+
+QStringList initOtherBlockCommands()
+{
+    QStringList list;
+    list << "cite" << "ref" << "label";
+    return list;
+}
+
+QStringList SyntaxHighlighter::otherBlockCommands = initOtherBlockCommands();
+QStringList SyntaxHighlighter::textBlockCommands = initTextBlockCommands();
+
 SyntaxHighlighter::SyntaxHighlighter(WidgetFile *widgetFile) :
     QSyntaxHighlighter(widgetFile->widgetTextEdit()->document())
 {
     _widgetFile = widgetFile;
+
 }
 SyntaxHighlighter::~SyntaxHighlighter()
 {
@@ -59,7 +82,6 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 {
     BlockData *blockData = new BlockData(text.length());
     setCurrentBlockUserData(blockData);
-
 
     if(_widgetFile->file()->format() == File::BIBTEX)
     {
@@ -163,6 +185,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 
     QTextCharFormat formatNormal = ConfigManager::Instance.getTextCharFormats("normal");
     QTextCharFormat formatCommand = ConfigManager::Instance.getTextCharFormats("command");
+    QTextCharFormat formatCommandInMathMode = ConfigManager::Instance.getTextCharFormats("command-in-math-mode");
     QTextCharFormat formatComment = ConfigManager::Instance.getTextCharFormats("comment");
     QTextCharFormat formatMath = ConfigManager::Instance.getTextCharFormats("math");
     QTextCharFormat formatStructure = ConfigManager::Instance.getTextCharFormats("structure");
@@ -172,11 +195,12 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 
 
 State state = intToState(previousBlockState());
-State previousState = state;
+ State previousState = state;
 
 int index = 0;
 QChar currentChar;
 QChar nextChar;
+QString commandBuffer;
 //qDebug()<<"previous state "<<state;
 while(index < text.length())
 {
@@ -194,6 +218,10 @@ while(index < text.length())
     if(currentChar == '%')
     {
         setFormat(index, text.size() - index, formatComment);
+        for(int comment_idx = index; comment_idx < text.size(); ++comment_idx)
+        {
+            blockData->state[comment_idx] = Comment;
+        }
         break;
     }
     switch(state)
@@ -215,7 +243,78 @@ while(index < text.length())
         {
             previousState = Text;
             state = Command;
+            commandBuffer = QString::null;
             setFormat(index, 1, formatCommand);
+        }
+        else
+        if(currentChar == '}')
+        {
+            state = previousState;
+        }
+        break;
+    case TextBlock:
+        if(      currentChar == ' '
+             ||  currentChar == '\t')
+        {
+            ++index;
+        }
+        else
+        if(currentChar != '{')
+        {
+            state = Text;
+            --index;
+        }
+        else
+        {
+            state = Text;
+        }
+        break;
+    case Other:
+        if(currentChar == '}')
+        {
+            state = previousState;
+        }
+        /*else
+        if(      currentChar == '$'
+             ||  currentChar == '\\' && nextChar == '[')
+        {
+            previousState = Other;
+            state = Math;
+            setFormat(index, 1, formatMath);
+            if(currentChar == '$' && nextChar == '$')
+            {
+                setFormat(index + 1, 1, formatMath);
+                ++index;
+            }
+        }
+        else
+        if(currentChar == '\\')
+        {
+            previousState = Other;
+            state = Command;
+            commandBuffer = QString::null;
+            setFormat(index, 1, formatCommand);
+        }*/
+        else
+        {
+            state = Other;
+        }
+        break;
+    case OtherBlock:
+        if(      currentChar == ' '
+             ||  currentChar == '\t')
+        {
+            ++index;
+        }
+        else
+        if(currentChar != '{')
+        {
+            state = previousState;
+            --index;
+        }
+        else
+        {
+            state = Other;
         }
         break;
     case Math:
@@ -237,18 +336,69 @@ while(index < text.length())
         {
             previousState = Math;
             state = Command;
-            setFormat(index, 1, formatCommand);
+            commandBuffer = QString::null;
+            setFormat(index, 1, formatCommandInMathMode);
         }
         break;
     case Command:
+        if(currentChar == '*')
+        {
+            if(previousState == Text)
+            {
+                setFormat(index, 1, formatCommand);
+            }
+            else
+            {
+                setFormat(index, 1, formatCommandInMathMode);
+            }
+            //go to the next index;
+            blockData->state[index] = state;
+            ++index;
+            if(index < text.length())
+            {
+                currentChar = text.at(index);
+            }
+            else
+            {
+                break;
+            }
+        }
         if(QString(currentChar).contains(QRegExp("[^a-zA-Z]")))
         {
-            state = previousState;
+            if(textBlockCommands.contains(commandBuffer))
+            {
+                state = Text;
+            }
+            else
+            if(otherBlockCommands.contains(commandBuffer))
+            {
+                state = OtherBlock;
+            }
+            else
+            {
+                if(previousState == Text)
+                {
+                    state = Text;
+                }
+                else
+                {
+                    state = Math;
+                }
+            }
+
             --index;
         }
         else
         {
-            setFormat(index, 1, formatCommand);
+            commandBuffer += currentChar;
+            if(previousState == Text)
+            {
+                setFormat(index, 1, formatCommand);
+            }
+            else
+            {
+                setFormat(index, 1, formatCommandInMathMode);
+            }
         }
         break;
     }
