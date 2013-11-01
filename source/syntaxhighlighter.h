@@ -23,6 +23,7 @@
 #define SYNTAXHIGHLIGHTER_H
 
 #include <QSyntaxHighlighter>
+#include <QStringList>
 
 class QTextEdit;
 class WidgetFile;
@@ -33,10 +34,21 @@ public:
     SyntaxHighlighter(WidgetFile * widgetFile);
     ~SyntaxHighlighter();
 
+    /**
+     * @brief textBlockCommand contains command where the
+     * arguments inside { } are text (and so will be check by
+     * the spell checker)
+     */
+    static QStringList textBlockCommands;
+    static QStringList otherBlockCommands;
+
+    typedef enum State { Text, TextBlock, Other, OtherBlock, Math, Command, Comment } State;
+    bool isWordSeparator(QChar c) const;
 protected:
     virtual void highlightBlock(const QString &text);
     void highlightExpression(const QString &text, const QString &pattern, const QTextCharFormat &format);
 private:
+
     WidgetFile * _widgetFile;
 };
 

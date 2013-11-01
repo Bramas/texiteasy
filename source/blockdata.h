@@ -23,6 +23,7 @@
 #define BLOCKDATA_H
 
 #include <QTextBlock>
+#include <QStack>
 #include <QTextBlockUserData>
 
 struct ParenthesisInfo {
@@ -39,20 +40,24 @@ class BlockData : public QTextBlockUserData
 {
 
 public:
-    BlockData() {};
+    BlockData(int length);
+    ~BlockData();
     static BlockData *data(const QTextBlock &block) { return static_cast<BlockData *>(block.userData()); }
-    QList<int> code;
-    QList<bool> misspelled;
+    //QList<int> code;
+    char * state;
+    bool * misspelled;
     QVector<ParenthesisInfo *> parentheses();
     QVector<LatexBlockInfo *> latexblocks();
     void insertPar( ParenthesisInfo *info );
     void insertLat( LatexBlockInfo *info );
     void insertDollar(int pos ) { this->_dollars.append(pos); }
     bool isAClosingDollar(int position);
+    int length() { return _length; }
 private:
     QVector<ParenthesisInfo *> _parentheses;
     QVector<LatexBlockInfo *> _latexblocks;
     QVector<int> _dollars;
+    int _length;
 };
 
 

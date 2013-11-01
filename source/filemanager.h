@@ -64,6 +64,8 @@ public slots:
     void setCurrent(WidgetFile * widget);
     void setCurrent(int index);
 
+    void setDictionaryFromAction();
+
 
 private slots:
     void sendCursorPositionChanged(int x, int y) { emit cursorPositionChanged(x, y); }

@@ -1,4 +1,5 @@
 #include "widgetfile.h"
+#include "hunspell/hunspell.hxx"
 #include "minisplitter.h"
 #include "widgettextedit.h"
 #include "widgetconsole.h"
@@ -64,7 +65,6 @@ WidgetFile::WidgetFile(QWidget *parent) :
     _verticalSplitter->setCollapsible(2,true);
 
 
-
     connect(_widgetFindReplace->pushButtonClose(), SIGNAL(clicked()), this, SLOT(closeFindReplaceWidget()));
     connect(_widgetTextEdit,SIGNAL(textChanged()),_widgetLineNumber,SLOT(update()));
     connect(_widgetTextEdit->getCurrentFile()->getBuilder(), SIGNAL(pdfChanged()),_widgetPdfViewer->widgetPdfDocument(),SLOT(updatePdf()));
@@ -74,6 +74,7 @@ WidgetFile::WidgetFile(QWidget *parent) :
 
 
     _widgetTextEdit->getCurrentFile()->create();
+    setDictionary(ConfigManager::Instance.currentDictionary());
     _widgetTextEdit->setText(" ");
 
     _widgetPdfViewer->widgetPdfDocument()->setFile(_widgetTextEdit->getCurrentFile());
@@ -104,6 +105,8 @@ void WidgetFile::initTheme()
     this->setAutoFillBackground(true);
     this->setPalette(Pal);
     _widgetTextEdit->setStyleSheet(QString("QPlainTextEdit { border: 0px solid ")+
+                                        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("textedit-border").foreground().color())+"; "+
+                                        QString("border-right: 1px solid ")+
                                         ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("textedit-border").foreground().color())+"; "+
                                         QString("color: ")+
                                         ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+"; "+
@@ -340,4 +343,23 @@ void WidgetFile::open(QString filename)
 void WidgetFile::setFileToBuild(File *file)
 {
     widgetTextEdit()->getCurrentFile()->getBuilder()->setFile(file);
+}
+
+
+Hunspell * WidgetFile::spellChecker()
+{
+    return _spellChecker;
+}
+
+QString WidgetFile::spellCheckerEncoding()
+{
+    return spellChecker()->get_dic_encoding();
+}
+void WidgetFile::setDictionary(QString dico)
+{
+    _dictionary = dico;
+    _spellChecker = new Hunspell((ConfigManager::Instance.dictionaryPath() + _dictionary).toLatin1()+".aff",
+                                 (ConfigManager::Instance.dictionaryPath() + _dictionary).toLatin1()+".dic");
+    syntaxHighlighter()->rehighlight();
+    widgetTextEdit()->onCursorPositionChange();
 }

@@ -19,6 +19,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "hunspell/hunspell.hxx"
 #include "widgettextedit.h"
 #include "widgetinsertcommand.h"
 #include "configmanager.h"
@@ -41,6 +42,8 @@
 #include "completionengine.h"
 #include <math.h>
 #include <QtCore>
+#include <QApplication>
+#include <QMenu>
 #include <QImage>
 #include <QLayout>
 #include "QTextEdit"
@@ -63,6 +66,7 @@ WidgetTextEdit::WidgetTextEdit(WidgetFile * parent) :
     _widgetLineNumber(0)
 
 {
+    _widgetFile = parent;
     this->setContentsMargins(0,0,0,0);
     connect(this,SIGNAL(textChanged()),this->currentFile,SLOT(setModified()));
     connect(this,SIGNAL(textChanged()),this,SLOT(updateIndentation()));
@@ -119,6 +123,82 @@ void WidgetTextEdit::paintEvent(QPaintEvent *event)
     }
     return;
 }
+void WidgetTextEdit::contextMenuEvent(QContextMenuEvent *event)
+{
+    QMenu * defaultMenu = createStandardContextMenu();
+    QMenu * menu = new QMenu(this);
+
+    QTextCursor cursor = cursorForPosition(event->pos());
+    BlockData *data = static_cast<BlockData *>(cursor.block().userData() );
+    QTextCodec *codec = QTextCodec::codecForName(widgetFile()->spellCheckerEncoding().toLatin1());
+
+
+    int blockPos = cursor.block().position();
+    int colstart, colend;
+    colend = colstart = cursor.positionInBlock();
+    if (data && colstart < data->length() && data->misspelled[colstart]==true)
+    {
+        while (colstart >= 0 && (data->misspelled[colstart]==true))
+        {
+            --colstart;
+        }
+        ++colstart;
+        while (colend < data->length() && (data->misspelled[colend]==true))
+        {
+            colend++;
+        }
+        cursor.setPosition(blockPos+colstart,QTextCursor::MoveAnchor);
+        cursor.setPosition(blockPos+colend,QTextCursor::KeepAnchor);
+        QString    word          = cursor.selectedText();
+        QByteArray encodedString = codec->fromUnicode(word);
+        bool check = widgetFile()->spellChecker()->spell(encodedString.data());
+        if (!check)
+        {
+            char ** wlst;
+            int ns = widgetFile()->spellChecker()->suggest(&wlst, encodedString.data());
+            if (ns > 0)
+            {
+                QStringList suggWords;
+                for (int i=0; i < ns; i++)
+                {
+                    suggWords.append(codec->toUnicode(wlst[i]));
+                }
+                widgetFile()->spellChecker()->free_list(&wlst, ns);
+                if(!suggWords.contains(word))
+                {
+                    this->setTextCursor(cursor);
+
+                    QAction * action;
+                    QFont spellmenufont (qApp->font());
+                    spellmenufont.setBold(true);
+                    foreach (const QString &suggestion, suggWords)
+                    {
+                        action = new QAction(suggestion, menu);
+                        menu->insertAction(menu->actionAt(QPoint(0,0)), action);
+                        connect(action, SIGNAL(triggered()), this, SLOT(correctWord()));
+                        action->setFont(spellmenufont);
+                    }
+                    menu->addSeparator();
+                }
+
+             }
+        }
+    }
+    menu->addActions(defaultMenu->actions());
+    menu->exec(event->globalPos());
+    delete menu;
+}
+void WidgetTextEdit::correctWord()
+{
+    QAction *action = qobject_cast<QAction *>(sender());
+    if (action)
+    {
+        QString newword = action->text();
+        textCursor().removeSelectedText();
+        textCursor().insertText(newword);
+    }
+}
+
 void WidgetTextEdit::updateLineNumber(const QRect &rect, int dy)
 {
     if(!_widgetLineNumber)
@@ -240,6 +320,12 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
         int start = cur.selectionStart();
         int end = cur.selectionEnd();
         BlockData * bd = dynamic_cast<BlockData *>(this->textCursor().block().userData());
+        if(!bd)
+        {
+            cur.insertText(QString::fromUtf8("$"));
+            this->setTextCursor(cur);
+            return;
+        }
         if(start == end && bd->isAClosingDollar(start - this->textCursor().block().position()))
         {
             cur.insertText(QString::fromUtf8("$"));

@@ -19,20 +19,47 @@
  *                                                                         *
  ***************************************************************************/
 
+
+#include "hunspell/hunspell.hxx"
+
 #include "syntaxhighlighter.h"
 #include <QTextCharFormat>
 #include <QTextDocument>
 #include <QDebug>
+#include <QTextCodec>
 #include "blockdata.h"
 #include "configmanager.h"
 #include "widgetfile.h"
 #include "widgettextedit.h"
 #include "file.h"
 
+QStringList initTextBlockCommands()
+{
+    QStringList list;
+    list << "text"
+    << "textbf"
+    << "textit"
+    << "textrm"
+    << "emph"
+    << "section" << "subsection" << "subsubsection" << "paragraph";
+    return list;
+}
+
+QStringList initOtherBlockCommands()
+{
+    QStringList list;
+    list << "cite" << "ref" << "label";
+    return list;
+}
+
+QStringList SyntaxHighlighter::otherBlockCommands = initOtherBlockCommands();
+QStringList SyntaxHighlighter::textBlockCommands = initTextBlockCommands();
+
 SyntaxHighlighter::SyntaxHighlighter(WidgetFile *widgetFile) :
     QSyntaxHighlighter(widgetFile->widgetTextEdit()->document())
 {
     _widgetFile = widgetFile;
+
 }
 SyntaxHighlighter::~SyntaxHighlighter()
 {
@@ -41,8 +68,21 @@ SyntaxHighlighter::~SyntaxHighlighter()
 #endif
 }
 
+
+SyntaxHighlighter::State intToState(int in) {
+    switch(in) {
+        default:
+        case SyntaxHighlighter::Text: return SyntaxHighlighter::Text;
+        case SyntaxHighlighter::Math: return SyntaxHighlighter::Math;
+        case SyntaxHighlighter::Comment: return SyntaxHighlighter::Comment;
+    }
+}
+
 void SyntaxHighlighter::highlightBlock(const QString &text)
 {
+    BlockData *blockData = new BlockData(text.length());
+    setCurrentBlockUserData(blockData);
+
     if(_widgetFile->file()->format() == File::BIBTEX)
     {
         QTextCharFormat formatBibTitle = ConfigManager::Instance.getTextCharFormats("bibtex_command");
@@ -50,6 +90,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
         QTextCharFormat formatBibString = ConfigManager::Instance.getTextCharFormats("bibtex_string");
         QTextCharFormat formatBibQuotes = ConfigManager::Instance.getTextCharFormats("bibtex_quote");
         QTextCharFormat formatComment = ConfigManager::Instance.getTextCharFormats("comment");
+
 
         QString patternBibTitle = "@[a-zA-Z\\-_]+";
         QString patternBibString = "\\\"[^\\\"]+\\\"";
@@ -79,11 +120,6 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
         return;
     }
 
-    BlockData *blockData = new BlockData;
-    if(this->previousBlockState() == 1)
-    {
-        blockData->insertDollar(-1);
-    }
 
     int dollarPos = text.indexOf( '$' );
     while ( dollarPos != -1 )
@@ -137,16 +173,19 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
       rightPos = text.indexOf("\\end{", rightPos+1 );
       }
 
-    setCurrentBlockUserData(blockData);
 
 
 
-
+    QTextCharFormat spellingErrorFormat = ConfigManager::Instance.getTextCharFormats("normal");
+    spellingErrorFormat.setFontUnderline(true);
+    spellingErrorFormat.setUnderlineColor(QColor(Qt::red));
+    spellingErrorFormat.setUnderlineStyle(QTextCharFormat::SpellCheckUnderline);
 
 
 
     QTextCharFormat formatNormal = ConfigManager::Instance.getTextCharFormats("normal");
     QTextCharFormat formatCommand = ConfigManager::Instance.getTextCharFormats("command");
+    QTextCharFormat formatCommandInMathMode = ConfigManager::Instance.getTextCharFormats("command-in-math-mode");
     QTextCharFormat formatComment = ConfigManager::Instance.getTextCharFormats("comment");
     QTextCharFormat formatMath = ConfigManager::Instance.getTextCharFormats("math");
     QTextCharFormat formatStructure = ConfigManager::Instance.getTextCharFormats("structure");
@@ -155,86 +194,267 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
      setFormat(0, text.size(), formatNormal);
 
 
-     QString patternCommand = "\\\\[a-zA-Z]+";
-     QString patternStructure = "\\\\(sub){0,3}section\\{[^\\}]*\\}";
+State state = intToState(previousBlockState());
+ State previousState = state;
 
-     this->highlightExpression(text,patternCommand,formatCommand);
-     this->highlightExpression(text,patternStructure,formatStructure);
-
-
-
-    int length=0;
-    int lastindex = 0;
-    int index=-1;
-    int commentIndex = text.size();
+int index = 0;
+QChar currentChar;
+QChar nextChar;
+QString commandBuffer;
+//qDebug()<<"previous state "<<state;
+while(index < text.length())
+{
+    //qDebug()<<state;
+    currentChar = text.at(index);
+    if(index < text.length() - 1)
     {
-        QString patternComment =  "\\%.*$";
-        QRegExp expression(patternComment);
-        index = text.indexOf(expression);
-        if(index >= 0)
-        {
-            length = expression.matchedLength();
-            setFormat(index, length, formatComment);
-            commentIndex = index;
-        }
-    }
-
-
-
-    length=0;
-    lastindex = 0;
-    index=-1;
-
-
-
-    QString mathLeftDelimiters = "\\$\\$|\\$|\\\\\\[";
-    QString mathRightDelimiters = "\\$\\$|\\$|\\\\\\]";
-
-    if(this->previousBlockState() == 1)
-    {
-        QString patternMathStart = "^((?!("+mathRightDelimiters+"|\\%)).)*("+mathRightDelimiters+")";
-        QRegExp expression(patternMathStart);
-        index = text.indexOf(expression);
-        if(index >= 0 && index < commentIndex)
-        {
-            length = expression.matchedLength();
-            setFormat(0, length, formatMath);
-        }
-        else
-        {
-            setFormat(0, text.length(), formatMath);
-            this->setCurrentBlockState(1);
-            return;
-        }
-    }
-
-    QString patternMath = "("+mathLeftDelimiters+")((?!("+mathRightDelimiters+"|\\%)).)*("+mathRightDelimiters+")";
-    lastindex = index = length;
-    length = 0;
-    {
-        QRegExp expression(patternMath);
-        index = text.indexOf(expression,index);
-        while (index >= 0 && index < commentIndex) {
-            lastindex = index;
-            length = expression.matchedLength();
-            setFormat(index, length, formatMath);
-            index = text.indexOf(expression, index + length);
-        }
-    }
-    QString patternMathEnd =  "("+mathLeftDelimiters+")((?!("+mathRightDelimiters+")).)*([\\%].*){0,1}$";
-    QRegExp expression(patternMathEnd);
-    index = text.indexOf(expression,lastindex+length);
-    if(index >= 0 && index < commentIndex)
-    {
-        setFormat(index, text.length() - index, formatMath);
-        this->setCurrentBlockState(1);
+        nextChar = text.at(index + 1);
     }
     else
     {
-        this->setCurrentBlockState(-1);
+        nextChar == QChar::Null;
     }
+    // if the end of line is commented, we break the loop and we keep the current state (we do not save state = Comment)
+    if(currentChar == '%')
+    {
+        setFormat(index, text.size() - index, formatComment);
+        for(int comment_idx = index; comment_idx < text.size(); ++comment_idx)
+        {
+            blockData->state[comment_idx] = Comment;
+        }
+        break;
+    }
+    switch(state)
+    {
+    case Text:
+        if(      currentChar == '$'
+             ||  currentChar == '\\' && nextChar == '[')
+        {
+            state = Math;
+            setFormat(index, 1, formatMath);
+            if(currentChar == '$' && nextChar == '$')
+            {
+                setFormat(index + 1, 1, formatMath);
+                ++index;
+            }
+        }
+        else
+        if(currentChar == '\\')
+        {
+            previousState = Text;
+            state = Command;
+            commandBuffer = QString::null;
+            setFormat(index, 1, formatCommand);
+        }
+        else
+        if(currentChar == '}')
+        {
+            state = previousState;
+        }
+        break;
+    case TextBlock:
+        if(      currentChar == ' '
+             ||  currentChar == '\t')
+        {
+            ++index;
+        }
+        else
+        if(currentChar != '{')
+        {
+            state = Text;
+            --index;
+        }
+        else
+        {
+            state = Text;
+        }
+        break;
+    case Other:
+        if(currentChar == '}')
+        {
+            state = previousState;
+        }
+        /*else
+        if(      currentChar == '$'
+             ||  currentChar == '\\' && nextChar == '[')
+        {
+            previousState = Other;
+            state = Math;
+            setFormat(index, 1, formatMath);
+            if(currentChar == '$' && nextChar == '$')
+            {
+                setFormat(index + 1, 1, formatMath);
+                ++index;
+            }
+        }
+        else
+        if(currentChar == '\\')
+        {
+            previousState = Other;
+            state = Command;
+            commandBuffer = QString::null;
+            setFormat(index, 1, formatCommand);
+        }*/
+        else
+        {
+            state = Other;
+        }
+        break;
+    case OtherBlock:
+        if(      currentChar == ' '
+             ||  currentChar == '\t')
+        {
+            ++index;
+        }
+        else
+        if(currentChar != '{')
+        {
+            state = previousState;
+            --index;
+        }
+        else
+        {
+            state = Other;
+        }
+        break;
+    case Math:
+        setFormat(index, 1, formatMath);
+        if(   currentChar == '\\' && nextChar == ']'
+           || currentChar == '$' && nextChar == '$')
+        {
+            state = Text;
+            setFormat(index + 1, 1, formatMath);
+            ++index;
+        }
+        else
+        if(currentChar == '$')
+        {
+            state = Text;
+        }
+        else
+        if(currentChar == '\\')
+        {
+            previousState = Math;
+            state = Command;
+            commandBuffer = QString::null;
+            setFormat(index, 1, formatCommandInMathMode);
+        }
+        break;
+    case Command:
+        if(currentChar == '*')
+        {
+            if(previousState == Text)
+            {
+                setFormat(index, 1, formatCommand);
+            }
+            else
+            {
+                setFormat(index, 1, formatCommandInMathMode);
+            }
+            //go to the next index;
+            blockData->state[index] = state;
+            ++index;
+            if(index < text.length())
+            {
+                currentChar = text.at(index);
+            }
+            else
+            {
+                break;
+            }
+        }
+        if(QString(currentChar).contains(QRegExp("[^a-zA-Z]")))
+        {
+            if(textBlockCommands.contains(commandBuffer))
+            {
+                state = Text;
+            }
+            else
+            if(otherBlockCommands.contains(commandBuffer))
+            {
+                state = OtherBlock;
+            }
+            else
+            {
+                if(previousState == Text)
+                {
+                    state = Text;
+                }
+                else
+                {
+                    state = Math;
+                }
+            }
 
-    setFormat(commentIndex, text.size() - commentIndex, formatComment);
+            --index;
+        }
+        else
+        {
+            commandBuffer += currentChar;
+            if(previousState == Text)
+            {
+                setFormat(index, 1, formatCommand);
+            }
+            else
+            {
+                setFormat(index, 1, formatCommandInMathMode);
+            }
+        }
+        break;
+    }
+    blockData->state[index] = state;
+    ++index;
+}
+
+
+if (_widgetFile->spellChecker())
+{
+    QString buffer;
+    QChar ch;
+    int i=0;
+    int check;
+    QByteArray encodedString;
+    QTextCodec *codec = QTextCodec::codecForName(_widgetFile->spellCheckerEncoding().toLatin1());
+
+    while (i < text.length())
+    {
+        buffer = QString::null;
+        ch = text.at( i );
+        while ((blockData->state[i] == Text) && (!isWordSeparator(ch)))
+        {
+              buffer += ch;
+              i++;
+              if (i < text.length()) ch = text.at( i );
+              else break;
+        }
+        if ((buffer.length() > 1))// && (!ignoredwordList.contains(buffer)) && (!hardignoredwordList.contains(buffer)))
+        {
+            encodedString = codec->fromUnicode(buffer);
+            check = _widgetFile->spellChecker()->spell(encodedString.data());
+            if (!check)
+            {
+                for(int buffer_idx = 0; buffer_idx < buffer.length(); ++buffer_idx)
+                {
+                    QTextCharFormat f = format(i - buffer.length() + buffer_idx);
+                    f.setFontUnderline(true);
+                    f.setUnderlineColor(QColor(Qt::red));
+                    setFormat(i - buffer.length() + buffer_idx, 1, f);
+                    blockData->misspelled[i - buffer.length() + buffer_idx] = true;
+                }
+            }
+        }
+        i++;
+    }
+}
+
+
+
+//DO NOT set current block state to Command -> this may cause out of range index in array. (see case Command in the main switch above)
+if(state == Command)
+{
+    state = previousState;
+}
+setCurrentBlockState(state);
 
 }
 void SyntaxHighlighter::highlightExpression(const QString &text, const QString &pattern, const QTextCharFormat &format)
@@ -248,4 +468,51 @@ void SyntaxHighlighter::highlightExpression(const QString &text, const QString &
     }
 }
 
+bool SyntaxHighlighter::isWordSeparator(QChar c) const
+{
+/*    switch (c.toLatin1()) {
+    case '.':
+    case ',':
+    case '?':
+    case '!':
+    case ':':
+    case ';':
+    case '+':
+    case '<':
+    case '>':
+    case '[':
+    case ']':
+    case '(':
+    case ')':
+    case '{':
+    case '}':
+    case '=':
+    case '/':
+    case '+':
+    case '%':
+    case '&':
+    case '^':
+    case '`':
+    case '*':
+    case '_':
+    case '\\':
+    case '\'':
+    case '\t':
+    case '\n':
+    case '"':
+    case '~':
+    case '$':
+    case '|':
+    case '#':
+    case '£':
+    case '@':
+    case 'µ':
+    case '=':
+    case '¨':
+        return true;
+    default:
+        return false;
+    }*/
+    return QString(c).contains(QRegExp(QString::fromUtf8("[^a-zâãäåæçèéêëìíîïðñòóôõøùúûüýþÿı]"),Qt::CaseInsensitive));
+}
 

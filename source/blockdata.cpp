@@ -21,6 +21,25 @@
 
 #include "blockdata.h"
 #include <QDebug>
+BlockData::BlockData(int length)
+{
+    _length = length;
+    misspelled = new bool[length];
+    state = new char[length];
+    for(int i = 0; i < length; ++i)
+    {
+        misspelled[i] = false;
+    }
+    for(int i = 0; i < length; ++i)
+    {
+        state[i] = 0;
+    }
+}
+BlockData::~BlockData()
+{
+    delete[] misspelled;
+    delete[] state;
+}
 
 QVector<ParenthesisInfo *> BlockData::parentheses() {
     return _parentheses;

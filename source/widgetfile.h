@@ -15,6 +15,7 @@ class WidgetSimpleOutput;
 class WidgetLineNumber;
 class SyntaxHighlighter;
 class File;
+class Hunspell;
 
 class WidgetFile : public QWidget
 {
@@ -45,6 +46,12 @@ public:
 
     void setFileToBuild(File * file);
 
+
+    Hunspell * spellChecker();
+    QString spellCheckerEncoding();
+    QString dictionary() { return _dictionary; }
+    void setDictionary(QString dico);
+
 signals:
     void verticalSplitterChanged();
 
@@ -63,6 +70,7 @@ public slots:
     void closeFindReplaceWidget(void);
 
 private:
+    QString _dictionary;
     WidgetTextEdit * _widgetTextEdit;
     MiniSplitter * _horizontalSplitter;
     MiniSplitter * _verticalSplitter;
@@ -72,6 +80,7 @@ private:
     WidgetPdfViewer * _widgetPdfViewer;
     WidgetSimpleOutput * _widgetSimpleOutput;
     WidgetLineNumber * _widgetLineNumber;
+    Hunspell * _spellChecker;
     SyntaxHighlighter * _syntaxHighlighter;
     
     WidgetFile * _masterFile;

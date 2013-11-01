@@ -5,12 +5,12 @@
 <context>
     <name>Builder</name>
     <message>
-        <location filename="../builder.cpp" line="93"/>
+        <location filename="../builder.cpp" line="99"/>
         <source>Erreur</source>
         <translation>error</translation>
     </message>
     <message>
-        <location filename="../builder.cpp" line="93"/>
+        <location filename="../builder.cpp" line="99"/>
         <source>La compilation n&apos;a pas pu démarrer.</source>
         <translation>La compilación no se puede iniciar.</translation>
     </message>
@@ -109,47 +109,57 @@
         <translation type="unfinished">Reemplazar fuente del tema</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="166"/>
+        <location filename="../dialogconfig.ui" line="146"/>
+        <source>Indentation avec des espaces</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogconfig.ui" line="160"/>
+        <source>Lageur d&apos;une tabulation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogconfig.ui" line="190"/>
         <source>Action</source>
         <translation type="unfinished">acción</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="171"/>
+        <location filename="../dialogconfig.ui" line="195"/>
         <source>Raccourci</source>
         <translation type="unfinished">Atajos</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="193"/>
+        <location filename="../dialogconfig.ui" line="217"/>
         <source>Chemin vers les executables latex</source>
         <translation type="unfinished">Ruta al ejecutable de látex</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="205"/>
+        <location filename="../dialogconfig.ui" line="229"/>
         <source>Parcourir</source>
         <translation type="unfinished">Pasar por</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="214"/>
+        <location filename="../dialogconfig.ui" line="238"/>
         <source>Pdflatex</source>
         <translation>Pdflatex</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="221"/>
+        <location filename="../dialogconfig.ui" line="245"/>
         <source>Bibtex</source>
         <translation>Bibtex</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="245"/>
+        <location filename="../dialogconfig.ui" line="269"/>
         <source>Valider</source>
         <translation>Someter</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="258"/>
+        <location filename="../dialogconfig.ui" line="282"/>
         <source>Annler</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="271"/>
+        <location filename="../dialogconfig.ui" line="295"/>
         <source>Appliquer</source>
         <translation type="unfinished">Aplicar</translation>
     </message>
@@ -429,17 +439,17 @@
         <translation type="unfinished">Sincronizar pdf</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="295"/>
+        <location filename="../mainwindow.cpp" line="292"/>
         <source>Ouvrir un fichier</source>
         <translation type="unfinished">Abrir archivo</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="295"/>
         <source>Latex (*.tex *.latex);;BibTex(*.bib)</source>
-        <translation>Latex (*.tex *.latex);;BibTex(*.bib)</translation>
+        <translation type="obsolete">Latex (*.tex *.latex);;BibTex(*.bib)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="432"/>
+        <location filename="../mainwindow.cpp" line="434"/>
+        <location filename="../mainwindow.cpp" line="440"/>
         <source>Mettre à jour TexitEasy</source>
         <translation type="unfinished">Actualizar TexitEasy</translation>
     </message>
@@ -460,32 +470,32 @@
 <context>
     <name>UpdateChecker</name>
     <message>
-        <location filename="../updatechecker.cpp" line="32"/>
+        <location filename="../updatechecker.cpp" line="40"/>
         <source>Nouvelle version</source>
         <translation type="unfinished">Nueva versión</translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="32"/>
+        <location filename="../updatechecker.cpp" line="40"/>
         <source>Un nouvelle version est disponnible, vous pouvez la télécharger depuis le site officiel</source>
         <translation type="unfinished">Una nueva versión es avaialble, puede descargarlo desde el sitio oficial</translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="34"/>
+        <location filename="../updatechecker.cpp" line="42"/>
         <source>Votre version: </source>
         <translation type="unfinished">Su versión:</translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="34"/>
+        <location filename="../updatechecker.cpp" line="42"/>
         <source>Nouvelle version:</source>
         <translation type="unfinished">Nueva versión: </translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="35"/>
+        <location filename="../updatechecker.cpp" line="43"/>
         <source>La prochaine fois</source>
         <translation type="unfinished">La próxima vez</translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="35"/>
+        <location filename="../updatechecker.cpp" line="43"/>
         <source>Ne plus me prevenir de cette mise à jour</source>
         <translation type="unfinished">No me impedirá esta actualización</translation>
     </message>
@@ -493,9 +503,14 @@
 <context>
     <name>WidgetFile</name>
     <message>
-        <location filename="../widgetfile.cpp" line="192"/>
+        <location filename="../widgetfile.cpp" line="314"/>
         <source>Enregistrer un fichier</source>
         <translation type="unfinished">Guardar un documento</translation>
+    </message>
+    <message>
+        <location filename="../widgetfile.cpp" line="337"/>
+        <source>Ouvrir </source>
+        <translation>Abrir </translation>
     </message>
 </context>
 <context>
@@ -593,19 +608,19 @@
     <name>WidgetSimpleOutput</name>
     <message>
         <location filename="../widgetsimpleoutput.cpp" line="10"/>
-        <location filename="../widgetsimpleoutput.cpp" line="37"/>
+        <location filename="../widgetsimpleoutput.cpp" line="36"/>
         <source>Type</source>
         <translation type="unfinished">Tipo</translation>
     </message>
     <message>
         <location filename="../widgetsimpleoutput.cpp" line="10"/>
-        <location filename="../widgetsimpleoutput.cpp" line="37"/>
+        <location filename="../widgetsimpleoutput.cpp" line="36"/>
         <source>Ligne</source>
         <translation>Línea</translation>
     </message>
     <message>
         <location filename="../widgetsimpleoutput.cpp" line="10"/>
-        <location filename="../widgetsimpleoutput.cpp" line="37"/>
+        <location filename="../widgetsimpleoutput.cpp" line="36"/>
         <source>Message</source>
         <translation type="unfinished">Mensaje</translation>
     </message>
@@ -619,19 +634,19 @@
     </message>
     <message>
         <location filename="../widgetstatusbar.cpp" line="24"/>
-        <location filename="../widgetstatusbar.cpp" line="204"/>
+        <location filename="../widgetstatusbar.cpp" line="131"/>
         <source>Console</source>
         <translation type="unfinished">Consola</translation>
     </message>
     <message>
         <location filename="../widgetstatusbar.cpp" line="29"/>
-        <location filename="../widgetstatusbar.cpp" line="207"/>
+        <location filename="../widgetstatusbar.cpp" line="134"/>
         <source>Erreurs</source>
         <translation type="unfinished">Errores</translation>
     </message>
     <message>
         <location filename="../widgetstatusbar.cpp" line="35"/>
-        <location filename="../widgetstatusbar.cpp" line="163"/>
+        <location filename="../widgetstatusbar.cpp" line="90"/>
         <source>Ligne %1, Colonne %2</source>
         <translation>Línea %1, Columna %2</translation>
     </message>

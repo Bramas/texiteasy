@@ -40,6 +40,7 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <QCoreApplication>
+#include <QRegExp>
 
 #define DEBUG_THEME_PARSER(a)
 
@@ -65,15 +66,27 @@ void ConfigManager::init()
     checkRevision();
 
     QSettings settings;
-    settings.beginGroup("theme");
 
 
+    if(!settings.contains("defaultDictionary"))
+    {
+        if(dictionnaries().contains(QLocale::system().name()))
+        {
+            settings.setValue("defaultDictionary", QLocale::system().name());
+        }
+        else
+        {
+            settings.setValue("defaultDictionary", "en_GB");
+        }
+    }
 
     if(!settings.contains("language"))
     {
         QString locale = QLocale::system().name().section('_', 0, 0);
         settings.setValue("language",locale);
     }
+
+    settings.beginGroup("theme");
     if(!settings.contains("theme"))
     {
         settings.setValue("theme",QString("dark"));
@@ -445,6 +458,24 @@ QStringList ConfigManager::themesList()
     QDir dir(dataLocation);
     return dir.entryList(QDir::Files | QDir::Readable, QDir::Name).filter(QRegExp("\\.sim-theme"));
 }
+QString ConfigManager::dictionaryPath()
+{
+       QString dataLocation("");
+   #if QT_VERSION < 0x050000
+       dataLocation = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+   #else
+       dataLocation = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+   #endif
+       return dataLocation+"/dictionaries/";
+}
+
+QStringList ConfigManager::dictionnaries()
+{
+    QDir dir(dictionaryPath());
+    QStringList list = dir.entryList(QDir::Files | QDir::Readable, QDir::Name).filter(QRegExp("\\.dic"));
+    list.replaceInStrings(QRegExp("\.dic$"), "");
+    return list;
+}
 
 QStringList ConfigManager::languagesList()
 {
@@ -592,6 +623,18 @@ void ConfigManager::checkRevision()
             localtheme2.remove();
             theme.copy(dataLocation+dir.separator()+"dark.sim-theme");
             theme2.copy(dataLocation+dir.separator()+"light.sim-theme");
+        }
+    case 4:
+        qDebug()<<"texiteasy 4=>5";
+        {
+            QDir().mkdir(dictionaryPath());
+            QDir dir(":/data/dictionaries");
+            QStringList dictionaries = dir.entryList(QDir::NoDotAndDotDot | QDir::Files);
+            foreach (QString dico, dictionaries)
+            {
+                QFile dicoFile(":/data/dictionaries/"+dico);
+                dicoFile.copy(dictionaryPath()+dico);
+            }
         }
      }
      settings.setValue("revision",CURRENT_CONFIG_REVISION);
