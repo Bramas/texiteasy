@@ -27,6 +27,7 @@ BlockData::BlockData(int length)
     misspelled = new bool[length];
     state = new char[length];
     parenthesisLevel.push(0);
+    crocherLevel.push(0);
     for(int i = 0; i < length; ++i)
     {
         misspelled[i] = false;
@@ -79,4 +80,46 @@ bool BlockData::isAClosingDollar(int position)
         even = !even;
     }
     return even;
+}
+
+BlockStartingState::BlockStartingState(BlockData *data, int state, int stateAfterOption)
+{
+    this->state = state;
+    this->stateAfterOption = stateAfterOption;
+    this->parenthesisLevel = data->parenthesisLevel;
+    this->crocherLevel = data->crocherLevel;
+}
+bool BlockStartingState::equals(const BlockStartingState & other) const
+{
+    if(state != other.state)
+    {
+        return false;
+    }
+    if(stateAfterOption != other.stateAfterOption)
+    {
+        return false;
+    }
+    if(parenthesisLevel.count() != other.parenthesisLevel.count())
+    {
+        return false;
+    }
+    if(crocherLevel.count() != other.crocherLevel.count())
+    {
+        return false;
+    }
+    for(int idx = 0; idx < parenthesisLevel.count(); ++idx)
+    {
+        if(parenthesisLevel.at(idx) != other.parenthesisLevel.at(idx))
+        {
+            return false;
+        }
+    }
+    for(int idx = 0; idx < crocherLevel.count(); ++idx)
+    {
+        if(crocherLevel.at(idx) != other.crocherLevel.at(idx))
+        {
+            return false;
+        }
+    }
+    return true;
 }

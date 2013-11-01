@@ -48,7 +48,8 @@ QStringList initTextBlockCommands()
 QStringList initOtherBlockCommands()
 {
     QStringList list;
-    list << "cite" << "ref" << "label";
+    list << "cite" << "ref" << "label" << "begin" << "end" << "input" << "includegraphics"
+         << "bibliographystyle" << "bibliography";
     return list;
 }
 
@@ -73,6 +74,8 @@ SyntaxHighlighter::State intToState(int in) {
     switch(in) {
         default:
         case SyntaxHighlighter::Text: return SyntaxHighlighter::Text;
+        case SyntaxHighlighter::Other: return SyntaxHighlighter::Other;
+        case SyntaxHighlighter::Option: return SyntaxHighlighter::Option;
         case SyntaxHighlighter::Math: return SyntaxHighlighter::Math;
         case SyntaxHighlighter::Comment: return SyntaxHighlighter::Comment;
     }
@@ -82,6 +85,15 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 {
     BlockData *blockData = new BlockData(text.length());
     setCurrentBlockUserData(blockData);
+    QTextBlock previousBlock = currentBlock().previous();
+    if(previousBlock.isValid())
+    {
+        BlockData * previousData = static_cast<BlockData *>(previousBlock.userData());
+        if(previousData);
+        {
+            blockData->blockStartingState = previousData->blockEndingState;
+        }
+    }
 
     if(_widgetFile->file()->format() == File::BIBTEX)
     {
@@ -186,25 +198,25 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
     QTextCharFormat formatNormal = ConfigManager::Instance.getTextCharFormats("normal");
     QTextCharFormat formatCommand = ConfigManager::Instance.getTextCharFormats("command");
     QTextCharFormat formatCommandInMathMode = ConfigManager::Instance.getTextCharFormats("command-in-math-mode");
+    QTextCharFormat formatOption = ConfigManager::Instance.getTextCharFormats("option");
     QTextCharFormat formatComment = ConfigManager::Instance.getTextCharFormats("comment");
     QTextCharFormat formatMath = ConfigManager::Instance.getTextCharFormats("math");
-    QTextCharFormat formatStructure = ConfigManager::Instance.getTextCharFormats("structure");
 
 
      setFormat(0, text.size(), formatNormal);
 
 
-State state = intToState(previousBlockState());
- State previousState = state;
-
+State state = intToState(blockData->blockStartingState.state);
+State previousState = state;
+State stateAfterOption = intToState(blockData->blockStartingState.stateAfterOption);
 int index = 0;
 QChar currentChar;
 QChar nextChar;
 QString commandBuffer;
-qDebug()<<"previous state "<<state;
+//qDebug()<<"previous state "<<state;
 while(index < text.length())
 {
-    qDebug()<<state;
+    //qDebug()<<state;
     currentChar = text.at(index);
     if(index < text.length() - 1)
     {
@@ -231,6 +243,14 @@ while(index < text.length())
     else if(currentChar == '}')
     {
         blockData->parenthesisLevel.top() -= 1;
+    }
+    if(currentChar == '[')
+    {
+        blockData->crocherLevel.top() += 1;
+    }
+    else if(currentChar == ']')
+    {
+        blockData->crocherLevel.top() -= 1;
     }
     switch(state)
     {
@@ -261,71 +281,14 @@ while(index < text.length())
             setFormat(index, 1, formatCommand);
         }
         break;
-    case TextBlock:
-        if(      currentChar == ' '
-             ||  currentChar == '\t')
-        {
-            ++index;
-        }
-        else
-        if(currentChar != '{')
-        {
-            state = Text;
-            --index;
-        }
-        else
-        {
-            state = Text;
-        }
-        break;
     case Other:
         if(currentChar != ' ' && currentChar != '\t' && blockData->parenthesisLevel.top() == 0)
         {
             blockData->parenthesisLevel.pop();
             state = previousState;
         }
-        /*else
-        if(      currentChar == '$'
-             ||  currentChar == '\\' && nextChar == '[')
-        {
-            previousState = Other;
-            state = Math;
-            setFormat(index, 1, formatMath);
-            if(currentChar == '$' && nextChar == '$')
-            {
-                setFormat(index + 1, 1, formatMath);
-                ++index;
-            }
-        }
-        else
-        if(currentChar == '\\')
-        {
-            previousState = Other;
-            state = Command;
-            commandBuffer = QString::null;
-            setFormat(index, 1, formatCommand);
-        }*/
         else
         {
-            state = Other;
-        }
-        break;
-    case OtherBlock:
-        if(      currentChar == ' '
-             ||  currentChar == '\t')
-        {
-            //nothing
-        }
-        else
-        if(currentChar != '{')
-        {
-            state = previousState;
-            --index;
-        }
-        else
-        {
-            blockData->parenthesisLevel.top() -= 1;
-            blockData->parenthesisLevel.push(1);
             state = Other;
         }
         break;
@@ -350,6 +313,30 @@ while(index < text.length())
             state = Command;
             commandBuffer = QString::null;
             setFormat(index, 1, formatCommandInMathMode);
+        }
+        break;
+    case Option:
+        if(currentChar == '{' && blockData->crocherLevel.top() == 0)
+        {
+            blockData->crocherLevel.pop();
+            blockData->parenthesisLevel.top() -= 1;
+            blockData->parenthesisLevel.push(0);
+            state = stateAfterOption;
+            --index;
+        }
+        else
+        if(currentChar != ' ' && currentChar != '\t' && blockData->crocherLevel.top() == 0)
+        {
+
+            setFormat(index, 1, formatOption);
+            blockData->crocherLevel.pop();
+            blockData->parenthesisLevel.push(0);
+            state = stateAfterOption;
+        }
+        else
+        {
+            setFormat(index, 1, formatOption);
+            state = Option;
         }
         break;
     case Command:
@@ -377,39 +364,40 @@ while(index < text.length())
         }
         if(QString(currentChar).contains(QRegExp("[^a-zA-Z]")))
         {
+            if(currentChar == '[')
+            {
+                blockData->crocherLevel.top() -= 1;
+            }
             if(textBlockCommands.contains(commandBuffer))
             {
-                blockData->parenthesisLevel.push(0);
-                state = Text;
+                blockData->crocherLevel.push(0);
+                state = Option;
+                stateAfterOption = Text;
                 --index;
             }
             else
             if(otherBlockCommands.contains(commandBuffer))
             {
-                /*if(currentChar == ' ' || currentChar == '\t')
-                {
-                    state = OtherBlock;
-                }
-                else
-                {
-                    blockData->parenthesisLevel.top() -= 1;
-                    blockData->parenthesisLevel.push(1);
-                    state = Other;
-                }*/
-                blockData->parenthesisLevel.push(0);
-                state = Other;
+                blockData->crocherLevel.push(0);
+                state = Option;
+                stateAfterOption = Other;
                 --index;
             }
             else
             {
                 if(previousState == Text)
                 {
-                    state = Text;
+                    blockData->crocherLevel.push(0);
+                    state = Option;
+                    stateAfterOption = Text;
+                    --index;
                 }
                 else
                 {
-                    state = Math;
-                    setFormat(index, 1, formatMath);
+                    blockData->crocherLevel.push(0);
+                    state = Option;
+                    stateAfterOption =  Math;
+                    --index;
                 }
             }
         }
@@ -433,8 +421,11 @@ while(index < text.length())
     {
         blockData->parenthesisLevel.top() = 0;
     }
+    if(blockData->crocherLevel.top() < 0)
+    {
+        blockData->crocherLevel.top() = 0;
+    }
 }
-
 
 if (_widgetFile->spellChecker())
 {
@@ -483,7 +474,26 @@ if(state == Command)
 {
     state = previousState;
 }
-setCurrentBlockState(state);
+
+blockData->blockEndingState = BlockStartingState(blockData, state, stateAfterOption);
+
+// Check if we need to rehighlight the next block
+QTextBlock nextBlock = this->currentBlock().next();
+if(nextBlock.isValid())
+{
+    BlockData * nextData = static_cast<BlockData *>(nextBlock.userData());
+    BlockStartingState nextStartingData;
+    if(nextData && (nextStartingData = nextData->blockStartingState).state > -1);
+    {
+        if(!nextStartingData.equals(blockData->blockEndingState))
+        {
+            qDebug()<<"rehigh "<<state;
+            //change the currentBlock state to request the update of the next block
+            setCurrentBlockState(-currentBlockState());
+        }
+
+    }
+}
 
 }
 void SyntaxHighlighter::highlightExpression(const QString &text, const QString &pattern, const QTextCharFormat &format)

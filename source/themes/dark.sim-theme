@@ -9,3 +9,9 @@ selected-line=" foreground(14, 16, 15)  background(48, 50, 44) "
 synced-line=" foreground(14, 16, 15)  background(68, 70, 64) "
 structure="font(bold )  foreground(249, 39, 114)  background(39, 40, 34) "
 textedit-border=" foreground(14, 16, 15)  background(58, 60, 50) "
+
+
+bibtex_command=" foreground(249, 39, 114)  background(39, 40, 34) "
+bibtex_keyword=" foreground(128, 128, 115) "
+bibtex_string=" foreground(248, 248, 242) "
+bibtex_quote=" foreground(118, 227, 75) "
