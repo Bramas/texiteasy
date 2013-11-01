@@ -49,6 +49,8 @@ public:
 
     Hunspell * spellChecker();
     QString spellCheckerEncoding();
+    QString dictionary() { return _dictionary; }
+    void setDictionary(QString dico);
 
 signals:
     void verticalSplitterChanged();
@@ -68,6 +70,7 @@ public slots:
     void closeFindReplaceWidget(void);
 
 private:
+    QString _dictionary;
     WidgetTextEdit * _widgetTextEdit;
     MiniSplitter * _horizontalSplitter;
     MiniSplitter * _verticalSplitter;

@@ -5,9 +5,11 @@
 #include "minisplitter.h"
 
 #include <QPushButton>
+#include <QMenu>
 #include <QDebug>
 #include <QSplitter>
 #include <QToolButton>
+#include <QMouseEvent>
 #include <QLabel>
 #include <QBitmap>
 #include <QGraphicsDropShadowEffect>
@@ -43,9 +45,29 @@ WidgetStatusBar::WidgetStatusBar(QWidget *parent) :
     this->addPermanentWidget(messageArea, 1);
 
 
+    _labelDictionary = new WidgetStatusBarButton(this);
+    _labelDictionary->setText(ConfigManager::Instance.currentDictionary());
+    foreach(const QString dico, ConfigManager::Instance.dictionnaries())
+    {
+        QAction * action = new QAction(dico, _labelDictionary);
+        if(!dico.compare(_labelDictionary->text()))
+        {
+            action->setCheckable(true);
+            action->setChecked(true);
+        }
+        connect(action, SIGNAL(triggered()), &FileManager::Instance, SLOT(setDictionaryFromAction()));
+        _labelDictionary->addAction(action);
+    }
+    _labelDictionary->enableLeftClickContextMenu();
+    _labelDictionary->setEnabled(false);
+    this->addPermanentWidget(_labelDictionary, 0);
+
+
     _encodingLabel = new QLabel(this);
     _encodingLabel->setStyleSheet(QString("font-size:11px; color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color()));
     this->addPermanentWidget(_encodingLabel, 0);
+
+
 
 
 
@@ -99,8 +121,11 @@ void WidgetStatusBar::updateButtons()
 {
     if(!FileManager::Instance.currentWidgetFile())
     {
+        _labelDictionary->setText("");
+        _labelDictionary->setEnabled(false);
         return;
     }
+    // udate Console widget and errorTable widget
     QList<int> sizes = FileManager::Instance.currentWidgetFile()->verticalSplitter()->sizes();
     if(sizes[2] == 0)
     {
@@ -118,6 +143,10 @@ void WidgetStatusBar::updateButtons()
     {
         _labelConsole->setStyleSheet(QString("background-color:")+ ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color().darker(200)));
     }
+    //update dictionary label
+
+    _labelDictionary->setEnabled(true);
+    _labelDictionary->setText(FileManager::Instance.currentWidgetFile()->dictionary());
 }
 
 void WidgetStatusBar::initTheme()
@@ -125,6 +154,8 @@ void WidgetStatusBar::initTheme()
     this->setStyleSheet("QStatusBar::item { border: none;} QStatusBar {padding:0; height:100px; background: "+
                         ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("linenumber").background().color())+
                                      "}");
+
+    _labelDictionary->setStyleSheet(QString("color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color()));
 
     _labelConsole->setText(QString("<div style='margin:5px;'><a class='link' style='text-decoration:none; color:")+
                                 ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
@@ -198,11 +229,40 @@ void WidgetStatusBarButton::toggleCheckedWithoutTriggeringAction()
         _label->setPixmap(*_defaultPixmap);
     }
 }
-void WidgetStatusBarButton::mousePressEvent(QMouseEvent *)
+void WidgetStatusBarButton::mousePressEvent(QMouseEvent * event)
 {
-    if(this->isCheckable())
+    if(!this->isEnabled())
+    {
+        return;
+    }
+    if(this->isCheckable() && this->action())
     {
         this->action()->toggle();
+        return;
+    }
+    if(event->button() == Qt::RightButton || _leftClickContextMenu && event->button() == Qt::LeftButton)
+    {
+        if(this->actions().count())
+        {
+            QMenu menu(this);
+            QList<QAction*> listAction = this->actions();
+            menu.addActions(listAction);
+            int bottom = menu.actionGeometry(listAction.last()).bottom();
+
+            QAction * action = menu.exec(this->mapToGlobal(QPoint(0, - 6 - bottom)));
+            if(action)
+            {
+                this->setText(action->text());
+                updateGeometry();
+                foreach(QAction * a, this->actions())
+                {
+                    a->setChecked(false);
+                }
+                action->setCheckable(true);
+                action->setChecked(true);
+            }
+            return;
+        }
     }
 }
 void WidgetStatusBarButton::setAction(QAction *action)
@@ -214,4 +274,20 @@ void WidgetStatusBarButton::setAction(QAction *action)
         this->setChecked(_action->isChecked());
         connect(_action, SIGNAL(toggled(bool)), this, SLOT(setChecked(bool)));
     }
+}
+
+void WidgetStatusBarButton::setText(QString text)
+{
+    _label->setText(text);
+    updateGeometry();
+}
+
+void WidgetStatusBarButton::updateGeometry()
+{
+    int width = fontMetrics().width(_label->text());
+    _label->setMinimumWidth(width);
+    _label->setMaximumWidth(width);
+    this->setMinimumWidth(width);
+    this->setMaximumWidth(width);
+    QWidget::updateGeometry();
 }

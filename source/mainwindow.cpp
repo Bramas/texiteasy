@@ -336,6 +336,7 @@ void MainWindow::onCurrentFileChanged(WidgetFile * widget)
     if(!widget)
     {
         ui->verticalLayout->addWidget(_emptyWidget);
+        _widgetStatusBar->updateButtons();
         return;
     }
     ui->verticalLayout->addWidget(widget);

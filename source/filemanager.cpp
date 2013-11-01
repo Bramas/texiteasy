@@ -283,3 +283,16 @@ void FileManager::setPdfSynchronized(bool pdfSynchronized)
     _pdfSynchronized = pdfSynchronized;
 
 }
+void FileManager::setDictionaryFromAction()
+{
+    if(!this->currentWidgetFile())
+    {
+        return;
+    }
+    QAction *action = qobject_cast<QAction *>(sender());
+    if(!action)
+    {
+        return;
+    }
+    this->currentWidgetFile()->setDictionary(action->text());
+}

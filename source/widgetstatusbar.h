@@ -25,8 +25,11 @@ public:
         _hoverPixmap(0),
         _label(new QLabel(this))
     {
+        _checkable = false;
+        _leftClickContextMenu = false;
         this->setCursor(Qt::PointingHandCursor);
         this->setMinimumSize(20,20);
+        this->setContextMenuPolicy(Qt::NoContextMenu);
     }
     void      setAction(QAction * action);
     QAction * action() { return _action; }
@@ -40,10 +43,14 @@ public:
             _label->setPixmap(*_defaultPixmap);
         }
     }
-
+    void setText(QString text);
+    QString text() { return _label->text(); }
+    void enableLeftClickContextMenu(bool enable = true) { _leftClickContextMenu = enable; }
     void setCheckable(bool checkable) { _checkable = checkable; }
     bool isCheckable() { return _checkable; }
     bool isChecked() { return _checked; }
+
+    void updateGeometry();
 
 public slots:
     void toggleChecked();
@@ -59,6 +66,7 @@ protected:
 
 QAction * _action;
 
+bool _leftClickContextMenu;
 bool _checkable;
 bool _checked;
 
@@ -94,6 +102,7 @@ private:
     QLabel * _positionLabel;
     QLabel * _encodingLabel;
     WidgetStatusBarButton * _labelLinkSync;
+    WidgetStatusBarButton * _labelDictionary;
 
     QLabel * _labelConsole;
     QLabel * _labelErrorTable;

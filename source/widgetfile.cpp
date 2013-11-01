@@ -64,8 +64,6 @@ WidgetFile::WidgetFile(QWidget *parent) :
     _verticalSplitter->setCollapsible(3,true);
     _verticalSplitter->setCollapsible(2,true);
 
-    _spellChecker = new Hunspell(ConfigManager::Instance.currentDictionaryFilename().toLatin1()+".aff",
-                                 ConfigManager::Instance.currentDictionaryFilename().toLatin1()+".dic");
 
     connect(_widgetFindReplace->pushButtonClose(), SIGNAL(clicked()), this, SLOT(closeFindReplaceWidget()));
     connect(_widgetTextEdit,SIGNAL(textChanged()),_widgetLineNumber,SLOT(update()));
@@ -76,6 +74,7 @@ WidgetFile::WidgetFile(QWidget *parent) :
 
 
     _widgetTextEdit->getCurrentFile()->create();
+    setDictionary(ConfigManager::Instance.currentDictionary());
     _widgetTextEdit->setText(" ");
 
     _widgetPdfViewer->widgetPdfDocument()->setFile(_widgetTextEdit->getCurrentFile());
@@ -355,4 +354,12 @@ Hunspell * WidgetFile::spellChecker()
 QString WidgetFile::spellCheckerEncoding()
 {
     return spellChecker()->get_dic_encoding();
+}
+void WidgetFile::setDictionary(QString dico)
+{
+    _dictionary = dico;
+    _spellChecker = new Hunspell((ConfigManager::Instance.dictionaryPath() + _dictionary).toLatin1()+".aff",
+                                 (ConfigManager::Instance.dictionaryPath() + _dictionary).toLatin1()+".dic");
+    syntaxHighlighter()->rehighlight();
+    widgetTextEdit()->onCursorPositionChange();
 }
