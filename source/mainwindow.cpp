@@ -53,6 +53,7 @@
 #include <QPalette>
 #include <QPixmap>
 #include <QTableWidget>
+#include <QMessageBox>
 #include "configmanager.h"
 #include "widgetconsole.h"
 #include "widgetstatusbar.h"
@@ -349,14 +350,17 @@ bool MainWindow::closeTab(int index)
 
     if(widget->widgetTextEdit()->getCurrentFile()->isModified())
     {
-        DialogClose dialogClose(this);
-        dialogClose.setMessage(tr(QString::fromUtf8("Le fichier %1 n'a pas été enregistré.").toLatin1()).arg(widget->widgetTextEdit()->getCurrentFile()->getFilename()));
-        dialogClose.exec();
-        if(dialogClose.confirmed())
+        int i = QMessageBox::warning(this, trUtf8("Quitter?") ,trUtf8("Le fichier %1 n'a pas été enregistré.").arg(widget->widgetTextEdit()->getCurrentFile()->fileInfo().baseName()), "Annuler", "Quitter sans sauvegarder", "Sauvegarder et quitter");
+
+        if(i)
         {
-            if(dialogClose.saved())
+            if(i == 2)
             {
                 widget->save();
+                if(widget->widgetTextEdit()->getCurrentFile()->isModified())
+                {
+                    return false;
+                }
             }
         }
         else
