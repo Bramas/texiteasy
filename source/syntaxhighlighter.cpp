@@ -50,7 +50,7 @@ QStringList initOtherBlockCommands()
     QStringList list;
     list << "cite" << "ref" << "label" << "begin" << "end" << "input" << "includegraphics"
          << "bibliographystyle" << "bibliography" << "usepackage" << "newcommand" << "renewcommand"
-         << "newtheorem";
+         << "newtheorem" << "bibitem";
     return list;
 }
 
@@ -204,6 +204,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
     QTextCharFormat formatOption = ConfigManager::Instance.getTextCharFormats("option");
     QTextCharFormat formatComment = ConfigManager::Instance.getTextCharFormats("comment");
     QTextCharFormat formatMath = ConfigManager::Instance.getTextCharFormats("math");
+    QTextCharFormat formatOther = ConfigManager::Instance.getTextCharFormats("other");
 
 
      setFormat(0, text.size(), formatNormal);
@@ -213,7 +214,7 @@ State state = intToState(blockData->blockStartingState.state);
 State previousState = intToState(blockData->blockStartingState.previousState);
 State stateAfterOption = intToState(blockData->blockStartingState.stateAfterOption);
 
-QStack<StateLevel> * parenthesisLevel = &(blockData->blockEndingState.parenthesisLevel);
+QStack<int> * parenthesisLevel = &(blockData->blockEndingState.parenthesisLevel);
 QStack<int> * crocherLevel = &(blockData->blockEndingState.crocherLevel);
 
 int index = 0;
@@ -223,8 +224,8 @@ QString commandBuffer;
 //qDebug()<<"previous state "<<state;
 while(index < text.length())
 {
-    qDebug()<<index<<" : "<<currentChar<<" state : "<<state<<", parentheislevel : "<<(blockData->blockEndingState.parenthesisLevel);
     currentChar = text.at(index);
+    //qDebug()<<index<<" : "<<currentChar<<" state : "<<state<<", parentheislevel : "<<(blockData->blockEndingState.parenthesisLevel);
     if(index < text.length() - 1)
     {
         nextChar = text.at(index + 1);
@@ -245,11 +246,11 @@ while(index < text.length())
     }
     if(currentChar == '{')
     {
-        parenthesisLevel->top().level += 1;
+        parenthesisLevel->top() += 1;
     }
     else if(currentChar == '}')
     {
-        parenthesisLevel->top().level -= 1;
+        parenthesisLevel->top() -= 1;
     }
     if(currentChar == '[')
     {
@@ -262,17 +263,17 @@ while(index < text.length())
     switch(state)
     {
     case Text:
-        if(currentChar != ' ' && currentChar != '\t' && parenthesisLevel->top().level == 0 && parenthesisLevel->count() > 1)
+        if(currentChar != ' ' && currentChar != '\t' && parenthesisLevel->top() == 0 && parenthesisLevel->count() > 1)
         {
-            state = previousState;
+            state = Math;
             parenthesisLevel->pop();
             if(currentChar == '}')
             {
-                parenthesisLevel->top().level += 1;
+                parenthesisLevel->top() += 1;
             }
             if(currentChar == '[')
             {
-                parenthesisLevel->top().level -= 1;
+                parenthesisLevel->top() -= 1;
             }
             if(currentChar == ']')
             {
@@ -302,37 +303,19 @@ while(index < text.length())
         }
         break;
     case Other:
-        if(currentChar != ' ' && currentChar != '\t' && parenthesisLevel->top().level == 0)
+        if(currentChar != ' ' && currentChar != '\t' && parenthesisLevel->top() == 0)
         {
             parenthesisLevel->pop();
             state = previousState;
         }
         else
         {
+            setFormat(index, 1, formatOther);
             state = Other;
         }
         break;
     case Math:
         setFormat(index, 1, formatMath);
-        if(currentChar != ' ' && currentChar != '\t' && parenthesisLevel->top().level == 0 && parenthesisLevel->count() > 1)
-        {
-            state = parenthesisLevel->top().previousState;
-            parenthesisLevel->pop();
-            if(currentChar == '}')
-            {
-                parenthesisLevel->top().level += 1;
-            }
-            if(currentChar == '[')
-            {
-                parenthesisLevel->top().level -= 1;
-            }
-            if(currentChar == ']')
-            {
-                crocherLevel->top() += 1;
-            }
-            --index;
-        }
-        else
         if(   currentChar == '\\' && nextChar == ']'
            || currentChar == '$' && nextChar == '$')
         {
@@ -355,27 +338,35 @@ while(index < text.length())
         }
         break;
     case Option:
-        if(currentChar == '{' && crocherLevel->top() == 0)
+        /*if(currentChar == '{' && crocherLevel->top() == 0)
         {
             crocherLevel->pop();
-            parenthesisLevel->top().level -= 1;
+            parenthesisLevel->top() -= 1;
             parenthesisLevel->push(0);
-            parenthesisLevel->top().previousState = previousState;
             state = stateAfterOption;
             --index;
         }
-        else
+        else*/
         if(currentChar != ' ' && currentChar != '\t' && crocherLevel->top() == 0)
         {
             crocherLevel->pop();
             if(currentChar == '{')
             {
-                parenthesisLevel->top().level -= 1;
+                parenthesisLevel->top() -= 1;
             }
-            parenthesisLevel->push(0);
-            parenthesisLevel->top().previousState = previousState;
+            if(stateAfterOption != previousState)
+            {
+                parenthesisLevel->push(0);
+            }
+            if(currentChar == ']')
+            {
+                setFormat(index, 1, formatOption);
+            }
+            else
+            {
+                --index;
+            }
             state = stateAfterOption;
-            --index;
         }
         else
         {
@@ -424,7 +415,7 @@ while(index < text.length())
             }
             if(currentChar == '}')
             {
-                parenthesisLevel->top().level += 1;
+                parenthesisLevel->top() += 1;
                 --index;
                 state = previousState;
                 break;
@@ -435,7 +426,7 @@ while(index < text.length())
             }else
             if(currentChar == '{')
             {
-                parenthesisLevel->top().level -= 1;
+                parenthesisLevel->top() -= 1;
             }
             if(textBlockCommands.contains(commandBuffer))
             {
@@ -486,9 +477,9 @@ while(index < text.length())
     }
     blockData->state[index] = state;
     ++index;
-    if(parenthesisLevel->top().level < 0)
+    if(parenthesisLevel->top() < 0)
     {
-        parenthesisLevel->top().level = 0;
+        parenthesisLevel->top() = 0;
     }
     if(crocherLevel->top() < 0)
     {
@@ -558,7 +549,6 @@ if(nextBlock.isValid())
     {
         if(!nextStartingData.equals(blockData->blockEndingState))
         {
-            qDebug()<<"rehigh "<<state;
             //change the currentBlock state to request the update of the next block
             setCurrentBlockState(-currentBlockState());
         }
@@ -580,49 +570,6 @@ void SyntaxHighlighter::highlightExpression(const QString &text, const QString &
 
 bool SyntaxHighlighter::isWordSeparator(QChar c) const
 {
-/*    switch (c.toLatin1()) {
-    case '.':
-    case ',':
-    case '?':
-    case '!':
-    case ':':
-    case ';':
-    case '+':
-    case '<':
-    case '>':
-    case '[':
-    case ']':
-    case '(':
-    case ')':
-    case '{':
-    case '}':
-    case '=':
-    case '/':
-    case '+':
-    case '%':
-    case '&':
-    case '^':
-    case '`':
-    case '*':
-    case '_':
-    case '\\':
-    case '\'':
-    case '\t':
-    case '\n':
-    case '"':
-    case '~':
-    case '$':
-    case '|':
-    case '#':
-    case '£':
-    case '@':
-    case 'µ':
-    case '=':
-    case '¨':
-        return true;
-    default:
-        return false;
-    }*/
     return QString(c).contains(QRegExp(QString::fromUtf8("[^a-zâãäåæçèéêëìíîïðñòóôõøùúûüýþÿı]"),Qt::CaseInsensitive));
 }
 

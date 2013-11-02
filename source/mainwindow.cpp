@@ -142,10 +142,10 @@ MainWindow::MainWindow(QWidget *parent) :
     QAction * lastAction = this->ui->menuTh_me->actions().last();
     foreach(const QString& theme, ConfigManager::Instance.themesList())
     {
-        QAction * action = new QAction(theme.left(theme.size()-10), this->ui->menuTh_me);
+        QAction * action = new QAction(theme, this->ui->menuTh_me);
         action->setPriority(QAction::LowPriority);
         action->setCheckable(true);
-        if(!theme.left(theme.size()-10).compare(ConfigManager::Instance.theme()))
+        if(!theme.compare(ConfigManager::Instance.theme()))
         {
             action->setChecked(true);
         }

@@ -1,5 +1,7 @@
 [General]
 command=" foreground(249, 39, 114)  background(39, 40, 34) "
+command-in-math-mode=" foreground(180, 180, 114)"
+option=" foreground(240, 210, 110)"
 comment=" foreground(117, 113, 94)  background(39, 40, 34) "
 leftStructure="font(bold )  foreground(158, 158, 152)  background(58, 60, 50) "
 linenumber=" foreground(128, 128, 115)  background(39, 40, 34) "
@@ -9,6 +11,7 @@ selected-line=" foreground(14, 16, 15)  background(48, 50, 44) "
 synced-line=" foreground(14, 16, 15)  background(68, 70, 64) "
 structure="font(bold )  foreground(249, 39, 114)  background(39, 40, 34) "
 textedit-border=" foreground(14, 16, 15)  background(58, 60, 50) "
+other=" foreground(218, 205, 217)"
 
 
 bibtex_command=" foreground(249, 39, 114)  background(39, 40, 34) "

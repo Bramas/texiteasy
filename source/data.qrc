@@ -1,8 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>data/icons/appicon.png</file>
-        <file>themes/dark.sim-theme</file>
-        <file>themes/light.sim-theme</file>
         <file>data/fonts/consola.ttf</file>
         <file>data/fonts/consolab.ttf</file>
         <file>data/fonts/consolai.ttf</file>
@@ -45,5 +43,7 @@
         <file>data/dictionaries/README_es_ES.txt</file>
         <file>data/dictionaries/README_hu_HU.txt</file>
         <file>data/dictionaries/README_pl.txt</file>
+        <file>themes/dark.texiteasy-theme</file>
+        <file>themes/light.texiteasy-theme</file>
     </qresource>
 </RCC>

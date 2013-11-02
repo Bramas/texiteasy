@@ -143,7 +143,7 @@ void DialogConfig::show()
     QString currentTheme = ConfigManager::Instance.theme();
     foreach(QString theme, ConfigManager::Instance.themesList())
     {
-        this->ui->comboBox_themes->addItem(theme.remove(QRegExp("\\.[^.]*$")));
+        this->ui->comboBox_themes->addItem(theme);
         if(!currentTheme.compare(theme,Qt::CaseInsensitive))
         {
             this->ui->comboBox_themes->setCurrentIndex(this->ui->comboBox_themes->count()-1);

@@ -88,6 +88,7 @@ public:
 
     QStringList     themesList();
     const QString&  theme() { return _theme; }
+    QString themePath();
 
     QStringList     languagesList();
     QString         language()                      { QSettings settings; return settings.value("language").toString(); }

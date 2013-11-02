@@ -37,23 +37,16 @@ struct LatexBlockInfo {
 };
 
 class BlockData;
-struct StateLevel
-{
-    StateLevel() { level = 0; previousState = 0; }
-    int level;
-    int previousState;
-};
-
 class BlockState
 {
 public:
-    BlockState() { state = 0; stateAfterOption = 0; parenthesisLevel.push(StateLevel()); crocherLevel.push(0); }
+    BlockState() { state = 0; stateAfterOption = 0; parenthesisLevel.push(0); crocherLevel.push(0); }
     BlockState(int state, int previousState, int stateAfterOption);
     bool equals(const BlockState & other) const;
     int state;
     int previousState;
     int stateAfterOption;
-    QStack<StateLevel> parenthesisLevel;
+    QStack<int> parenthesisLevel;
     QStack<int> crocherLevel;
 
 };

@@ -345,7 +345,7 @@ void ConfigManager::save()
     }
     QSettings settings;
     settings.beginGroup("theme");
-    QSettings file(dataLocation+dir.separator()+settings.value("theme").toString()+".sim-theme",QSettings::IniFormat);
+    QSettings file(themePath()+settings.value("theme").toString()+".texiteasy-theme",QSettings::IniFormat);
 
     QMapIterator<QString,QTextCharFormat> it(*this->textCharFormats);
     QString key;
@@ -387,7 +387,7 @@ bool ConfigManager::load(QString theme)
         settings.setValue("theme",theme);
     }
     this->_theme = theme;
-    QSettings file(dataLocation+dir.separator()+theme+".sim-theme",QSettings::IniFormat);
+    QSettings file(themePath()+theme+".texiteasy-theme",QSettings::IniFormat);
 
     if(!file.contains("normal"))
     {
@@ -429,34 +429,15 @@ bool ConfigManager::load(QString theme)
 
 void ConfigManager::openThemeFolder()
 {
-    QString dataLocation;
-#if QT_VERSION < 0x050000
-    dataLocation = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
-#else
-    dataLocation = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
-#endif
-    if(dataLocation.isEmpty())
-    {
-            return;
-    }
-
-    QDesktopServices::openUrl(QUrl("file:///" + dataLocation));
+    QDesktopServices::openUrl(QUrl("file:///" + themePath()));
 }
 
 QStringList ConfigManager::themesList()
 {
-    QString dataLocation("");
-#if QT_VERSION < 0x050000
-    dataLocation = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
-#else
-    dataLocation = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
-#endif
-    if(dataLocation.isEmpty())
-    {
-        return QStringList();
-    }
-    QDir dir(dataLocation);
-    return dir.entryList(QDir::Files | QDir::Readable, QDir::Name).filter(QRegExp("\\.sim-theme"));
+    QDir dir(themePath());
+    QStringList list = dir.entryList(QDir::Files | QDir::Readable, QDir::Name).filter(QRegExp("\\.texiteasy-theme"));
+    list.replaceInStrings(QRegExp("\.texiteasy-theme$"), "");
+    return list;
 }
 QString ConfigManager::dictionaryPath()
 {
@@ -468,6 +449,17 @@ QString ConfigManager::dictionaryPath()
    #endif
        return dataLocation+"/dictionaries/";
 }
+QString ConfigManager::themePath()
+{
+       QString dataLocation("");
+   #if QT_VERSION < 0x050000
+       dataLocation = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+   #else
+       dataLocation = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+   #endif
+       return dataLocation+"/themes/";
+}
+
 
 QStringList ConfigManager::dictionnaries()
 {
@@ -613,20 +605,21 @@ void ConfigManager::checkRevision()
         }
     case 3:
         qDebug()<<"texiteasy 3=>4";
-        {
-            QDir dir;
-            QFile theme(":/themes/dark.sim-theme");
-            QFile theme2(":/themes/light.sim-theme");
-            QFile localtheme(dataLocation+dir.separator()+"dark.sim-theme");
-            QFile localtheme2(dataLocation+dir.separator()+"light.sim-theme");
-            localtheme.remove();
-            localtheme2.remove();
-            theme.copy(dataLocation+dir.separator()+"dark.sim-theme");
-            theme2.copy(dataLocation+dir.separator()+"light.sim-theme");
-        }
     case 4:
         qDebug()<<"texiteasy 4=>5";
         {
+            {
+                QDir().mkdir(themePath());
+                QDir dir;
+                QFile theme(":/themes/dark.texiteasy-theme");
+                QFile theme2(":/themes/light.texiteasy-theme");
+                QFile localtheme(dataLocation+dir.separator()+"dark.sim-theme");
+                QFile localtheme2(dataLocation+dir.separator()+"light.sim-theme");
+                localtheme.remove();
+                localtheme2.remove();
+                theme.copy(themePath()+"dark.texiteasy-theme");
+                theme2.copy(themePath()+"light.texiteasy-theme");
+            }
             QDir().mkdir(dictionaryPath());
             QDir dir(":/data/dictionaries");
             QStringList dictionaries = dir.entryList(QDir::NoDotAndDotDot | QDir::Files);
