@@ -54,6 +54,15 @@ DialogConfig::DialogConfig(MainWindow *parent) :
             this->ui->comboBoxLanguages->setCurrentIndex(this->ui->comboBoxLanguages->count()-1);
         }
     }
+    QString currentDictionary = ConfigManager::Instance.currentDictionary();
+    foreach(QString dico, ConfigManager::Instance.dictionnaries())
+    {
+        this->ui->comboBoxDictionary->addItem(dico);
+        if(!currentDictionary.compare(dico,Qt::CaseInsensitive))
+        {
+            this->ui->comboBoxDictionary->setCurrentIndex(this->ui->comboBoxDictionary->count()-1);
+        }
+    }
 
 }
 
@@ -81,6 +90,7 @@ void DialogConfig::save()
 
     // Page General
     ConfigManager::Instance.setLanguage(this->ui->comboBoxLanguages->currentText());
+    ConfigManager::Instance.setDictionary(this->ui->comboBoxDictionary->currentText());
 
     // Page Editor
     //

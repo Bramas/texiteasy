@@ -96,6 +96,7 @@ public:
     void            applyTranslation();
 
     QStringList     dictionnaries();
+    void            setDictionary(QString dico )    { QSettings settings; settings.setValue("defaultDictionary", dico); }
     QString         currentDictionaryFilename()     { return dictionaryPath()+currentDictionary(); }
     QString         currentDictionary()             { QSettings settings; return settings.value("defaultDictionary").toString(); }
     /**

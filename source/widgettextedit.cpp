@@ -71,7 +71,7 @@ WidgetTextEdit::WidgetTextEdit(WidgetFile * parent) :
     connect(this,SIGNAL(textChanged()),this->currentFile,SLOT(setModified()));
     connect(this,SIGNAL(textChanged()),this,SLOT(updateIndentation()));
     connect(this,SIGNAL(cursorPositionChanged()), this, SLOT(onCursorPositionChange()));
-    connect(this->verticalScrollBar(),SIGNAL(valueChanged(int)),this->viewport(),SLOT(update()));
+    //connect(this->verticalScrollBar(),SIGNAL(valueChanged(int)),this->viewport(),SLOT(update()));
 #ifdef OS_MAC
     _wierdCircumflexCursor = false;
 #endif
@@ -79,6 +79,7 @@ WidgetTextEdit::WidgetTextEdit(WidgetFile * parent) :
     this->currentFile->setModified(false);
     this->updateTabWidth();
     connect(&ConfigManager::Instance, SIGNAL(tabWidthChanged()), this, SLOT(updateTabWidth()));
+
 }
 WidgetTextEdit::~WidgetTextEdit()
 {
@@ -229,9 +230,7 @@ void WidgetTextEdit::onCursorPositionChange()
 
 void WidgetTextEdit::resizeEvent(QResizeEvent *event)
 {
-    this->updateIndentation();
     WIDGET_TEXT_EDIT_PARENT_CLASS::resizeEvent(event);
-    update();
 }
 
 void WidgetTextEdit::insertPlainText(const QString &text)
@@ -494,7 +493,7 @@ void WidgetTextEdit::wheelEvent(QWheelEvent * event)
     {
         WIDGET_TEXT_EDIT_PARENT_CLASS::wheelEvent(event);
     }
-    update();
+    //update();
 }
 void WidgetTextEdit::setBlockLeftMargin(const QTextBlock &textBlock, int leftMargin)
 {
