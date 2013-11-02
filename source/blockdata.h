@@ -37,15 +37,23 @@ struct LatexBlockInfo {
 };
 
 class BlockData;
-class BlockStartingState
+struct StateLevel
+{
+    StateLevel() { level = 0; previousState = 0; }
+    int level;
+    int previousState;
+};
+
+class BlockState
 {
 public:
-    BlockStartingState() { state = 0; stateAfterOption = 0; }
-    BlockStartingState(BlockData *data, int state, int stateAfterOption);
-    bool equals(const BlockStartingState & other) const;
+    BlockState() { state = 0; stateAfterOption = 0; parenthesisLevel.push(StateLevel()); crocherLevel.push(0); }
+    BlockState(int state, int previousState, int stateAfterOption);
+    bool equals(const BlockState & other) const;
     int state;
+    int previousState;
     int stateAfterOption;
-    QStack<int> parenthesisLevel;
+    QStack<StateLevel> parenthesisLevel;
     QStack<int> crocherLevel;
 
 };
@@ -61,8 +69,6 @@ public:
     //QList<int> code;
     char * state;
     bool * misspelled;
-    QStack<int> parenthesisLevel;
-    QStack<int> crocherLevel;
     QVector<ParenthesisInfo *> parentheses();
     QVector<LatexBlockInfo *> latexblocks();
     void insertPar( ParenthesisInfo *info );
@@ -70,8 +76,8 @@ public:
     void insertDollar(int pos ) { this->_dollars.append(pos); }
     bool isAClosingDollar(int position);
     int length() { return _length; }
-    BlockStartingState blockStartingState;
-    BlockStartingState blockEndingState;
+    BlockState blockStartingState;
+    BlockState blockEndingState;
 private:
     QVector<ParenthesisInfo *> _parentheses;
     QVector<LatexBlockInfo *> _latexblocks;

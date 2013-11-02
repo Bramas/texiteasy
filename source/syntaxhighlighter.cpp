@@ -49,7 +49,8 @@ QStringList initOtherBlockCommands()
 {
     QStringList list;
     list << "cite" << "ref" << "label" << "begin" << "end" << "input" << "includegraphics"
-         << "bibliographystyle" << "bibliography";
+         << "bibliographystyle" << "bibliography" << "usepackage" << "newcommand" << "renewcommand"
+         << "newtheorem";
     return list;
 }
 
@@ -92,6 +93,8 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
         if(previousData);
         {
             blockData->blockStartingState = previousData->blockEndingState;
+            blockData->blockEndingState = blockData->blockStartingState;
+            //qDebug()<<"from previous "<<blockData->blockStartingState.parenthesisLevel;
         }
     }
 
@@ -207,8 +210,12 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 
 
 State state = intToState(blockData->blockStartingState.state);
-State previousState = state;
+State previousState = intToState(blockData->blockStartingState.previousState);
 State stateAfterOption = intToState(blockData->blockStartingState.stateAfterOption);
+
+QStack<StateLevel> * parenthesisLevel = &(blockData->blockEndingState.parenthesisLevel);
+QStack<int> * crocherLevel = &(blockData->blockEndingState.crocherLevel);
+
 int index = 0;
 QChar currentChar;
 QChar nextChar;
@@ -216,7 +223,7 @@ QString commandBuffer;
 //qDebug()<<"previous state "<<state;
 while(index < text.length())
 {
-    //qDebug()<<state;
+    qDebug()<<index<<" : "<<currentChar<<" state : "<<state<<", parentheislevel : "<<(blockData->blockEndingState.parenthesisLevel);
     currentChar = text.at(index);
     if(index < text.length() - 1)
     {
@@ -238,27 +245,40 @@ while(index < text.length())
     }
     if(currentChar == '{')
     {
-        blockData->parenthesisLevel.top() += 1;
+        parenthesisLevel->top().level += 1;
     }
     else if(currentChar == '}')
     {
-        blockData->parenthesisLevel.top() -= 1;
+        parenthesisLevel->top().level -= 1;
     }
     if(currentChar == '[')
     {
-        blockData->crocherLevel.top() += 1;
+        crocherLevel->top() += 1;
     }
     else if(currentChar == ']')
     {
-        blockData->crocherLevel.top() -= 1;
+        crocherLevel->top() -= 1;
     }
     switch(state)
     {
     case Text:
-        if(currentChar != ' ' && currentChar != '\t' && blockData->parenthesisLevel.top() == 0 && blockData->parenthesisLevel.count() > 1)
+        if(currentChar != ' ' && currentChar != '\t' && parenthesisLevel->top().level == 0 && parenthesisLevel->count() > 1)
         {
             state = previousState;
-            blockData->parenthesisLevel.pop();
+            parenthesisLevel->pop();
+            if(currentChar == '}')
+            {
+                parenthesisLevel->top().level += 1;
+            }
+            if(currentChar == '[')
+            {
+                parenthesisLevel->top().level -= 1;
+            }
+            if(currentChar == ']')
+            {
+                crocherLevel->top() += 1;
+            }
+            --index;
         }
         else
         if(      currentChar == '$'
@@ -282,9 +302,9 @@ while(index < text.length())
         }
         break;
     case Other:
-        if(currentChar != ' ' && currentChar != '\t' && blockData->parenthesisLevel.top() == 0)
+        if(currentChar != ' ' && currentChar != '\t' && parenthesisLevel->top().level == 0)
         {
-            blockData->parenthesisLevel.pop();
+            parenthesisLevel->pop();
             state = previousState;
         }
         else
@@ -294,6 +314,25 @@ while(index < text.length())
         break;
     case Math:
         setFormat(index, 1, formatMath);
+        if(currentChar != ' ' && currentChar != '\t' && parenthesisLevel->top().level == 0 && parenthesisLevel->count() > 1)
+        {
+            state = parenthesisLevel->top().previousState;
+            parenthesisLevel->pop();
+            if(currentChar == '}')
+            {
+                parenthesisLevel->top().level += 1;
+            }
+            if(currentChar == '[')
+            {
+                parenthesisLevel->top().level -= 1;
+            }
+            if(currentChar == ']')
+            {
+                crocherLevel->top() += 1;
+            }
+            --index;
+        }
+        else
         if(   currentChar == '\\' && nextChar == ']'
            || currentChar == '$' && nextChar == '$')
         {
@@ -316,22 +355,27 @@ while(index < text.length())
         }
         break;
     case Option:
-        if(currentChar == '{' && blockData->crocherLevel.top() == 0)
+        if(currentChar == '{' && crocherLevel->top() == 0)
         {
-            blockData->crocherLevel.pop();
-            blockData->parenthesisLevel.top() -= 1;
-            blockData->parenthesisLevel.push(0);
+            crocherLevel->pop();
+            parenthesisLevel->top().level -= 1;
+            parenthesisLevel->push(0);
+            parenthesisLevel->top().previousState = previousState;
             state = stateAfterOption;
             --index;
         }
         else
-        if(currentChar != ' ' && currentChar != '\t' && blockData->crocherLevel.top() == 0)
+        if(currentChar != ' ' && currentChar != '\t' && crocherLevel->top() == 0)
         {
-
-            setFormat(index, 1, formatOption);
-            blockData->crocherLevel.pop();
-            blockData->parenthesisLevel.push(0);
+            crocherLevel->pop();
+            if(currentChar == '{')
+            {
+                parenthesisLevel->top().level -= 1;
+            }
+            parenthesisLevel->push(0);
+            parenthesisLevel->top().previousState = previousState;
             state = stateAfterOption;
+            --index;
         }
         else
         {
@@ -340,6 +384,13 @@ while(index < text.length())
         }
         break;
     case Command:
+
+        if(commandBuffer.isNull() && currentChar == '\\')
+        {
+            setFormat(index, 1, formatCommand);
+            state = previousState;
+            break;
+        }
         if(currentChar == '*')
         {
             if(previousState == Text)
@@ -364,13 +415,31 @@ while(index < text.length())
         }
         if(QString(currentChar).contains(QRegExp("[^a-zA-Z]")))
         {
+            if(currentChar == ']')
+            {
+                crocherLevel->top() += 1;
+                --index;
+                state = previousState;
+                break;
+            }
+            if(currentChar == '}')
+            {
+                parenthesisLevel->top().level += 1;
+                --index;
+                state = previousState;
+                break;
+            }
             if(currentChar == '[')
             {
-                blockData->crocherLevel.top() -= 1;
+                crocherLevel->top() -= 1;
+            }else
+            if(currentChar == '{')
+            {
+                parenthesisLevel->top().level -= 1;
             }
             if(textBlockCommands.contains(commandBuffer))
             {
-                blockData->crocherLevel.push(0);
+                crocherLevel->push(0);
                 state = Option;
                 stateAfterOption = Text;
                 --index;
@@ -378,7 +447,7 @@ while(index < text.length())
             else
             if(otherBlockCommands.contains(commandBuffer))
             {
-                blockData->crocherLevel.push(0);
+                crocherLevel->push(0);
                 state = Option;
                 stateAfterOption = Other;
                 --index;
@@ -387,14 +456,14 @@ while(index < text.length())
             {
                 if(previousState == Text)
                 {
-                    blockData->crocherLevel.push(0);
+                    crocherLevel->push(0);
                     state = Option;
                     stateAfterOption = Text;
                     --index;
                 }
                 else
                 {
-                    blockData->crocherLevel.push(0);
+                    crocherLevel->push(0);
                     state = Option;
                     stateAfterOption =  Math;
                     --index;
@@ -417,13 +486,13 @@ while(index < text.length())
     }
     blockData->state[index] = state;
     ++index;
-    if(blockData->parenthesisLevel.top() < 0)
+    if(parenthesisLevel->top().level < 0)
     {
-        blockData->parenthesisLevel.top() = 0;
+        parenthesisLevel->top().level = 0;
     }
-    if(blockData->crocherLevel.top() < 0)
+    if(crocherLevel->top() < 0)
     {
-        blockData->crocherLevel.top() = 0;
+        crocherLevel->top() = 0;
     }
 }
 
@@ -475,14 +544,16 @@ if(state == Command)
     state = previousState;
 }
 
-blockData->blockEndingState = BlockStartingState(blockData, state, stateAfterOption);
+blockData->blockEndingState.state               = state;
+blockData->blockEndingState.previousState       = previousState;
+blockData->blockEndingState.stateAfterOption    = stateAfterOption;
 
 // Check if we need to rehighlight the next block
 QTextBlock nextBlock = this->currentBlock().next();
 if(nextBlock.isValid())
 {
     BlockData * nextData = static_cast<BlockData *>(nextBlock.userData());
-    BlockStartingState nextStartingData;
+    BlockState nextStartingData;
     if(nextData && (nextStartingData = nextData->blockStartingState).state > -1);
     {
         if(!nextStartingData.equals(blockData->blockEndingState))
