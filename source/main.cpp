@@ -29,7 +29,6 @@
 #include <QDebug>
 
 
-
 int main(int argc, char *argv[])
 {
 #ifdef OS_MAC

@@ -77,8 +77,15 @@
     <property name="title">
      <string>Compiler</string>
     </property>
+    <widget class="QMenu" name="menuOtherBuilder">
+     <property name="title">
+      <string>Autre compilation</string>
+     </property>
+    </widget>
     <addaction name="actionPdfLatex"/>
     <addaction name="actionBibtex"/>
+    <addaction name="separator"/>
+    <addaction name="menuOtherBuilder"/>
     <addaction name="separator"/>
     <addaction name="actionAutoView"/>
     <addaction name="actionView"/>
@@ -304,6 +311,11 @@
    </property>
    <property name="text">
     <string>Synchroniser le pdf</string>
+   </property>
+  </action>
+  <action name="actionTest">
+   <property name="text">
+    <string>test</string>
    </property>
   </action>
  </widget>

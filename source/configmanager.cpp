@@ -86,6 +86,32 @@ void ConfigManager::init()
         settings.setValue("language",locale);
     }
 
+    settings.beginGroup("builder");
+
+#if __MAC_10_6
+    if(!settings.contains("latexPath"))
+    {
+        settings.setValue("latexPath","/usr/texbin/");
+    }
+#endif
+    if(!settings.contains("bibtex"))
+    {
+        settings.setValue("bibtex","bibtex \"%1\"");
+    }
+
+    if(!settings.contains("defaultLatex"))
+    {
+        settings.setValue("defaultLatex","PdfLatex");
+        settings.setValue("latexCommandNames", QStringList("PdfLatex"));
+    #if OS_WINDOWS
+        settings.setValue("latexCommands", QStringList("pdflatex.exe -synctex=1 -shell-escape -interaction=nonstopmode -enable-write18 %1"));
+    #else
+        settings.setValue("latexCommands", QStringList("pdflatex -synctex=1 -shell-escape -interaction=nonstopmode -enable-write18 %1"));
+    #endif
+    }
+
+    settings.endGroup();
+
     settings.beginGroup("theme");
     if(!settings.contains("theme"))
     {
@@ -101,34 +127,6 @@ void ConfigManager::init()
         charFormat.setFont(font);
         charFormat.setBackground(QColor(250,250,250));
         textCharFormats->insert("normal",charFormat);
-    }
-    settings.endGroup();
-    settings.beginGroup("builder");
-#if __MAC_10_6
-    if(!settings.contains("latexPath"))
-    {
-        settings.setValue("latexPath","/usr/texbin/");
-    }
-#endif
-    if(!settings.contains("bibtex"))
-    {
-        settings.setValue("bibtex","bibtex \"%1\"");
-    }
-    if(!settings.contains("pdflatex"))
-    {
-#if OS_WINDOWS
-    settings.setValue("pdflatex", "pdflatex.exe -synctex=1 -shell-escape -interaction=nonstopmode -enable-write18 \"%1\"");
-#else
-    settings.setValue("pdflatex", "pdflatex -synctex=1 -shell-escape -interaction=nonstopmode -enable-write18 \"%1\"");
-#endif
-    }
-    if(!settings.contains("latex"))
-    {
-#if OS_WINDOWS
-    settings.setValue("latex", "latex.exe -interaction=nonstopmode \"%1\"");
-#else
-    settings.setValue("latex", "latex -interaction=nonstopmode \"%1\"");
-#endif
     }
     settings.endGroup();
     this->applyTranslation();

@@ -108,7 +108,6 @@ MainWindow::MainWindow(QWidget *parent) :
     this->initTheme();
 
 
-
     // Connect menubar Actions
     connect(this->ui->actionLinkSync, SIGNAL(toggled(bool)), &FileManager::Instance, SLOT(setPdfSynchronized(bool)));
     connect(this->ui->actionLinkSync, SIGNAL(toggled(bool)), &ConfigManager::Instance, SLOT(setPdfSynchronized(bool)));
@@ -130,7 +129,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->ui->actionPaste, SIGNAL(triggered()), &FileManager::Instance, SLOT(paste()));
     connect(this->ui->actionFindReplace, SIGNAL(triggered()), &FileManager::Instance, SLOT(openFindReplaceWidget()));
     connect(this->ui->actionEnvironment, SIGNAL(triggered()), &FileManager::Instance, SLOT(wrapEnvironment()));
-    connect(this->ui->actionPdfLatex,SIGNAL(triggered()), &FileManager::Instance,SLOT(pdflatex()));
+    connect(this->ui->actionPdfLatex,SIGNAL(triggered()), &FileManager::Instance,SLOT(builTex()));
     connect(this->ui->actionBibtex,SIGNAL(triggered()), &FileManager::Instance,SLOT(bibtex()));
     connect(this->ui->actionView, SIGNAL(triggered()), &FileManager::Instance,SLOT(jumpToPdfFromSource()));
 
@@ -168,6 +167,8 @@ MainWindow::MainWindow(QWidget *parent) :
     this->ui->menuOuvrir_R_cent->insertSeparator(lastAction);
 
 
+    initBuildMenu();
+    connect(&ConfigManager::Instance, SIGNAL(changed()), this, SLOT(initBuildMenu()));
 
     {
         QList<QAction *> actionsList = this->findChildren<QAction *>();
@@ -215,8 +216,21 @@ void MainWindow::closeEvent(QCloseEvent * event)
 }
 void MainWindow::dragEnterEvent(QDragEnterEvent * event)
 {
-    /* TODO : reject files that are not .tex */
-    event->acceptProposedAction();
+    if(!event->mimeData()->hasUrls())
+    {
+        event->ignore();
+        return;
+    }
+    QList<QUrl> urlList = event->mimeData()->urls();
+    foreach(const QUrl & url, urlList)
+    {
+        if(canBeOpened(url.toLocalFile()) || canBeInserted(url.toLocalFile()))
+        {
+            event->acceptProposedAction();
+            return;
+        }
+    }
+    event->ignore();
 }
 void MainWindow::dragMoveEvent(QDragMoveEvent * event)
 {
@@ -234,15 +248,40 @@ void MainWindow::dropEvent(QDropEvent * event)
     // check for our needed mime type, here a file or a list of files
     if (mimeData->hasUrls())
     {
-        QList<QUrl> urlList = mimeData->urls();
-
+        QStringList openableFiles;
+        QStringList insertableFiles;
         // extract the local paths of the files
-        for (int i = 0; i < urlList.size() && i < 32; ++i)
+        foreach (const QUrl & url, mimeData->urls())
         {
-            open(urlList.at(i).toLocalFile());
+            if(canBeOpened(url.toLocalFile()))
+            {
+                openableFiles.append(url.toLocalFile());
+            }
+            else if(canBeInserted(url.toLocalFile()))
+            {
+                insertableFiles.append(url.toLocalFile());
+            }
         }
-
+        if(!openableFiles.isEmpty())
+        {
+            foreach(const QString& file, openableFiles)
+            {
+                open(file);
+            }
+            event->acceptProposedAction();
+            return;
+        }
+        if(!insertableFiles.isEmpty() && FileManager::Instance.currentWidgetFile())
+        {
+            foreach(const QString& file, insertableFiles)
+            {
+                FileManager::Instance.currentWidgetFile()->widgetTextEdit()->insertFile(file);
+            }
+            event->acceptProposedAction();
+            return;
+        }
     }
+    event->ignore();
 }
 void MainWindow::changeEvent(QEvent *event)
 {
@@ -251,6 +290,46 @@ void MainWindow::changeEvent(QEvent *event)
     }
     else
         QWidget::changeEvent(event);
+}
+bool MainWindow::canBeOpened(QString filename)
+{
+    QString ext = QFileInfo(filename).suffix();
+    if(!ext.compare("tex")
+            || !ext.compare("bib"))
+    {
+        return true;
+    }
+    return false;
+}
+bool MainWindow::canBeInserted(QString filename)
+{
+    QString ext = QFileInfo(filename).suffix();
+    if(!ext.compare("jpeg",Qt::CaseInsensitive)
+            || !ext.compare("jpg",Qt::CaseInsensitive)
+            || !ext.compare("png",Qt::CaseInsensitive))
+    {
+        return true;
+    }
+    return false;
+}
+
+void MainWindow::initBuildMenu()
+{
+    this->ui->menuOtherBuilder->clear();
+    this->ui->actionPdfLatex->setText(ConfigManager::Instance.defaultLatex());
+    QStringList commandNameList = ConfigManager::Instance.latexCommandNames();
+    foreach(const QString & name, commandNameList)
+    {
+        QAction * action = new QAction(name, this->ui->menuOtherBuilder);
+        action->setPriority(QAction::LowPriority);
+        if(!name.compare(ConfigManager::Instance.defaultLatex()))
+        {
+            delete action;
+            continue;
+        }
+        this->ui->menuOtherBuilder->addAction(action);
+        connect(action, SIGNAL(triggered()), &FileManager::Instance,SLOT(builTex()));
+    }
 }
 
 void MainWindow::newFile()

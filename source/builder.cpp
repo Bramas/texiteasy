@@ -23,6 +23,7 @@
 #include "file.h"
 #include <QMessageBox>
 #include <QDebug>
+#include <QtGlobal>
 #include <QSettings>
 #include "configmanager.h"
 
@@ -31,11 +32,14 @@ QString Builder::Warning = QObject::tr("Warning");
 
 Builder::Builder(File * file) :
     file(file),
-    process(new QProcess())
+    process(new QProcess(this))
 {
     connect(this->process,SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(onFinished(int,QProcess::ExitStatus)));
     connect(this->process,SIGNAL(error(QProcess::ProcessError)), this, SLOT(onError(QProcess::ProcessError)));
     connect(this->process,SIGNAL(readyReadStandardOutput()), this, SLOT(onStandartOutputReady()));
+    connect(this->process,SIGNAL(readyReadStandardError()), this, SLOT(onStandartOutputReady()));
+    setupPathEnvironment();
+    connect(&ConfigManager::Instance, SIGNAL(changed()), this, SLOT(setupPathEnvironment()));
 }
 
 Builder::~Builder()
@@ -51,7 +55,40 @@ void Builder::setFile(File *file)
     this->file = file;
 }
 
-void Builder::pdflatex()
+bool Builder::setupPathEnvironment()
+{
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+    QString extraPath = ConfigManager::Instance.latexPath();
+#ifdef OS_MAC
+    if (extraPath.isEmpty())
+    {
+        env.insert("PATH", env.value("PATH") + ":/usr/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/texbin:/sw/bin");
+    }
+    else
+    {
+        env.insert("PATH", env.value("PATH") + ":/usr/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/texbin:/sw/bin:"+extraPath);
+    }
+    process->setProcessEnvironment(env);
+#endif
+#ifdef OS_WIN
+    if (!extraPath.isEmpty())
+    {
+        env.insert("PATH", env.value("PATH") + ";"+extraPath);
+        process->setProcessEnvironment(env);
+    }
+#endif
+#ifdef OS_LINUX
+    if (!extraPath.isEmpty())
+    {
+        env.insert("PATH", env.value("PATH") + ":"+extra_path);
+        process->setProcessEnvironment(env);
+    }
+#endif
+    //Very Important, everything is in there because process->setEnvironement is for child process
+    return qputenv("PATH", env.value("PATH").toLatin1());
+}
+
+void Builder::builTex(QString command)
 {
     if(this->file->getFilename().isEmpty())
     {
@@ -60,17 +97,23 @@ void Builder::pdflatex()
     emit started();
     _lastOutput = QString("");
     _simpleOutPut.clear();
+    _commands.clear();
     _basename = this->file->fileInfo().baseName();
 
-    QSettings settings;
-    process->setWorkingDirectory(this->file->getPath());
-    //QString command = settings.value("latexPath").toString()+pdflatexExe+" -output-directory=\""+this->file->getPath()+"\" -aux-directory="+this->file->getAuxPath()+" -synctex=1 -shell-escape -interaction=nonstopmode -enable-write18 \""+this->file->getFilename()+"\"";
-    QString command = ConfigManager::Instance.pdflatexCommand(true).arg(_basename);//.arg(this->file->getPath()).arg(this->file->getAuxPath());
-    qDebug()<<"start pdflatex : "<<command;
     if(this->process->state() != QProcess::NotRunning)
     {
         this->process->kill();
     }
+    process->setWorkingDirectory(this->file->getPath());
+
+    command.replace(QRegExp("(%1(\.[a-zA-Z0-9]+){0,1})"),"\"\\1\"");
+    command = command.arg(_basename);
+
+    _commands = command.split(';');
+    command = QString(_commands.front()).trimmed();
+    _commands.pop_front();
+    qDebug()<<"start building : "<<command;
+    _lastOutput.append(command+"\n\n");
     process->start(command);
 }
 
@@ -109,6 +152,15 @@ void Builder::onFinished(int /*exitCode*/, QProcess::ExitStatus /*exitStatus*/)
         emit statusChanged(QString::fromUtf8("Terminé avec des erreurs"));
         return;
     }
+    if(!_commands.isEmpty())
+    {
+        QString command = QString(_commands.front()).trimmed();
+        _commands.pop_front();
+        qDebug()<<"continue building with : "<<command;
+        _lastOutput.append("\n----------------------------------\n"+command+"\n\n");
+        process->start(command);
+        return;
+    }
     emit statusChanged(QString::fromUtf8("Terminé avec succés"));
     emit success();
     emit pdfChanged();
@@ -117,23 +169,18 @@ void Builder::onStandartOutputReady()
 {
     QString output = this->process->readAllStandardOutput();
     _lastOutput.append(output);
+    output = this->process->readAllStandardError();
+    _lastOutput.append(output);
     emit outputUpdated(_lastOutput);
 }
 
 bool Builder::checkOutput()
 {
-    if(_lastOutput.indexOf("Output written on ") != -1)
-    {
-        //_simpleOutPut << "Output written on \""+this->_basename+".pdf\"";
-        return true;
-    }
     if(_lastOutput.indexOf("Database file ") != -1)
     {
         //_simpleOutPut << "Success";
         return true;
     }
-
-
     QStringList lines = _lastOutput.split('\n');
     QString errorMessage;
     bool errorState = false;
@@ -177,5 +224,5 @@ bool Builder::checkOutput()
         }
     }
 
-    return false;
+    return _simpleOutPut.isEmpty();
 }

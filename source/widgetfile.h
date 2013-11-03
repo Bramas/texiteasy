@@ -25,7 +25,7 @@ public:
     ~WidgetFile();
     void initTheme();
 
-    void pdflatex(void);
+    void builTex(QString command);
     void bibtex(void);
     WidgetFile * masterFile() { return _masterFile; }
     void save();

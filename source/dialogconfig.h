@@ -47,6 +47,10 @@ public slots:
     void show();
     void changePage(int currentRow);
     void configureShortCut(QTableWidgetItem *item);
+    void addNewCommand();
+    void onCurrentLatexCommandChanged();
+    void deleteSelectedLatex();
+    void updateComboboxDefaultLatex();
     
 protected:
     void changeEvent(QEvent *event);
@@ -55,6 +59,7 @@ private:
     Ui::DialogConfig *ui;
     QSettings settings;
     MainWindow * _parent;
+    QString currentLatexName;
 };
 
 #endif // DIALOGCONFIG_H

@@ -46,7 +46,7 @@ public slots:
      */
     void save() { this->currentWidgetFile()->save(); }
     void saveAs() { this->currentWidgetFile()->saveAs(); }
-    void pdflatex(void){ this->currentWidgetFile()->pdflatex(); }
+    void builTex(void);
     void bibtex(void) { this->currentWidgetFile()->bibtex(); }
     void openFindReplaceWidget() { this->currentWidgetFile()->openFindReplaceWidget(); }
     void undo();

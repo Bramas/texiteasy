@@ -49,11 +49,12 @@ public:
     static QString Warning;
 
 public slots:
-    void pdflatex();
+    void builTex(QString command);
     void bibtex();
     void onFinished(int exitCode,QProcess::ExitStatus exitStatus);
     void onError(QProcess::ProcessError processError);
     void onStandartOutputReady();
+    bool setupPathEnvironment();
 
 signals:
     void statusChanged(QString);
@@ -69,6 +70,7 @@ private:
     QString _basename;
     QProcess * process;
     QString _lastOutput;
+    QStringList _commands;
     QList<Builder::Output> _simpleOutPut;
 };
 

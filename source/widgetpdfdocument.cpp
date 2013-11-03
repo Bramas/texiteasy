@@ -31,7 +31,7 @@
 #include "file.h"
 
 
-
+#define ZOOM_UPDATE 500
 #define SYNCTEX_GZ_EXT ".synctex.gz"
 #define SYNCTEX_EXT ".synctex"
 #define max(a,b) ((a)>(b)?(a):(b))
@@ -65,6 +65,7 @@ WidgetPdfDocument::WidgetPdfDocument(QWidget *parent) :
 
     connect(_scroll, SIGNAL(valueChanged(int)), this, SLOT(onScroll(int)));
     connect(this, SIGNAL(translated(int)), _scroll, SLOT(setValue(int)));
+    connect(&_requestNewResolutionTimer, SIGNAL(timeout()), this, SLOT(refreshPages()));
 
 }
 WidgetPdfDocument::~WidgetPdfDocument()
@@ -111,7 +112,8 @@ void WidgetPdfDocument::paintEvent(QPaintEvent *)
             continue;
         }
         image = this->page(i);
-        painter.drawImage(0,cumulatedTop,*image);
+        QRect target(0, cumulatedTop, _document->page(i)->pageSize().width() * _zoom, _document->page(i)->pageSize().height() * _zoom);
+        painter.drawImage(target,*image);
         if(i == _syncPage+1)
         {
             if(_lastUpdate.elapsed()<1200)
@@ -383,6 +385,7 @@ void WidgetPdfDocument::refreshPages()
             _loadedPages[idx] = false;
         }
     }
+    update();
 
 }
 void WidgetPdfDocument::checkLinksOver(const QPointF &pos)
@@ -450,8 +453,11 @@ void WidgetPdfDocument::wheelEvent(QWheelEvent * event)
 {
     if(event->modifiers() & (Qt::ControlModifier | Qt::AltModifier | Qt::ShiftModifier))
     {
-        qreal factor = log(1 + _zoom) / 30.0;
+        qreal factor = 0.1;//log(1 + _zoom) / 30.0;
         factor =  event->delta() > 0 ? 1 + factor : 1 - factor;
+#ifdef OS_MAC
+        factor = 1.0 + qreal(event->delta())/200.0;
+#endif
         this->zoom(factor, event->pos());
     }
     else if(event->orientation() == Qt::Vertical)
@@ -473,18 +479,22 @@ void WidgetPdfDocument::zoom(qreal factor, QPoint target)
 {
     qreal oldZoom = _zoom;
     this->_zoom *= factor;
+    this->_zoom = _zoom < 0.1 ? 0.1 : _zoom; // limit the zoom to 0.1
     this->_zoom = _zoom > 3 ? 3 : _zoom; // limit the zoom to 3
     factor = _zoom / oldZoom; // calculate the real factor;
     this->_painterTranslate *= factor;
     this->_painterTranslate += target - target*factor;
     this->boundPainterTranslation();
-    this->refreshPages();
 
     this->_scroll->setRange(0,this->documentHeight() - this->height()+30);
     this->_scroll->setPageStep(this->height() / _zoom);
     emit translated( - _painterTranslate.y());
-    initLinks();
     update();
+    _requestNewResolutionTimer.stop();
+    _requestNewResolutionTimer.start(ZOOM_UPDATE);
+    return;
+    refreshPages();
+    initLinks();
 }
 void WidgetPdfDocument::zoomIn()
 {

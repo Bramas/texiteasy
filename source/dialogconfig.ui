@@ -53,7 +53,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>3</number>
    </property>
    <widget class="QWidget" name="pageGeneral">
     <widget class="QWidget" name="formLayoutWidget_2">
@@ -217,50 +217,124 @@
        <height>391</height>
       </rect>
      </property>
-     <layout class="QFormLayout" name="formLayout_2">
-      <property name="fieldGrowthPolicy">
-       <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-      </property>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>Chemin vers les executables latex</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QLineEdit" name="lineEdit_latexPath"/>
-        </item>
-        <item>
-         <widget class="QPushButton" name="pushButton_browseLatexPath">
+     <layout class="QVBoxLayout" name="formLayout_2">
+      <item>
+       <layout class="QFormLayout" name="formLayout_4">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_4">
           <property name="text">
-           <string>Parcourir</string>
+           <string>Chemin vers les executables latex</string>
           </property>
          </widget>
         </item>
+        <item row="0" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QLineEdit" name="lineEdit_latexPath"/>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_browseLatexPath">
+            <property name="text">
+             <string>Parcourir</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>BibTex</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="lineEdit_bibtex">
+          <property name="text">
+           <string>bibtex %1</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_6">
+          <property name="text">
+           <string>Commande Latex par défaut</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QComboBox" name="comboBoxDefaultLatex"/>
+        </item>
        </layout>
       </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_5">
-        <property name="text">
-         <string>Pdflatex</string>
-        </property>
+      <item>
+       <widget class="QTableWidget" name="tableWidgetLatexCommands">
+        <attribute name="horizontalHeaderStretchLastSection">
+         <bool>true</bool>
+        </attribute>
+        <attribute name="verticalHeaderVisible">
+         <bool>false</bool>
+        </attribute>
+        <row>
+         <property name="text">
+          <string notr="true">ligne 1</string>
+         </property>
+        </row>
+        <column>
+         <property name="text">
+          <string notr="true">Nom</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string notr="true">Commande</string>
+         </property>
+        </column>
+        <item row="0" column="0">
+         <property name="text">
+          <string notr="true">PdfLatex</string>
+         </property>
+        </item>
+        <item row="0" column="1">
+         <property name="text">
+          <string notr="true">pdflatex -synctex=1 -shell-escape -interaction=nonstopmode -enable-write18 &quot;%1&quot;</string>
+         </property>
+        </item>
        </widget>
       </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="label_6">
-        <property name="text">
-         <string>Bibtex</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLineEdit" name="lineEdit_pdflatex"/>
-      </item>
-      <item row="2" column="1">
-       <widget class="QLineEdit" name="lineEdit_bibtex"/>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QPushButton" name="pushButton_addLatex">
+          <property name="text">
+           <string> + </string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_removeLatex">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string> - </string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
@@ -269,9 +343,9 @@
   <widget class="QPushButton" name="pushButton_saveAndQuit">
    <property name="geometry">
     <rect>
-     <x>540</x>
+     <x>510</x>
      <y>430</y>
-     <width>75</width>
+     <width>91</width>
      <height>23</height>
     </rect>
    </property>
@@ -282,14 +356,14 @@
   <widget class="QPushButton" name="pushButton_quit">
    <property name="geometry">
     <rect>
-     <x>630</x>
+     <x>614</x>
      <y>430</y>
-     <width>75</width>
+     <width>91</width>
      <height>23</height>
     </rect>
    </property>
    <property name="text">
-    <string>Annler</string>
+    <string>Annuler</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton_save">
@@ -297,7 +371,7 @@
     <rect>
      <x>190</x>
      <y>430</y>
-     <width>75</width>
+     <width>101</width>
      <height>23</height>
     </rect>
    </property>

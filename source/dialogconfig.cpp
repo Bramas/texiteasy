@@ -24,6 +24,7 @@
 #include "ui_dialogconfig.h"
 #include "mainwindow.h"
 #include "dialogkeysequence.h"
+#include "dialogaddlatexcommand.h"
 
 #include <QFile>
 #include <QTextStream>
@@ -43,6 +44,12 @@ DialogConfig::DialogConfig(MainWindow *parent) :
     connect(this->ui->listWidget, SIGNAL(currentRowChanged( int )), this, SLOT(changePage( int )));
     connect(this->ui->checkBox_replaceDefaultFont, SIGNAL(toggled(bool)), this->ui->comboBox_fontFamilly, SLOT(setEnabled(bool)));
     connect(this->ui->tableWidget_keyBinding, SIGNAL(itemClicked(QTableWidgetItem*)), this, SLOT(configureShortCut(QTableWidgetItem*)));
+
+    connect(this->ui->pushButton_addLatex, SIGNAL(clicked()), this, SLOT(addNewCommand()));
+    connect(this->ui->tableWidgetLatexCommands, SIGNAL(itemSelectionChanged()), this, SLOT(onCurrentLatexCommandChanged()));
+    connect(this->ui->pushButton_removeLatex, SIGNAL(clicked()), this, SLOT(deleteSelectedLatex()));
+
+
 
     // Page General
     QString currentLanguage = ConfigManager::Instance.language();
@@ -88,6 +95,21 @@ void DialogConfig::saveAndClose()
 void DialogConfig::save()
 {
 
+    // Page Builder:
+
+    ConfigManager::Instance.setBibtexCommand(this->ui->lineEdit_bibtex->text());
+    //ConfigManager::Instance.setPdflatexCommand(this->ui->lineEdit_pdflatex->text());
+    ConfigManager::Instance.setLatexPath(this->ui->lineEdit_latexPath->text());
+    ConfigManager::Instance.setDefaultLatex(this->ui->comboBoxDefaultLatex->currentText());
+    QStringList listName, listCommand;
+    for(int index = 0; index < ui->tableWidgetLatexCommands->rowCount(); ++index)
+    {
+        listName << ui->tableWidgetLatexCommands->item(index, 0)->text();
+        listCommand << ui->tableWidgetLatexCommands->item(index, 1)->text();
+    }
+    ConfigManager::Instance.setLatexCommandNames(listName);
+    ConfigManager::Instance.setLatexCommands(listCommand);
+
     // Page General
     ConfigManager::Instance.setLanguage(this->ui->comboBoxLanguages->currentText());
     ConfigManager::Instance.setDictionary(this->ui->comboBoxDictionary->currentText());
@@ -106,12 +128,6 @@ void DialogConfig::save()
     ConfigManager::Instance.setTabWidth(this->ui->spinBoxTabWidth->value());
 
 
-    // Page Builder:
-
-    ConfigManager::Instance.setBibtexCommand(this->ui->lineEdit_bibtex->text());
-    ConfigManager::Instance.setPdflatexCommand(this->ui->lineEdit_pdflatex->text());
-    ConfigManager::Instance.setLatexPath(this->ui->lineEdit_latexPath->text());
-
     // Page Shortcut
 
     QSettings settings;
@@ -121,6 +137,8 @@ void DialogConfig::save()
         action->setShortcut(QKeySequence(this->ui->tableWidget_keyBinding->item(row, 1)->text()));
         settings.setValue(action->text(),action->shortcut());
     }
+
+    ConfigManager::Instance.sendChangedSignal();
 
 }
 void DialogConfig::show()
@@ -132,9 +150,32 @@ void DialogConfig::show()
 
     // Page Builder:
 
+    currentLatexName = ConfigManager::Instance.defaultLatex();
     this->ui->lineEdit_bibtex->setText(ConfigManager::Instance.bibtexCommand());
-    this->ui->lineEdit_pdflatex->setText(ConfigManager::Instance.pdflatexCommand());
     this->ui->lineEdit_latexPath->setText(ConfigManager::Instance.latexPath());
+
+    ui->tableWidgetLatexCommands->clear();
+    ui->tableWidgetLatexCommands->setSelectionBehavior(QAbstractItemView::SelectRows);
+    int nbRow = ConfigManager::Instance.latexCommands().count();
+    ui->tableWidgetLatexCommands->setRowCount(nbRow);
+    for(int index = 0; index < nbRow; ++index)
+    {
+        QString name;
+        if(index < ConfigManager::Instance.latexCommandNames().count())
+        {
+            name = ConfigManager::Instance.latexCommandNames().at(index);
+        }
+        QString command = ConfigManager::Instance.latexCommands().at(index);
+        QTableWidgetItem * item;
+        item = new QTableWidgetItem(name);
+        item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+        this->ui->tableWidgetLatexCommands->setItem(index, 0, item);
+        item = new QTableWidgetItem(command);
+        item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+        this->ui->tableWidgetLatexCommands->setItem(index, 1, item);
+    }
+    updateComboboxDefaultLatex();
+
 
     // Page Editor
 
@@ -185,6 +226,78 @@ void DialogConfig::addEditableActions(const QList<QAction *> &actions)
             ++row;
         }
 
+}
+void DialogConfig::addNewCommand()
+{
+    DialogAddLatexCommand dialog(this);
+    if(!dialog.exec())
+    {
+        return;
+    }
+    QString command = dialog.command();
+    QString name = dialog.name();
+    if(name.isEmpty() || command.isEmpty())
+    {
+        return;
+    }
+    int nbRow = this->ui->tableWidgetLatexCommands->rowCount();
+
+    this->ui->tableWidgetLatexCommands->insertRow(nbRow);
+
+    QTableWidgetItem * item;
+    item = new QTableWidgetItem(name);
+    item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+    this->ui->tableWidgetLatexCommands->setItem(nbRow, 0, item);
+    item = new QTableWidgetItem(command);
+    item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+    this->ui->tableWidgetLatexCommands->setItem(nbRow, 1, item);
+
+    onCurrentLatexCommandChanged();
+    updateComboboxDefaultLatex();
+}
+void DialogConfig::onCurrentLatexCommandChanged()
+{
+    if(ui->tableWidgetLatexCommands->rowCount()<2)
+    {
+        ui->pushButton_removeLatex->setEnabled(false);
+        return;
+    }
+    if(ui->tableWidgetLatexCommands->selectedItems().isEmpty())
+    {
+        ui->pushButton_removeLatex->setEnabled(false);
+        return;
+    }
+    ui->pushButton_removeLatex->setEnabled(true);
+}
+void DialogConfig::deleteSelectedLatex()
+{
+    if(ui->tableWidgetLatexCommands->selectedItems().isEmpty())
+    {
+        return;
+    }
+
+    int row = ui->tableWidgetLatexCommands->selectedItems().first()->row();
+    ui->tableWidgetLatexCommands->removeRow(row);
+    updateComboboxDefaultLatex();
+}
+void DialogConfig::updateComboboxDefaultLatex()
+{
+    bool defaultExist = false;
+    this->ui->comboBoxDefaultLatex->clear();
+    for(int row = 0; row < this->ui->tableWidgetLatexCommands->rowCount(); ++row)
+    {
+        QString name = ui->tableWidgetLatexCommands->item(row,0)->text();
+        this->ui->comboBoxDefaultLatex->addItem(name);
+        if(!name.compare(currentLatexName))
+        {
+            defaultExist = true;
+            this->ui->comboBoxDefaultLatex->setCurrentIndex(ui->comboBoxDefaultLatex->count() - 1);
+        }
+    }
+    if(!defaultExist)
+    {
+        currentLatexName = this->ui->comboBoxDefaultLatex->currentText();
+    }
 }
 
 void DialogConfig::configureShortCut(QTableWidgetItem *item)

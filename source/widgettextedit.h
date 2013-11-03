@@ -114,6 +114,7 @@ public slots:
     void insertPlainText(const QString &text);
     void goToLine(int line, QString stringSelected = QString());
     void updateTabWidth();
+    void insertFile(QString filename);
 protected:
     void insertFromMimeData(const QMimeData * source);
     void mousePressEvent(QMouseEvent *e) {

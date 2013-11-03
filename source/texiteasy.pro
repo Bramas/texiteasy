@@ -72,7 +72,8 @@ SOURCES += main.cpp\
     hunspell/dictmgr.cxx \
     hunspell/csutil.cxx \
     hunspell/affixmgr.cxx \
-    hunspell/affentry.cxx
+    hunspell/affentry.cxx \
+    dialogaddlatexcommand.cpp
 
 HEADERS  += mainwindow.h \
     widgetlinenumber.h \
@@ -127,7 +128,8 @@ HEADERS  += mainwindow.h \
     hunspell/baseaffix.hxx \
     hunspell/atypes.hxx \
     hunspell/affixmgr.hxx \
-    hunspell/affentry.hxx
+    hunspell/affentry.hxx \
+    dialogaddlatexcommand.h
 
 FORMS    += mainwindow.ui \
     dialogwelcome.ui \
@@ -138,7 +140,8 @@ FORMS    += mainwindow.ui \
     widgetfindreplace.ui \
     dialogkeysequence.ui \
     widgetstatusbar.ui \
-    dialogabout.ui
+    dialogabout.ui \
+    dialogaddlatexcommand.ui
 
 TRANSLATIONS += translations/texiteasy_ar.ts \
                 translations/texiteasy_fr.ts \

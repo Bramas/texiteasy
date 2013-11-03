@@ -100,12 +100,15 @@ protected:
     void resizeEvent(QResizeEvent *);
     void jumpToEditor(int page, const QPointF& pos);
     void jumpToEditorFromAbsolutePos(const QPointF &pos);
+
+private slots:
+    void refreshPages();
 private:
+
     void initDocument();
     void initLinks();
     void boundPainterTranslation();
     QImage * page(int page);
-    void refreshPages();
     void checkLinksOver(const QPointF &pos);
     bool checkLinksPress(const QPointF &pos);
 
@@ -129,6 +132,7 @@ private:
     int _syncPage;
     QRectF _syncRect;
     QTimer _timer;
+    QTimer _requestNewResolutionTimer;
     WidgetTextEdit * _widgetTextEdit;
     qreal _zoom;
 

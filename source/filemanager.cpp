@@ -298,3 +298,17 @@ void FileManager::setDictionaryFromAction()
     }
     this->currentWidgetFile()->setDictionary(action->text());
 }
+
+void FileManager::builTex()
+{
+    QAction * action = qobject_cast<QAction*>(sender());
+    if(!action)
+    {
+        return;
+    }
+    QString command = ConfigManager::Instance.latexCommand(action->text());
+    if(!command.isEmpty())
+    {
+        this->currentWidgetFile()->builTex(command);
+    }
+}

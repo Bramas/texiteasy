@@ -613,6 +613,18 @@ void WidgetTextEdit::updateIndentation(void)
     this->updatingIndentation = false;
 */
 }
+void WidgetTextEdit::insertFile(QString filename)
+{
+    if(!this->getCurrentFile()->getFilename().isEmpty())
+    {
+        QDir dir(this->getCurrentFile()->getPath());
+        filename = dir.relativeFilePath(filename);
+    }
+    QTextCursor cur = textCursor();
+    cur.movePosition(QTextCursor::EndOfBlock, QTextCursor::MoveAnchor);
+    cur.insertText("\n\\includegraphics{"+filename+"}");
+    this->setTextCursor(cur);
+}
 
 void WidgetTextEdit::insertFromMimeData(const QMimeData *source)
 {

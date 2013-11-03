@@ -108,9 +108,36 @@ public:
 
     void checkRevision();
 
+
+    QStringList latexCommandNames()
+                {  QSettings settings; return settings.value("builder/latexCommandNames").toStringList();  }
+    void        setLatexCommandNames(QStringList list)
+                {  QSettings settings; settings.setValue("builder/latexCommandNames", list);  }
+    QStringList latexCommands()
+                {  QSettings settings; return settings.value("builder/latexCommands").toStringList();  }
+    void    setLatexCommands(QStringList list)
+                {  QSettings settings; settings.setValue("builder/latexCommands", list);  }
+
+    void    setDefaultLatex(QString name) {  QSettings settings; settings.setValue("builder/defaultLatex", name);  }
+    QString defaultLatex() {  QSettings settings; return settings.value("builder/defaultLatex").toString();  }
+    QString latexCommand(QString name = QString::null)
+    {
+        if(name.isEmpty())
+        {
+            name = defaultLatex();
+        }
+        int i = latexCommandNames().indexOf(name);
+        QStringList list = latexCommands();
+        if(i >= 0 && i < list.count())
+        {
+            return list.at(i);
+        }
+        return QString::null;
+    }
+
+
     QString bibtexCommand(bool fullPath = false) { QSettings settings; return (fullPath ? settings.value("builder/latexPath").toString() : QString(""))+settings.value("builder/bibtex").toString(); }
     QString pdflatexCommand(bool fullPath = false) { QSettings settings; return (fullPath ? settings.value("builder/latexPath").toString() : QString(""))+settings.value("builder/pdflatex").toString(); }
-    QString latexCommand(bool fullPath = false) { QSettings settings; return (fullPath ? settings.value("builder/latexPath").toString() : QString(""))+settings.value("builder/latex").toString(); }
     QString latexPath() { QSettings settings; return settings.value("builder/latexPath").toString(); }
 
     QString commandDatabaseFilename() { QSettings settings; return settings.value("commandDatabaseFilename").toString(); }
@@ -141,6 +168,7 @@ public slots:
     void openUpdateWebsite() { QString link = TEXITEASY_UPDATE_WEBSITE;
                                QDesktopServices::openUrl(QUrl(link)); }
 
+    void sendChangedSignal() { emit changed(); }
 signals:
 
     /**
@@ -148,6 +176,7 @@ signals:
      * emitted when we detect that the version is outdated
      */
     void versionIsOutdated();
+    void changed();
     void tabWidthChanged();
 private:
     void replaceDefaultFont();

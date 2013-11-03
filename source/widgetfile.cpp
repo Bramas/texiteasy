@@ -269,7 +269,7 @@ void WidgetFile::toggleErrorTable()
         openErrorTable();
     }
 }
-void WidgetFile::pdflatex()
+void WidgetFile::builTex(QString command)
 {
     if(this->masterFile())
     {
@@ -279,7 +279,7 @@ void WidgetFile::pdflatex()
     {
         save();
     }
-    file()->getBuilder()->pdflatex();
+    file()->getBuilder()->builTex(command);
 }
 void WidgetFile::bibtex()
 {

@@ -69,6 +69,8 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     void setTheme(QString theme);
+    bool canBeOpened(QString filename);
+    bool canBeInserted(QString filename);
     ~MainWindow();
 
 public slots:
@@ -83,6 +85,7 @@ public slots:
     void onCurrentFileChanged(WidgetFile * widget);
     bool closeTab(int);
     void addFilenameToLastOpened(QString filename);
+    void initBuildMenu();
 private slots:
     void addUpdateMenu();
 protected:
