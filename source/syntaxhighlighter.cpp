@@ -84,8 +84,7 @@ SyntaxHighlighter::State intToState(int in) {
 
 void SyntaxHighlighter::highlightBlock(const QString &text)
 {
-    qDebug()<<"begin highlight block "<<currentBlock().blockNumber();
-    BlockData *blockData2 = static_cast<BlockData*>(currentBlockUserData());
+    //qDebug()<<"begin highlight block "<<currentBlock().blockNumber();
     BlockData *blockData = new BlockData(text.length());
     setCurrentBlockUserData(blockData);
     QTextBlock previousBlock = currentBlock().previous();

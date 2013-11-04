@@ -86,8 +86,8 @@ public:
     BlockData(int length = 1);
     ~BlockData();
     static BlockData *data(const QTextBlock &block) { return static_cast<BlockData *>(block.userData()); }
-    //QList<int> code;
-    CharacterDataArray characterData;
+
+    CharacterData * characterData;
     QVector<ParenthesisInfo *> parentheses();
     QVector<LatexBlockInfo *> latexblocks();
     void insertPar( ParenthesisInfo *info );

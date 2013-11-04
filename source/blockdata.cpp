@@ -21,6 +21,7 @@
 
 #include "blockdata.h"
 #include <QDebug>
+#define max(a,b) (((a)>(b))?(a):(b))
 CharacterDataArray::CharacterDataArray()
 {
     qDebug()<<"create "<<this;
@@ -54,12 +55,18 @@ CharacterData& CharacterDataArray::at(int idx) {
 }
 BlockData::BlockData(int length)
 {
-    _length = length;
-    characterData.init(length);
+    // WARNING : if length = 1, delete[] while cause a segmentation fault
+    _length = max(2,length);
+    characterData = new CharacterData[_length];
 
 }
 BlockData::~BlockData()
 {
+    if(characterData)
+    {
+        delete[] characterData;
+        characterData = 0;
+    }
 }
 
 QVector<ParenthesisInfo *> BlockData::parentheses() {
