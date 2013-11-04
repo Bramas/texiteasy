@@ -475,8 +475,6 @@ while(index < text.length())
         }
         break;
     }
-    blockData->characterData[index].state = state;
-    ++index;
     if(parenthesisLevel->top() < 0)
     {
         parenthesisLevel->top() = 0;
@@ -485,6 +483,12 @@ while(index < text.length())
     {
         crocherLevel->top() = 0;
     }
+    if(index >= text.length())
+    {
+        break;
+    }
+    blockData->characterData[index].state = state;
+    ++index;
 }
 
 if (_widgetFile->spellChecker())

@@ -60,25 +60,6 @@ public:
     int state;
 };
 
-class CharacterDataArray : public QObject
-{
-public:
-    CharacterDataArray();
-    ~CharacterDataArray();
-    void init(int length);
-    CharacterData& at(int idx);
-
-    CharacterData& operator[](int idx){
-        return this->at(idx);
-    }
-
-
-private:
-    int _length;
-    CharacterData * _array;
-};
-
-
 class BlockData : public QTextBlockUserData
 {
 

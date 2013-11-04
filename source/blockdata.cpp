@@ -22,37 +22,7 @@
 #include "blockdata.h"
 #include <QDebug>
 #define max(a,b) (((a)>(b))?(a):(b))
-CharacterDataArray::CharacterDataArray()
-{
-    qDebug()<<"create "<<this;
-    _length = 10;
-    _array = new CharacterData[_length];
-}
-CharacterDataArray::~CharacterDataArray()
-{
-    if(_array)
-    {
-        qDebug()<<"delete "<<this;
-        delete[] _array;
-        _array = 0;
-    }
-}
-void CharacterDataArray::init(int length)
-{
 
-    _length = length < 2 ? 2 : length;
-    _array = new CharacterData[_length];
-}
-CharacterData& CharacterDataArray::at(int idx) {
-    /*if(idx >= _length)
-    {
-        delete[] _array;
-        _length *=4 ;
-        _array = new CharacterData[_length];
-        return at(idx);
-    }*/
-    return _array[idx];
-}
 BlockData::BlockData(int length)
 {
     // WARNING : if length = 1, delete[] while cause a segmentation fault
