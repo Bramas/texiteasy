@@ -173,7 +173,37 @@ void WidgetTab::drawMoreButton(QPainter *painter, int index)
 
 void WidgetTab::mousePressEvent(QMouseEvent * event)
 {
-    //QWidget::mousePressEvent(event);
+    if(event->button() == Qt::RightButton)
+    {
+        return;
+    }
+    _pressCloseId = _pressMoreId = false;
+    int idx = -1;
+    int lastWidth = 0;
+    foreach(int w, _tabsNameWidth)
+    {
+        if(idx == -1 && event->pos().x() < w)
+        {
+            return;
+        }
+        if(event->pos().x() < w)
+        {
+            if(!this->widget(idx)->actions().isEmpty() && this->overMoreButton(event->pos(), lastWidth))
+            {
+                _pressMoreId = idx;
+                return;
+            }
+            if(this->overCloseButton(event->pos(), w))
+            {
+                _pressCloseId = idx;
+                return;
+            }
+            return;
+        }
+        lastWidth = w;
+        ++idx;
+    }
+    return;
 }
 
 void WidgetTab::mouseReleaseEvent(QMouseEvent * event)
@@ -198,7 +228,7 @@ void WidgetTab::mouseReleaseEvent(QMouseEvent * event)
                 this->contextMenuEvent(new QContextMenuEvent(QContextMenuEvent::Mouse,event->pos()));
                 return;
             }
-            if(this->overCloseButton(event->pos(), w))
+            if(this->overCloseButton(event->pos(), w) && _pressCloseId == idx)
             {
                 _overCloseId = idx;
                 emit tabCloseRequested(_overCloseId);

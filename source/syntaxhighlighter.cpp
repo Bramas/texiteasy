@@ -84,6 +84,8 @@ SyntaxHighlighter::State intToState(int in) {
 
 void SyntaxHighlighter::highlightBlock(const QString &text)
 {
+    qDebug()<<"begin highlight block "<<currentBlock().blockNumber();
+    BlockData *blockData2 = static_cast<BlockData*>(currentBlockUserData());
     BlockData *blockData = new BlockData(text.length());
     setCurrentBlockUserData(blockData);
     QTextBlock previousBlock = currentBlock().previous();
@@ -94,7 +96,6 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
         {
             blockData->blockStartingState = previousData->blockEndingState;
             blockData->blockEndingState = blockData->blockStartingState;
-            //qDebug()<<"from previous "<<blockData->blockStartingState.parenthesisLevel;
         }
     }
 
@@ -240,7 +241,7 @@ while(index < text.length())
         setFormat(index, text.size() - index, formatComment);
         for(int comment_idx = index; comment_idx < text.size(); ++comment_idx)
         {
-            blockData->state[comment_idx] = Comment;
+            blockData->characterData[comment_idx].state = Comment;
         }
         break;
     }
@@ -393,7 +394,7 @@ while(index < text.length())
                 setFormat(index, 1, formatCommandInMathMode);
             }
             //go to the next index;
-            blockData->state[index] = state;
+            blockData->characterData[index].state = state;
             ++index;
             if(index < text.length())
             {
@@ -475,7 +476,7 @@ while(index < text.length())
         }
         break;
     }
-    blockData->state[index] = state;
+    blockData->characterData[index].state = state;
     ++index;
     if(parenthesisLevel->top() < 0)
     {
@@ -500,7 +501,7 @@ if (_widgetFile->spellChecker())
     {
         buffer = QString::null;
         ch = text.at( i );
-        while ((blockData->state[i] == Text) && (!isWordSeparator(ch)))
+        while ((blockData->characterData[i].state == Text) && (!isWordSeparator(ch)))
         {
               buffer += ch;
               i++;
@@ -519,7 +520,7 @@ if (_widgetFile->spellChecker())
                     f.setFontUnderline(true);
                     f.setUnderlineColor(QColor(Qt::red));
                     setFormat(i - buffer.length() + buffer_idx, 1, f);
-                    blockData->misspelled[i - buffer.length() + buffer_idx] = true;
+                    blockData->characterData[i - buffer.length() + buffer_idx].misspelled = true;
                 }
             }
         }
@@ -555,7 +556,7 @@ if(nextBlock.isValid())
 
     }
 }
-
+//qDebug()<<"end highlight block";
 }
 void SyntaxHighlighter::highlightExpression(const QString &text, const QString &pattern, const QTextCharFormat &format)
 {

@@ -47,7 +47,7 @@
      <x>0</x>
      <y>0</y>
      <width>991</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFichier">
@@ -82,7 +82,7 @@
       <string>Autre compilation</string>
      </property>
     </widget>
-    <addaction name="actionPdfLatex"/>
+    <addaction name="actionDefaultCommandLatex"/>
     <addaction name="actionBibtex"/>
     <addaction name="separator"/>
     <addaction name="menuOtherBuilder"/>
@@ -155,9 +155,9 @@
     <string>Ctrl+S</string>
    </property>
   </action>
-  <action name="actionPdfLatex">
+  <action name="actionDefaultCommandLatex">
    <property name="text">
-    <string>PdfLatex</string>
+    <string notr="true">defaultCommandLatex</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+B</string>

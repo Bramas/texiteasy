@@ -209,7 +209,8 @@ void CompletionEngine::keyPressEvent(QKeyEvent *event)
         dynamic_cast<WidgetTextEdit*>(this->parentWidget())->setFocus(event);
         return;
     }
-    dynamic_cast<WidgetTextEdit*>(this->parent())->insertPlainText(event->text());
+    _widgetTextEdit->insertPlainText(event->text());
+    _widgetTextEdit->matchCommand();
 }
 
 void CompletionEngine::addCustomWordFromSource()

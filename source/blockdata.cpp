@@ -21,24 +21,45 @@
 
 #include "blockdata.h"
 #include <QDebug>
+CharacterDataArray::CharacterDataArray()
+{
+    qDebug()<<"create "<<this;
+    _length = 10;
+    _array = new CharacterData[_length];
+}
+CharacterDataArray::~CharacterDataArray()
+{
+    if(_array)
+    {
+        qDebug()<<"delete "<<this;
+        delete[] _array;
+        _array = 0;
+    }
+}
+void CharacterDataArray::init(int length)
+{
+
+    _length = length < 2 ? 2 : length;
+    _array = new CharacterData[_length];
+}
+CharacterData& CharacterDataArray::at(int idx) {
+    /*if(idx >= _length)
+    {
+        delete[] _array;
+        _length *=4 ;
+        _array = new CharacterData[_length];
+        return at(idx);
+    }*/
+    return _array[idx];
+}
 BlockData::BlockData(int length)
 {
     _length = length;
-    misspelled = new bool[length];
-    state = new char[length];
-    for(int i = 0; i < length; ++i)
-    {
-        misspelled[i] = false;
-    }
-    for(int i = 0; i < length; ++i)
-    {
-        state[i] = 0;
-    }
+    characterData.init(length);
+
 }
 BlockData::~BlockData()
 {
-    delete[] misspelled;
-    delete[] state;
 }
 
 QVector<ParenthesisInfo *> BlockData::parentheses() {

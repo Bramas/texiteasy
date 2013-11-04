@@ -102,6 +102,8 @@ private:
     int _widgetOverId;
     int _overCloseId;
     int _overMoreId;
+    int _pressCloseId;
+    int _pressMoreId;
     int _padding;
     int _margin;
     int _closeLeftMargin ;

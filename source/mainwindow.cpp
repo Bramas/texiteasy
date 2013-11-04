@@ -129,7 +129,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->ui->actionPaste, SIGNAL(triggered()), &FileManager::Instance, SLOT(paste()));
     connect(this->ui->actionFindReplace, SIGNAL(triggered()), &FileManager::Instance, SLOT(openFindReplaceWidget()));
     connect(this->ui->actionEnvironment, SIGNAL(triggered()), &FileManager::Instance, SLOT(wrapEnvironment()));
-    connect(this->ui->actionPdfLatex,SIGNAL(triggered()), &FileManager::Instance,SLOT(builTex()));
+    connect(this->ui->actionDefaultCommandLatex,SIGNAL(triggered()), &FileManager::Instance,SLOT(builTex()));
     connect(this->ui->actionBibtex,SIGNAL(triggered()), &FileManager::Instance,SLOT(bibtex()));
     connect(this->ui->actionView, SIGNAL(triggered()), &FileManager::Instance,SLOT(jumpToPdfFromSource()));
 
@@ -316,7 +316,7 @@ bool MainWindow::canBeInserted(QString filename)
 void MainWindow::initBuildMenu()
 {
     this->ui->menuOtherBuilder->clear();
-    this->ui->actionPdfLatex->setText(ConfigManager::Instance.defaultLatex());
+    this->ui->actionDefaultCommandLatex->setText(ConfigManager::Instance.defaultLatex());
     QStringList commandNameList = ConfigManager::Instance.latexCommandNames();
     foreach(const QString & name, commandNameList)
     {

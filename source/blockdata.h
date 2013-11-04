@@ -25,6 +25,7 @@
 #include <QTextBlock>
 #include <QStack>
 #include <QTextBlockUserData>
+#include <QPointer>
 
 struct ParenthesisInfo {
     QChar character;
@@ -51,17 +52,42 @@ public:
 
 };
 
+class CharacterData : public QObject
+{
+public:
+    CharacterData() : misspelled(false), state(0) {}
+    bool misspelled;
+    int state;
+};
+
+class CharacterDataArray : public QObject
+{
+public:
+    CharacterDataArray();
+    ~CharacterDataArray();
+    void init(int length);
+    CharacterData& at(int idx);
+
+    CharacterData& operator[](int idx){
+        return this->at(idx);
+    }
+
+
+private:
+    int _length;
+    CharacterData * _array;
+};
+
 
 class BlockData : public QTextBlockUserData
 {
 
 public:
-    BlockData(int length);
+    BlockData(int length = 1);
     ~BlockData();
     static BlockData *data(const QTextBlock &block) { return static_cast<BlockData *>(block.userData()); }
     //QList<int> code;
-    char * state;
-    bool * misspelled;
+    CharacterDataArray characterData;
     QVector<ParenthesisInfo *> parentheses();
     QVector<LatexBlockInfo *> latexblocks();
     void insertPar( ParenthesisInfo *info );

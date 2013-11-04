@@ -137,14 +137,14 @@ void WidgetTextEdit::contextMenuEvent(QContextMenuEvent *event)
     int blockPos = cursor.block().position();
     int colstart, colend;
     colend = colstart = cursor.positionInBlock();
-    if (data && colstart < data->length() && data->misspelled[colstart]==true)
+    if (data && colstart < data->length() && data->characterData[colstart].misspelled==true)
     {
-        while (colstart >= 0 && (data->misspelled[colstart]==true))
+        while (colstart >= 0 && (data->characterData[colstart].misspelled==true))
         {
             --colstart;
         }
         ++colstart;
-        while (colend < data->length() && (data->misspelled[colend]==true))
+        while (colend < data->length() && (data->characterData[colend].misspelled==true))
         {
             colend++;
         }
@@ -409,6 +409,7 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
         }
         this->setTextCursor(cur1);
         this->onCursorPositionChange();
+
         return;
     }
     if(e->key() != Qt::Key_Control && e->key() != Qt::Key_Shift && e->key() != Qt::Key_Alt && e->key() != Qt::Key_AltGr && e->key() != Qt::Key_ApplicationLeft && e->key() != Qt::Key_ApplicationRight)
@@ -429,6 +430,8 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
         }
     }
     WIDGET_TEXT_EDIT_PARENT_CLASS::keyPressEvent(e);
+
+    this->matchCommand();
     /*//qDebug()<<"ok"<<e->key()<<"  "<<Qt::Key_Enter;
     if(e->key() == Qt::Key_Enter || e->key() == Qt::Key_Enter - 1)
     {
@@ -569,49 +572,6 @@ void WidgetTextEdit::updateIndentation(void)
     }
     _lineCount = this->document()->blockCount();
 
-
-
-    this->matchCommand();
-
-/*    this->_indentationMutex.lock();
-    if(!this->_indentationInited)
-    {
-        this->_indentationMutex.unlock();
-        this->updatingIndentation = false;
-        return;
-    }
-    this->_indentationMutex.unlock();
-
-    this->fileStructure->updateStructure();
-    if(!this->fileStructure->info()->count())
-    {
-        this->updatingIndentation = false;
-        return;
-    }
-
-    QTextBlockFormat myClassFormat;
-    QListIterator<FileStructureInfo*> iterator(*this->fileStructure->info());
-
-
-    FileStructureInfo * value;
-    while(iterator.hasNext())
-    {
-        value = iterator.next();
-        value->top = this->blockTop(value->startBlock);
-        value->height = this->blockBottom(value->endBlock) - this->blockTop(value->startBlock);
-
-    }
-
-    BlockIndentation * indentation = this->fileStructure->indentations();
-    QTextBlock block = this->textCursor().block();
-    if(block.blockFormat().leftMargin() != 25*indentation[block.blockNumber()].level)
-        for(int i = block.blockNumber(); i < indentation[block.blockNumber()].next; ++i)
-        {
-            this->setBlockLeftMargin(block, 25*indentation[i].level);
-            block = block.next();
-        }
-    this->updatingIndentation = false;
-*/
 }
 void WidgetTextEdit::insertFile(QString filename)
 {
@@ -665,12 +625,11 @@ void WidgetTextEdit::matchCommand()
         return;
     }
 #endif
+    return;
     QRegExp command("\\\\[a-zA-Z\\{\\-_]+$");
     QRegExp beginCommand("\\\\begin\\{([^\\}]+)\\}$");
     int pos = this->textCursor().positionInBlock();
     QString possibleCommand = this->textCursor().block().text().left(pos);
-
-
     if(possibleCommand.indexOf(command) != -1) // the possibleCommand is a command
     {
         //QFontMetrics fm(ConfigManager::Instance.getTextCharFormats("normal").font());
