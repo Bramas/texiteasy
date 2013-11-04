@@ -7,10 +7,17 @@ DialogAddLatexCommand::DialogAddLatexCommand(QWidget *parent) :
 {
     ui->setupUi(this);
     this->ui->comboBox->addItem(trUtf8("Personalisé"),"");
+#ifdef OS_WINDOWS
     this->ui->comboBox->addItem("PdfLatex","pdflatex.exe -synctex=1 -shell-escape -interaction=nonstopmode -enable-write18 %1");
+    this->ui->comboBox->addItem("XeLatex","xelatex.exe -synctex=1 -interaction=nonstopmode %1");
+    this->ui->comboBox->addItem("Latexmk","latexmk.exe -e \"$pdflatex=q/pdflatex -synctex=1 -interaction=nonstopmode/\" -pdf %1");
+    this->ui->comboBox->addItem("Latex + dvipdfm","latex.exe -interaction=nonstopmode %1 ; dvipdfm.exe %1.dvi");
+#else
+    this->ui->comboBox->addItem("PdfLatex","pdflatex -synctex=1 -shell-escape -interaction=nonstopmode -enable-write18 %1");
     this->ui->comboBox->addItem("XeLatex","xelatex -synctex=1 -interaction=nonstopmode %1");
     this->ui->comboBox->addItem("Latexmk","latexmk -e \"$pdflatex=q/pdflatex -synctex=1 -interaction=nonstopmode/\" -pdf %1");
     this->ui->comboBox->addItem("Latex + dvipdfm","latex -interaction=nonstopmode %1 ; dvipdfm %1.dvi");
+#endif
     connect(this->ui->comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onCurrentItemChanged(int)));
 }
 

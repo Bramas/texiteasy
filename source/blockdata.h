@@ -52,7 +52,7 @@ public:
 
 };
 
-class CharacterData : public QObject
+class CharacterData
 {
 public:
     CharacterData() : misspelled(false), state(0) {}
@@ -68,7 +68,7 @@ public:
     ~BlockData();
     static BlockData *data(const QTextBlock &block) { return static_cast<BlockData *>(block.userData()); }
 
-    CharacterData * characterData;
+    QVector<CharacterData> characterData;
     QVector<ParenthesisInfo *> parentheses();
     QVector<LatexBlockInfo *> latexblocks();
     void insertPar( ParenthesisInfo *info );

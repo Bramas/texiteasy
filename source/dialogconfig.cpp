@@ -168,10 +168,10 @@ void DialogConfig::show()
         QString command = ConfigManager::Instance.latexCommands().at(index);
         QTableWidgetItem * item;
         item = new QTableWidgetItem(name);
-        item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+        item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable);
         this->ui->tableWidgetLatexCommands->setItem(index, 0, item);
         item = new QTableWidgetItem(command);
-        item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+        item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable);
         this->ui->tableWidgetLatexCommands->setItem(index, 1, item);
     }
     updateComboboxDefaultLatex();

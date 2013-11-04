@@ -27,17 +27,24 @@ BlockData::BlockData(int length)
 {
     // WARNING : if length = 1, delete[] while cause a segmentation fault
     _length = max(2,length);
-    characterData = new CharacterData[_length];
+    characterData.resize(_length);
 
 }
 BlockData::~BlockData()
 {
-    if(characterData)
+    //if(characterData)
     {
-        delete[] characterData;
-        characterData = 0;
+        //qDebug()<<"length "<<_length;
+        //delete[] characterData;
+        //characterData = 0;
     }
 }
+/*
+The same reasoning is used with all robots and it gives :
+\[\sumC{C(\tau+1)}{r_1(\tau+1)} + \sumC{C(\tau+1)}{r_1(\tau+1)} \leq
+\sumC{C(\tau)}{r_1(\tau)}+\sumC{C(\tau)}{r_2(\tau)}\]
+Which means either
+*/
 
 QVector<ParenthesisInfo *> BlockData::parentheses() {
     return _parentheses;
