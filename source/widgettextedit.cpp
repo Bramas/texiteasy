@@ -625,7 +625,6 @@ void WidgetTextEdit::matchCommand()
         return;
     }
 #endif
-    return;
     QRegExp command("\\\\[a-zA-Z\\{\\-_]+$");
     QRegExp beginCommand("\\\\begin\\{([^\\}]+)\\}$");
     int pos = this->textCursor().positionInBlock();
