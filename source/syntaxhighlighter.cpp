@@ -483,12 +483,19 @@ while(index < text.length())
     {
         crocherLevel->top() = 0;
     }
-    if(index >= text.length())
+    if(index < 0)
     {
-        break;
+        index = 0;
     }
-    blockData->characterData[index].state = state;
-    ++index;
+    else
+    {
+        if(index >= text.length())
+        {
+            break;
+        }
+        blockData->characterData[index].state = state;
+        ++index;
+    }
 }
 
 if (_widgetFile->spellChecker())
