@@ -429,13 +429,13 @@ bool WidgetPdfDocument::checkLinksPress(const QPointF &pos)
 
 void WidgetPdfDocument::mousePressEvent(QMouseEvent * event)
 {
-    if(this->checkLinksPress(event->posF()))
+    if(this->checkLinksPress(event->pos()))
     {
         return;
     }
     if(event->modifiers() == Qt::ControlModifier)
     {
-        this->jumpToEditorFromAbsolutePos(event->posF());
+        this->jumpToEditorFromAbsolutePos(event->pos());
         return;
     }
     this->_pressAt = event->pos();
@@ -508,7 +508,7 @@ void WidgetPdfDocument::zoomOut()
 
 void WidgetPdfDocument::mouseMoveEvent(QMouseEvent * event)
 {
-    this->checkLinksOver(event->posF());
+    this->checkLinksOver(event->pos());
     if(this->_mousePressed)
     {
         this->setCursor(Qt::ClosedHandCursor);
@@ -547,18 +547,18 @@ void WidgetPdfDocument::updatePdf()
     update();
 }
 
-void WidgetPdfDocument::jumpToEditorFromAbsolutePos(const QPointF &pos)
+void WidgetPdfDocument::jumpToEditorFromAbsolutePos(const QPoint &pos)
 {
     if(!this->_document->numPages())
     {
         return;
 
     }
-    QPointF absolute(pos - this->_painterTranslate);
+    QPoint absolute(pos - this->_painterTranslate);
     qreal pageHeightWithMargin = _document->page(0)->pageSize().height()*_zoom+WidgetPdfDocument::PageMargin;
 
     int page = absolute.y() / pageHeightWithMargin;
-    QPointF relative(absolute.x(), absolute.y() - page * pageHeightWithMargin);
+    QPoint relative(absolute.x(), absolute.y() - page * pageHeightWithMargin);
 
     if(relative.x() < 0 || relative.y() < 0)
     {
@@ -567,7 +567,7 @@ void WidgetPdfDocument::jumpToEditorFromAbsolutePos(const QPointF &pos)
     this->jumpToEditor(page, relative);
 }
 
-void WidgetPdfDocument::jumpToEditor(int page, const QPointF& pos)
+void WidgetPdfDocument::jumpToEditor(int page, const QPoint& pos)
 {
     if (scanner == NULL) return;
     if (synctex_edit_query(scanner, page+1, pos.x(), pos.y()) > 0)
