@@ -33,8 +33,11 @@
 #include "synctex_parser.h"
 #include <QPoint>
 
+#ifdef OS_MAC
+#include "poppler-qt5.h"
+#else
 #include "poppler/qt4/poppler-qt4.h"
-
+#endif
 
 class File;
 class QImage;

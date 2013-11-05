@@ -483,7 +483,7 @@ while(index < text.length())
     {
         crocherLevel->top() = 0;
     }
-    if(index >= text.length())
+    if(index < 0 || index >= text.length())
     {
         break;
     }
