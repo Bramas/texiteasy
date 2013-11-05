@@ -20,6 +20,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
     while(i < text.length())
     {
         setFormat(i, 1, format[i%5]);
+        //setFormat(i, 1, format[0]);
         ++i;
     }
 }
