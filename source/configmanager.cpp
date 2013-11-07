@@ -41,6 +41,7 @@
 #include <QDebug>
 #include <QCoreApplication>
 #include <QRegExp>
+#include <poppler/cpp/poppler-version.h>
 
 #define DEBUG_THEME_PARSER(a)
 
@@ -138,6 +139,10 @@ void ConfigManager::setMainWindow(QWidget * mainWindow)
     this->mainWindow = mainWindow;
 }
 
+QString ConfigManager::popplerVersion()
+{
+        return POPPLER_VERSION;
+}
 
 ConfigManager::~ConfigManager()
 {

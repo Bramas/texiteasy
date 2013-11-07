@@ -34,7 +34,7 @@
 #include <QPoint>
 
 #ifdef OS_MAC
-#include "poppler-qt5.h"
+#include "poppler/qt5/poppler-qt5.h"
 #else
 #include "poppler/qt4/poppler-qt4.h"
 #endif
@@ -53,7 +53,6 @@ struct Link
         //delete destination;
     }
 };
-
 
 class WidgetPdfDocument : public QWidget
 {

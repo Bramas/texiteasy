@@ -105,6 +105,7 @@ public:
      */
     QString dictionaryPath();
 
+    QString popplerVersion();
 
     void checkRevision();
 
