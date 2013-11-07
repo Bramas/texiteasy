@@ -179,7 +179,8 @@ unix:!mac{
     DEFINES += OS_LINUX
 }
 mac{
-    LIBS += -lz -L/usr/local/lib -lpoppler-qt4
+    INCLUDEPATH += /usr/local/include
+    LIBS += -lz -L/usr/local/lib -lpoppler-qt5
     ICON = texiteasy.icns
     DEFINES += OS_MAC
     #CONFIG += x86 x86_64

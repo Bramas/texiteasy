@@ -33,8 +33,11 @@
 #include "synctex_parser.h"
 #include <QPoint>
 
+#ifdef OS_MAC
+#include "poppler/qt5/poppler-qt5.h"
+#else
 #include "poppler/qt4/poppler-qt4.h"
-
+#endif
 
 class File;
 class QImage;
@@ -50,7 +53,6 @@ struct Link
         //delete destination;
     }
 };
-
 
 class WidgetPdfDocument : public QWidget
 {
@@ -98,8 +100,8 @@ protected:
     void mouseReleaseEvent(QMouseEvent *);
     void wheelEvent(QWheelEvent *);
     void resizeEvent(QResizeEvent *);
-    void jumpToEditor(int page, const QPointF& pos);
-    void jumpToEditorFromAbsolutePos(const QPointF &pos);
+    void jumpToEditor(int page, const QPoint& pos);
+    void jumpToEditorFromAbsolutePos(const QPoint &pos);
 
 private slots:
     void refreshPages();

@@ -483,6 +483,7 @@ while(index < text.length())
     {
         crocherLevel->top() = 0;
     }
+
     if(index < 0)
     {
         index = 0;

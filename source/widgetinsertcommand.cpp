@@ -224,7 +224,7 @@ void WidgetInsertCommand::saveCommandsToPng()
                        (mathEnv?QString("$"):QString())+
                        command+
                        (mathEnv?QString("$"):QString())+
-                       QString("\\end{document}")).toAscii().data());
+                       QString("\\end{document}")).toLatin1().data());
             temp.close();
         }
 
