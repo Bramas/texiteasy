@@ -250,7 +250,18 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
 {
 #ifdef OS_MAC
     _wierdCircumflexCursor = false;
+    // Hack because on mac modifiers do not work with a external mouse wheel
+    // So we keep the modifiers here so that other widget can ask modifiers (used in widgetpdfdocument::wheelEvent() )
+    if(e->key() == Qt::Key_Control)
+    {
+        modifiers = e->modifiers() | Qt::ControlModifier;
+    }else
+    if(e->key() == Qt::Key_Alt)
+    {
+        modifiers = e->modifiers() | Qt::AltModifier;
+    }
 #endif
+
     if(e->key() == Qt::Key_Space && (e->modifiers() & (Qt::MetaModifier | Qt::ControlModifier)))
     {
         //this->matchCommand();

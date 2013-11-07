@@ -30,6 +30,10 @@
 #include <QtCore>
 #include "file.h"
 
+#ifdef OS_MAC
+#include "widgetfile.h"
+#include "widgettextedit.h"
+#endif
 
 #define ZOOM_UPDATE 500
 #define SYNCTEX_GZ_EXT ".synctex.gz"
@@ -373,6 +377,7 @@ void WidgetPdfDocument::goToPage(int page, int top, int height)
 
 void WidgetPdfDocument::refreshPages()
 {
+    _requestNewResolutionTimer.stop();
     if(!_document)
     {
         return;
@@ -385,6 +390,7 @@ void WidgetPdfDocument::refreshPages()
             _loadedPages[idx] = false;
         }
     }
+    this->initLinks();
     update();
 
 }
@@ -451,7 +457,13 @@ void WidgetPdfDocument::mouseReleaseEvent(QMouseEvent * /*event*/)
 }
 void WidgetPdfDocument::wheelEvent(QWheelEvent * event)
 {
-    if(event->modifiers() & (Qt::ControlModifier | Qt::AltModifier | Qt::ShiftModifier))
+#ifdef OS_MAC
+    // Hack because modifiers do not work with an external mouse
+    if(this->_file->widgetFile()->widgetTextEdit()->modifiers
+#else
+    if(event->modifiers()
+#endif
+            & (Qt::ControlModifier | Qt::AltModifier | Qt::ShiftModifier))
     {
         qreal factor = 0.1;//log(1 + _zoom) / 30.0;
         factor =  event->delta() > 0 ? 1 + factor : 1 - factor;
@@ -543,7 +555,6 @@ void WidgetPdfDocument::boundPainterTranslation()
 void WidgetPdfDocument::updatePdf()
 {
     this->initDocument();
-
     update();
 }
 

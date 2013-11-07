@@ -92,6 +92,10 @@ public:
     void deletePreviousTab();
     WidgetFile * widgetFile() { return _widgetFile; }
 
+#ifdef OS_MAC
+    Qt::KeyboardModifiers modifiers;
+#endif
+
 signals:
     void updateFirstVisibleBlock(int,int);
     void updatedWithSameFirstVisibleBlock();
@@ -126,6 +130,10 @@ private:
     void initIndentation(void);
     void paintEvent(QPaintEvent *event);
     void keyPressEvent(QKeyEvent *e);
+#ifdef OS_MAC
+    // Hack -> see keypressevent for answering why
+    void keyReleaseEvent(QKeyEvent *e) { modifiers = Qt::NoModifier; WIDGET_TEXT_EDIT_PARENT_CLASS::keyReleaseEvent(e); }
+#endif
     void resizeEvent(QResizeEvent * event);
     void wheelEvent(QWheelEvent * event);
     void highlightCurrentLine(void);
