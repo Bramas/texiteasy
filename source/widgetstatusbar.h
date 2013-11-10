@@ -51,6 +51,7 @@ public:
     bool isChecked() { return _checked; }
 
     void updateGeometry();
+    QLabel * label() { return _label; }
 
 public slots:
     void toggleChecked();

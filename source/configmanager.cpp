@@ -41,7 +41,7 @@
 #include <QDebug>
 #include <QCoreApplication>
 #include <QRegExp>
-#include <poppler/cpp/poppler-version.h>
+#include <poppler/poppler-config.h>
 
 #define DEBUG_THEME_PARSER(a)
 
@@ -486,7 +486,6 @@ void ConfigManager::applyTranslation()
     }
     QApplication::installTranslator(translator);
 }
-
 bool ConfigManager::isThisVersionHaveToBeReminded(QString version)
 {
     QSettings settings;

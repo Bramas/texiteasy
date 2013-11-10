@@ -153,7 +153,8 @@ void WidgetStatusBar::initTheme()
                         ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("linenumber").background().color())+
                                      "}");
 
-    _labelDictionary->setStyleSheet(QString("color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color()));
+    _labelDictionary->label()->setStyleSheet(QString("font-size:12px; margin-right:5px; color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color()));
+    //_labelDictionary->setStyleSheet(QString("color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color()));
 
     _labelConsole->setText(QString("<div style='font-size:12px; '><a class='link' style='text-decoration:none; color:")+
                                 ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
@@ -181,6 +182,11 @@ void WidgetStatusBar::initTheme()
     effect->setColor(ConfigManager::Instance.getTextCharFormats("normal").background().color().darker(darkTheme ? 400 : 130));
     effect->setOffset(darkTheme ? -1 : 1, darkTheme ? -1 : 1);
     _positionLabel->setGraphicsEffect(effect);
+    effect= new QGraphicsDropShadowEffect(this);
+    effect->setBlurRadius(0);
+    effect->setColor(ConfigManager::Instance.getTextCharFormats("normal").background().color().darker(darkTheme ? 400 : 130));
+    effect->setOffset(darkTheme ? -1 : 1, darkTheme ? -1 : 1);
+    _labelDictionary->setGraphicsEffect(effect);
 
     updateButtons();
 }
@@ -283,7 +289,9 @@ void WidgetStatusBarButton::setText(QString text)
 
 void WidgetStatusBarButton::updateGeometry()
 {
-    int width = fontMetrics().width(_label->text());
+    QFontMetrics fm(QFont(ConfigManager::Instance.getTextCharFormats("normal").fontFamily(), 12));
+
+    int width = fm.width(_label->text());
     _label->setMinimumWidth(width);
     _label->setMaximumWidth(width);
     this->setMinimumWidth(width);

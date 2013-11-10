@@ -168,8 +168,10 @@ RESOURCES += \
     commands.qrc
 
 win32 {
-    LIBS += -LC:/dev/Tools/poppler/lib -lpoppler-qt4
+    LIBS += -LC:/Qt/prerequisites-i686/lib -lpoppler-qt5
+    LIBS += -LC:/Qt/prerequisites-i686/lib -lz
 
+    INCLUDEPATH += C:/Qt/prerequisites-i686/include
     RC_FILE = win.rc
 
     DEFINES += OS_WINDOWS

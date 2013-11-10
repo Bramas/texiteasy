@@ -36,7 +36,11 @@
 #ifdef OS_MAC
 #include "poppler/qt5/poppler-qt5.h"
 #else
-#include "poppler/qt4/poppler-qt4.h"
+    #ifdef OS_WINDOWS
+        #include "poppler/qt5/poppler-qt5.h"
+    #else
+        #include "poppler/qt4/poppler-qt4.h"
+    #endif
 #endif
 
 class File;

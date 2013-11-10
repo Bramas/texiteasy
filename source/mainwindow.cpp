@@ -240,11 +240,8 @@ void MainWindow::dragLeaveEvent(QDragLeaveEvent * event)
 {
     event->accept();
 }
-
-void MainWindow::dropEvent(QDropEvent * event)
+bool MainWindow::handleMimeData(const QMimeData* mimeData)
 {
-    const QMimeData* mimeData = event->mimeData();
-
     // check for our needed mime type, here a file or a list of files
     if (mimeData->hasUrls())
     {
@@ -268,8 +265,7 @@ void MainWindow::dropEvent(QDropEvent * event)
             {
                 open(file);
             }
-            event->acceptProposedAction();
-            return;
+            return true;
         }
         if(!insertableFiles.isEmpty() && FileManager::Instance.currentWidgetFile())
         {
@@ -277,11 +273,22 @@ void MainWindow::dropEvent(QDropEvent * event)
             {
                 FileManager::Instance.currentWidgetFile()->widgetTextEdit()->insertFile(file);
             }
-            event->acceptProposedAction();
-            return;
+            return true;
         }
     }
-    event->ignore();
+    return false;
+}
+
+void MainWindow::dropEvent(QDropEvent * event)
+{
+    if(handleMimeData(event->mimeData()))
+    {
+        event->acceptProposedAction();
+    }
+    else
+    {
+        event->ignore();
+    }
 }
 void MainWindow::changeEvent(QEvent *event)
 {

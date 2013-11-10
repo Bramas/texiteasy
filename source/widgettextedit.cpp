@@ -47,6 +47,7 @@
 #include <QImage>
 #include <QLayout>
 #include "QTextEdit"
+#include "mainwindow.h"
 #include "widgetlinenumber.h"
 #include "widgetfile.h"
 
@@ -443,16 +444,11 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
     WIDGET_TEXT_EDIT_PARENT_CLASS::keyPressEvent(e);
 
     this->matchCommand();
-    /*//qDebug()<<"ok"<<e->key()<<"  "<<Qt::Key_Enter;
-    if(e->key() == Qt::Key_Enter || e->key() == Qt::Key_Enter - 1)
-    {
 
-    }*/
 }
 
 bool WidgetTextEdit::selectNextArgument()
 {
-    //([\{\[\(,])
     QTextCursor cur = this->document()->find(QRegExp("@[^\\}\\]\\),]*"),this->textCursor().position());
     if(cur.isNull())
     {
@@ -469,17 +465,8 @@ void WidgetTextEdit::wheelEvent(QWheelEvent * event)
     {
         int delta =  event->delta() > 0 ? 1 : -1 ;
 
-
-        //this->textCursor().movePosition()
         ConfigManager::Instance.changePointSizeBy(delta);
-        /*this->setCurrentCharFormat(ConfigManager::Instance.getTextCharFormats("normal"));
-        QTextBlock tb = this->document()->begin();
-        for(int i = 0; i < this->document()->blockCount(); ++i)
-        {
-            tb.layout()->setFont(ConfigManager::Instance.getTextCharFormats("normal").font());
-            tb.clearLayout();
-            tb.next();
-        }*/
+
         int pos = this->textCursor().position();
         this->selectAll();
         this->textCursor().setBlockCharFormat(ConfigManager::Instance.getTextCharFormats("normal"));
@@ -490,12 +477,7 @@ void WidgetTextEdit::wheelEvent(QWheelEvent * event)
         this->setTextCursor(cur);
 
         this->setCurrentCharFormat(ConfigManager::Instance.getTextCharFormats("normal"));
-        //this->setCurrentFont(ConfigManager::Instance.getTextCharFormats("normal").font());
-        /*this->setStyleSheet(QString("QTextEdit { border: 1px solid ")+
-                                            ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("textedit-border").foreground().color())+"; "+QString("color: ")+
-                                            ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+"; "+
-                                            QString("background-color: ")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color())+
-                                    "; }");*/
+
 
         if(this->_syntaxHighlighter)
         {
@@ -520,62 +502,11 @@ void WidgetTextEdit::setBlockLeftMargin(const QTextBlock &textBlock, int leftMar
 
 void WidgetTextEdit::initIndentation(void)
 {
-/*    if(this->updatingIndentation)
-    {
-        return;
-    }
-    this->updatingIndentation = true;
-    this->fileStructure->updateStructure();
-    if(!this->fileStructure->info()->count())
-    {
-
-        this->updatingIndentation = false;
-        return;
-    }
-
-    QTextBlock textBlock = this->document()->begin();
-
-
-    FileStructureInfo * value;
-
-    QListIterator<FileStructureInfo*> iterator(*this->fileStructure->info());
-
-    BlockInfo * blocksInfo = new BlockInfo[this->document()->blockCount()];
-    while(iterator.hasNext())
-    {
-        value = iterator.next();
-        value->top = this->blockTop(value->startBlock);
-        value->height = this->blockBottom(value->endBlock) - this->blockTop(value->startBlock);
-
-        for(int i = value->startBlock; i <= value->endBlock; ++i)
-        {
-            blocksInfo[i].leftMargin = 25*value->level;
-        }
-    }
-
-    for(int idx = 0; idx < this->document()->blockCount(); ++idx)
-    {
-        textBlock = this->document()->findBlockByNumber(idx);
-        this->setBlockLeftMargin(textBlock, blocksInfo[idx].leftMargin);
-    }
-*/
     this->currentFile->refreshLineNumber();
- /*   this->_indentationMutex.lock();
-    this->_indentationInited = true;
-    this->_indentationMutex.unlock();
-    this->updatingIndentation = false;*/
 }
 
 void WidgetTextEdit::updateIndentation(void)
 {
-  /*
-    if(this->updatingIndentation)
-    {
-        return;
-    }
-    this->updatingIndentation = true;
-*/
-
     if(this->document()->blockCount() != _lineCount)
     {
         this->currentFile->insertLine(this->textCursor().blockNumber(), this->document()->blockCount() - _lineCount);
@@ -586,6 +517,15 @@ void WidgetTextEdit::updateIndentation(void)
 }
 void WidgetTextEdit::insertFile(QString filename)
 {
+    // if it is an image, compute the boundingbox option (very usefull for those who use latex + ...
+    QImage image(filename);
+    QString options = "width=10cm";
+    if(!image.isNull())
+    {
+        options  +=   ", bb=0 0 "+QString::number(image.width())
+                    +" "+QString::number(image.height());
+    }
+
     if(!this->getCurrentFile()->getFilename().isEmpty())
     {
         QDir dir(this->getCurrentFile()->getPath());
@@ -593,15 +533,14 @@ void WidgetTextEdit::insertFile(QString filename)
     }
     QTextCursor cur = textCursor();
     cur.movePosition(QTextCursor::EndOfBlock, QTextCursor::MoveAnchor);
-    cur.insertText("\n\\includegraphics{"+filename+"}");
+    cur.insertText("\n\\includegraphics["+options+"]{"+filename+"}");
     this->setTextCursor(cur);
 }
 
 void WidgetTextEdit::insertFromMimeData(const QMimeData *source)
 {
-    //QMimeData * source2 = new QMimeData();
-    //source2->setData(QString("text/plain"),QByteArray(source->text().toLatin1()));
-    this->insertPlainText(source->text());
+    MainWindow* w = dynamic_cast<MainWindow*>(parent());
+    w->handleMimeData(source);
 }
 
 void WidgetTextEdit::matchAll()

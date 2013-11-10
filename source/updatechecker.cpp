@@ -6,7 +6,6 @@
 #include <QMessageBox>
 #include <QTimer>
 #include "configmanager.h"
-
 UpdateChecker::UpdateChecker()
 {
     connect(this, SIGNAL(finished(QNetworkReply*)), this, SLOT(onFinished(QNetworkReply*)));
