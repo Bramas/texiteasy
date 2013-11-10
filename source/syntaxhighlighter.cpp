@@ -100,10 +100,10 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 
     if(_widgetFile->file()->format() == File::BIBTEX)
     {
-        QTextCharFormat formatBibTitle = ConfigManager::Instance.getTextCharFormats("bibtex_command");
-        QTextCharFormat formatBibKeywords = ConfigManager::Instance.getTextCharFormats("bibtex_keyword");
-        QTextCharFormat formatBibString = ConfigManager::Instance.getTextCharFormats("bibtex_string");
-        QTextCharFormat formatBibQuotes = ConfigManager::Instance.getTextCharFormats("bibtex_quote");
+        QTextCharFormat formatBibTitle = ConfigManager::Instance.getTextCharFormats("bibtex/command");
+        QTextCharFormat formatBibKeywords = ConfigManager::Instance.getTextCharFormats("bibtex/keyword");
+        QTextCharFormat formatBibString = ConfigManager::Instance.getTextCharFormats("bibtex/string");
+        QTextCharFormat formatBibQuotes = ConfigManager::Instance.getTextCharFormats("bibtex/quote");
         QTextCharFormat formatComment = ConfigManager::Instance.getTextCharFormats("comment");
 
 

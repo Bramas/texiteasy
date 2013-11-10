@@ -12,18 +12,16 @@ TARGET = texiteasy
 TEMPLATE = app
 
 APPLICATION_NAME = \\\"'TexitEasy'\\\"
-DEFINES += "APPLICATION_NAME=$${APPLICATION_NAME}"
 TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com'\\\"
-DEFINES += "TEXITEASY_UPDATE_WEBSITE=$${TEXITEASY_UPDATE_WEBSITE}"
-VERSION = \\\"'0.5.5'\\\"
+VERSION = \\\"'0.6.0'\\\"
+VERSION_HEX = 0x000600
+
+DEFINES += "CURRENT_VERSION_HEX=$${VERSION_HEX}"
 DEFINES += "CURRENT_VERSION=$${VERSION}"
+DEFINES += "APPLICATION_NAME=$${APPLICATION_NAME}"
+DEFINES += "TEXITEASY_UPDATE_WEBSITE=$${TEXITEASY_UPDATE_WEBSITE}"
 
 #DEFINES += DEBUG_DESTRUCTOR
-
-# config_revision is used to make so task for migration
-# we increment it each time we need to make a task for those who update the soft
-# see configManager::checkRevision() for more information
-DEFINES += "CURRENT_CONFIG_REVISION=5"
 
 SOURCES += main.cpp\
         mainwindow.cpp \
@@ -101,7 +99,6 @@ HEADERS  += mainwindow.h \
     stylehelper.h \
     minisplitter.h \
     widgetsimpleoutput.h \
-    zlib/zlib.h \
     dialogkeysequence.h \
     widgetstatusbar.h \
     widgettooltip.h \
@@ -175,18 +172,23 @@ win32 {
     RC_FILE = win.rc
 
     DEFINES += OS_WINDOWS
+    LAST_VERSION_URL = \\\"'https://raw.github.com/Bramas/texiteasy/master/VERSION_WIN'\\\"
+
 }
 unix:!mac{
     LIBS += -lz -L/usr/local/lib -lpoppler-qt4
     DEFINES += OS_LINUX
+    LAST_VERSION_URL = \\\"'https://raw.github.com/Bramas/texiteasy/master/VERSION_LINUX'\\\"
 }
 mac{
     INCLUDEPATH += /usr/local/include
     LIBS += -lz -L/usr/local/lib -lpoppler-qt5
     ICON = texiteasy.icns
     DEFINES += OS_MAC
+    LAST_VERSION_URL = \\\"'https://raw.github.com/Bramas/texiteasy/master/VERSION_MAC'\\\"
     #CONFIG += x86 x86_64
 }
+DEFINES += "LAST_VERSION_URL=$${LAST_VERSION_URL}"
 
 OTHER_FILES += \
     hunspell/license.myspell \

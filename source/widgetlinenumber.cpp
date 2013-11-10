@@ -36,14 +36,15 @@ WidgetLineNumber::WidgetLineNumber(QWidget *parent) :
     QWidget(parent),
     widgetTextEdit(0),
     firstVisibleBlock(0),
-    firstVisibleBlockTop(0)
+    firstVisibleBlockTop(0),
+    _currentLine(-1)
 {
     this->scrollOffset = 0;
 
 
-    /*this->setStyleSheet(QString("WidgetLineNumber { background-color: black")+//ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats()->value("linenumber").background().color())+
+    /*this->setStyleSheet(QString("WidgetLineNumber { background-color: black")+//ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats()->value("line-number").background().color())+
                         "; }");
-    qDebug()<<QString("background-color: black")+//ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats()->value("linenumber").background().color())+
+    qDebug()<<QString("background-color: black")+//ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats()->value("line-number").background().color())+
               ";";*/
 }
 
@@ -68,11 +69,11 @@ void WidgetLineNumber::updateFirstVisibleBlock(int block, int top)
 void WidgetLineNumber::updateWidth(int lineCount)
 {
     QFont font;
-    font.setFamily(ConfigManager::Instance.getTextCharFormats("linenumber").font().family());
-    font.setPointSize(ConfigManager::Instance.getTextCharFormats("linenumber").font().pointSize());
+    font.setFamily(ConfigManager::Instance.getTextCharFormats("line-number").font().family());
+    font.setPointSize(ConfigManager::Instance.getTextCharFormats("line-number").font().pointSize());
     QFontMetrics fm(font);
 
-    int width = ConfigManager::Instance.getTextCharFormats("linenumber").font().pointSize();//fm.width("0") + 2;
+    int width = ConfigManager::Instance.getTextCharFormats("line-number").font().pointSize();//fm.width("0") + 2;
     int ln = 1;
     while(lineCount >= 10)
     {
@@ -91,21 +92,26 @@ void WidgetLineNumber::paintEvent(QPaintEvent * /*event*/)
     //update info about the scroll position
     this->scrollOffset = -this->widgetTextEdit->verticalScrollBar()->value();
 
-    this->firstVisibleBlock = widgetTextEdit->firstVisibleBlockNumber();
 
+    this->firstVisibleBlock = widgetTextEdit->firstVisibleBlockNumber();
     QPainter painter(this);
 
-    QFont font;
-    font.setFamily(ConfigManager::Instance.getTextCharFormats("linenumber").font().family());
-    font.setPointSize(ConfigManager::Instance.getTextCharFormats("linenumber").font().pointSize());
-    painter.setFont(font);
-    QFontMetrics fm(font);
-    painter.setFont(font);
+    QFont defaultFont;
+    defaultFont.setFamily(ConfigManager::Instance.getTextCharFormats("line-number").font().family());
+    defaultFont.setPointSize(ConfigManager::Instance.getTextCharFormats("line-number").font().pointSize());
+    QFontMetrics fm(defaultFont);
+    painter.setFont(defaultFont);
+
+    QFont currentLineFont;
+    currentLineFont.setFamily(ConfigManager::Instance.getTextCharFormats("line-number").font().family());
+    currentLineFont.setPointSize(ConfigManager::Instance.getTextCharFormats("line-number").font().pointSize());
+    currentLineFont.setWeight(QFont::Bold);
 
     int l;
 
 
-    QPen defaultPen(ConfigManager::Instance.getTextCharFormats("linenumber").foreground().color(),1);
+    QPen defaultPen(ConfigManager::Instance.getTextCharFormats("line-number").foreground().color(),1);
+    QPen currentLinePen(ConfigManager::Instance.getTextCharFormats("current-line-number").foreground().color(), 1);
     QPen blockRangePen(QColor(160,10,10),4);
     painter.setPen(defaultPen);
 
@@ -116,6 +122,16 @@ void WidgetLineNumber::paintEvent(QPaintEvent * /*event*/)
 
     while(l < widgetTextEdit->document()->blockCount() && this->widgetTextEdit->blockTop(l) + this->scrollOffset < height())
     {
+        if(l == _currentLine)
+        {
+            painter.setPen(currentLinePen);
+            painter.setFont(currentLineFont);
+        }
+        else
+        {
+            painter.setPen(defaultPen);
+            painter.setFont(defaultFont);
+        }
         painter.drawText(0,this->scrollOffset+this->widgetTextEdit->blockTop(l), right-9, fontHeight, Qt::AlignRight, QString::number(l+1));
         ++l;
     }

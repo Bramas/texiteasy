@@ -39,12 +39,12 @@ void WidgetTab::paintEvent(QPaintEvent * event)
     QPainter painter(this);
     QFontMetrics fm(painter.font());
 
-    bool darkTheme = ConfigManager::Instance.getTextCharFormats("linenumber").background().color().value() < 150;
+    bool darkTheme = ConfigManager::Instance.getTextCharFormats("line-number").background().color().value() < 150;
 
-    QPen defaultPen(darkTheme ? ConfigManager::Instance.getTextCharFormats("linenumber").foreground().color().darker(150) :
-                                ConfigManager::Instance.getTextCharFormats("linenumber").foreground().color().lighter(160));
-    QPen hoverPen(darkTheme ? ConfigManager::Instance.getTextCharFormats("linenumber").foreground().color() :
-                              ConfigManager::Instance.getTextCharFormats("linenumber").foreground().color().darker(150));
+    QPen defaultPen(darkTheme ? ConfigManager::Instance.getTextCharFormats("line-number").foreground().color().darker(150) :
+                                ConfigManager::Instance.getTextCharFormats("line-number").foreground().color().lighter(160));
+    QPen hoverPen(darkTheme ? ConfigManager::Instance.getTextCharFormats("line-number").foreground().color() :
+                              ConfigManager::Instance.getTextCharFormats("line-number").foreground().color().darker(150));
     QPen defaultClosePen(QColor(100,100,100));
     defaultClosePen.setWidth(2);
     QPen hoverClosePen(QColor(130,130,130));
@@ -53,11 +53,11 @@ void WidgetTab::paintEvent(QPaintEvent * event)
     overClosePen.setWidth(2);
 
     QPen rectPen(QColor(0,0,0));
-    QBrush backgroundBrush(ConfigManager::Instance.getTextCharFormats("linenumber").background().color().darker(200));
+    QBrush backgroundBrush(ConfigManager::Instance.getTextCharFormats("line-number").background().color().darker(200));
     QBrush defaultRectBrush(darkTheme ?
-                                ConfigManager::Instance.getTextCharFormats("linenumber").background().color().lighter(130) :
-                                ConfigManager::Instance.getTextCharFormats("linenumber").background().color().darker(160));
-    QBrush hoverRectBrush(ConfigManager::Instance.getTextCharFormats("linenumber").background().color());
+                                ConfigManager::Instance.getTextCharFormats("line-number").background().color().lighter(130) :
+                                ConfigManager::Instance.getTextCharFormats("line-number").background().color().darker(160));
+    QBrush hoverRectBrush(ConfigManager::Instance.getTextCharFormats("line-number").background().color());
 
 
     painter.setBrush(backgroundBrush);

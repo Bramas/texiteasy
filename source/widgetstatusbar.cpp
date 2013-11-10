@@ -150,7 +150,7 @@ void WidgetStatusBar::updateButtons()
 void WidgetStatusBar::initTheme()
 {
     this->setStyleSheet("QStatusBar::item { margin-left:4px; border: none;} QStatusBar {padding:0px; height:100px; background: "+
-                        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("linenumber").background().color())+
+                        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("line-number").background().color())+
                                      "}");
 
     _labelDictionary->label()->setStyleSheet(QString("font-size:12px; margin-right:5px; color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color()));

@@ -11,7 +11,7 @@ UpdateChecker::UpdateChecker()
     connect(this, SIGNAL(finished(QNetworkReply*)), this, SLOT(onFinished(QNetworkReply*)));
 
     QNetworkRequest request;
-    request.setUrl(QUrl("https://raw.github.com/Bramas/texiteasy/master/VERSION"));
+    request.setUrl(QUrl(LAST_VERSION_URL));
     request.setRawHeader("User-Agent", QString(QString("TexitEasy ")+CURRENT_VERSION).toLatin1());
     this->get(request);
 }

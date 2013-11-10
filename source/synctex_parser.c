@@ -256,7 +256,7 @@ void _synctex_free_leaf(synctex_node_t node) {
 #	ifdef	__SYNCTEX_WORK__
 #		include "/usr/include/zlib.h"
 #	else
-#		include "zlib/zlib.h"
+#		include <zlib.h>
 #	endif
 
 /*  The synctex scanner is the root object.

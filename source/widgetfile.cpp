@@ -101,7 +101,7 @@ WidgetFile::~WidgetFile()
 void WidgetFile::initTheme()
 {
     QPalette Pal(palette());
-    Pal.setColor(QPalette::Background, ConfigManager::Instance.getTextCharFormats("linenumber").background().color());
+    Pal.setColor(QPalette::Background, ConfigManager::Instance.getTextCharFormats("line-number").background().color());
     this->setAutoFillBackground(true);
     this->setPalette(Pal);
     _widgetTextEdit->setStyleSheet(QString("QPlainTextEdit { border: 0px solid ")+
@@ -136,7 +136,7 @@ void WidgetFile::initTheme()
     {
         QPalette Pal(palette());
         // set black background
-        QTextCharFormat format = ConfigManager::Instance.getTextCharFormats("linenumber");
+        QTextCharFormat format = ConfigManager::Instance.getTextCharFormats("line-number");
         QBrush brush = format.background();
         Pal.setColor(QPalette::Background, brush.color());
         _widgetLineNumber->setAutoFillBackground(true);

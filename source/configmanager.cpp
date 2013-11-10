@@ -439,7 +439,7 @@ QStringList ConfigManager::themesList()
 {
     QDir dir(themePath());
     QStringList list = dir.entryList(QDir::Files | QDir::Readable, QDir::Name).filter(QRegExp("\\.texiteasy-theme"));
-    list.replaceInStrings(QRegExp("\.texiteasy-theme$"), "");
+    list.replaceInStrings(QRegExp("\\.texiteasy-theme$"), "");
     return list;
 }
 QString ConfigManager::dictionaryPath()
@@ -468,7 +468,7 @@ QStringList ConfigManager::dictionnaries()
 {
     QDir dir(dictionaryPath());
     QStringList list = dir.entryList(QDir::Files | QDir::Readable, QDir::Name).filter(QRegExp("\\.dic"));
-    list.replaceInStrings(QRegExp("\.dic$"), "");
+    list.replaceInStrings(QRegExp("\\.dic$"), "");
     return list;
 }
 
@@ -506,7 +506,7 @@ void ConfigManager::checkRevision()
 {
     QSettings settings;
 
-    int fromVersion = settings.value("revision",0).toInt();
+    int fromVersion = settings.value("version_hex",0x000000).toInt();
 
     QString dataLocation("");
     QString documentLocation("");
@@ -529,32 +529,11 @@ void ConfigManager::checkRevision()
             {
                 return;
             }
-            settings.setValue("lastFolder",documentLocation);
-
-           {
-                QDir dir;
-                dir.mkpath(dataLocation);
-            }
-        }
-        case 1:
-        {
-            qDebug()<<"texiteasy 1=>2";
+            if(settings.contains("lastFolder"))
             {
-                QDir dir;
-
-                QFile theme(":/themes/dark.sim-theme");
-                QFile theme2(":/themes/light.sim-theme");
-                theme.copy(dataLocation+dir.separator()+"dark.sim-theme");
-                theme2.copy(dataLocation+dir.separator()+"light.sim-theme");
+                settings.setValue("lastFolder",documentLocation);
             }
-
-            settings.setValue("bibtex","bibtex \"%1\"");
-            #if OS_WINDOWS
-                settings.setValue("pdflatex", "pdflatex.exe -synctex=1 -shell-escape -interaction=nonstopmode -enable-write18 \"%1\"");
-            #else
-                settings.setValue("pdflatex", "pdflatex -synctex=1 -shell-escape -interaction=nonstopmode -enable-write18 \"%1\"");
-            #endif
-
+            QDir().mkpath(dataLocation);
 
             QString pdflatexCommand = "pdflatex";
     #ifdef OS_WINDOWS
@@ -580,20 +559,18 @@ void ConfigManager::checkRevision()
             if(-2 == QProcess::execute(settings.value("latexPath").toString()+pdflatexCommand+" --version"))
             {
                 qDebug()<<"latex not found ask for a the path";
+                //qDebug()<<QFileDialog::getExistingDirectory(0, QObject::trUtf8("Choisir l'emplacement contenant l'executable latex."),programLocation);
             }
             else
             {
                 qDebug()<<"latex found";
-                //qDebug()<<QFileDialog::getExistingDirectory(0, QObject::trUtf8("Choisir l'emplacement contenant l'executable latex."),programLocation);
             }
-        }
-        case 2:
-        {
-            qDebug()<<"texiteasy 2=>3";
-            QDir dir;
-            QFile commandsSqllite(":/data/commands.sqlite");
-            commandsSqllite.copy(dataLocation+dir.separator()+"commands.sqlite");
-            QFile::setPermissions(dataLocation+dir.separator()+"commands.sqlite",
+
+            {
+                QDir dir;
+                QFile commandsSqllite(":/data/commands.sqlite");
+                commandsSqllite.copy(dataLocation+dir.separator()+"commands.sqlite");
+                QFile::setPermissions(dataLocation+dir.separator()+"commands.sqlite",
                                   QFile::ReadOwner |
                                   QFile::WriteOwner |
                                   QFile::ReadGroup |
@@ -603,35 +580,42 @@ void ConfigManager::checkRevision()
                                   QFile::ReadUser |
                                   QFile::WriteUser
                                   );
-            settings.setValue("commandDatabaseFilename",dataLocation+dir.separator()+"commands.sqlite");
-        }
-    case 3:
-        qDebug()<<"texiteasy 3=>4";
-    case 4:
-        qDebug()<<"texiteasy 4=>5";
-        {
+                settings.setValue("commandDatabaseFilename",dataLocation+dir.separator()+"commands.sqlite");
+            }
+
+            qDebug()<<"texiteasy =>0.6.0";
             {
                 QDir().mkdir(themePath());
                 QDir dir;
+
+                //remove some old files
+                {
+                    QFile localtheme(dataLocation+dir.separator()+"dark.sim-theme");
+                    QFile localtheme2(dataLocation+dir.separator()+"light.sim-theme");
+                    localtheme.remove();
+                    localtheme2.remove();
+                }
+
                 QFile theme(":/themes/dark.texiteasy-theme");
                 QFile theme2(":/themes/light.texiteasy-theme");
-                QFile localtheme(dataLocation+dir.separator()+"dark.sim-theme");
-                QFile localtheme2(dataLocation+dir.separator()+"light.sim-theme");
-                localtheme.remove();
-                localtheme2.remove();
                 theme.copy(themePath()+"dark.texiteasy-theme");
                 theme2.copy(themePath()+"light.texiteasy-theme");
             }
-            QDir().mkdir(dictionaryPath());
-            QDir dir(":/data/dictionaries");
-            QStringList dictionaries = dir.entryList(QDir::NoDotAndDotDot | QDir::Files);
-            foreach (QString dico, dictionaries)
             {
-                QFile dicoFile(":/data/dictionaries/"+dico);
-                dicoFile.copy(dictionaryPath()+dico);
+                QDir().mkdir(dictionaryPath());
+                QDir dir(":/data/dictionaries");
+                QStringList dictionaries = dir.entryList(QDir::NoDotAndDotDot | QDir::Files);
+                foreach (QString dico, dictionaries)
+                {
+                    QFile dicoFile(":/data/dictionaries/"+dico);
+                    dicoFile.copy(dictionaryPath()+dico);
+                }
             }
         }
-     }
-     settings.setValue("revision",CURRENT_CONFIG_REVISION);
+    case 0x000600:
+    default:
+        break;
+    }
+    settings.setValue("version_hex",CURRENT_VERSION_HEX);
 }
 

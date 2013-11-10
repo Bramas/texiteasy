@@ -31,6 +31,7 @@ class WidgetLineNumber : public QWidget
 public:
     explicit WidgetLineNumber(QWidget *parent);
     void setWidgetTextEdit(WidgetTextEdit * widgetTextEdit);
+    void setCurrentLine(int line) { _currentLine = line; }
 signals:
     
 public slots:
@@ -46,6 +47,7 @@ private:
     int firstVisibleBlock;
     int firstVisibleBlockTop;
     int _startBlock;
+    int _currentLine;
     int _endBlock;
 };
 

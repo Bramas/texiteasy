@@ -207,7 +207,9 @@ void WidgetTextEdit::updateLineNumber(const QRect &rect, int dy)
     {
         return;
     }
+    _widgetLineNumber->setCurrentLine(textCursor().blockNumber());
     _widgetLineNumber->update(0, rect.y(), _widgetLineNumber->width(), rect.height());
+
 }
 bool WidgetTextEdit::isCursorVisible()
 {

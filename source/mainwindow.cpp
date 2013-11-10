@@ -504,7 +504,7 @@ void MainWindow::setTheme(QString theme)
 void MainWindow::initTheme()
 {
     QPalette Pal(palette());
-    Pal.setColor(QPalette::Background, ConfigManager::Instance.getTextCharFormats("linenumber").background().color());
+    Pal.setColor(QPalette::Background, ConfigManager::Instance.getTextCharFormats("line-number").background().color());
     this->setAutoFillBackground(true);
     this->setPalette(Pal);
     FileManager::Instance.initTheme();
