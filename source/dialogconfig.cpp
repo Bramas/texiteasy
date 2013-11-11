@@ -97,6 +97,9 @@ void DialogConfig::save()
 
     // Page Builder:
 
+
+    ConfigManager::Instance.setHideAuxFiles(this->ui->checkBoxHideAuxFiles->isChecked());
+
     ConfigManager::Instance.setBibtexCommand(this->ui->lineEdit_bibtex->text());
     //ConfigManager::Instance.setPdflatexCommand(this->ui->lineEdit_pdflatex->text());
     ConfigManager::Instance.setLatexPath(this->ui->lineEdit_latexPath->text());
@@ -111,6 +114,8 @@ void DialogConfig::save()
     ConfigManager::Instance.setLatexCommands(listCommand);
 
     // Page General
+
+    ConfigManager::Instance.setOpenLastSessionAtStartup(this->ui->checkBoxOpenLastSessionAtStartup->isChecked());
     ConfigManager::Instance.setLanguage(this->ui->comboBoxLanguages->currentText());
     ConfigManager::Instance.setDictionary(this->ui->comboBoxDictionary->currentText());
 
@@ -146,9 +151,14 @@ void DialogConfig::show()
     QSettings settings;
     settings.beginGroup("theme");
 
+    // Page General
+
+    this->ui->checkBoxOpenLastSessionAtStartup->setChecked(ConfigManager::Instance.openLastSessionAtStartup());
 
 
     // Page Builder:
+
+    this->ui->checkBoxHideAuxFiles->setChecked(ConfigManager::Instance.hideAuxFiles());
 
     currentLatexName = ConfigManager::Instance.defaultLatex();
     this->ui->lineEdit_bibtex->setText(ConfigManager::Instance.bibtexCommand());

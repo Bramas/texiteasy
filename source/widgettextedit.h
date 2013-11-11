@@ -105,6 +105,7 @@ signals:
 private slots:
     void updateLineNumber(const QRect &rect, int dy);
     void correctWord();
+    void addToDictionnary();
 
 public slots:
     void wrapEnvironment();

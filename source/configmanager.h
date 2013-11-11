@@ -88,6 +88,9 @@ public:
 
     void            setOpenFilesWhenClosing(QStringList files) { QSettings settings; settings.setValue("openFilesWhenClosing", files); }
     QStringList     openFilesWhenClosing() { QSettings settings; return settings.value("openFilesWhenClosing").toStringList(); }
+    void            setOpenLastSessionAtStartup(bool open) { QSettings settings; settings.setValue("openLastSessionAtStartup", open); }
+    bool            openLastSessionAtStartup() { QSettings settings; return settings.value("openLastSessionAtStartup", true).toBool(); }
+
 
     QStringList     themesList();
     const QString&  theme() { return _theme; }
@@ -106,12 +109,15 @@ public:
      * @brief dictionnaryPath end with a separator character
      * @return
      */
-    QString dictionaryPath();
-
+    QString         dictionaryPath();
+    void            addToDictionnary(QString dico, QString word);
+    QStringList     userDictionnary(QString dico);
     QString popplerVersion();
 
     void checkRevision();
 
+    bool hideAuxFiles() { QSettings settings; return settings.value("builder/hideAuxFiles", true).toBool(); }
+    void setHideAuxFiles(bool hide) { QSettings settings; settings.setValue("builder/hideAuxFiles", hide); }
 
     QStringList latexCommandNames()
                 {  QSettings settings; return settings.value("builder/latexCommandNames").toStringList();  }

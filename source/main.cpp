@@ -47,11 +47,11 @@ int main(int argc, char *argv[])
     w.show();
     a.connect(&a, SIGNAL(requestOpenFile(QString)), &w, SLOT(open(QString)));
 
-/*
+
     if(argc > 1)
     {
         QString filename = argv[1];
         w.open(filename);
-    }*/
+    }
     return a.exec();
 }
