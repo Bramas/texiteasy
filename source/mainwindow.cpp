@@ -451,7 +451,9 @@ bool MainWindow::closeTab(int index)
 
     if(widget->widgetTextEdit()->getCurrentFile()->isModified())
     {
-        int i = QMessageBox::warning(this, trUtf8("Quitter?") ,trUtf8("Le fichier %1 n'a pas été enregistré.").arg(widget->widgetTextEdit()->getCurrentFile()->fileInfo().baseName()), "Annuler", "Quitter sans sauvegarder", "Sauvegarder et quitter");
+        int i = QMessageBox::warning(this, trUtf8("Quitter?"),
+                    trUtf8("Le fichier %1 n'a pas été enregistré.").arg(widget->file()->fileInfo().baseName()),
+                                     trUtf8("Annuler"), trUtf8("Quitter sans sauvegarder"), trUtf8("Sauvegarder et quitter"));
 
         if(i)
         {

@@ -5,12 +5,12 @@
 <context>
     <name>Builder</name>
     <message>
-        <location filename="../builder.cpp" line="99"/>
+        <location filename="../builder.cpp" line="142"/>
         <source>Erreur</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="../builder.cpp" line="99"/>
+        <location filename="../builder.cpp" line="142"/>
         <source>La compilation n&apos;a pas pu démarrer.</source>
         <translation>La compilation n&apos;a pas pu démarrer.</translation>
     </message>
@@ -21,6 +21,34 @@
         <location filename="../dialogabout.ui" line="14"/>
         <source>A propos de TexitEasy</source>
         <translation>A propos de TexitEasy</translation>
+    </message>
+</context>
+<context>
+    <name>DialogAddLatexCommand</name>
+    <message>
+        <location filename="../dialogaddlatexcommand.ui" line="14"/>
+        <source>Dialog</source>
+        <translation>Préférences</translation>
+    </message>
+    <message>
+        <location filename="../dialogaddlatexcommand.ui" line="55"/>
+        <source>Commande :</source>
+        <translation>Commande :</translation>
+    </message>
+    <message>
+        <location filename="../dialogaddlatexcommand.ui" line="68"/>
+        <source>Nom :</source>
+        <translation>Nom :</translation>
+    </message>
+    <message>
+        <location filename="../dialogaddlatexcommand.ui" line="94"/>
+        <source>Commande prédéfinies :</source>
+        <translation>Commande prédéfinies :</translation>
+    </message>
+    <message>
+        <location filename="../dialogaddlatexcommand.cpp" line="9"/>
+        <source>Personalisé</source>
+        <translation>Personalisé</translation>
     </message>
 </context>
 <context>
@@ -89,77 +117,109 @@
         <translation>Langage</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="101"/>
+        <location filename="../dialogconfig.ui" line="82"/>
+        <source>Dictionnaire par défaut</source>
+        <translation>Dictionnaire par défaut</translation>
+    </message>
+    <message>
+        <location filename="../dialogconfig.ui" line="111"/>
         <source>Taille du texte</source>
         <translation>Taille du texte</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="111"/>
+        <location filename="../dialogconfig.ui" line="121"/>
         <source>Thème</source>
         <translation>Thème</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="121"/>
+        <location filename="../dialogconfig.ui" line="131"/>
         <source>Police de caractère</source>
         <translation>Police de caractère</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="130"/>
+        <location filename="../dialogconfig.ui" line="140"/>
         <source>Remplacer la police du thème</source>
         <translation>Remplacer la police du thème</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="146"/>
+        <location filename="../dialogconfig.ui" line="156"/>
         <source>Indentation avec des espaces</source>
         <translation>Indentation avec des espaces</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="160"/>
+        <location filename="../dialogconfig.ui" line="170"/>
         <source>Lageur d&apos;une tabulation</source>
         <translation>Lageur d&apos;une tabulation</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="190"/>
+        <location filename="../dialogconfig.ui" line="200"/>
         <source>Action</source>
         <translation>Action</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="195"/>
+        <location filename="../dialogconfig.ui" line="205"/>
         <source>Raccourci</source>
         <translation>Raccourci</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="217"/>
+        <location filename="../dialogconfig.ui" line="226"/>
         <source>Chemin vers les executables latex</source>
         <translation>Chemin vers les executables latex</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="229"/>
+        <location filename="../dialogconfig.ui" line="238"/>
         <source>Parcourir</source>
         <translation>Parcourir</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="238"/>
+        <location filename="../dialogconfig.ui" line="247"/>
+        <source>BibTex</source>
+        <translation>BibTex</translation>
+    </message>
+    <message>
+        <location filename="../dialogconfig.ui" line="254"/>
+        <source>bibtex %1</source>
+        <translation>bibtex %1</translation>
+    </message>
+    <message>
+        <location filename="../dialogconfig.ui" line="261"/>
+        <source>Commande Latex par défaut</source>
+        <translation>Commande Latex par défaut</translation>
+    </message>
+    <message>
+        <location filename="../dialogconfig.ui" line="310"/>
+        <source> + </source>
+        <translation> + </translation>
+    </message>
+    <message>
+        <location filename="../dialogconfig.ui" line="320"/>
+        <source> - </source>
+        <translation> - </translation>
+    </message>
+    <message>
+        <location filename="../dialogconfig.ui" line="366"/>
+        <source>Annuler</source>
+        <translation>Annuler</translation>
+    </message>
+    <message>
         <source>Pdflatex</source>
-        <translation>Pdflatex</translation>
+        <translation type="obsolete">Pdflatex</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="245"/>
         <source>Bibtex</source>
-        <translation>Bibtex</translation>
+        <translation type="obsolete">Bibtex</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="269"/>
+        <location filename="../dialogconfig.ui" line="353"/>
         <source>Valider</source>
         <translation>Valider</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="282"/>
         <source>Annler</source>
-        <translation>Annuler</translation>
+        <translation type="obsolete">Annuler</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="295"/>
+        <location filename="../dialogconfig.ui" line="379"/>
         <source>Appliquer</source>
         <translation>Appliquer</translation>
     </message>
@@ -219,237 +279,277 @@
         <translation>Ouvrir Récent</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="78"/>
+        <location filename="../mainwindow.ui" line="79"/>
         <source>Compiler</source>
         <translation>Compiler</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="89"/>
+        <location filename="../mainwindow.ui" line="83"/>
+        <source>Autre compilation</source>
+        <translation>Autre compilation</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="97"/>
         <source>Options</source>
         <translation>Options</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="93"/>
+        <location filename="../mainwindow.ui" line="101"/>
         <source>Thème</source>
         <translation>Thème</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="103"/>
+        <location filename="../mainwindow.ui" line="111"/>
         <source>Edition</source>
         <translation>Edition</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="117"/>
+        <location filename="../mainwindow.ui" line="125"/>
         <source>Aide</source>
         <translation>Aide</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="129"/>
+        <location filename="../mainwindow.ui" line="137"/>
         <source>Ouvrir</source>
         <translation>Ouvrir</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="132"/>
+        <location filename="../mainwindow.ui" line="140"/>
         <source>Ctrl+O</source>
         <translation>Ctrl+O</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="137"/>
+        <location filename="../mainwindow.ui" line="145"/>
         <source>Enregistrer Sous</source>
         <translation>Enregistrer sous</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="140"/>
+        <location filename="../mainwindow.ui" line="148"/>
         <source>Ctrl+Shift+S</source>
         <translation>Ctrl+Shift+S</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="145"/>
+        <location filename="../mainwindow.ui" line="153"/>
         <source>Enregistrer</source>
         <translation>Enregistrer</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="148"/>
+        <location filename="../mainwindow.ui" line="156"/>
         <source>Ctrl+S</source>
         <translation>Ctrl+S</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="153"/>
         <source>PdfLatex</source>
-        <translation>PdfLatex</translation>
+        <translation type="obsolete">PdfLatex</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="156"/>
+        <location filename="../mainwindow.ui" line="164"/>
         <source>Ctrl+B</source>
         <translation>Ctrl+B</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="161"/>
+        <location filename="../mainwindow.ui" line="169"/>
         <source>Préférences</source>
         <translation>Préférences</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="164"/>
+        <location filename="../mainwindow.ui" line="172"/>
         <source>Ctrl+P</source>
         <translation>Ctrl+P</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="178"/>
+        <location filename="../mainwindow.ui" line="186"/>
         <source>Afficher automatiquement le pdf</source>
         <translation>Afficher automatiquement le pdf</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="189"/>
+        <location filename="../mainwindow.ui" line="197"/>
         <source>Nouveau</source>
         <translation>Nouveau</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="192"/>
+        <location filename="../mainwindow.ui" line="200"/>
         <source>Ctrl+N</source>
         <translation>Ctrl+N</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="197"/>
+        <location filename="../mainwindow.ui" line="205"/>
         <source>Encodage</source>
         <translation>Encodage</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="200"/>
+        <location filename="../mainwindow.ui" line="208"/>
         <source>Ctrl+Shift+E</source>
         <translation>Ctrl+Shift+E</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="205"/>
+        <location filename="../mainwindow.ui" line="213"/>
         <source>Quitter</source>
         <translation>Quitter</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="210"/>
+        <location filename="../mainwindow.ui" line="218"/>
+        <location filename="../mainwindow.cpp" line="456"/>
         <source>Annuler</source>
         <translation>Annuler</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="213"/>
+        <location filename="../mainwindow.ui" line="221"/>
         <source>Ctrl+Z</source>
         <translation>Ctrl+Z</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="218"/>
+        <location filename="../mainwindow.ui" line="226"/>
         <source>Refaire</source>
         <translation>Refaire</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="221"/>
+        <location filename="../mainwindow.ui" line="229"/>
         <source>Ctrl+Y</source>
         <translation>Ctrl+Y</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="226"/>
+        <location filename="../mainwindow.ui" line="234"/>
         <source>Couper</source>
         <translation>Couper</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="229"/>
+        <location filename="../mainwindow.ui" line="237"/>
         <source>Ctrl+X</source>
         <translation>Ctrl+X</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="234"/>
+        <location filename="../mainwindow.ui" line="242"/>
         <source>Copier</source>
         <translation>Copier</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="237"/>
+        <location filename="../mainwindow.ui" line="245"/>
         <source>Ctrl+C</source>
         <translation>Ctrl+C</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="242"/>
+        <location filename="../mainwindow.ui" line="250"/>
         <source>Coller</source>
         <translation>Coller</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="245"/>
+        <location filename="../mainwindow.ui" line="253"/>
         <source>Ctrl+V</source>
         <translation>Ctrl+V</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="250"/>
+        <location filename="../mainwindow.ui" line="258"/>
         <source>Rechercher / Remplacer</source>
         <translation>Rechercher / Remplacer</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="253"/>
+        <location filename="../mainwindow.ui" line="261"/>
         <source>Ctrl+F</source>
         <translation>Ctrl+F</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="258"/>
+        <location filename="../mainwindow.ui" line="266"/>
         <source>Voir le pdf</source>
         <translation>Voir le pdf</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="261"/>
+        <location filename="../mainwindow.ui" line="269"/>
         <source>Ctrl+D</source>
         <translation>Ctrl+D</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="266"/>
+        <location filename="../mainwindow.ui" line="274"/>
         <source>Ouvrir le dossier thème</source>
         <translation>Ouvrir le dossier thème</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="269"/>
+        <location filename="../mainwindow.ui" line="277"/>
         <source>Ctrl+T</source>
         <translation>Ctrl+T</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="274"/>
+        <location filename="../mainwindow.ui" line="282"/>
         <source>Supprimer l&apos;historique</source>
         <translation>Supprimer l&apos;historique</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="279"/>
+        <location filename="../mainwindow.ui" line="287"/>
         <source>Bibtex</source>
         <translation>Bibtex</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="282"/>
+        <location filename="../mainwindow.ui" line="290"/>
         <source>Ctrl+Shift+B</source>
         <translation>Ctrl+Shift+B</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="287"/>
+        <location filename="../mainwindow.ui" line="295"/>
         <source>A propos de TexitEasy</source>
         <translation>A propos de TexitEasy</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="295"/>
+        <location filename="../mainwindow.ui" line="303"/>
         <source>Environement</source>
         <translation>Environement</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="298"/>
+        <location filename="../mainwindow.ui" line="306"/>
         <source>Ctrl+E</source>
         <translation>Ctrl+E</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="306"/>
+        <location filename="../mainwindow.ui" line="314"/>
         <source>Synchroniser le pdf</source>
         <translation>Synchroniser le pdf</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="292"/>
+        <location filename="../mainwindow.ui" line="319"/>
+        <source>test</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="324"/>
+        <source>Ouvrir les derniers documents</source>
+        <translation>Ouvrir les derniers documents</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="327"/>
+        <source>Ctrl+Shift+O</source>
+        <translation>Ctrl+Shift+O</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="392"/>
         <source>Ouvrir un fichier</source>
         <translation>Ouvrir un fichier</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="454"/>
+        <source>Quitter?</source>
+        <translation>Quitter?</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="455"/>
+        <source>Le fichier %1 n&apos;a pas été enregistré.</source>
+        <translation>Le fichier %1 n&apos;a pas été enregistré.</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="456"/>
+        <source>Quitter sans sauvegarder</source>
+        <translation>Quitter sans sauvegarder</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="456"/>
+        <source>Sauvegarder et quitter</source>
+        <translation>Sauvegarder et quitter</translation>
     </message>
     <message>
         <source>Latex (*.tex *.latex);;BibTex(*.bib)</source>
         <translation type="obsolete">Latex (*.tex *.latex);;BibTex(*.bib)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="434"/>
-        <location filename="../mainwindow.cpp" line="440"/>
+        <location filename="../mainwindow.cpp" line="542"/>
+        <location filename="../mainwindow.cpp" line="548"/>
         <source>Mettre à jour TexitEasy</source>
         <translation>Mettre à jour TexitEasy</translation>
     </message>
@@ -457,12 +557,12 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="../builder.cpp" line="29"/>
+        <location filename="../builder.cpp" line="30"/>
         <source>Erreur</source>
         <translation>Erreur</translation>
     </message>
     <message>
-        <location filename="../builder.cpp" line="30"/>
+        <location filename="../builder.cpp" line="31"/>
         <source>Warning</source>
         <translation>Attention</translation>
     </message>
@@ -470,32 +570,32 @@
 <context>
     <name>UpdateChecker</name>
     <message>
-        <location filename="../updatechecker.cpp" line="40"/>
+        <location filename="../updatechecker.cpp" line="39"/>
         <source>Nouvelle version</source>
         <translation>Nouvelle version</translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="40"/>
+        <location filename="../updatechecker.cpp" line="39"/>
         <source>Un nouvelle version est disponnible, vous pouvez la télécharger depuis le site officiel</source>
         <translation>Un nouvelle version est disponnible, vous pouvez la télécharger depuis le site officiel</translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="42"/>
+        <location filename="../updatechecker.cpp" line="41"/>
         <source>Votre version: </source>
         <translation>Votre version:</translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="42"/>
+        <location filename="../updatechecker.cpp" line="41"/>
         <source>Nouvelle version:</source>
         <translation>Nouvelle version: </translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="43"/>
+        <location filename="../updatechecker.cpp" line="42"/>
         <source>La prochaine fois</source>
         <translation>La prochaine fois</translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="43"/>
+        <location filename="../updatechecker.cpp" line="42"/>
         <source>Ne plus me prevenir de cette mise à jour</source>
         <translation>Ne plus me prevenir de cette mise à jour</translation>
     </message>
@@ -503,12 +603,12 @@
 <context>
     <name>WidgetFile</name>
     <message>
-        <location filename="../widgetfile.cpp" line="314"/>
+        <location filename="../widgetfile.cpp" line="313"/>
         <source>Enregistrer un fichier</source>
         <translation>Enregistrer un fichier</translation>
     </message>
     <message>
-        <location filename="../widgetfile.cpp" line="337"/>
+        <location filename="../widgetfile.cpp" line="336"/>
         <source>Ouvrir </source>
         <translation>Ouvrir </translation>
     </message>
@@ -633,20 +733,20 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgetstatusbar.cpp" line="24"/>
-        <location filename="../widgetstatusbar.cpp" line="131"/>
+        <location filename="../widgetstatusbar.cpp" line="26"/>
+        <location filename="../widgetstatusbar.cpp" line="161"/>
         <source>Console</source>
         <translation>Console</translation>
     </message>
     <message>
-        <location filename="../widgetstatusbar.cpp" line="29"/>
-        <location filename="../widgetstatusbar.cpp" line="134"/>
+        <location filename="../widgetstatusbar.cpp" line="31"/>
+        <location filename="../widgetstatusbar.cpp" line="164"/>
         <source>Erreurs</source>
         <translation>Erreurs</translation>
     </message>
     <message>
-        <location filename="../widgetstatusbar.cpp" line="35"/>
-        <location filename="../widgetstatusbar.cpp" line="90"/>
+        <location filename="../widgetstatusbar.cpp" line="37"/>
+        <location filename="../widgetstatusbar.cpp" line="110"/>
         <source>Ligne %1, Colonne %2</source>
         <translation>Ligne %1, Colonne %2</translation>
     </message>
