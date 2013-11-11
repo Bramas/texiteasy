@@ -235,16 +235,15 @@ void Builder::hideAuxFiles()
     _hiddingProcess->waitForFinished();
     command = QString("attrib +h \"%1.synctex.gz\"").arg(basename);
     _hiddingProcess->start(command);
-    _hiddingProcess->waitForFinished();
 #else
     #ifdef OS_MAC
-
-
+    QString command = QString("chflags hidden \"%1.aux\" ; chflags hidden \"%1.bbl\" ; chflags hidden \"%1.blg\" ; chflags hidden \"%1.out\" ; chflags hidden \"%1.log\" ; chflags hidden \"%1.fdb_latexmk\" ; chflags hidden \"%1.nav\" ; chflags hidden \"%1.fls\" ; chflags hidden \"%1.snm\" ;  chflags hidden \"%1.synctex.gz\" ").arg(basename);
+    _hiddingProcess->start(command);
     #else
-        #ifdef OS_LINX
+    #ifdef OS_LINX
 
 
-        #endif
+    #endif
     #endif
 #endif
 }

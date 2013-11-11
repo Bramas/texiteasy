@@ -6,7 +6,7 @@
 #include <QFileSystemWatcher>
 #include "widgetfile.h"
 
-
+class QMimeData;
 class MainWindow;
 
 class FileManager : public QObject
@@ -29,6 +29,7 @@ public:
     void setMainWindow(MainWindow * m) { _mainWindow = m; }
     void removeWatch(QString filename) { _fileSystemWatcher.removePath(filename); }
     void addWatch(QString filename) { _fileSystemWatcher.addPath(filename); }
+    void handleMimeData(const QMimeData * mimeData);
 
 signals:
     void cursorPositionChanged(int,int);

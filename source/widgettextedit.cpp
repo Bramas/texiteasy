@@ -47,7 +47,7 @@
 #include <QImage>
 #include <QLayout>
 #include "QTextEdit"
-#include "mainwindow.h"
+#include "filemanager.h"
 #include "widgetlinenumber.h"
 #include "widgetfile.h"
 
@@ -56,7 +56,7 @@
 #define abs(a) ((a) > 0 ? (a) : (-(a)))
 
 WidgetTextEdit::WidgetTextEdit(WidgetFile * parent) :
-    WIDGET_TEXT_EDIT_PARENT_CLASS(dynamic_cast<QWidget*>(parent)),
+    WIDGET_TEXT_EDIT_PARENT_CLASS(parent),
     _completionEngine(new CompletionEngine(this)),
     currentFile(new File(parent, this)),
     fileStructure(new FileStructure(this)),
@@ -555,8 +555,7 @@ void WidgetTextEdit::insertFile(QString filename)
 
 void WidgetTextEdit::insertFromMimeData(const QMimeData *source)
 {
-    MainWindow* w = dynamic_cast<MainWindow*>(parent());
-    w->handleMimeData(source);
+    FileManager::Instance.handleMimeData(source);
 }
 
 void WidgetTextEdit::matchAll()

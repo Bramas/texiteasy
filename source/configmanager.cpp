@@ -627,6 +627,28 @@ void ConfigManager::checkRevision()
                     localtheme2.remove();
                 }
 
+                QFile::setPermissions(themePath()+"dark.texiteasy-theme",
+                                  QFile::ReadOwner |
+                                  QFile::WriteOwner |
+                                  QFile::ReadGroup |
+                                  QFile::WriteGroup |
+                                  QFile::ReadOther |
+                                  QFile::WriteOther |
+                                  QFile::ReadUser |
+                                  QFile::WriteUser
+                                  );
+                QFile::setPermissions(themePath()+"light.texiteasy-theme",
+                                  QFile::ReadOwner |
+                                  QFile::WriteOwner |
+                                  QFile::ReadGroup |
+                                  QFile::WriteGroup |
+                                  QFile::ReadOther |
+                                  QFile::WriteOther |
+                                  QFile::ReadUser |
+                                  QFile::WriteUser
+                                  );
+
+
                 QFile theme(":/themes/dark.texiteasy-theme");
                 QFile theme2(":/themes/light.texiteasy-theme");
                 theme.copy(themePath()+"dark.texiteasy-theme");
@@ -644,7 +666,44 @@ void ConfigManager::checkRevision()
             }
         }
     case 0x000600:
-    default:
+    {
+        qDebug()<<"texiteasy 0.6.0 => 0.6.1";
+        //remove some old files and update theme
+        {
+            QFile localtheme(themePath()+"dark.texiteasy-theme");
+            QFile localtheme2(themePath()+"light.texiteasy-theme");
+            localtheme.remove();
+            localtheme2.remove();
+        }
+
+        QFile::setPermissions(themePath()+"dark.texiteasy-theme",
+                          QFile::ReadOwner |
+                          QFile::WriteOwner |
+                          QFile::ReadGroup |
+                          QFile::WriteGroup |
+                          QFile::ReadOther |
+                          QFile::WriteOther |
+                          QFile::ReadUser |
+                          QFile::WriteUser
+                          );
+        QFile::setPermissions(themePath()+"light.texiteasy-theme",
+                          QFile::ReadOwner |
+                          QFile::WriteOwner |
+                          QFile::ReadGroup |
+                          QFile::WriteGroup |
+                          QFile::ReadOther |
+                          QFile::WriteOther |
+                          QFile::ReadUser |
+                          QFile::WriteUser
+                          );
+
+
+        QFile theme(":/themes/dark.texiteasy-theme");
+        QFile theme2(":/themes/light.texiteasy-theme");
+        theme.copy(themePath()+"dark.texiteasy-theme");
+        theme2.copy(themePath()+"light.texiteasy-theme");
+    }
+    case 0x000601:
         break;
     }
     settings.setValue("version_hex",CURRENT_VERSION_HEX);

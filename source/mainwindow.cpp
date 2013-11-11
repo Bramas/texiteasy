@@ -363,8 +363,6 @@ void MainWindow::addFilenameToLastOpened(QString filename)
     QFileInfo info(filename);
     settings.setValue("lastFolder",info.path());
     QString basename = info.baseName();
-    //window title
-    this->setWindowTitle(basename+" - texiteasy");
     //udpate the settings
     {
         QSettings settings;
@@ -450,6 +448,9 @@ void MainWindow::onCurrentFileChanged(WidgetFile * widget)
     ui->verticalLayout->addWidget(widget);
     widget->widgetTextEdit()->setFocus();
     _widgetStatusBar->updateButtons();
+
+    //window title
+    this->setWindowTitle(_tabWidget->currentText()+" - texiteasy");
 }
 bool MainWindow::closeTab(int index)
 {

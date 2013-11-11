@@ -45,6 +45,7 @@ public:
     void setCurrentIndex(int index);
     void initTheme();
     int currentIndex() const { return _currentIndex; }
+    QString currentText() const { if(_currentIndex >= 0 && _currentIndex < _tabsName.count()) return _tabsName.at(_currentIndex); return ""; }
     int count() const { return _tabsName.count(); }
 signals:
     void currentChanged(WidgetFile*);

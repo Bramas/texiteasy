@@ -40,6 +40,7 @@ class SyntaxHighlighter;
 class CompletionEngine;
 class WidgetInsertCommand;
 class WidgetLineNumber;
+class MainWindow;
 
 class QInputMethodEvent;
 struct BlockInfo
@@ -187,6 +188,7 @@ private:
     WidgetInsertCommand * _widgetInsertCommand;
     WidgetLineNumber * _widgetLineNumber;
     WidgetFile * _widgetFile;
+    MainWindow * _mainWindow;
 
 
 };

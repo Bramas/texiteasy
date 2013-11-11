@@ -332,3 +332,8 @@ void FileManager::onFileSystemChanged(QString filename)
 
     }
 }
+
+void FileManager::handleMimeData(const QMimeData * mimeData)
+{
+    _mainWindow->handleMimeData(mimeData);
+}
