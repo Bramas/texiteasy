@@ -80,6 +80,7 @@ public slots:
     void open();
     void open(QString filename);
     void openLast(void);
+    void openLastSession(void);
     void clearLastOpened(void);
     void focus(void);
     void changeTheme(void);

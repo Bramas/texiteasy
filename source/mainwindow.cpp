@@ -116,6 +116,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
     connect(this->ui->actionAbout, SIGNAL(triggered()), new DialogAbout(this), SLOT(show()));
     connect(this->ui->actionOpen,SIGNAL(triggered()),this,SLOT(open()));
+    connect(this->ui->actionOpenLastSession,SIGNAL(triggered()),this,SLOT(openLastSession()));
     connect(this->ui->actionSave,SIGNAL(triggered()),&FileManager::Instance,SLOT(save()));
     connect(this->ui->actionSaveAs,SIGNAL(triggered()),&FileManager::Instance,SLOT(saveAs()));
     connect(this->ui->actionOpenConfigFolder, SIGNAL(triggered()), &ConfigManager::Instance, SLOT(openThemeFolder()));
@@ -203,15 +204,17 @@ void MainWindow::focus()
 
 void MainWindow::closeEvent(QCloseEvent * event)
 {
-
+    QStringList files;
     while(_tabWidget->count())
     {
+        files << _tabWidget->widget(0)->file()->getFilename();
         if(!this->closeTab(0))
         {
             event->ignore();
             return;
         }
     }
+    ConfigManager::Instance.setOpenFilesWhenClosing(files);
     event->accept();
 }
 void MainWindow::dragEnterEvent(QDragEnterEvent * event)
@@ -366,6 +369,16 @@ void MainWindow::addFilenameToLastOpened(QString filename)
         settings.setValue("lastFiles", lastFiles);
     }
 }
+
+void MainWindow::openLastSession()
+{
+    QStringList files = ConfigManager::Instance.openFilesWhenClosing();
+    foreach(const QString & file, files)
+    {
+        open(file);
+    }
+}
+
 void MainWindow::openLast()
 {
     QString filename = dynamic_cast<QAction*>(sender())->text();
@@ -405,12 +418,14 @@ void MainWindow::open(QString filename)
     //open
     if(FileManager::Instance.open(filename))
     {
-        _tabWidget->addTab(FileManager::Instance.currentWidgetFile(), FileManager::Instance.currentWidgetFile()->widgetTextEdit()->getCurrentFile()->fileInfo().baseName());
+        WidgetFile * current = FileManager::Instance.currentWidgetFile();
+        QString tabName = FileManager::Instance.currentWidgetFile()->file()->fileInfo().baseName();
+        _tabWidget->addTab(current, tabName);
         _tabWidget->setCurrentIndex(_tabWidget->count()-1);
     }
     else
     {
-        _tabWidget->setTabText(_tabWidget->currentIndex(), FileManager::Instance.currentWidgetFile()->widgetTextEdit()->getCurrentFile()->fileInfo().baseName());
+        _tabWidget->setTabText(_tabWidget->currentIndex(), FileManager::Instance.currentWidgetFile()->file()->fileInfo().baseName());
     }
 
     this->statusBar()->showMessage(filename,4000);

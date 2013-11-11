@@ -65,6 +65,7 @@
     <addaction name="separator"/>
     <addaction name="actionOpen"/>
     <addaction name="menuOuvrir_R_cent"/>
+    <addaction name="actionOpenLastSession"/>
     <addaction name="separator"/>
     <addaction name="actionSave"/>
     <addaction name="actionSaveAs"/>
@@ -316,6 +317,14 @@
   <action name="actionTest">
    <property name="text">
     <string>test</string>
+   </property>
+  </action>
+  <action name="actionOpenLastSession">
+   <property name="text">
+    <string>Ouvrir les derniers documents</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+O</string>
    </property>
   </action>
  </widget>

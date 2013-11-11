@@ -8,12 +8,14 @@
 #include <QAction>
 #include <QMenu>
 #include <QFontMetrics>
+#include <QTimer>
 #include "configmanager.h"
 #include "widgettextedit.h"
 #include "widgetfile.h"
 
 WidgetTab::WidgetTab(QWidget *parent) :
-    QWidget(parent)
+    QWidget(parent),
+    _currentChangedSignalWillBeSend(false)
 {
     _currentIndex = -1;
     _widgetOverId = -1;
@@ -375,7 +377,35 @@ void WidgetTab::removeTab(int index)
     }
     this->setCurrentIndex(index - 1);
 }
+void WidgetTab::sendCurrentChanged()
+{
+    if(_currentIndex >= 0 && _currentIndex < _widgets.count())
+    {
+        emit currentChanged(_widgets.at(_currentIndex));
+    }
+    else
+    {
+        emit currentChanged(0);
+    }
+    _currentChangedSignalWillBeSend = false;
+    update();
+}
 
+void WidgetTab::setCurrentIndex(int index)
+{
+    if(index == _currentIndex)
+    {
+        return;
+    }
+    _currentIndex =  index;
+
+    if(!_currentChangedSignalWillBeSend)
+    {
+        _currentChangedSignalWillBeSend = true;
+        QTimer::singleShot(0,this, SLOT(sendCurrentChanged()));
+    }
+    update();
+}
 void WidgetTab::initTheme()
 {
 }

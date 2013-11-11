@@ -86,9 +86,12 @@ public:
     QString         textCharFormatToString(QTextCharFormat charFormat, QTextCharFormat defaultFormat = QTextCharFormat());
     QTextCharFormat stringToTextCharFormat(QString string, QTextCharFormat defaultFormat = QTextCharFormat());
 
+    void            setOpenFilesWhenClosing(QStringList files) { QSettings settings; settings.setValue("openFilesWhenClosing", files); }
+    QStringList     openFilesWhenClosing() { QSettings settings; return settings.value("openFilesWhenClosing").toStringList(); }
+
     QStringList     themesList();
     const QString&  theme() { return _theme; }
-    QString themePath();
+    QString         themePath();
 
     QStringList     languagesList();
     QString         language()                      { QSettings settings; return settings.value("language").toString(); }

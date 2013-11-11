@@ -42,23 +42,7 @@ public:
     void removeTab(int index);
     void removeAll();
 
-    void setCurrentIndex(int index)
-    {
-        if(index == _currentIndex)
-        {
-            return;
-        }
-        _currentIndex =  index;
-        if(index != -1)
-        {
-            emit currentChanged(_widgets.at(index));
-        }
-        else
-        {
-            emit currentChanged(0);
-        }
-        update();
-    }
+    void setCurrentIndex(int index);
     void initTheme();
     int currentIndex() const { return _currentIndex; }
     int count() const { return _tabsName.count(); }
@@ -80,7 +64,8 @@ public slots:
         int index = _widgets.indexOf(tab);
         setTabText(index, name);
     }
-
+private slots:
+    void sendCurrentChanged();
 protected:
     void paintEvent(QPaintEvent *);
     void mouseReleaseEvent(QMouseEvent *);
@@ -98,6 +83,7 @@ private:
     QStringList _tabsName;
     QList<WidgetFile *> _widgets;
     QList<int> _tabsNameWidth;
+    bool _currentChangedSignalWillBeSend;
     int _currentIndex;
     int _widgetOverId;
     int _overCloseId;
