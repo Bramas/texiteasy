@@ -240,7 +240,18 @@ void Builder::hideAuxFiles()
     QString command = QString("chflags hidden \"%1.aux\" ; chflags hidden \"%1.bbl\" ; chflags hidden \"%1.blg\" ; chflags hidden \"%1.out\" ; chflags hidden \"%1.log\" ; chflags hidden \"%1.fdb_latexmk\" ; chflags hidden \"%1.nav\" ; chflags hidden \"%1.fls\" ; chflags hidden \"%1.snm\" ;  chflags hidden \"%1.synctex.gz\" ").arg(basename);
     _hiddingProcess->start(command);
     #else
-    #ifdef OS_LINX
+    #ifdef OS_LINUX
+
+    QFile h(file->getPath()+QDir().separator()+".hidden");
+    if(h.open(QFile::ReadWrite | QFile::Text))
+    {
+        QString source = h.readAll();
+        if(!source.contains(QString("%1.aux").arg(basename)))
+        {
+            h.write(QString("\n%1.aux\n%1.bbl\n%1.blg\n%1.out\n%1.log\n%1.fdb_latexmk\n%1.nav\n%1.fls\n%1.snm\n%1.synctex.gz\n").arg(basename).toLatin1().data());
+        }
+
+    }
 
 
     #endif
