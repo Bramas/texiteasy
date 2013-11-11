@@ -80,7 +80,7 @@ bool Builder::setupPathEnvironment()
 #ifdef OS_LINUX
     if (!extraPath.isEmpty())
     {
-        env.insert("PATH", env.value("PATH") + ":"+extra_path);
+        env.insert("PATH", env.value("PATH") + ":"+extraPath);
         process->setProcessEnvironment(env);
     }
 #endif

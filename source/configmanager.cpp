@@ -41,7 +41,12 @@
 #include <QDebug>
 #include <QCoreApplication>
 #include <QRegExp>
-#include <poppler/poppler-config.h>
+
+#ifdef OS_LINUX
+#   define POPPLER_VERSION "unknown"
+#else
+#   include <poppler/poppler-config.h>
+#endif
 
 #define DEBUG_THEME_PARSER(a)
 
