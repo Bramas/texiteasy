@@ -51,6 +51,7 @@ public:
 public slots:
     void builTex(QString command);
     void bibtex();
+    void clean();
     void onFinished(int exitCode,QProcess::ExitStatus exitStatus);
     void onError(QProcess::ProcessError processError);
     void onStandartOutputReady();
@@ -65,10 +66,12 @@ signals:
     void started();
 
 private:
+    void hideAuxFiles();
     bool checkOutput();
     File * file;
     QString _basename;
     QProcess * process;
+    QProcess * _hiddingProcess;
     QString _lastOutput;
     QStringList _commands;
     QList<Builder::Output> _simpleOutPut;

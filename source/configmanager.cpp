@@ -41,6 +41,7 @@
 #include <QDebug>
 #include <QCoreApplication>
 #include <QRegExp>
+#include <QTextStream>
 
 #ifdef OS_LINUX
 #   define POPPLER_VERSION "unknown"
@@ -438,6 +439,31 @@ bool ConfigManager::load(QString theme)
 void ConfigManager::openThemeFolder()
 {
     QDesktopServices::openUrl(QUrl("file:///" + themePath()));
+}
+void ConfigManager::addToDictionnary(QString dico, QString word)
+{
+    // we do not care about multiple entries.
+    QFile file(dictionaryPath()+dico+".user-word");
+    file.open(QFile::WriteOnly | QFile::Append);
+    QTextStream s(&file);
+    s.setCodec("utf8");
+    s << QString(" ");
+    s << word;
+}
+QStringList ConfigManager::userDictionnary(QString dico)
+{
+    QFile file(dictionaryPath()+dico+".user-word");
+    file.open(QFile::ReadOnly);
+    QTextStream s(&file);
+    s.setCodec("utf8");
+    QString word;
+    QStringList list;
+    while(!s.atEnd())
+    {
+        s >> word;
+        list.append(word);
+    }
+    return list;
 }
 
 QStringList ConfigManager::themesList()

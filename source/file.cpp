@@ -23,6 +23,7 @@
 #include "builder.h"
 #include "viewer.h"
 #include "widgettextedit.h"
+#include "filemanager.h"
 #include <QFile>
 #include <QFileDialog>
 #include <QTextStream>
@@ -74,7 +75,7 @@ void File::save(QString filename, bool recursively)
     {
         this->data = this->_widgetTextEdit->toPlainText();
     }
-
+    FileManager::Instance.removeWatch(this->filename);
     // Save
     QFile file(this->filename);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -93,6 +94,7 @@ void File::save(QString filename, bool recursively)
         }
     }
 
+    FileManager::Instance.addWatch(this->filename);
     _modified = false;
     _autoSaveTimer->stop();
     _autoSaveTimer->start(AUTO_SAVE);

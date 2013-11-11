@@ -76,7 +76,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
     ConfigManager::Instance.setMainWindow(this);
-
+    FileManager::Instance.setMainWindow(this);
     _tabWidget = new WidgetTab();
     connect(_tabWidget, SIGNAL(currentChanged(WidgetFile*)), this, SLOT(onCurrentFileChanged(WidgetFile*)));
     connect(_tabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
@@ -132,6 +132,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->ui->actionEnvironment, SIGNAL(triggered()), &FileManager::Instance, SLOT(wrapEnvironment()));
     connect(this->ui->actionDefaultCommandLatex,SIGNAL(triggered()), &FileManager::Instance,SLOT(builTex()));
     connect(this->ui->actionBibtex,SIGNAL(triggered()), &FileManager::Instance,SLOT(bibtex()));
+    connect(this->ui->actionClean,SIGNAL(triggered()), &FileManager::Instance,SLOT(clean()));
     connect(this->ui->actionView, SIGNAL(triggered()), &FileManager::Instance,SLOT(jumpToPdfFromSource()));
 
 
@@ -185,6 +186,11 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     setAcceptDrops(true);
+
+    if(ConfigManager::Instance.openLastSessionAtStartup())
+    {
+        this->openLastSession();
+    }
 
     return;
 }

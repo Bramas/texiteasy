@@ -32,7 +32,8 @@ QString Builder::Warning = QObject::tr("Warning");
 
 Builder::Builder(File * file) :
     file(file),
-    process(new QProcess(this))
+    process(new QProcess(this)),
+    _hiddingProcess(new QProcess(this))
 {
     connect(this->process,SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(onFinished(int,QProcess::ExitStatus)));
     connect(this->process,SIGNAL(error(QProcess::ProcessError)), this, SLOT(onError(QProcess::ProcessError)));
@@ -94,6 +95,8 @@ void Builder::builTex(QString command)
     {
         return;
     }
+
+
     emit started();
     _lastOutput = QString("");
     _simpleOutPut.clear();
@@ -105,7 +108,31 @@ void Builder::builTex(QString command)
         this->process->kill();
     }
     process->setWorkingDirectory(this->file->getPath());
+    if(ConfigManager::Instance.hideAuxFiles())
+    {
+        _hiddingProcess->setWorkingDirectory(this->file->getPath());
+#ifdef OS_WINDOWS
+        QString commandHide = QString("attrib -h \"%1.aux\"").arg(_basename);
+        _hiddingProcess->start(commandHide);
+        _hiddingProcess->waitForReadyRead();
+        commandHide = QString("attrib -h \"%1.log\"").arg(_basename);
+        _hiddingProcess->start(commandHide);
+        _hiddingProcess->waitForReadyRead();
+        commandHide = QString("attrib -h \"%1.synctex.gz\"").arg(_basename);
+        _hiddingProcess->start(commandHide);
+        _hiddingProcess->waitForFinished();
+#else
+    #ifdef OS_MAC
 
+
+    #else
+        #ifdef OS_LINX
+
+
+        #endif
+    #endif
+#endif
+    }
     command.replace(QRegExp("(%1(\.[a-zA-Z0-9]+){0,1})"),"\"\\1\"");
     command = command.arg(_basename);
 
@@ -115,6 +142,19 @@ void Builder::builTex(QString command)
     qDebug()<<"start building : "<<command;
     _lastOutput.append(command+"\n\n");
     process->start(command);
+}
+
+void Builder::clean()
+{
+    if(this->file->getFilename().isEmpty())
+    {
+        return;
+    }
+    QDir dir(file->getPath());
+    QString basename = this->file->fileInfo().baseName();
+    dir.remove(basename+".aux");
+    dir.remove(basename+".log");
+    dir.remove(basename+".synctex.gz");
 }
 
 void Builder::bibtex()
@@ -164,6 +204,10 @@ void Builder::onFinished(int /*exitCode*/, QProcess::ExitStatus /*exitStatus*/)
     emit statusChanged(QString::fromUtf8("Terminé avec succés"));
     emit success();
     emit pdfChanged();
+    if(ConfigManager::Instance.hideAuxFiles())
+    {
+        this->hideAuxFiles();
+    }
 }
 void Builder::onStandartOutputReady()
 {
@@ -172,6 +216,37 @@ void Builder::onStandartOutputReady()
     output = this->process->readAllStandardError();
     _lastOutput.append(output);
     emit outputUpdated(_lastOutput);
+}
+void Builder::hideAuxFiles()
+{
+    if(this->file->getFilename().isEmpty())
+    {
+        return;
+    }
+
+    _hiddingProcess->setWorkingDirectory(this->file->getPath());
+    QString basename = this->file->fileInfo().baseName();
+#ifdef OS_WINDOWS
+    QString command = QString("attrib +h \"%1.aux\"").arg(basename);
+    _hiddingProcess->start(command);
+    _hiddingProcess->waitForFinished();
+    command = QString("attrib +h \"%1.log\"").arg(basename);
+    _hiddingProcess->start(command);
+    _hiddingProcess->waitForFinished();
+    command = QString("attrib +h \"%1.synctex.gz\"").arg(basename);
+    _hiddingProcess->start(command);
+    _hiddingProcess->waitForFinished();
+#else
+    #ifdef OS_MAC
+
+
+    #else
+        #ifdef OS_LINX
+
+
+        #endif
+    #endif
+#endif
 }
 
 bool Builder::checkOutput()

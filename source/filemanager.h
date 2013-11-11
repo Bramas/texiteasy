@@ -3,7 +3,11 @@
 
 #include <QObject>
 #include <QList>
+#include <QFileSystemWatcher>
 #include "widgetfile.h"
+
+
+class MainWindow;
 
 class FileManager : public QObject
 {
@@ -22,6 +26,9 @@ public:
     File * file(int index);
     WidgetFile * widgetFile(QString filename);
     WidgetFile * widgetFile(int index) { return _widgetFiles.at(index); }
+    void setMainWindow(MainWindow * m) { _mainWindow = m; }
+    void removeWatch(QString filename) { _fileSystemWatcher.removePath(filename); }
+    void addWatch(QString filename) { _fileSystemWatcher.addPath(filename); }
 
 signals:
     void cursorPositionChanged(int,int);
@@ -48,6 +55,7 @@ public slots:
     void saveAs() { this->currentWidgetFile()->saveAs(); }
     void builTex(void);
     void bibtex(void) { this->currentWidgetFile()->bibtex(); }
+    void clean(void) { this->currentWidgetFile()->clean(); }
     void openFindReplaceWidget() { this->currentWidgetFile()->openFindReplaceWidget(); }
     void undo();
     void redo();
@@ -67,10 +75,12 @@ public slots:
     void setDictionaryFromAction();
 
 
+
 private slots:
     void sendCursorPositionChanged(int x, int y) { emit cursorPositionChanged(x, y); }
     void sendVerticalSplitterChanged() { emit verticalSplitterChanged(); }
     void sendMessageFromCurrentFile(QString message) { emit messageFromCurrentFile(message); }
+    void onFileSystemChanged(QString filename);
 
 private:
 
@@ -82,6 +92,8 @@ private:
     QList<WidgetFile *> _widgetFiles;
     int _currentWidgetFileId;
     bool _pdfSynchronized;
+    QFileSystemWatcher _fileSystemWatcher;
+    MainWindow * _mainWindow;
 };
 
 #endif // FILEMANAGER_H

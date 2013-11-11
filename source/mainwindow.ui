@@ -85,6 +85,7 @@
     </widget>
     <addaction name="actionDefaultCommandLatex"/>
     <addaction name="actionBibtex"/>
+    <addaction name="actionClean"/>
     <addaction name="separator"/>
     <addaction name="menuOtherBuilder"/>
     <addaction name="separator"/>
@@ -325,6 +326,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+O</string>
+   </property>
+  </action>
+  <action name="actionClean">
+   <property name="text">
+    <string>Nettoyer</string>
    </property>
   </action>
  </widget>

@@ -180,6 +180,11 @@ void WidgetTextEdit::contextMenuEvent(QContextMenuEvent *event)
                         connect(action, SIGNAL(triggered()), this, SLOT(correctWord()));
                         action->setFont(spellmenufont);
                     }
+                    spellmenufont.setBold(false);
+                    spellmenufont.setItalic(true);
+                    action = new QAction(trUtf8("Ajouter au dictionnaire"), menu);
+                    menu->insertAction(menu->actionAt(QPoint(0,0)), action);
+                    connect(action, SIGNAL(triggered()), this, SLOT(addToDictionnary()));
                     menu->addSeparator();
                 }
 
@@ -190,6 +195,15 @@ void WidgetTextEdit::contextMenuEvent(QContextMenuEvent *event)
     menu->exec(event->globalPos());
     delete menu;
 }
+void WidgetTextEdit::addToDictionnary()
+{
+    QString newword = textCursor().selectedText();
+    ConfigManager::Instance.addToDictionnary(this->widgetFile()->dictionary(), newword);
+    QTextCodec *codec = QTextCodec::codecForName(widgetFile()->spellCheckerEncoding().toLatin1());
+    this->widgetFile()->spellChecker()->add(codec->fromUnicode(newword).data());
+    _syntaxHighlighter->rehighlightBlock(textCursor().block());
+}
+
 void WidgetTextEdit::correctWord()
 {
     QAction *action = qobject_cast<QAction *>(sender());

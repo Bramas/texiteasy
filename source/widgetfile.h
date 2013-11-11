@@ -27,6 +27,7 @@ public:
 
     void builTex(QString command);
     void bibtex(void);
+    void clean(void);
     WidgetFile * masterFile() { return _masterFile; }
     void save();
     void saveAs(void);
