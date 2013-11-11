@@ -32,7 +32,7 @@
 int main(int argc, char *argv[])
 {
 #ifdef OS_MAC
-    QCoreApplication::addLibraryPath("/Developer/Applications/Qt/plugins/sqldrivers");
+    //QCoreApplication::addLibraryPath("/Developer/Applications/Qt/plugins/sqldrivers");
 #endif
     Application a(argc, argv);
     ConfigManager::Instance.init();
