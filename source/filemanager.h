@@ -14,6 +14,7 @@ class FileManager : public QObject
     Q_OBJECT
 public:
     static FileManager Instance;
+    void init();
     WidgetFile * currentWidgetFile() { if(_currentWidgetFileId < 0) return 0; return _widgetFiles.at(_currentWidgetFileId); }
 
     void initTheme();
@@ -27,8 +28,8 @@ public:
     WidgetFile * widgetFile(QString filename);
     WidgetFile * widgetFile(int index) { return _widgetFiles.at(index); }
     void setMainWindow(MainWindow * m) { _mainWindow = m; }
-    void removeWatch(QString filename) { _fileSystemWatcher.removePath(filename); }
-    void addWatch(QString filename) { _fileSystemWatcher.addPath(filename); }
+    void removeWatch(QString filename) { _fileSystemWatcher->removePath(filename); }
+    void addWatch(QString filename) { _fileSystemWatcher->addPath(filename); }
     void handleMimeData(const QMimeData * mimeData);
 
 signals:
@@ -93,7 +94,7 @@ private:
     QList<WidgetFile *> _widgetFiles;
     int _currentWidgetFileId;
     bool _pdfSynchronized;
-    QFileSystemWatcher _fileSystemWatcher;
+    QFileSystemWatcher * _fileSystemWatcher;
     MainWindow * _mainWindow;
 };
 

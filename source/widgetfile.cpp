@@ -334,6 +334,10 @@ void WidgetFile::open(QString filename)
     _widgetTextEdit->getCurrentFile()->open(filename);
     _widgetPdfViewer->widgetPdfDocument()->setFile(_widgetTextEdit->getCurrentFile());
     _widgetConsole->setBuilder(_widgetTextEdit->getCurrentFile()->getBuilder());
+    foreach(QAction * a, this->actions())
+    {
+        this->removeAction(a);
+    }
     foreach(AssociatedFile associatedfile,  _widgetTextEdit->getCurrentFile()->associatedFiles())
     {
         QString basename = associatedfile.filename;

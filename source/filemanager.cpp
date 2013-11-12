@@ -18,7 +18,11 @@ FileManager::FileManager(QObject *parent) :
     _mainWindow(0)
 {
     _pdfSynchronized = ConfigManager::Instance.isPdfSynchronized();
-    connect(&_fileSystemWatcher, SIGNAL(fileChanged(QString)), this, SLOT(onFileSystemChanged(QString)));
+}
+void FileManager::init()
+{
+    _fileSystemWatcher = new QFileSystemWatcher(this);
+    connect(_fileSystemWatcher, SIGNAL(fileChanged(QString)), this, SLOT(onFileSystemChanged(QString)));
 }
 
 bool FileManager::newFile()
@@ -109,7 +113,7 @@ bool FileManager::open(QString filename)
 {
     bool newWidget = this->newFile();
     this->currentWidgetFile()->open(filename);
-    _fileSystemWatcher.addPath(filename);
+    _fileSystemWatcher->addPath(filename);
 
     // is it an associated file?
     int masterId = this->reverseAssociatedFileIndex(filename);
@@ -261,7 +265,7 @@ void FileManager::close(WidgetFile *widget)
         return;
     }
     deleteMasterConnexions(widget);
-    _fileSystemWatcher.removePath(widget->file()->getFilename());
+    _fileSystemWatcher->removePath(widget->file()->getFilename());
     if(_currentWidgetFileId >= id && _currentWidgetFileId != 0)
     {
         --_currentWidgetFileId;

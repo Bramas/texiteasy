@@ -420,11 +420,6 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
     {
         QTextCursor cur1 = this->textCursor();
         QTextCursor cur2 = _multipleEdit.first();
-        /*if(!cur1.selectedText().isEmpty())
-        {
-            cur2.setPosition(_multipleEdit.first());
-            cur2.movePosition(cur1.selectionStart() == cur1.position() ? QTextCursor::Right : QTextCursor::Left, QTextCursor::KeepAnchor, cur1.selectedText().length());
-        }*/
         if(e->key() == Qt::Key_Delete)
         {
             cur1.deleteChar();
@@ -555,7 +550,14 @@ void WidgetTextEdit::insertFile(QString filename)
 
 void WidgetTextEdit::insertFromMimeData(const QMimeData *source)
 {
-    FileManager::Instance.handleMimeData(source);
+    if(source->hasUrls())
+    {
+        FileManager::Instance.handleMimeData(source);
+    }
+    else
+    {
+        WIDGET_TEXT_EDIT_PARENT_CLASS::insertFromMimeData(source);
+    }
 }
 
 void WidgetTextEdit::matchAll()

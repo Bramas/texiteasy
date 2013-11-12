@@ -185,7 +185,7 @@ mac{
     LIBS += -L/usr/local/lib -lz -lpoppler-qt5
     ICON = texiteasy.icns
     DEFINES += OS_MAC
-#   DEFINES += MAC_DEPLOY
+   DEFINES += MAC_DEPLOY
     LAST_VERSION_URL = \\\"'https://raw.github.com/Bramas/texiteasy/master/VERSION_MAC'\\\"
     #CONFIG += x86 x86_64
 }

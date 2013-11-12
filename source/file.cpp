@@ -217,6 +217,7 @@ void File::lookForAssociatedFiles()
     {
         return;
     }
+    _associatedFiles.clear();
 
     // Look for bibtex Files
     QRegExp patternBib("\\\\bibliography\\{([^\\}]*)\\}");

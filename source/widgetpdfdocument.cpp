@@ -31,6 +31,7 @@
 #include "file.h"
 
 #ifdef OS_MAC
+#include "filemanager.h"
 #include "widgetfile.h"
 #include "widgettextedit.h"
 #endif
@@ -459,7 +460,7 @@ void WidgetPdfDocument::wheelEvent(QWheelEvent * event)
 {
 #ifdef OS_MAC
     // Hack because modifiers do not work with an external mouse
-    if(this->_file->widgetFile()->widgetTextEdit()->modifiers
+    if( FileManager::Instance.currentWidgetFile()->widgetTextEdit()->modifiers
 #else
     if(event->modifiers()
 #endif
@@ -494,8 +495,9 @@ void WidgetPdfDocument::zoom(qreal factor, QPoint target)
     this->_zoom = _zoom < 0.1 ? 0.1 : _zoom; // limit the zoom to 0.1
     this->_zoom = _zoom > 3 ? 3 : _zoom; // limit the zoom to 3
     factor = _zoom / oldZoom; // calculate the real factor;
+    this->_painterTranslate -= target;
     this->_painterTranslate *= factor;
-    this->_painterTranslate += target - target*factor;
+    this->_painterTranslate += target;
     this->boundPainterTranslation();
 
     this->_scroll->setRange(0,this->documentHeight() - this->height()+30);
@@ -505,8 +507,6 @@ void WidgetPdfDocument::zoom(qreal factor, QPoint target)
     _requestNewResolutionTimer.stop();
     _requestNewResolutionTimer.start(ZOOM_UPDATE);
     return;
-    refreshPages();
-    initLinks();
 }
 void WidgetPdfDocument::zoomIn()
 {

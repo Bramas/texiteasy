@@ -289,9 +289,9 @@ void WidgetStatusBarButton::setText(QString text)
 
 void WidgetStatusBarButton::updateGeometry()
 {
-    QFontMetrics fm(QFont(ConfigManager::Instance.getTextCharFormats("normal").fontFamily(), 12));
+    QFontMetrics fm(QFont(this->_label->font().family(), 12));
 
-    int width = fm.width(_label->text());
+    int width = fm.width(_label->text()) + 10;
     _label->setMinimumWidth(width);
     _label->setMaximumWidth(width);
     this->setMinimumWidth(width);
