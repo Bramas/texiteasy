@@ -704,6 +704,7 @@ void ConfigManager::checkRevision()
         theme2.copy(themePath()+"light.texiteasy-theme");
     }
     case 0x000601:
+    case 0x000602:
         break;
     }
     settings.setValue("version_hex",CURRENT_VERSION_HEX);
