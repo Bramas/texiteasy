@@ -42,9 +42,9 @@
 	<key>CFBundleName</key>
 	<string>texiteasy</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.5.3</string>
+	<string>0.6.1</string>
 	<key>CFBundleVersion</key>
-	<string>0.5.3</string>
+	<string>0.6.1</string>
 	<key>NSHighResolutionCapable</key>
 	<string>True</string>
 </dict>

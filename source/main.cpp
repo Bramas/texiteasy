@@ -27,15 +27,22 @@
 #include <QSettings>
 #include <QFontDatabase>
 #include <QDebug>
+#include <QFileInfo>
+#include <QDir>
 
 
 int main(int argc, char *argv[])
 {
 #ifdef OS_MAC
-    //QCoreApplication::addLibraryPath("/Developer/Applications/Qt/plugins/sqldrivers");
+#ifdef MAC_DEPLOY
+     QDir dir(QFileInfo(argv[0]).path());  // e.g. appdir/Contents/MacOS
+     dir.cdUp();
+     dir.cd("PlugIns");  // e.g. appdir/Contents/PlugIns
+     QCoreApplication::setLibraryPaths(QStringList(dir.absolutePath()));
+#endif
 #endif
     Application a(argc, argv);
-    ConfigManager::Instance.init();
+
 
     QFontDatabase::addApplicationFont(":/data/fonts/consola.ttf");
     QFontDatabase::addApplicationFont(":/data/fonts/consolab.ttf");
@@ -43,6 +50,7 @@ int main(int argc, char *argv[])
     QFontDatabase::addApplicationFont(":/data/fonts/consolaz.ttf");
 
     qDebug()<<QString("Start ")+APPLICATION_NAME+QString(" version ")+CURRENT_VERSION;
+    ConfigManager::Instance.init();
     MainWindow w;
     w.show();
     a.connect(&a, SIGNAL(requestOpenFile(QString)), &w, SLOT(open(QString)));
