@@ -139,32 +139,41 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
     int dollarPos = text.indexOf( '$' );
     while ( dollarPos != -1 )
     {
-        blockData->insertDollar(dollarPos);
+        if(dollarPos == 0 || text.at(dollarPos - 1) != '\\')
+        {
+            blockData->insertDollar(dollarPos);
+        }
         dollarPos = text.indexOf( '$', dollarPos+1 );
     }
 
 
     int leftPos = text.indexOf( '{' );
     while ( leftPos != -1 )
-      {
-      ParenthesisInfo *info = new ParenthesisInfo;
-      info->character = '{';
-      info->position = leftPos;
+    {
+        if(leftPos == 0 || text.at(leftPos - 1) != '\\')
+        {
+            ParenthesisInfo *info = new ParenthesisInfo;
+            info->character = '{';
+            info->position = leftPos;
 
-      blockData->insertPar( info );
+            blockData->insertPar( info );
+        }
       leftPos = text.indexOf( '{', leftPos+1 );
-      }
+    }
 
     int rightPos = text.indexOf('}');
     while ( rightPos != -1 )
-      {
-      ParenthesisInfo *info = new ParenthesisInfo;
-      info->character = '}';
-      info->position = rightPos;
+    {
+        if(rightPos == 0 || text.at(rightPos - 1) != '\\')
+        {
+            ParenthesisInfo *info = new ParenthesisInfo;
+            info->character = '}';
+            info->position = rightPos;
 
-      blockData->insertPar( info );
-      rightPos = text.indexOf( '}', rightPos+1 );
-      }
+            blockData->insertPar( info );
+        }
+        rightPos = text.indexOf( '}', rightPos+1 );
+    }
 
     leftPos = text.indexOf( "\\begin{" );
     while ( leftPos != -1 )
@@ -221,6 +230,7 @@ int index = 0;
 QChar currentChar;
 QChar nextChar;
 QString commandBuffer;
+bool escapedChar;
 //qDebug()<<"previous state "<<state;
 while(index < text.length())
 {
@@ -234,8 +244,16 @@ while(index < text.length())
     {
         nextChar == QChar::Null;
     }
+    if(state == Command && commandBuffer.isNull())
+    {
+        escapedChar = true;
+    }
+    else
+    {
+        escapedChar = false;
+    }
     // if the end of line is commented, we break the loop and we keep the current state (we do not save state = Comment)
-    if(currentChar == '%')
+    if(currentChar == '%' && !escapedChar)
     {
         setFormat(index, text.size() - index, formatComment);
         for(int comment_idx = index; comment_idx < text.size(); ++comment_idx)
@@ -244,19 +262,19 @@ while(index < text.length())
         }
         break;
     }
-    if(currentChar == '{')
+    if(currentChar == '{' && !escapedChar)
     {
         parenthesisLevel->top() += 1;
     }
-    else if(currentChar == '}')
+    else if(currentChar == '}' && !escapedChar)
     {
         parenthesisLevel->top() -= 1;
     }
-    if(currentChar == '[')
+    if(currentChar == '[' && !escapedChar)
     {
         crocherLevel->top() += 1;
     }
-    else if(currentChar == ']')
+    else if(currentChar == ']' && !escapedChar)
     {
         crocherLevel->top() -= 1;
     }
@@ -267,34 +285,34 @@ while(index < text.length())
         {
             state = Math;
             parenthesisLevel->pop();
-            if(currentChar == '}')
+            if(currentChar == '}' && !escapedChar)
             {
                 parenthesisLevel->top() += 1;
             }
-            if(currentChar == '[')
+            if(currentChar == '[' && !escapedChar)
             {
                 parenthesisLevel->top() -= 1;
             }
-            if(currentChar == ']')
+            if(currentChar == ']' && !escapedChar)
             {
                 crocherLevel->top() += 1;
             }
             --index;
         }
         else
-        if(      currentChar == '$'
-             ||  currentChar == '\\' && nextChar == '[')
+        if(      (currentChar == '$'  && !escapedChar)
+             ||  (currentChar == '\\' && !escapedChar) && nextChar == '[')
         {
             state = Math;
             setFormat(index, 1, formatMath);
-            if(currentChar == '$' && nextChar == '$')
+            if(currentChar == '$' && !escapedChar && nextChar == '$')
             {
                 setFormat(index + 1, 1, formatMath);
                 ++index;
             }
         }
         else
-        if(currentChar == '\\')
+        if(currentChar == '\\' && !escapedChar)
         {
             previousState = Text;
             state = Command;
@@ -316,20 +334,20 @@ while(index < text.length())
         break;
     case Math:
         setFormat(index, 1, formatMath);
-        if(   currentChar == '\\' && nextChar == ']'
-           || currentChar == '$' && nextChar == '$')
+        if(   currentChar == '\\' && !escapedChar && nextChar == ']'
+           || currentChar == '$' && !escapedChar && nextChar == '$')
         {
             state = Text;
             setFormat(index + 1, 1, formatMath);
             ++index;
         }
         else
-        if(currentChar == '$')
+        if(currentChar == '$' && !escapedChar)
         {
             state = Text;
         }
         else
-        if(currentChar == '\\')
+        if(currentChar == '\\' && !escapedChar)
         {
             previousState = Math;
             state = Command;
@@ -350,7 +368,7 @@ while(index < text.length())
         if(currentChar != ' ' && currentChar != '\t' && crocherLevel->top() == 0)
         {
             crocherLevel->pop();
-            if(currentChar == '{')
+            if(currentChar == '{' && !escapedChar)
             {
                 parenthesisLevel->top() -= 1;
             }
@@ -358,7 +376,7 @@ while(index < text.length())
             {
                 parenthesisLevel->push(0);
             }
-            if(currentChar == ']')
+            if(currentChar == ']' && !escapedChar)
             {
                 setFormat(index, 1, formatOption);
             }
@@ -376,9 +394,15 @@ while(index < text.length())
         break;
     case Command:
 
-        if(commandBuffer.isNull() && currentChar == '\\')
+        if(commandBuffer.isNull() && QString(currentChar).contains(QRegExp("[^a-zA-Z]")))
         {
-            setFormat(index, 1, formatCommand);
+            if(previousState == Math)
+            {
+                setFormat(index, 1, formatCommandInMathMode);
+            }else
+            {
+                setFormat(index, 1, formatCommand);
+            }
             state = previousState;
             break;
         }
