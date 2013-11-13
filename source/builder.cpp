@@ -101,13 +101,13 @@ void Builder::builTex(QString command)
     _lastOutput = QString("");
     _simpleOutPut.clear();
     _commands.clear();
-    _basename = this->file->fileInfo().baseName();
+    _basename = this->file->rootBasename();
 
     if(this->process->state() != QProcess::NotRunning)
     {
         this->process->kill();
     }
-    process->setWorkingDirectory(this->file->getPath());
+    process->setWorkingDirectory(this->file->getRootPath());
     if(ConfigManager::Instance.hideAuxFiles())
     {
         _hiddingProcess->setWorkingDirectory(this->file->getPath());
@@ -150,8 +150,8 @@ void Builder::clean()
     {
         return;
     }
-    QDir dir(file->getPath());
-    QString basename = this->file->fileInfo().baseName();
+    QDir dir(file->getRootPath());
+    QString basename = this->file->rootBasename();
     dir.remove(basename+".aux");
     dir.remove(basename+".log");
     dir.remove(basename+".synctex.gz");
@@ -167,9 +167,9 @@ void Builder::bibtex()
     QSettings settings;
     _lastOutput = QString("");
     _simpleOutPut.clear();
-    _basename = this->file->fileInfo().baseName();
+    _basename = this->file->rootBasename();
 
-    process->setWorkingDirectory(this->file->getPath());
+    process->setWorkingDirectory(this->file->getRootPath());
     QString command = ConfigManager::Instance.bibtexCommand(true).arg(_basename);//.arg(".texiteasy");//this->file->getPath()).arg();//this->file->getAuxPath());
     qDebug()<<command;
     process->start(command);
@@ -224,8 +224,8 @@ void Builder::hideAuxFiles()
         return;
     }
 
-    _hiddingProcess->setWorkingDirectory(this->file->getPath());
-    QString basename = this->file->fileInfo().baseName();
+    _hiddingProcess->setWorkingDirectory(this->file->getRootPath());
+    QString basename = this->file->rootBasename();
 #ifdef OS_WINDOWS
     QString command = QString("attrib +h \"%1.aux\"").arg(basename);
     _hiddingProcess->start(command);

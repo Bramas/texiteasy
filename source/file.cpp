@@ -138,9 +138,19 @@ const QString File::open(QString filename, QString codec)
         in.setCodec(codec.toLatin1());
     }
 
-    while (!in.atEnd()) {
-        data.append(in.readLine()+"\n");
+    data = in.readAll();
+
+    this->findTexDirectives(); // find directive before look for associative files
+    if(codec.isEmpty() && _texDirectives.contains("encoding"))
+    {
+        codec = _texDirectives.value("encoding");
+        if(codec.compare("utf8", Qt::CaseInsensitive) && codec.compare("utf-8", Qt::CaseInsensitive) && codec.compare("utf 8", Qt::CaseInsensitive))
+        {
+            qDebug()<<"reload "<<codec;
+            return this->open(this->filename, codec);
+        }
     }
+
     if(codec.isEmpty() && data.contains(QString::fromUtf8("�")))
     {
         this->open(this->filename,"ISO 8859-1");
@@ -209,6 +219,23 @@ void File::autoSave()
     out.setCodec(_codec.toLatin1());
     //out.setGenerateByteOrderMark(true);
     out << this->data;
+}
+void File::findTexDirectives()
+{
+    if(this->data.isEmpty())
+    {
+        return;
+    }
+    _texDirectives.clear();
+    QRegExp directivePattern("%[ ]*\\![ ]*TEX[ ]*([a-z\\-]+)[ ]*=([^\\n]+)\\n", Qt::CaseInsensitive);
+    int index = -1;
+    while(-1 != (index = this->data.indexOf(directivePattern, index + 1)))
+    {
+        QString directiveName = directivePattern.capturedTexts().at(1);
+        QString directiveValue = directivePattern.capturedTexts().at(2);
+        qDebug()<<directiveName.trimmed()<<" "<<directiveValue.trimmed();
+        _texDirectives.insert(directiveName.trimmed(), directiveValue.trimmed());
+    }
 }
 
 void File::lookForAssociatedFiles()

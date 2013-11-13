@@ -42,7 +42,7 @@ public:
     static QStringList textBlockCommands;
     static QStringList otherBlockCommands;
 
-    typedef enum State { Text, Other, Math, Command, Option, Comment } State;
+    typedef enum State { Text, Other, Math, Command, Option, Comment, Verbatim } State;
     bool isWordSeparator(QChar c) const;
 protected:
     virtual void highlightBlock(const QString &text);

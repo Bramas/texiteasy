@@ -334,10 +334,30 @@ void WidgetFile::open(QString filename)
     _widgetTextEdit->getCurrentFile()->open(filename);
     _widgetPdfViewer->widgetPdfDocument()->setFile(_widgetTextEdit->getCurrentFile());
     _widgetConsole->setBuilder(_widgetTextEdit->getCurrentFile()->getBuilder());
+
+
+    if(file()->texDirectives().contains("spellcheck"))
+    {
+        this->setDictionary(file()->texDirectives().value("spellcheck"));
+    }
+
     foreach(QAction * a, this->actions())
     {
         this->removeAction(a);
     }
+
+    if(file()->texDirectives().contains("root"))
+    {
+        QString rootfile = file()->rootFilename();
+
+        QString basename = rootfile;
+        basename.replace(QRegExp("^.*[\\\\\\//]([^\\\\\\//]+)$"), "\\1");
+        QAction * a = new QAction(trUtf8("Ouvrir ") + basename, this);
+        a->setProperty("filename", rootfile);
+        connect(a, SIGNAL(triggered()), &FileManager::Instance, SLOT(openAssociatedFile()));
+        this->addAction(a);
+    }
+
     foreach(AssociatedFile associatedfile,  _widgetTextEdit->getCurrentFile()->associatedFiles())
     {
         QString basename = associatedfile.filename;

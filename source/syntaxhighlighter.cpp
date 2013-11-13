@@ -136,69 +136,6 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
     }
 
 
-    int dollarPos = text.indexOf( '$' );
-    while ( dollarPos != -1 )
-    {
-        if(dollarPos == 0 || text.at(dollarPos - 1) != '\\')
-        {
-            blockData->insertDollar(dollarPos);
-        }
-        dollarPos = text.indexOf( '$', dollarPos+1 );
-    }
-
-
-    int leftPos = text.indexOf( '{' );
-    while ( leftPos != -1 )
-    {
-        if(leftPos == 0 || text.at(leftPos - 1) != '\\')
-        {
-            ParenthesisInfo *info = new ParenthesisInfo;
-            info->character = '{';
-            info->position = leftPos;
-
-            blockData->insertPar( info );
-        }
-      leftPos = text.indexOf( '{', leftPos+1 );
-    }
-
-    int rightPos = text.indexOf('}');
-    while ( rightPos != -1 )
-    {
-        if(rightPos == 0 || text.at(rightPos - 1) != '\\')
-        {
-            ParenthesisInfo *info = new ParenthesisInfo;
-            info->character = '}';
-            info->position = rightPos;
-
-            blockData->insertPar( info );
-        }
-        rightPos = text.indexOf( '}', rightPos+1 );
-    }
-
-    leftPos = text.indexOf( "\\begin{" );
-    while ( leftPos != -1 )
-      {
-      LatexBlockInfo *info = new LatexBlockInfo;
-      info->character = 'b';
-      info->position = leftPos;
-
-      blockData->insertLat( info );
-      leftPos = text.indexOf("\\begin{", leftPos+1 );
-      }
-
-    rightPos = text.indexOf("\\end{");
-    while ( rightPos != -1 )
-      {
-      LatexBlockInfo *info = new LatexBlockInfo;
-      info->character = 'e';
-      info->position = rightPos;
-
-      blockData->insertLat( info );
-      rightPos = text.indexOf("\\end{", rightPos+1 );
-      }
-
-
-
 
     QTextCharFormat spellingErrorFormat = ConfigManager::Instance.getTextCharFormats("normal");
     spellingErrorFormat.setFontUnderline(true);
@@ -214,7 +151,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
     QTextCharFormat formatComment = ConfigManager::Instance.getTextCharFormats("comment");
     QTextCharFormat formatMath = ConfigManager::Instance.getTextCharFormats("math");
     QTextCharFormat formatOther = ConfigManager::Instance.getTextCharFormats("other");
-
+    QTextCharFormat formatVerbatim = formatOther;
 
      setFormat(0, text.size(), formatNormal);
 
@@ -229,12 +166,15 @@ QStack<int> * crocherLevel = &(blockData->blockEndingState.crocherLevel);
 int index = 0;
 QChar currentChar;
 QChar nextChar;
+QChar verbCharacter;
 QString commandBuffer;
 bool escapedChar;
+int overrideCurrentState;
 //qDebug()<<"previous state "<<state;
 while(index < text.length())
 {
     currentChar = text.at(index);
+    overrideCurrentState = -1;
     //qDebug()<<index<<" : "<<currentChar<<" state : "<<state<<", parentheislevel : "<<(blockData->blockEndingState.parenthesisLevel);
     if(index < text.length() - 1)
     {
@@ -244,7 +184,7 @@ while(index < text.length())
     {
         nextChar == QChar::Null;
     }
-    if(state == Command && commandBuffer.isNull())
+    if((state == Command && commandBuffer.isNull()) || state == Verbatim || (state == Command && !commandBuffer.compare("verb") && QString(currentChar).contains(QRegExp("[^a-zA-Z]"))))
     {
         escapedChar = true;
     }
@@ -285,19 +225,6 @@ while(index < text.length())
         {
             state = Math;
             parenthesisLevel->pop();
-            if(currentChar == '}' && !escapedChar)
-            {
-                parenthesisLevel->top() += 1;
-            }
-            if(currentChar == '[' && !escapedChar)
-            {
-                parenthesisLevel->top() -= 1;
-            }
-            if(currentChar == ']' && !escapedChar)
-            {
-                crocherLevel->top() += 1;
-            }
-            --index;
         }
         else
         if(      (currentChar == '$'  && !escapedChar)
@@ -323,6 +250,7 @@ while(index < text.length())
     case Other:
         if(currentChar != ' ' && currentChar != '\t' && parenthesisLevel->top() == 0)
         {
+            setFormat(index, 1, formatOther);
             parenthesisLevel->pop();
             state = previousState;
         }
@@ -338,6 +266,7 @@ while(index < text.length())
            || currentChar == '$' && !escapedChar && nextChar == '$')
         {
             state = Text;
+            overrideCurrentState = Math;
             setFormat(index + 1, 1, formatMath);
             ++index;
         }
@@ -345,6 +274,7 @@ while(index < text.length())
         if(currentChar == '$' && !escapedChar)
         {
             state = Text;
+            overrideCurrentState = Math;
         }
         else
         if(currentChar == '\\' && !escapedChar)
@@ -356,15 +286,6 @@ while(index < text.length())
         }
         break;
     case Option:
-        /*if(currentChar == '{' && crocherLevel->top() == 0)
-        {
-            crocherLevel->pop();
-            parenthesisLevel->top() -= 1;
-            parenthesisLevel->push(0);
-            state = stateAfterOption;
-            --index;
-        }
-        else*/
         if(currentChar != ' ' && currentChar != '\t' && crocherLevel->top() == 0)
         {
             crocherLevel->pop();
@@ -392,8 +313,19 @@ while(index < text.length())
             state = Option;
         }
         break;
+    case Verbatim:
+        if(currentChar == verbCharacter)
+        {
+            setFormat(index, 1, formatVerbatim);
+            state = previousState;
+            overrideCurrentState = Verbatim;
+        }
+        else
+        {
+            setFormat(index, 1, formatVerbatim);
+        }
+        break;
     case Command:
-
         if(commandBuffer.isNull() && QString(currentChar).contains(QRegExp("[^a-zA-Z]")))
         {
             if(previousState == Math)
@@ -430,6 +362,13 @@ while(index < text.length())
         }
         if(QString(currentChar).contains(QRegExp("[^a-zA-Z]")))
         {
+            if(!commandBuffer.compare("verb"))
+            {
+                setFormat(index, 1, formatVerbatim);
+                verbCharacter = currentChar;
+                state = Verbatim;
+                break;
+            }
             if(currentChar == ']')
             {
                 crocherLevel->top() += 1;
@@ -518,10 +457,100 @@ while(index < text.length())
         {
             break;
         }
-        blockData->characterData[index].state = state;
+        if(overrideCurrentState != -1)
+        {
+            blockData->characterData[index].state = overrideCurrentState;
+        }
+        else
+        {
+            blockData->characterData[index].state = state;
+        }
         ++index;
     }
 }
+
+
+
+
+//*****************************************************************************
+//
+
+
+
+int dollarPos = text.indexOf( '$' );
+while ( dollarPos != -1 )
+{
+    if(   blockData->characterData[dollarPos].state != Verbatim
+       && blockData->characterData[dollarPos].state != Command)
+    {
+        blockData->insertDollar(dollarPos);
+    }
+    dollarPos = text.indexOf( '$', dollarPos+1 );
+}
+
+
+int leftPos = text.indexOf( '{' );
+while ( leftPos != -1 )
+{
+    if(   blockData->characterData[leftPos].state != Verbatim
+       && blockData->characterData[leftPos].state != Command)
+    {
+        ParenthesisInfo *info = new ParenthesisInfo;
+        info->character = '{';
+        info->position = leftPos;
+
+        blockData->insertPar( info );
+    }
+  leftPos = text.indexOf( '{', leftPos+1 );
+}
+
+int rightPos = text.indexOf('}');
+while ( rightPos != -1 )
+{
+    if(   blockData->characterData[rightPos].state != Verbatim
+       && blockData->characterData[rightPos].state != Command)
+    {
+        ParenthesisInfo *info = new ParenthesisInfo;
+        info->character = '}';
+        info->position = rightPos;
+
+        blockData->insertPar( info );
+    }
+    rightPos = text.indexOf( '}', rightPos+1 );
+}
+
+leftPos = text.indexOf( "\\begin{" );
+while ( leftPos != -1 )
+  {
+  LatexBlockInfo *info = new LatexBlockInfo;
+  info->character = 'b';
+  info->position = leftPos;
+
+  blockData->insertLat( info );
+  leftPos = text.indexOf("\\begin{", leftPos+1 );
+  }
+
+rightPos = text.indexOf("\\end{");
+while ( rightPos != -1 )
+  {
+  LatexBlockInfo *info = new LatexBlockInfo;
+  info->character = 'e';
+  info->position = rightPos;
+
+  blockData->insertLat( info );
+  rightPos = text.indexOf("\\end{", rightPos+1 );
+  }
+
+
+
+
+
+
+
+
+
+//*****************************************************************************
+// Spell Checker
 
 if (_widgetFile->spellChecker())
 {

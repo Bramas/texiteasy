@@ -109,6 +109,28 @@ public:
 
     QString getPath() const { QString s(this->filename); return s.replace(QRegExp("^(([^\\\\\\/]*[\\\\\\/])*)[^\\\\\\/]*$"),"\\1"); }
 
+    QString rootBasename() const { return QFileInfo(rootFilename()).baseName(); }
+    QString getRootPath() const { return QFileInfo(rootFilename()).path(); }
+
+    QString rootFilename() const
+    {
+        if(!_texDirectives.contains("root"))
+        {
+              return getFilename();
+        }
+        QString rootfile = _texDirectives.value("root");
+        QDir dir(rootfile);
+        if(!dir.isAbsolute())
+        {
+            rootfile = getPath()+rootfile;
+        }
+        if(rootfile.right(4).compare(".tex"))
+        {
+            rootfile += ".tex";
+        }
+        return rootfile;
+    }
+
     /**
      * @brief getAuxPath (not used)
      * @return the auxilary directory
@@ -136,9 +158,9 @@ public:
      */
     QString getPdfFilename() const {
         QRegExp ext("\\.[a-zA-Z0-9]+$");
-        if(this->filename.indexOf(ext) != -1)
+        if(this->rootFilename().indexOf(ext) != -1)
         {
-            QString s(this->filename); return s.replace(ext, ".pdf");
+            QString s(this->rootFilename()); return s.replace(ext, ".pdf");
         }
         return "";
     }
@@ -165,6 +187,8 @@ public:
     void removeOpenAssociatedFile(File * openAssocitedFile);
     WidgetFile * widgetFile() { return _widgetFile; }
 
+    const QMap<QString, QString> & texDirectives(){ return _texDirectives; }
+
 
 public slots:
     /**
@@ -189,7 +213,7 @@ private:
      * @brief lookForAssociatedFiles parse the source, and find if there is some \input{} files or bitex, or figures
      */
     void lookForAssociatedFiles();
-
+    void findTexDirectives();
     QTimer * _autoSaveTimer;
     QList<AssociatedFile> _associatedFiles;
     QList<File*> _openAssociatedFiles;
@@ -202,6 +226,7 @@ private:
     WidgetTextEdit * _widgetTextEdit;
     WidgetFile * _widgetFile;
     Format _format;
+    QMap<QString, QString> _texDirectives;
 
 
     QMap<int,int> _lineNumberSinceLastBuild;
