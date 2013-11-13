@@ -16,6 +16,8 @@ TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com'\\\"
 VERSION = \\\"'0.6.2'\\\"
 VERSION_HEX = 0x000602
 
+DEFINES += LIB_DEPLOY
+
 DEFINES += "CURRENT_VERSION_HEX=$${VERSION_HEX}"
 DEFINES += "CURRENT_VERSION=$${VERSION}"
 DEFINES += "APPLICATION_NAME=$${APPLICATION_NAME}"
@@ -185,7 +187,6 @@ mac{
     LIBS += -L/usr/local/lib -lz -lpoppler-qt5
     ICON = texiteasy.icns
     DEFINES += OS_MAC
-   DEFINES += MAC_DEPLOY
     LAST_VERSION_URL = \\\"'https://raw.github.com/Bramas/texiteasy/master/VERSION_MAC'\\\"
     #CONFIG += x86 x86_64
 }

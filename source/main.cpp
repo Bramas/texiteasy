@@ -34,11 +34,16 @@
 
 int main(int argc, char *argv[])
 {
+#ifdef LIB_DEPLOY
 #ifdef OS_MAC
-#ifdef MAC_DEPLOY
      QDir dir(QFileInfo(argv[0]).path());  // e.g. appdir/Contents/MacOS
      dir.cdUp();
      dir.cd("PlugIns");  // e.g. appdir/Contents/PlugIns
+     QCoreApplication::setLibraryPaths(QStringList(dir.absolutePath()));
+#endif
+#ifdef OS_WINDOWS
+     QDir dir(QFileInfo(argv[0]).path());  // e.g. appdir
+     dir.cd("PlugIns");  // e.g. appdir/PlugIns
      QCoreApplication::setLibraryPaths(QStringList(dir.absolutePath()));
 #endif
 #endif
