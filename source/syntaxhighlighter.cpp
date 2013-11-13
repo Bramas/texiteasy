@@ -376,9 +376,15 @@ while(index < text.length())
         break;
     case Command:
 
-        if(commandBuffer.isNull() && currentChar == '\\')
+        if(commandBuffer.isNull() && !QString(currentChar).contains(QRegExp("[^a-zA-Z]")))
         {
-            setFormat(index, 1, formatCommand);
+            if(previousState == Math)
+            {
+                setFormat(index, 1, formatCommandInMathMode);
+            }else
+            {
+                setFormat(index, 1, formatCommand);
+            }
             state = previousState;
             break;
         }
