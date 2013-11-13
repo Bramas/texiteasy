@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QList>
 #include <QFileSystemWatcher>
+#include "file.h"
 #include "widgetfile.h"
 
 class QMimeData;
@@ -22,7 +23,7 @@ public:
     bool open(QString filename);
     void close(WidgetFile *widget);
     int count() { return _widgetFiles.count(); }
-    int reverseAssociatedFileIndex(QString filename);
+    AssociatedFile reverseAssociation(QString filename, int* index = 0);
 
     File * file(int index);
     WidgetFile * widgetFile(QString filename);
@@ -86,8 +87,8 @@ private slots:
 
 private:
 
-    void createMasterConnexions(WidgetFile * widget, WidgetFile * master);
-    void deleteMasterConnexions(WidgetFile * widget);
+    void createMasterConnexions(WidgetFile * widget, WidgetFile * master, AssociatedFile::Type type = AssociatedFile::INPUT);
+    void deleteMasterConnexions(WidgetFile * widget, AssociatedFile::Type type = AssociatedFile::INPUT);
     void changeConnexions(WidgetFile *oldFile);
 
     explicit FileManager(QObject *parent = 0);

@@ -39,9 +39,11 @@ class QTimer;
 class WidgetFile;
 struct AssociatedFile
 {
-    typedef enum Type {BIBTEX, INPUT, FIGURE} Type;
+    typedef enum Type {NONE, BIBTEX, INPUT, FIGURE} Type;
     AssociatedFile::Type type;
     QString filename;
+
+    static AssociatedFile NoAssociation;
 };
 
 class File : public QObject
@@ -114,23 +116,9 @@ public:
 
     QString rootFilename() const
     {
-        if(!_texDirectives.contains("root"))
-        {
-              return getFilename();
-        }
-        QString rootfile = _texDirectives.value("root");
-        QDir dir(rootfile);
-        if(!dir.isAbsolute())
-        {
-            rootfile = getPath()+rootfile;
-        }
-        if(rootfile.right(4).compare(".tex"))
-        {
-            rootfile += ".tex";
-        }
-        return rootfile;
+        return _rootFilename;
     }
-
+    void setRootFilename(QString filename) { _rootFilename = filename; }
     /**
      * @brief getAuxPath (not used)
      * @return the auxilary directory
@@ -183,7 +171,7 @@ public:
 
     const QList<AssociatedFile> & associatedFiles() const { return _associatedFiles; }
     QStringList bibtexFiles() const;
-    bool isAssociatedWith(QString filename);
+    AssociatedFile associationWith(QString filename);
     void removeOpenAssociatedFile(File * openAssocitedFile);
     WidgetFile * widgetFile() { return _widgetFile; }
 
@@ -221,6 +209,7 @@ private:
     QString _codec;
     QString data;
     QString filename;
+    QString _rootFilename;
     bool _modified;
     Viewer * viewer;
     WidgetTextEdit * _widgetTextEdit;

@@ -49,7 +49,7 @@ CompletionEngine::CompletionEngine(WidgetTextEdit *parent) :
 
     _words.removeDuplicates();
     _words.sort();
-    qDebug()<<"Completion engine Initialized : "<<_words.count()<<" words";
+    //qDebug()<<"Completion engine Initialized : "<<_words.count()<<" words";
 }
 CompletionEngine::~CompletionEngine()
 {

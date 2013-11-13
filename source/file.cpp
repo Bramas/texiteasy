@@ -34,6 +34,8 @@
 
 #define AUTO_SAVE 120000
 
+AssociatedFile AssociatedFile::NoAssociation = { AssociatedFile::NONE, QString()};
+
 File::File(WidgetFile *widgetFile, WidgetTextEdit* widgetTextEdit, QString filename) :
     _autoSaveTimer(new QTimer),
     builder(new Builder(this)),
@@ -169,6 +171,29 @@ const QString File::open(QString filename, QString codec)
 
     this->_widgetTextEdit->setText(this->data);
     this->lookForAssociatedFiles();
+
+
+    //Update Root Filename;
+    if(!_texDirectives.contains("root"))
+    {
+          setRootFilename(getFilename());
+    }
+    else
+    {
+        QString rootfile = _texDirectives.value("root");
+        QDir dir(rootfile);
+        if(!dir.isAbsolute())
+        {
+            rootfile = getPath()+rootfile;
+        }
+        if(rootfile.right(4).compare(".tex"))
+        {
+            rootfile += ".tex";
+        }
+        setRootFilename(rootfile);
+    }
+
+
     this->refreshLineNumber();
     _modified = false;
     _autoSaveTimer->stop();
@@ -233,7 +258,6 @@ void File::findTexDirectives()
     {
         QString directiveName = directivePattern.capturedTexts().at(1);
         QString directiveValue = directivePattern.capturedTexts().at(2);
-        qDebug()<<directiveName.trimmed()<<" "<<directiveValue.trimmed();
         _texDirectives.insert(directiveName.trimmed(), directiveValue.trimmed());
     }
 }
@@ -297,16 +321,16 @@ QStringList File::bibtexFiles() const
     }
     return list;
 }
-bool File::isAssociatedWith(QString filename)
+AssociatedFile File::associationWith(QString filename)
 {
     foreach(AssociatedFile assoc, _associatedFiles)
     {
         if(!assoc.filename.compare(filename))
         {
-            return true;
+            return assoc;
         }
     }
-    return false;
+    return AssociatedFile::NoAssociation;
 }
 void File::addOpenAssociatedFile(File * openAssocitedFile)
 {

@@ -68,34 +68,43 @@ WidgetFile * FileManager::widgetFile(QString filename)
     return 0;
 }
 
-void FileManager::createMasterConnexions(WidgetFile * widget, WidgetFile * master)
+void FileManager::createMasterConnexions(WidgetFile * widget, WidgetFile * master, AssociatedFile::Type type)
 {
     master->file()->addOpenAssociatedFile(widget->file());
 
+
     // update the child
-    widget->setMasterFile(master);
-    widget->file()->getBuilder()->setFile(master->file());
+    connect(master->file()->getBuilder(), SIGNAL(pdfChanged()),widget->widgetPdfViewer()->widgetPdfDocument(),SLOT(updatePdf()));
+    if(type == AssociatedFile::BIBTEX)
+    {
+        widget->setMasterFile(master);
+        widget->file()->getBuilder()->setFile(master->file());
+    }
 
     // update the parent
     connect(widget->file()->getBuilder(), SIGNAL(pdfChanged()),master->widgetPdfViewer()->widgetPdfDocument(),SLOT(updatePdf()));
 }
 
-void FileManager::deleteMasterConnexions(WidgetFile *widget)
+void FileManager::deleteMasterConnexions(WidgetFile *widget, AssociatedFile::Type type)
 {
     // if it has a master file
     // remove connexion with the master file
     if(widget->masterFile())
     {
         widget->masterFile()->file()->removeOpenAssociatedFile(widget->file());
+        disconnect(widget->masterFile()->file()->getBuilder(), SIGNAL(pdfChanged()),widget->widgetPdfViewer()->widgetPdfDocument(),SLOT(updatePdf()));
         disconnect(widget->file()->getBuilder(), SIGNAL(pdfChanged()),widget->masterFile()->widgetPdfViewer()->widgetPdfDocument(),SLOT(updatePdf()));
 
-        // the widget maybe own the pdfDocument of the master file
-        // in this case we have to remove it as a child because
-        // if the widget is deleted, all children are deleted
-        if(widget->masterFile()->widgetPdfViewer()->widgetPdfDocument()->parent()
-                == widget->widgetPdfViewer())
+        if(widget->file()->format() == File::BIBTEX)
         {
-            widget->masterFile()->widgetPdfViewer()->restorPdfDocumentParent();
+            // the widget maybe own the pdfDocument of the master file
+            // in this case we have to remove it as a child because
+            // if the widget is deleted, all children are deleted
+            if(widget->masterFile()->widgetPdfViewer()->widgetPdfDocument()->parent()
+                    == widget->widgetPdfViewer())
+            {
+                widget->masterFile()->widgetPdfViewer()->restorPdfDocumentParent();
+            }
         }
     }
 
@@ -103,8 +112,14 @@ void FileManager::deleteMasterConnexions(WidgetFile *widget)
     // restore everything with the open associatedFiles
     foreach(File * openAssoc, widget->file()->openAssociatedFiles())
     {
+        // we miss the other part!!!
+        disconnect(openAssoc->getBuilder(), SIGNAL(pdfChanged()),widget->widgetPdfViewer()->widgetPdfDocument(),SLOT(updatePdf()));
+
+        if(openAssoc->format() == File::BIBTEX)
+        {
+            openAssoc->getBuilder()->setFile(openAssoc);
+        }
         openAssoc->widgetFile()->setMasterFile(0);
-        openAssoc->getBuilder()->setFile(openAssoc);
     }
 
 }
@@ -116,11 +131,22 @@ bool FileManager::open(QString filename)
     _fileSystemWatcher->addPath(filename);
 
     // is it an associated file?
-    int masterId = this->reverseAssociatedFileIndex(filename);
+    int masterId = 0;
+    AssociatedFile assoc = this->reverseAssociation(filename, &masterId);
     if(masterId != -1)
     {
         WidgetFile * masterFile = this->widgetFile(masterId);
-        createMasterConnexions(this->currentWidgetFile(), masterFile);
+        qDebug()<<"is associated with "<<masterFile->file()->getFilename();
+        if(assoc.type == AssociatedFile::INPUT && !this->currentWidgetFile()->file()->texDirectives().contains("root"))
+        {
+            this->currentWidgetFile()->file()->setRootFilename(masterFile->file()->getFilename());
+            this->currentWidgetFile()->widgetPdfViewer()->widgetPdfDocument()->updatePdf();
+        }
+        //else
+        //if(assoc.type == AssociatedFile::BIBTEX)
+        {
+            createMasterConnexions(this->currentWidgetFile(), masterFile, assoc.type);
+        }
     }
 
     // is there already an opened associated file
@@ -129,7 +155,16 @@ bool FileManager::open(QString filename)
     {
         if(associatedWidget = this->widgetFile(associatedFile.filename))
         {
-            createMasterConnexions(associatedWidget, this->currentWidgetFile());
+            if(associatedFile.type == AssociatedFile::INPUT && !associatedWidget->file()->texDirectives().contains("root"))
+            {
+                associatedWidget->file()->setRootFilename(this->currentWidgetFile()->file()->getFilename());
+                associatedWidget->widgetPdfViewer()->widgetPdfDocument()->updatePdf();
+            }
+            //else
+            //if(associatedFile.type == AssociatedFile::BIBTEX)
+            {
+                createMasterConnexions(associatedWidget, this->currentWidgetFile(), associatedFile.type);
+            }
         }
     }
 
@@ -146,18 +181,21 @@ void FileManager::openAssociatedFile()
     }
 
 }
-int FileManager::reverseAssociatedFileIndex(QString filename)
+AssociatedFile FileManager::reverseAssociation(QString filename, int *index)
 {
-    int index = 0;
+    int idx = 0;
     foreach(WidgetFile * widgetFile, _widgetFiles)
     {
-        if(widgetFile->file()->isAssociatedWith(filename))
+        AssociatedFile assoc;
+        if((assoc = widgetFile->file()->associationWith(filename)).type != AssociatedFile::NONE)
         {
-            return index;
+            if(index) *index = idx;
+            return assoc;
         }
-        ++index;
+        ++idx;
     }
-    return -1;
+    if(index) *index = -1;
+    return AssociatedFile::NoAssociation;
 }
 
 void FileManager::setCurrent(WidgetFile *widget)

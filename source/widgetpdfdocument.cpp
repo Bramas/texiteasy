@@ -242,8 +242,8 @@ void WidgetPdfDocument::initDocument()
     this->initLinks();
     this->initScroll();
 
-    QFileInfo fileInfo(this->_file->getFilename());
-    QString syncFile = fileInfo.canonicalPath() + QDir().separator() + fileInfo.baseName();
+    QFileInfo fileInfo(this->_file->rootFilename());
+    QString syncFile = fileInfo.canonicalPath() + "/" + fileInfo.baseName();
     if(QFile::exists(syncFile+".synctex.gz"))
     {
         if(scanner != NULL )
@@ -618,7 +618,6 @@ void WidgetPdfDocument::jumpToPdfFromSource(int source_line)
     }
 
     _widgetTextEdit->highlightSyncedLine(source_line);
-
     source_line = this->_file->getBuildedLine(source_line);
 
     if(source_line < 0 || source_line >= this->_widgetTextEdit->document()->blockCount())
@@ -646,6 +645,7 @@ void WidgetPdfDocument::jumpToPdfFromSource(int source_line)
     {
         return;
     }
+
 
     if (synctex_display_query(scanner, name.toUtf8().data(), source_line, 0) > 0)
     {
