@@ -96,7 +96,6 @@ void Builder::builTex(QString command)
         return;
     }
 
-
     emit started();
     _lastOutput = QString("");
     _simpleOutPut.clear();

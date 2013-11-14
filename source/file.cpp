@@ -73,7 +73,7 @@ void File::save(QString filename, bool recursively)
     {
         return;
     }
-    if(!this->_texDirectives.contains("root"))
+    if(!filename.isEmpty() && !this->_texDirectives.contains("root"))
     {
         this->setRootFilename(this->filename);
     }

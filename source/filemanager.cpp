@@ -112,8 +112,8 @@ void FileManager::deleteMasterConnexions(WidgetFile *widget, AssociatedFile::Typ
     // restore everything with the open associatedFiles
     foreach(File * openAssoc, widget->file()->openAssociatedFiles())
     {
-        // we miss the other part!!!
-        disconnect(openAssoc->getBuilder(), SIGNAL(pdfChanged()),widget->widgetPdfViewer()->widgetPdfDocument(),SLOT(updatePdf()));
+
+        //disconnect(openAssoc->getBuilder(), SIGNAL(pdfChanged()),widget->widgetPdfViewer()->widgetPdfDocument(),SLOT(updatePdf()));
 
         if(openAssoc->format() == File::BIBTEX)
         {
@@ -136,7 +136,6 @@ bool FileManager::open(QString filename)
     if(masterId != -1)
     {
         WidgetFile * masterFile = this->widgetFile(masterId);
-        qDebug()<<"is associated with "<<masterFile->file()->getFilename();
         if(assoc.type == AssociatedFile::INPUT && !this->currentWidgetFile()->file()->texDirectives().contains("root"))
         {
             this->currentWidgetFile()->file()->setRootFilename(masterFile->file()->getFilename());
