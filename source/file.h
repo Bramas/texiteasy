@@ -118,7 +118,9 @@ public:
     {
         return _rootFilename;
     }
-    void setRootFilename(QString filename) { _rootFilename = filename; }
+    void setRootFilename(QString filename) {
+        _rootFilename = filename;
+    }
     /**
      * @brief getAuxPath (not used)
      * @return the auxilary directory

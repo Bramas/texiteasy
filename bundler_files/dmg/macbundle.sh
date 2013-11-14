@@ -1,5 +1,8 @@
 
-cp Info.plist ../../../build/Qt_5_1_1_clang_64bit-Release/texiteasy.app/Contents/Info.plist
+#cp Info.plist ../../../build/Qt_5_1_1_clang_64bit-Release/texiteasy.app/Contents/Info.plist
+
+sudo sed "/VERSION_NUMBER/s//$1/" Info.plist > ../../../build/Qt_5_1_1_clang_64bit-Release/texiteasy.app/Contents/Info.plist
+
 mkdir ../../../build/Qt_5_1_1_clang_64bit-Release/texiteasy.app/Contents/PlugIns
 mkdir ../../../build/Qt_5_1_1_clang_64bit-Release/texiteasy.app/Contents/PlugIns/platforms
 cp /Users/quentinbramas/Qt/5.1.1/clang_64/plugins/platforms/libqcocoa.dylib ../../../build/Qt_5_1_1_clang_64bit-Release/texiteasy.app/Contents/PlugIns/platforms/libqcocoa.dylib
