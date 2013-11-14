@@ -338,14 +338,25 @@ void MainWindow::initBuildMenu()
     {
         QAction * action = new QAction(name, this->ui->menuOtherBuilder);
         action->setPriority(QAction::LowPriority);
-        if(!name.compare(ConfigManager::Instance.defaultLatex()))
+        /*if(!name.compare(ConfigManager::Instance.defaultLatex()))
         {
             delete action;
             continue;
-        }
+        }*/
         this->ui->menuOtherBuilder->addAction(action);
         connect(action, SIGNAL(triggered()), &FileManager::Instance,SLOT(builTex()));
     }
+
+    if(WidgetFile * widget = FileManager::Instance.currentWidgetFile())
+    if(widget->file()->texDirectives().contains("program"))
+    {
+        QString engine = widget->file()->texDirectives().value("program");
+        if(ConfigManager::Instance.latexCommandNames().contains(engine, Qt::CaseInsensitive))
+        {
+            ui->actionDefaultCommandLatex->setText(engine);
+        }
+    }
+
 }
 
 void MainWindow::newFile()
@@ -426,6 +437,14 @@ void MainWindow::open(QString filename)
         QString tabName = FileManager::Instance.currentWidgetFile()->file()->fileInfo().baseName();
         _tabWidget->addTab(current, tabName);
         _tabWidget->setCurrentIndex(_tabWidget->count()-1);
+        if(current->file()->texDirectives().contains("program"))
+        {
+            QString engine = current->file()->texDirectives().value("program");
+            if(!ConfigManager::Instance.latexCommandNames().contains(engine, Qt::CaseInsensitive))
+            {
+                QMessageBox::warning(this, trUtf8("Attention"), trUtf8("Le compilateur %1 n'est pas définie, veuillez le créer dans les options.").arg(engine));
+            }
+        }
     }
     else
     {
@@ -438,6 +457,7 @@ void MainWindow::open(QString filename)
 void MainWindow::onCurrentFileChanged(WidgetFile * widget)
 {
     this->closeCurrentWidgetFile();
+
     FileManager::Instance.setCurrent(widget);
     if(!widget)
     {
@@ -448,6 +468,18 @@ void MainWindow::onCurrentFileChanged(WidgetFile * widget)
     ui->verticalLayout->addWidget(widget);
     widget->widgetTextEdit()->setFocus();
     _widgetStatusBar->updateButtons();
+
+
+// change the default builder if the tex directive "program" exists
+    ui->actionDefaultCommandLatex->setText(ConfigManager::Instance.defaultLatex());
+    if(widget->file()->texDirectives().contains("program"))
+    {
+        QString engine = widget->file()->texDirectives().value("program");
+        if(ConfigManager::Instance.latexCommandNames().contains(engine, Qt::CaseInsensitive))
+        {
+            ui->actionDefaultCommandLatex->setText(engine);
+        }
+    }
 
     //window title
     this->setWindowTitle(_tabWidget->currentText()+" - texiteasy");

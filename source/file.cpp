@@ -262,7 +262,8 @@ void File::findTexDirectives()
     {
         QString directiveName = directivePattern.capturedTexts().at(1);
         QString directiveValue = directivePattern.capturedTexts().at(2);
-        _texDirectives.insert(directiveName.trimmed(), directiveValue.trimmed());
+        directiveValue.replace("TS-","",Qt::CaseInsensitive);
+        _texDirectives.insert(directiveName.trimmed().toLower(), directiveValue.trimmed());
     }
 }
 

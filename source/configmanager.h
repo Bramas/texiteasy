@@ -136,7 +136,7 @@ public:
         {
             name = defaultLatex();
         }
-        int i = latexCommandNames().indexOf(name);
+        int i = latexCommandNames().indexOf(QRegExp(name, Qt::CaseInsensitive));
         QStringList list = latexCommands();
         if(i >= 0 && i < list.count())
         {
