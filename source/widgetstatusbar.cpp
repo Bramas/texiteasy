@@ -89,6 +89,23 @@ WidgetStatusBar::WidgetStatusBar(QWidget *parent) :
 
 
 
+    _labelPdfViewerInItsOwnWidget = new WidgetStatusBarButton(this);
+    QImage incorporatedImage(":/data/img/incorporatedPdf.png");
+    QImage  separatedImage(":/data/img/separatedPdf.png");
+    QImage incorporatedHoverImage(":/data/img/incorporatedPdfHover.png");
+    QImage  separatedHoverImage(":/data/img/separatedPdfHover.png");
+    if(ConfigManager::Instance.darkTheme())
+    {
+        incorporatedImage.invertPixels();
+        separatedImage.invertPixels();
+    }
+    _labelPdfViewerInItsOwnWidget->setCheckable(true);
+    _labelPdfViewerInItsOwnWidget->setPixmaps(new QPixmap(QPixmap::fromImage(incorporatedImage)),
+                                              new QPixmap(QPixmap::fromImage(separatedImage)),
+                                              new QPixmap(QPixmap::fromImage(incorporatedImage)),
+                                              new QPixmap(QPixmap::fromImage(separatedImage))
+                                              );
+    this->addPermanentWidget(_labelPdfViewerInItsOwnWidget);
 
 
     connect(_labelConsole, SIGNAL(linkActivated(QString)), &FileManager::Instance, SLOT(toggleConsole()));

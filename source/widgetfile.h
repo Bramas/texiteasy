@@ -53,6 +53,8 @@ public:
     QString dictionary() { return _dictionary; }
     void setDictionary(QString dico);
 
+    void addWidgetPdfViewerToSplitter();
+
 signals:
     void verticalSplitterChanged();
 

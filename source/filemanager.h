@@ -9,6 +9,7 @@
 
 class QMimeData;
 class MainWindow;
+typedef QWidget WidgetPdfViewerWrapper;
 
 class FileManager : public QObject
 {
@@ -16,6 +17,7 @@ class FileManager : public QObject
 public:
     static FileManager Instance;
     void init();
+    void initWidgetPdfViewerWrapper();
     WidgetFile * currentWidgetFile() { if(_currentWidgetFileId < 0) return 0; return _widgetFiles.at(_currentWidgetFileId); }
 
     void initTheme();
@@ -32,6 +34,7 @@ public:
     void removeWatch(QString filename) { _fileSystemWatcher->removePath(filename); }
     void addWatch(QString filename) { _fileSystemWatcher->addPath(filename); }
     void handleMimeData(const QMimeData * mimeData);
+    WidgetPdfViewerWrapper * widgetPdfViewerWrapper() { return _widgetPdfViewerWrapper; }
 
 signals:
     void cursorPositionChanged(int,int);
@@ -67,6 +70,7 @@ public slots:
     void paste();
     void wrapEnvironment();
     void setPdfSynchronized(bool pdfSynchronized);
+    void setPdfViewerInItsOwnWidget(bool ownWidget);
     void jumpToPdfFromSource();
     void rehighlight();
     void toggleConsole();
@@ -97,6 +101,7 @@ private:
     bool _pdfSynchronized;
     QFileSystemWatcher * _fileSystemWatcher;
     MainWindow * _mainWindow;
+    WidgetPdfViewerWrapper * _widgetPdfViewerWrapper;
 };
 
 #endif // FILEMANAGER_H

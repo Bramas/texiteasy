@@ -127,11 +127,18 @@
     </property>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionPdfViewerInItsOwnWidget"/>
+   </widget>
    <addaction name="menuFichier"/>
    <addaction name="menuEdition"/>
    <addaction name="menuBuild"/>
    <addaction name="menuOptions"/>
    <addaction name="menuAide"/>
+   <addaction name="menuView"/>
   </widget>
   <action name="actionOpen">
    <property name="text">
@@ -331,6 +338,14 @@
   <action name="actionClean">
    <property name="text">
     <string>Nettoyer</string>
+   </property>
+  </action>
+  <action name="actionPdfViewerInItsOwnWidget">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Afficheur pdf séparé</string>
    </property>
   </action>
  </widget>

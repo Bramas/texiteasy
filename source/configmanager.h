@@ -158,6 +158,8 @@ public:
 
     bool isPdfSynchronized() { QSettings settings; return settings.value("pdfSynchronized", true).toBool(); }
 
+    bool pdfViewerInItsOwnWidget() { QSettings settings; return settings.value("pdfViewerItsOwnWidget", false).toBool(); }
+
     bool isThisVersionHaveToBeReminded(QString version);
     void dontRemindMeThisVersion(QString version);
 
@@ -174,6 +176,7 @@ public slots:
     void signalVersionIsOutdated() { emit versionIsOutdated(); }
 
     void setPdfSynchronized(bool pdfSynchronized) { QSettings settings; settings.setValue("pdfSynchronized", pdfSynchronized); }
+    void setPdfViewerInItsOwnWidget(bool b) { QSettings settings; settings.setValue("pdfViewerItsOwnWidget", b); }
     void openThemeFolder();
     void openUpdateWebsite() { QString link = TEXITEASY_UPDATE_WEBSITE;
                                QDesktopServices::openUrl(QUrl(link)); }

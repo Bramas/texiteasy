@@ -45,5 +45,9 @@
         <file>data/dictionaries/README_pl.txt</file>
         <file>themes/dark.texiteasy-theme</file>
         <file>themes/light.texiteasy-theme</file>
+        <file>data/img/separatedPdf.png</file>
+        <file>data/img/incorporatedPdf.png</file>
+        <file>data/img/incorporatedPdfHover.png</file>
+        <file>data/img/separatedPdfHover.png</file>
     </qresource>
 </RCC>

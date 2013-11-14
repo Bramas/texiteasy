@@ -93,6 +93,8 @@ MainWindow::MainWindow(QWidget *parent) :
     _widgetStatusBar = new WidgetStatusBar(this);
     ui->actionLinkSync->setChecked(ConfigManager::Instance.isPdfSynchronized());
     _widgetStatusBar->setLinkSyncAction(ui->actionLinkSync);
+    ui->actionPdfViewerInItsOwnWidget->setChecked(ConfigManager::Instance.pdfViewerInItsOwnWidget());
+    _widgetStatusBar->setPdfViewerWidgetAction(ui->actionPdfViewerInItsOwnWidget);
     this->setStatusBar(_widgetStatusBar);
     connect(&FileManager::Instance, SIGNAL(cursorPositionChanged(int,int)), _widgetStatusBar, SLOT(setPosition(int,int)));
     connect(&FileManager::Instance, SIGNAL(messageFromCurrentFile(QString)), _widgetStatusBar, SLOT(showTemporaryMessage(QString)));
@@ -111,6 +113,8 @@ MainWindow::MainWindow(QWidget *parent) :
     // Connect menubar Actions
     connect(this->ui->actionLinkSync, SIGNAL(toggled(bool)), &FileManager::Instance, SLOT(setPdfSynchronized(bool)));
     connect(this->ui->actionLinkSync, SIGNAL(toggled(bool)), &ConfigManager::Instance, SLOT(setPdfSynchronized(bool)));
+    connect(this->ui->actionPdfViewerInItsOwnWidget, SIGNAL(toggled(bool)), &FileManager::Instance, SLOT(setPdfViewerInItsOwnWidget(bool)));
+    connect(this->ui->actionPdfViewerInItsOwnWidget, SIGNAL(toggled(bool)), &ConfigManager::Instance, SLOT(setPdfViewerInItsOwnWidget(bool)));
     connect(this->ui->actionDeleteLastOpenFiles,SIGNAL(triggered()),this,SLOT(clearLastOpened()));
     connect(this->ui->actionNouveau,SIGNAL(triggered()),this,SLOT(newFile()));
     connect(this->ui->actionExit, SIGNAL(triggered()), this, SLOT(close()));
@@ -198,8 +202,11 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     QSettings settings;
-    settings.beginGroup("mainwindow");
-    settings.setValue("geometry", this->geometry());
+    settings.setValue("mainwindow/geometry", this->geometry());
+    if(FileManager::Instance.widgetPdfViewerWrapper())
+    {
+        settings.setValue("pdfViewerWrapper/geometry", FileManager::Instance.widgetPdfViewerWrapper()->geometry());
+    }
     delete ui;
 }
 
@@ -210,6 +217,7 @@ void MainWindow::focus()
 
 void MainWindow::closeEvent(QCloseEvent * event)
 {
+
     QStringList files;
     while(_tabWidget->count())
     {
@@ -221,6 +229,12 @@ void MainWindow::closeEvent(QCloseEvent * event)
         }
     }
     ConfigManager::Instance.setOpenFilesWhenClosing(files);
+
+    if(FileManager::Instance.widgetPdfViewerWrapper())
+    {
+        FileManager::Instance.widgetPdfViewerWrapper()->close();
+    }
+
     event->accept();
 }
 void MainWindow::dragEnterEvent(QDragEnterEvent * event)

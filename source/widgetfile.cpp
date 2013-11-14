@@ -27,7 +27,7 @@ WidgetFile::WidgetFile(QWidget *parent) :
     _widgetTextEdit = new WidgetTextEdit(this);
     _syntaxHighlighter = new SyntaxHighlighter(this);
     _widgetTextEdit->setSyntaxHighlighter(_syntaxHighlighter);
-    _widgetPdfViewer = new WidgetPdfViewer(this);
+    _widgetPdfViewer = new WidgetPdfViewer();
     _widgetPdfViewer->widgetPdfDocument()->setWidgetTextEdit(_widgetTextEdit);
     _widgetFindReplace = new WidgetFindReplace(_widgetTextEdit);
      this->closeFindReplaceWidget();
@@ -52,7 +52,11 @@ WidgetFile::WidgetFile(QWidget *parent) :
     this->setContentsMargins(0,8,0,0);
 
     _horizontalSplitter->addWidget(_verticalSplitter);
-    _horizontalSplitter->addWidget(_widgetPdfViewer);
+    if(!ConfigManager::Instance.pdfViewerInItsOwnWidget())
+    {
+        _horizontalSplitter->addWidget(_widgetPdfViewer);
+    }
+
     QList<int> sizes;
     sizes << width()/2 << width()/2;
     _horizontalSplitter->setSizes(sizes);
@@ -150,6 +154,13 @@ File * WidgetFile::file()
      return widgetTextEdit()->getCurrentFile();
 }
 
+void WidgetFile::addWidgetPdfViewerToSplitter()
+{
+    //if(_horizontalSplitter->count()>1)
+    {
+        _horizontalSplitter->addWidget(_widgetPdfViewer);
+    }
+}
 
 bool WidgetFile::isConsoleOpen()
 {

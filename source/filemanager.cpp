@@ -9,13 +9,15 @@
 #include <QAction>
 #include <QDebug>
 #include <QMessageBox>
+#include <QVBoxLayout>
 
 FileManager FileManager::Instance;
 
 FileManager::FileManager(QObject *parent) :
     QObject(parent),
     _currentWidgetFileId(-1),
-    _mainWindow(0)
+    _mainWindow(0),
+    _widgetPdfViewerWrapper(0)
 {
     _pdfSynchronized = ConfigManager::Instance.isPdfSynchronized();
 }
@@ -23,6 +25,23 @@ void FileManager::init()
 {
     _fileSystemWatcher = new QFileSystemWatcher(this);
     connect(_fileSystemWatcher, SIGNAL(fileChanged(QString)), this, SLOT(onFileSystemChanged(QString)));
+    if(ConfigManager::Instance.pdfViewerInItsOwnWidget())
+    {
+        initWidgetPdfViewerWrapper();
+    }
+}
+
+void FileManager::initWidgetPdfViewerWrapper()
+{
+    _widgetPdfViewerWrapper = new WidgetPdfViewerWrapper();
+    _widgetPdfViewerWrapper->setLayout(new QVBoxLayout());
+    _widgetPdfViewerWrapper->setMinimumHeight(50);
+    _widgetPdfViewerWrapper->setMinimumWidth(50);
+    _widgetPdfViewerWrapper->layout()->setMargin(0);
+    QSettings settings;
+    _widgetPdfViewerWrapper->setGeometry(settings.value("pdfViewerWrapper/geometry", QRect(200,100,800,600)).toRect());
+
+    _widgetPdfViewerWrapper->show();
 }
 
 bool FileManager::newFile()
@@ -222,6 +241,15 @@ void FileManager::setCurrent(int index)
      {
          this->currentWidgetFile()->widgetPdfViewer()->restorPdfDocumentParent();
      }
+     if(_widgetPdfViewerWrapper)
+     {
+         while(_widgetPdfViewerWrapper->layout()->count())
+         {
+             _widgetPdfViewerWrapper->layout()->itemAt(0)->widget()->setParent(0);
+             _widgetPdfViewerWrapper->layout()->removeItem(_widgetPdfViewerWrapper->layout()->itemAt(0));
+         }
+         _widgetPdfViewerWrapper->layout()->addWidget(this->currentWidgetFile()->widgetPdfViewer());
+     }
 }
 
 File * FileManager::file(int index)
@@ -332,6 +360,32 @@ void FileManager::setPdfSynchronized(bool pdfSynchronized)
     _pdfSynchronized = pdfSynchronized;
 
 }
+void FileManager::setPdfViewerInItsOwnWidget(bool ownWidget)
+{
+    if(ownWidget)
+    {
+        if(!_widgetPdfViewerWrapper)
+        {
+            initWidgetPdfViewerWrapper();
+        }
+        /*foreach(WidgetFile * widgetFile, _widgetFiles)
+        {
+            widgetFile->removeWidgetPdfViewerFromSplitter();
+        }*/
+        this->setCurrent(_currentWidgetFileId);
+    }
+    else
+    {
+        foreach(WidgetFile * widgetFile, _widgetFiles)
+        {
+            widgetFile->addWidgetPdfViewerToSplitter();
+        }
+        _widgetPdfViewerWrapper->close();
+        delete _widgetPdfViewerWrapper;
+        _widgetPdfViewerWrapper = 0;
+    }
+}
+
 void FileManager::setDictionaryFromAction()
 {
     if(!this->currentWidgetFile())

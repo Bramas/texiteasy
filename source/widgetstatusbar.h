@@ -34,7 +34,7 @@ public:
     void      setAction(QAction * action);
     QAction * action() { return _action; }
 
-    void setPixmaps(QPixmap * defaultPixmap, QPixmap * hoverPixmap)
+    void setPixmaps(QPixmap * defaultPixmap, QPixmap * checkedPixmap, QPixmap * defaultHoverPixmap, QPixmap * checkedHoverPixmap)
     {
         _defaultPixmap = defaultPixmap;
         _hoverPixmap   = hoverPixmap;
@@ -93,7 +93,7 @@ public slots:
 
     void updateButtons();
     void setLinkSyncAction(QAction * action) { _labelLinkSync->setAction(action); }
-
+    void setPdfViewerWidgetAction(QAction * action) { _labelPdfViewerInItsOwnWidget->setAction(action); }
     void showTemporaryMessage(QString message) { this->showMessage(message, 4000); }
     
 private:
@@ -103,6 +103,7 @@ private:
     QLabel * _positionLabel;
     QLabel * _encodingLabel;
     WidgetStatusBarButton * _labelLinkSync;
+    WidgetStatusBarButton * _labelPdfViewerInItsOwnWidget;
     WidgetStatusBarButton * _labelDictionary;
 
     QLabel * _labelConsole;
