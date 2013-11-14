@@ -24,8 +24,21 @@ void UpdateChecker::onFinished(QNetworkReply *reply)
     {
         return;
     }
-
     if(!version.compare(CURRENT_VERSION)) // if same version
+    {
+        return;
+    }
+    QStringList a = version.split('.');
+    if(a.count()<3) return;
+    int a0 = a.at(0).toInt();
+    int a1 = a.at(1).toInt();
+    int a2 = a.at(2).toInt();
+    QStringList b = QString(CURRENT_VERSION).split('.');
+    if(b.count()<3) return;
+    int b0 = b.at(0).toInt();
+    int b1 = b.at(1).toInt();
+    int b2 = b.at(2).toInt();
+    if(b0 > a0 || b1 > a1 || b2 > a2) // The local version is a beta that is not yet release officialy
     {
         return;
     }

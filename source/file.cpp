@@ -73,6 +73,10 @@ void File::save(QString filename, bool recursively)
     {
         return;
     }
+    if(!this->_texDirectives.contains("root"))
+    {
+        this->setRootFilename(this->filename);
+    }
     if(_modified)
     {
         this->data = this->_widgetTextEdit->toPlainText();
