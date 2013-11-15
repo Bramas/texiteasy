@@ -22,7 +22,9 @@ public:
         _action(0),
         _checked(false),
         _defaultPixmap(0),
-        _hoverPixmap(0),
+        _defaultHoverPixmap(0),
+        _checkedPixmap(0),
+        _checkedHoverPixmap(0),
         _label(new QLabel(this))
     {
         _checkable = false;
@@ -34,10 +36,12 @@ public:
     void      setAction(QAction * action);
     QAction * action() { return _action; }
 
-    void setPixmaps(QPixmap * defaultPixmap, QPixmap * checkedPixmap, QPixmap * defaultHoverPixmap, QPixmap * checkedHoverPixmap)
+    void setPixmaps(QPixmap * defaultPixmap, QPixmap * checkedPixmap, QPixmap * defaultHoverPixmap = 0, QPixmap * checkedHoverPixmap = 0)
     {
         _defaultPixmap = defaultPixmap;
-        _hoverPixmap   = hoverPixmap;
+        _checkedPixmap   = checkedPixmap;
+        _defaultHoverPixmap = defaultHoverPixmap ? defaultHoverPixmap : checkedPixmap;
+        _checkedHoverPixmap = checkedHoverPixmap ? checkedHoverPixmap : defaultPixmap;
         if(_defaultPixmap)
         {
             _label->setPixmap(*_defaultPixmap);
@@ -72,7 +76,9 @@ bool _checkable;
 bool _checked;
 
 QPixmap * _defaultPixmap;
-QPixmap * _hoverPixmap;
+QPixmap * _checkedPixmap;
+QPixmap * _defaultHoverPixmap;
+QPixmap * _checkedHoverPixmap;
 QLabel  * _label;
 
 

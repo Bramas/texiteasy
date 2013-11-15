@@ -98,12 +98,14 @@ WidgetStatusBar::WidgetStatusBar(QWidget *parent) :
     {
         incorporatedImage.invertPixels();
         separatedImage.invertPixels();
+        incorporatedHoverImage.invertPixels();
+        separatedHoverImage.invertPixels();
     }
     _labelPdfViewerInItsOwnWidget->setCheckable(true);
     _labelPdfViewerInItsOwnWidget->setPixmaps(new QPixmap(QPixmap::fromImage(incorporatedImage)),
                                               new QPixmap(QPixmap::fromImage(separatedImage)),
-                                              new QPixmap(QPixmap::fromImage(incorporatedImage)),
-                                              new QPixmap(QPixmap::fromImage(separatedImage))
+                                              new QPixmap(QPixmap::fromImage(incorporatedHoverImage)),
+                                              new QPixmap(QPixmap::fromImage(separatedHoverImage))
                                               );
     this->addPermanentWidget(_labelPdfViewerInItsOwnWidget);
 
@@ -215,25 +217,42 @@ void WidgetStatusBar::initTheme()
 
 void WidgetStatusBarButton::leaveEvent(QEvent *)
 {
-    if(_defaultPixmap)
+    if(isChecked())
     {
-        _label->setPixmap(*_defaultPixmap);
+        if(_checkedPixmap)
+        {
+            _label->setPixmap(*_checkedPixmap);
+        }
+    }
+    else
+    {
+        if(_defaultPixmap)
+        {
+            _label->setPixmap(*_defaultPixmap);
+        }
     }
 }
 
 void WidgetStatusBarButton::enterEvent(QEvent *)
 {
-    if(_hoverPixmap)
+    if(isChecked())
     {
-        _label->setPixmap(*_hoverPixmap);
+        if(_checkedHoverPixmap)
+        {
+            _label->setPixmap(*_checkedHoverPixmap);
+        }
+    }
+    else
+    {
+        if(_defaultHoverPixmap)
+        {
+            _label->setPixmap(*_defaultHoverPixmap);
+        }
     }
 }
 void WidgetStatusBarButton::toggleChecked()
 {
     _checked = ! _checked;
-    QPixmap * s = _defaultPixmap;
-    _defaultPixmap = _hoverPixmap;
-    _hoverPixmap = s;
     if(this->action())
     {
         this->action()->trigger();
@@ -243,12 +262,19 @@ void WidgetStatusBarButton::toggleChecked()
 void WidgetStatusBarButton::toggleCheckedWithoutTriggeringAction()
 {
     _checked = ! _checked;
-    QPixmap * s = _defaultPixmap;
-    _defaultPixmap = _hoverPixmap;
-    _hoverPixmap = s;
-    if(_defaultPixmap)
+    if(isChecked())
     {
-        _label->setPixmap(*_defaultPixmap);
+        if(_checkedPixmap)
+        {
+            _label->setPixmap(*_checkedPixmap);
+        }
+    }
+    else
+    {
+        if(_defaultPixmap)
+        {
+            _label->setPixmap(*_defaultPixmap);
+        }
     }
 }
 void WidgetStatusBarButton::mousePressEvent(QMouseEvent * event)

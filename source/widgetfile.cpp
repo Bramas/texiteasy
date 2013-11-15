@@ -159,6 +159,9 @@ void WidgetFile::addWidgetPdfViewerToSplitter()
     //if(_horizontalSplitter->count()>1)
     {
         _horizontalSplitter->addWidget(_widgetPdfViewer);
+        QList<int> sizes;
+        sizes << width()/2 << width()/2;
+        _horizontalSplitter->setSizes(sizes);
     }
 }
 
