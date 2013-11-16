@@ -84,7 +84,9 @@ public slots:
     void checkCurrentFileSystemChanges();
     void onFileSystemChanged(QString filename);
     void onFileSystemChanged(WidgetFile * widget);
+    void ensurePdfViewerIsVisible();
 
+    void setCurrentPdfToPdfViewer();
 
 
 private slots:

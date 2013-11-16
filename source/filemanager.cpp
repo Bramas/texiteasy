@@ -26,7 +26,7 @@ void FileManager::init()
 {
     if(ConfigManager::Instance.pdfViewerInItsOwnWidget())
     {
-        initWidgetPdfViewerWrapper();
+        //initWidgetPdfViewerWrapper();
     }
 }
 
@@ -53,6 +53,7 @@ bool FileManager::newFile()
     changeConnexions(oldFile);
 
     connect(newFile->file(), SIGNAL(modified(bool)), this, SLOT(sendCurrentFileModified(bool)));
+    connect(newFile->file()->getBuilder(), SIGNAL(pdfChanged()), this, SLOT(ensurePdfViewerIsVisible()));
     return true;
 }
 void FileManager::changeConnexions(WidgetFile * oldFile)
@@ -241,15 +242,19 @@ void FileManager::setCurrent(int index)
      {
          this->currentWidgetFile()->widgetPdfViewer()->restorPdfDocumentParent();
      }
-     if(_widgetPdfViewerWrapper)
-     {
-         while(_widgetPdfViewerWrapper->layout()->count())
-         {
-             _widgetPdfViewerWrapper->layout()->itemAt(0)->widget()->setParent(0);
-             _widgetPdfViewerWrapper->layout()->removeItem(_widgetPdfViewerWrapper->layout()->itemAt(0));
-         }
-         _widgetPdfViewerWrapper->layout()->addWidget(this->currentWidgetFile()->widgetPdfViewer());
-     }
+     setCurrentPdfToPdfViewer();
+}
+void FileManager::setCurrentPdfToPdfViewer()
+{
+    if(_widgetPdfViewerWrapper && this->currentWidgetFile())
+    {
+        while(_widgetPdfViewerWrapper->layout()->count())
+        {
+            _widgetPdfViewerWrapper->layout()->itemAt(0)->widget()->setParent(0);
+            _widgetPdfViewerWrapper->layout()->removeItem(_widgetPdfViewerWrapper->layout()->itemAt(0));
+        }
+        _widgetPdfViewerWrapper->layout()->addWidget(this->currentWidgetFile()->widgetPdfViewer());
+    }
 }
 
 File * FileManager::file(int index)
@@ -329,6 +334,7 @@ void FileManager::close(WidgetFile *widget)
     {
         return;
     }
+    widget->addWidgetPdfViewerToSplitter();
     deleteMasterConnexions(widget);
     if(_currentWidgetFileId >= id && _currentWidgetFileId != 0)
     {
@@ -382,6 +388,22 @@ void FileManager::setPdfViewerInItsOwnWidget(bool ownWidget)
         _widgetPdfViewerWrapper->close();
         delete _widgetPdfViewerWrapper;
         _widgetPdfViewerWrapper = 0;
+    }
+}
+void FileManager::ensurePdfViewerIsVisible()
+{
+    if(ConfigManager::Instance.pdfViewerInItsOwnWidget())
+    {
+        if(!_widgetPdfViewerWrapper)
+        {
+            initWidgetPdfViewerWrapper();
+            setCurrentPdfToPdfViewer();
+        }
+        if(!_widgetPdfViewerWrapper->isVisible())
+        {
+            _widgetPdfViewerWrapper->show();
+        }
+        _widgetPdfViewerWrapper->raise();
     }
 }
 
