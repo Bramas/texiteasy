@@ -706,6 +706,7 @@ void ConfigManager::checkRevision()
     case 0x000601:
     case 0x000602:
     case 0x000603:
+    case 0x000700:
         break;
     }
     settings.setValue("version_hex",CURRENT_VERSION_HEX);
