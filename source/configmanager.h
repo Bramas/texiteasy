@@ -135,6 +135,7 @@ public:
     QString popplerVersion();
 
     void checkRevision();
+    void recursiveCopy(QString from, QString to, QFileDevice::Permissions permission);
 
     bool hideAuxFiles() { QSettings settings; return settings.value("builder/hideAuxFiles", true).toBool(); }
     void setHideAuxFiles(bool hide) { QSettings settings; settings.setValue("builder/hideAuxFiles", hide); }
@@ -185,7 +186,12 @@ public:
 
     QString lastFolder() { QSettings settings; return settings.value("lastFolder").toString(); }
 
+
+    QString         macrosPath();
+
+
     static QString Extensions;
+    static QString MacroSuffix;
 
     void init();
 public slots:

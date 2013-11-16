@@ -13,8 +13,8 @@ TEMPLATE = app
 
 APPLICATION_NAME = \\\"'TexitEasy'\\\"
 TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com'\\\"
-VERSION = \\\"'0.7.0'\\\"
-VERSION_HEX = 0x000700
+VERSION = \\\"'0.8.0'\\\"
+VERSION_HEX = 0x000800
 
 #DEFINES += LIB_DEPLOY
 
@@ -73,7 +73,8 @@ SOURCES += main.cpp\
     hunspell/csutil.cxx \
     hunspell/affixmgr.cxx \
     hunspell/affentry.cxx \
-    dialogaddlatexcommand.cpp
+    dialogaddlatexcommand.cpp \
+    dialogmacros.cpp
 
 HEADERS  += mainwindow.h \
     widgetlinenumber.h \
@@ -128,7 +129,8 @@ HEADERS  += mainwindow.h \
     hunspell/atypes.hxx \
     hunspell/affixmgr.hxx \
     hunspell/affentry.hxx \
-    dialogaddlatexcommand.h
+    dialogaddlatexcommand.h \
+    dialogmacros.h
 
 FORMS    += mainwindow.ui \
     dialogwelcome.ui \
@@ -140,7 +142,8 @@ FORMS    += mainwindow.ui \
     dialogkeysequence.ui \
     widgetstatusbar.ui \
     dialogabout.ui \
-    dialogaddlatexcommand.ui
+    dialogaddlatexcommand.ui \
+    dialogmacros.ui
 
 TRANSLATIONS += translations/texiteasy_ar.ts \
                 translations/texiteasy_fr.ts \

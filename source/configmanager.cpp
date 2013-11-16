@@ -55,6 +55,8 @@ ConfigManager ConfigManager::Instance;
 
 QString ConfigManager::Extensions = trUtf8("Latex (*.tex *.latex);;BibTex(*.bib)");
 
+QString ConfigManager::MacroSuffix = ".texiteasy-macro";
+
 ConfigManager::ConfigManager() :
     mainWindow(0),
     textCharFormats(new QMap<QString,QTextCharFormat>())
@@ -483,6 +485,16 @@ QString ConfigManager::dictionaryPath()
    #endif
        return dataLocation+"/dictionaries/";
 }
+QString ConfigManager::macrosPath()
+{
+       QString dataLocation("");
+   #if QT_VERSION < 0x050000
+       dataLocation = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+   #else
+       dataLocation = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+   #endif
+       return dataLocation+"/macros/";
+}
 QString ConfigManager::themePath()
 {
        QString dataLocation("");
@@ -503,11 +515,14 @@ QStringList ConfigManager::dictionnaries()
     return list;
 }
 
+
 QStringList ConfigManager::languagesList()
 {
     QDir dir(":/translations");
     return dir.entryList(QDir::Files | QDir::Readable, QDir::Name).replaceInStrings(QRegExp("^texiteasy_([a-zA-Z0-9]+)\\.qm$"), "\\1");
 }
+
+
 void ConfigManager::applyTranslation()
 {
     QTranslator * translator = new QTranslator();
@@ -531,6 +546,26 @@ void ConfigManager::dontRemindMeThisVersion(QString version)
     QSettings settings;
     settings.setValue("lastDetectedUpdate",version);
 
+}
+
+void ConfigManager::recursiveCopy(QString from, QString to, QFile::Permissions permission)
+{
+    QDir().mkdir(to);
+    QDir fromDir(from);
+    QStringList files = fromDir.entryList(QDir::NoDotAndDotDot | QDir::Files);
+    foreach (QString fileName, files)
+    {
+        qDebug()<<"file : "<<from+"/"+fileName;
+        QFile file(from+"/"+fileName);
+        file.copy(to+"/"+fileName);
+        QFile::setPermissions(to+"/"+fileName, permission);
+    }
+    QStringList dirs = fromDir.entryList(QDir::NoDotAndDotDot | QDir::Dirs);
+    foreach (QString dir, dirs)
+    {
+        qDebug()<<"dir : "<<from+"/"+dir;
+        recursiveCopy(from+"/"+dir, to+"/"+dir, permission);
+    }
 }
 
 void ConfigManager::checkRevision()
@@ -707,6 +742,23 @@ void ConfigManager::checkRevision()
     case 0x000602:
     case 0x000603:
     case 0x000700:
+    {
+        {
+            recursiveCopy(":/data/macros", macrosPath(),
+                                                          QFile::ReadOwner |
+                                                          QFile::WriteOwner |
+                                                          QFile::ReadGroup |
+                                                          QFile::WriteGroup |
+                                                          QFile::ReadOther |
+                                                          QFile::WriteOther |
+                                                          QFile::ReadUser |
+                                                          QFile::WriteUser
+                                                          );
+        }
+    }
+
+
+    case 0x000800:
         break;
     }
     settings.setValue("version_hex",CURRENT_VERSION_HEX);
