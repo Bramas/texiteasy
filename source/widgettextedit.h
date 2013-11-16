@@ -91,6 +91,7 @@ public:
     void highlightSyncedLine(int line);
     void newLine();
     void deletePreviousTab();
+    void setTextCursorPosition(int pos);
     WidgetFile * widgetFile() { return _widgetFile; }
 
 #ifdef OS_MAC

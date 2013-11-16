@@ -1031,6 +1031,13 @@ void WidgetTextEdit::newLine()
     cursor.endEditBlock();
 }
 
+void WidgetTextEdit::setTextCursorPosition(int pos)
+{
+    QTextCursor cursor = this->textCursor();
+    cursor.setPosition(pos);
+    this->setTextCursor(cursor);
+}
+
 void WidgetTextEdit::wrapEnvironment()
 {
     QString word = this->wordOnLeft();

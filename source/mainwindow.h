@@ -23,6 +23,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QIcon>
 
 class QMimeData;
 class WidgetTextEdit;
@@ -41,6 +42,7 @@ class WidgetStatusBar;
 class QGridLayout;
 class WidgetTab;
 class WidgetFile;
+class QMessageBox;
 
 namespace Ui {
 class MainWindow;
@@ -78,15 +80,22 @@ public slots:
 
     void newFile();
     void open();
-    void open(QString filename);
+    void open(QString filename, int cursorPosition = 0);
     void openLast(void);
     void openLastSession(void);
     void clearLastOpened(void);
     void focus(void);
     void changeTheme(void);
     void onCurrentFileChanged(WidgetFile * widget);
-    bool closeTab(int);
+    /**
+     * @brief   The tab may not be close because the user does not want to
+     *          close a modified file. If the user want to save a new file, filename will contains the filename of the new created file (there is no other way to found out where the user saved the file)
+     * @param filename
+     * @return true if the tab is closed, false otherwise.
+     */
+    bool closeTab(int, QString **filename = 0);
     void addFilenameToLastOpened(QString filename);
+    void onFilenameChanged(QString filename);
     void initBuildMenu();
 private slots:
     void addUpdateMenu();
@@ -104,6 +113,7 @@ private:
     Ui::MainWindow *ui;
     void initTheme();
 
+    QMessageBox * _confirmCloseMessageBox;
     DialogConfig * dialogConfig;
     DialogWelcome * dialogWelcome;
     WidgetTab * _tabWidget;

@@ -12,6 +12,7 @@
 #include "configmanager.h"
 #include "widgettextedit.h"
 #include "widgetfile.h"
+#include "filemanager.h"
 
 WidgetTab::WidgetTab(QWidget *parent) :
     QWidget(parent),
@@ -34,6 +35,8 @@ WidgetTab::WidgetTab(QWidget *parent) :
 
     this->setContextMenuPolicy(Qt::NoContextMenu);
     this->addAction(new QAction("tesssst", this));
+    connect(&FileManager::Instance, SIGNAL(filenameChanged(WidgetFile*, QString)), this, SLOT(setTabText(WidgetFile*,QString)));
+    connect(&FileManager::Instance, SIGNAL(currentFileModified()), this, SLOT(update()));
 }
 
 void WidgetTab::paintEvent(QPaintEvent * event)
@@ -113,8 +116,15 @@ void WidgetTab::paintEvent(QPaintEvent * event)
             painter.setPen(defaultClosePen);
         }
         painter.translate(_closeLeftMargin, 0);
-        painter.drawLine(0, 15, _closeWidth, 15 + _closeWidth);
-        painter.drawLine(0, 15 + _closeWidth, _closeWidth, 15);
+        if(widget(index)->file()->isModified())
+        {
+            painter.drawEllipse(_closeWidth/2 - 1, 15 + _closeWidth/2 - 1, _closeWidth, _closeWidth);
+        }
+        else
+        {
+            painter.drawLine(0, 15, _closeWidth, 15 + _closeWidth);
+            painter.drawLine(0, 15 + _closeWidth, _closeWidth, 15);
+        }
         painter.translate(_closeWidth + _padding, 0);
 
         painter.translate(_margin, 0);

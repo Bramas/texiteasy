@@ -31,6 +31,7 @@
 #include <QList>
 #include <QStringList>
 #include <QFileInfo>
+#include <QDateTime>
 
 class Viewer;
 class Builder;
@@ -167,6 +168,10 @@ public:
 
     bool isModified() { return this->_modified; }
 
+    bool isUntitled() { return getFilename().isEmpty(); }
+
+    QDateTime lastSaved() const { return _lastSaved; }
+
     void addOpenAssociatedFile(File * openAssocitedFile);
     Format format() { return _format; }
     const QList<File*> & openAssociatedFiles() { return _openAssociatedFiles; }
@@ -186,10 +191,18 @@ public slots:
      */
     void autoSave();
     /**
-     * @brief setModified
+     * @brief setModified, this will send the signal modified(bool)
      */
     void setModified(bool mod = true) {
+        bool send = false;
+        if(mod != _modified) send = true;
+
         this->_modified = mod;
+
+        if(send)
+        {
+            emit modified(_modified);
+        }
     }
     void create(void)
     {
@@ -197,7 +210,8 @@ public slots:
         this->data=QString("");
         this->filename = QString("");
     }
-
+signals:
+    void modified(bool);
 private:
     /**
      * @brief lookForAssociatedFiles parse the source, and find if there is some \input{} files or bitex, or figures
@@ -219,6 +233,7 @@ private:
     Format _format;
     QMap<QString, QString> _texDirectives;
 
+    QDateTime _lastSaved;
 
     QMap<int,int> _lineNumberSinceLastBuild;
 };

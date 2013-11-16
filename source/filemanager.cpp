@@ -15,6 +15,7 @@ FileManager FileManager::Instance;
 
 FileManager::FileManager(QObject *parent) :
     QObject(parent),
+    _askReloadMessageBox(0),
     _currentWidgetFileId(-1),
     _mainWindow(0),
     _widgetPdfViewerWrapper(0)
@@ -23,8 +24,6 @@ FileManager::FileManager(QObject *parent) :
 }
 void FileManager::init()
 {
-    _fileSystemWatcher = new QFileSystemWatcher(this);
-    connect(_fileSystemWatcher, SIGNAL(fileChanged(QString)), this, SLOT(onFileSystemChanged(QString)));
     if(ConfigManager::Instance.pdfViewerInItsOwnWidget())
     {
         initWidgetPdfViewerWrapper();
@@ -52,6 +51,8 @@ bool FileManager::newFile()
     _widgetFiles.append(newFile);
     _currentWidgetFileId = _widgetFiles.count() - 1;
     changeConnexions(oldFile);
+
+    connect(newFile->file(), SIGNAL(modified(bool)), this, SLOT(sendCurrentFileModified(bool)));
     return true;
 }
 void FileManager::changeConnexions(WidgetFile * oldFile)
@@ -147,7 +148,6 @@ bool FileManager::open(QString filename)
 {
     bool newWidget = this->newFile();
     this->currentWidgetFile()->open(filename);
-    _fileSystemWatcher->addPath(filename);
 
     // is it an associated file?
     int masterId = 0;
@@ -330,7 +330,6 @@ void FileManager::close(WidgetFile *widget)
         return;
     }
     deleteMasterConnexions(widget);
-    _fileSystemWatcher->removePath(widget->file()->getFilename());
     if(_currentWidgetFileId >= id && _currentWidgetFileId != 0)
     {
         --_currentWidgetFileId;
@@ -413,19 +412,57 @@ void FileManager::builTex()
         this->currentWidgetFile()->builTex(command);
     }
 }
+void FileManager::checkCurrentFileSystemChanges()
+{
+    if(!currentWidgetFile() || currentWidgetFile()->file()->isUntitled())
+    {
+        return;
+    }
+    if(currentWidgetFile()->file()->lastSaved()
+            < currentWidgetFile()->file()->fileInfo().lastModified())
+    {
+        onFileSystemChanged(currentWidgetFile());
+    }
+}
 
 void FileManager::onFileSystemChanged(QString filename)
 {
-    QString message = trUtf8("Le fichier %1 à été modifié en dehors de %2. Voulez-vous le charger à nouveau ?").arg(QFileInfo(filename).baseName()).arg(APPLICATION_NAME);
-    if(0 == QMessageBox::warning(_mainWindow, trUtf8("Un fichier à été modifié."), message, trUtf8("Oui"), trUtf8("Non")))
+    WidgetFile * w = widgetFile(filename);
+    if(w)
     {
-        WidgetFile * w = widgetFile(filename);
-        if(w)
-        {
-            w->open(filename);
-        }
-
+        onFileSystemChanged(w);
     }
+}
+
+void FileManager::onFileSystemChanged(WidgetFile * widget)
+{
+    QString filename = widget->file()->getFilename();
+
+
+    if(!_askReloadMessageBox)
+    {
+         QString message = trUtf8("Le fichier %1 à été modifié en dehors de %2. Voulez-vous le charger à nouveau ?").arg(QFileInfo(filename).fileName()).arg(APPLICATION_NAME);
+
+        _askReloadMessageBox = new QMessageBox(trUtf8("Un fichier à été modifié."),
+                                              message,
+            QMessageBox::Warning,
+            QMessageBox::Yes | QMessageBox::Default,
+            QMessageBox::No,
+            QMessageBox::NoButton,
+            _mainWindow, Qt::Sheet);
+        _askReloadMessageBox->setButtonText(QMessageBox::Yes, trUtf8("Charger à nouveau"));
+        _askReloadMessageBox->setButtonText(QMessageBox::No, trUtf8("Ignorer"));
+    }
+    if(_askReloadMutex.tryLock())
+    {
+        if(QMessageBox::Yes == _askReloadMessageBox->exec())
+        {
+            widget->reload();
+        }
+        _askReloadMutex.unlock();
+    }
+
+
 }
 
 void FileManager::handleMimeData(const QMimeData * mimeData)

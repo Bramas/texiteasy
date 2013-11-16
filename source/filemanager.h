@@ -3,12 +3,13 @@
 
 #include <QObject>
 #include <QList>
-#include <QFileSystemWatcher>
+#include <QMutex>
 #include "file.h"
 #include "widgetfile.h"
 
 class QMimeData;
 class MainWindow;
+class QMessageBox;
 typedef QWidget WidgetPdfViewerWrapper;
 
 class FileManager : public QObject
@@ -31,14 +32,14 @@ public:
     WidgetFile * widgetFile(QString filename);
     WidgetFile * widgetFile(int index) { return _widgetFiles.at(index); }
     void setMainWindow(MainWindow * m) { _mainWindow = m; }
-    void removeWatch(QString filename) { _fileSystemWatcher->removePath(filename); }
-    void addWatch(QString filename) { _fileSystemWatcher->addPath(filename); }
     void handleMimeData(const QMimeData * mimeData);
     WidgetPdfViewerWrapper * widgetPdfViewerWrapper() { return _widgetPdfViewerWrapper; }
 
 signals:
     void cursorPositionChanged(int,int);
     void requestOpenFile(QString);
+    void currentFileModified(bool);
+    void currentFileModified();
     void filenameChanged(QString);
     void filenameChanged(WidgetFile*, QString);
     /**
@@ -80,6 +81,9 @@ public slots:
     void setCurrent(int index);
 
     void setDictionaryFromAction();
+    void checkCurrentFileSystemChanges();
+    void onFileSystemChanged(QString filename);
+    void onFileSystemChanged(WidgetFile * widget);
 
 
 
@@ -87,7 +91,7 @@ private slots:
     void sendCursorPositionChanged(int x, int y) { emit cursorPositionChanged(x, y); }
     void sendVerticalSplitterChanged() { emit verticalSplitterChanged(); }
     void sendMessageFromCurrentFile(QString message) { emit messageFromCurrentFile(message); }
-    void onFileSystemChanged(QString filename);
+    void sendCurrentFileModified(bool b) { emit currentFileModified(b); emit currentFileModified(); }
 
 private:
 
@@ -96,10 +100,12 @@ private:
     void changeConnexions(WidgetFile *oldFile);
 
     explicit FileManager(QObject *parent = 0);
+
+    QMessageBox * _askReloadMessageBox;
+    QMutex _askReloadMutex;
     QList<WidgetFile *> _widgetFiles;
     int _currentWidgetFileId;
     bool _pdfSynchronized;
-    QFileSystemWatcher * _fileSystemWatcher;
     MainWindow * _mainWindow;
     WidgetPdfViewerWrapper * _widgetPdfViewerWrapper;
 };

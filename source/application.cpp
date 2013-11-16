@@ -1,6 +1,7 @@
 #include "application.h"
 #include <QFileOpenEvent>
 #include <QTimer>
+#include <QDebug>
 #include "updatechecker.h"
 
 Application::Application(int argc, char *argv[]) :

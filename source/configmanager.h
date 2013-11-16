@@ -86,8 +86,28 @@ public:
     QString         textCharFormatToString(QTextCharFormat charFormat, QTextCharFormat defaultFormat = QTextCharFormat());
     QTextCharFormat stringToTextCharFormat(QString string, QTextCharFormat defaultFormat = QTextCharFormat());
 
-    void            setOpenFilesWhenClosing(QStringList files) { QSettings settings; settings.setValue("openFilesWhenClosing", files); }
-    QStringList     openFilesWhenClosing() { QSettings settings; return settings.value("openFilesWhenClosing").toStringList(); }
+    void            setOpenFilesWhenClosing(QStringList files, QStringList fileCursorPositions, int tabIndex)
+    {
+        QSettings settings;
+        settings.setValue("openTabIndexWhenClosing", tabIndex);
+        settings.setValue("openFilesWhenClosing", files);
+        settings.setValue("openFileCursorPositionsWhenClosing", fileCursorPositions);
+    }
+    int     openTabIndexWhenClosing()
+    {
+        QSettings settings;
+        return settings.value("openTabIndexWhenClosing", 0).toInt();
+    }
+    QStringList     openFilesWhenClosing()
+    {
+        QSettings settings;
+        return settings.value("openFilesWhenClosing").toStringList();
+    }
+    QStringList     openFileCursorPositionsWhenClosing()
+    {
+        QSettings settings;
+        return settings.value("openFileCursorPositionsWhenClosing").toStringList();
+    }
     void            setOpenLastSessionAtStartup(bool open) { QSettings settings; settings.setValue("openLastSessionAtStartup", open); }
     bool            openLastSessionAtStartup() { QSettings settings; return settings.value("openLastSessionAtStartup", true).toBool(); }
 

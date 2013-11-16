@@ -54,6 +54,7 @@
 #include <QPixmap>
 #include <QTableWidget>
 #include <QMessageBox>
+#include <QDrag>
 #include "configmanager.h"
 #include "widgetconsole.h"
 #include "widgetstatusbar.h"
@@ -70,6 +71,7 @@ Q_DECLARE_METATYPE(IntegerList)
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
+    _confirmCloseMessageBox(0),
     dialogConfig(new DialogConfig(this)),
     dialogWelcome(new DialogWelcome(this)),
     _emptyWidget(new WidgetEmpty(0))
@@ -96,6 +98,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->actionPdfViewerInItsOwnWidget->setChecked(ConfigManager::Instance.pdfViewerInItsOwnWidget());
     _widgetStatusBar->setPdfViewerWidgetAction(ui->actionPdfViewerInItsOwnWidget);
     this->setStatusBar(_widgetStatusBar);
+
+    connect(&FileManager::Instance, SIGNAL(currentFileModified(bool)), this, SLOT(setWindowModified(bool)));
     connect(&FileManager::Instance, SIGNAL(cursorPositionChanged(int,int)), _widgetStatusBar, SLOT(setPosition(int,int)));
     connect(&FileManager::Instance, SIGNAL(messageFromCurrentFile(QString)), _widgetStatusBar, SLOT(showTemporaryMessage(QString)));
     connect(&FileManager::Instance, SIGNAL(requestOpenFile(QString)), this, SLOT(open(QString)));
@@ -140,8 +144,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->ui->actionView, SIGNAL(triggered()), &FileManager::Instance,SLOT(jumpToPdfFromSource()));
 
 
-    connect(&FileManager::Instance, SIGNAL(filenameChanged(WidgetFile*, QString)), _tabWidget, SLOT(setTabText(WidgetFile*,QString)));
-    connect(&FileManager::Instance, SIGNAL(filenameChanged(QString)), this, SLOT(addFilenameToLastOpened(QString)));
+    connect(&FileManager::Instance, SIGNAL(filenameChanged(QString)), this, SLOT(onFilenameChanged(QString)));
 
     connect(&ConfigManager::Instance, SIGNAL(versionIsOutdated()), this, SLOT(addUpdateMenu()));
 
@@ -217,18 +220,30 @@ void MainWindow::focus()
 
 void MainWindow::closeEvent(QCloseEvent * event)
 {
-
     QStringList files;
+    QStringList fileCursorPositions;
+    int tabIndex = _tabWidget->currentIndex();
     while(_tabWidget->count())
     {
-        files << _tabWidget->widget(0)->file()->getFilename();
-        if(!this->closeTab(0))
+        QString * filename = 0;
+
+        fileCursorPositions<< QString::number(_tabWidget->widget(0)->widgetTextEdit()->textCursor().position());
+        if(!this->closeTab(0, &filename))
         {
             event->ignore();
             return;
         }
+        if(filename)
+        {
+            files << *filename;
+            delete filename;
+        }
+        else
+        {
+            fileCursorPositions.pop_back();
+        }
     }
-    ConfigManager::Instance.setOpenFilesWhenClosing(files);
+    ConfigManager::Instance.setOpenFilesWhenClosing(files, fileCursorPositions, tabIndex);
 
     if(FileManager::Instance.widgetPdfViewerWrapper())
     {
@@ -315,11 +330,19 @@ void MainWindow::dropEvent(QDropEvent * event)
 }
 void MainWindow::changeEvent(QEvent *event)
 {
+
+    if (!isActiveWindow())
+        return QMainWindow::changeEvent(event);
+
+    if (event->type() == QEvent::ActivationChange) {
+        FileManager::Instance.checkCurrentFileSystemChanges();
+    }
+    else
     if (event->type() == QEvent::LanguageChange) {
         this->ui->retranslateUi(this);
     }
     else
-        QWidget::changeEvent(event);
+        QMainWindow::changeEvent(event);
 }
 bool MainWindow::canBeOpened(QString filename)
 {
@@ -382,6 +405,15 @@ void MainWindow::newFile()
     }
     return;
 }
+void MainWindow::onFilenameChanged(QString filename)
+{
+    addFilenameToLastOpened(filename);
+    this->setWindowTitle(_tabWidget->currentText()+" - texiteasy");
+
+    setWindowIcon(style()->standardIcon(QStyle::SP_FileIcon, 0, this));
+    setWindowFilePath(FileManager::Instance.currentWidgetFile()->file()->getFilename());
+}
+
 void MainWindow::addFilenameToLastOpened(QString filename)
 {
     QSettings settings;
@@ -402,9 +434,20 @@ void MainWindow::addFilenameToLastOpened(QString filename)
 void MainWindow::openLastSession()
 {
     QStringList files = ConfigManager::Instance.openFilesWhenClosing();
+    QStringList fileCursorPositions = ConfigManager::Instance.openFileCursorPositionsWhenClosing();
+    int index = 0;
     foreach(const QString & file, files)
     {
-        open(file);
+        if(index < fileCursorPositions.count())
+        {
+            open(file, fileCursorPositions.at(index).toInt());
+        }
+        ++index;
+    }
+    int tabIndex = ConfigManager::Instance.openTabIndexWhenClosing();
+    if(tabIndex < _tabWidget->count())
+    {
+        _tabWidget->setCurrentIndex(tabIndex);
     }
 }
 
@@ -425,7 +468,7 @@ void MainWindow::open()
     }
     open(filename);
 }
-void MainWindow::open(QString filename)
+void MainWindow::open(QString filename, int cursorPosition)
 {
     QSettings settings;
 
@@ -448,7 +491,7 @@ void MainWindow::open(QString filename)
     if(FileManager::Instance.open(filename))
     {
         WidgetFile * current = FileManager::Instance.currentWidgetFile();
-        QString tabName = FileManager::Instance.currentWidgetFile()->file()->fileInfo().baseName();
+        QString tabName = FileManager::Instance.currentWidgetFile()->file()->fileInfo().fileName();
         _tabWidget->addTab(current, tabName);
         _tabWidget->setCurrentIndex(_tabWidget->count()-1);
         if(current->file()->texDirectives().contains("program"))
@@ -459,10 +502,14 @@ void MainWindow::open(QString filename)
                 QMessageBox::warning(this, trUtf8("Attention"), trUtf8("Le compilateur %1 n'est pas définie, veuillez le créer dans les options.").arg(engine));
             }
         }
+
+        current->widgetTextEdit()->setTextCursorPosition(cursorPosition);
+        QTimer::singleShot(1,current->widgetTextEdit(), SLOT(setFocus()));
+
     }
     else
     {
-        _tabWidget->setTabText(_tabWidget->currentIndex(), FileManager::Instance.currentWidgetFile()->file()->fileInfo().baseName());
+        _tabWidget->setTabText(_tabWidget->currentIndex(), FileManager::Instance.currentWidgetFile()->file()->fileInfo().fileName());
     }
 
     this->statusBar()->showMessage(filename,4000);
@@ -477,6 +524,7 @@ void MainWindow::onCurrentFileChanged(WidgetFile * widget)
     {
         ui->verticalLayout->addWidget(_emptyWidget);
         _widgetStatusBar->updateButtons();
+        setWindowIcon(QIcon());
         return;
     }
     ui->verticalLayout->addWidget(widget);
@@ -497,32 +545,71 @@ void MainWindow::onCurrentFileChanged(WidgetFile * widget)
 
     //window title
     this->setWindowTitle(_tabWidget->currentText()+" - texiteasy");
+    this->setWindowModified(widget->file()->isModified());
+    if(widget->file()->isUntitled())
+    {
+        setWindowIcon(QIcon());
+    }
+    else
+    {
+        setWindowIcon(style()->standardIcon(QStyle::SP_FileIcon, 0, this));
+    }
+    setWindowFilePath(widget->file()->getFilename());
+
+    FileManager::Instance.checkCurrentFileSystemChanges();
 }
-bool MainWindow::closeTab(int index)
+bool MainWindow::closeTab(int index, QString ** filename)
 {
     WidgetFile * widget = _tabWidget->widget(index);
 
     if(widget->widgetTextEdit()->getCurrentFile()->isModified())
     {
-        int i = QMessageBox::warning(this, trUtf8("Quitter?"),
-                    trUtf8("Le fichier %1 n'a pas été enregistré.").arg(widget->file()->fileInfo().baseName()),
-                                     trUtf8("Annuler"), trUtf8("Quitter sans sauvegarder"), trUtf8("Sauvegarder et quitter"));
-
-        if(i)
+        //if (!messageBox) {
+        QString insertedFilename = "";
+        if(!widget->file()->isUntitled())
         {
-            if(i == 2)
+            insertedFilename = " \""+widget->file()->fileInfo().baseName()+"\"";
+        }
+        if(!_confirmCloseMessageBox)
+        {
+            _confirmCloseMessageBox = new QMessageBox(trUtf8("Quitter?"),
+                                                  trUtf8("Le fichier%1 a été modifié.").arg(insertedFilename) + "\n" +
+              trUtf8("Voullez-vous sauvegarder les changements?"),//Do you want to save your changes?"),
+                QMessageBox::Warning,
+                QMessageBox::Yes | QMessageBox::Default,
+                QMessageBox::No,
+                QMessageBox::Cancel | QMessageBox::Escape,
+                this, Qt::Sheet);
+            _confirmCloseMessageBox->setButtonText(QMessageBox::Yes,
+                  widget->file()->isUntitled() ? trUtf8("Sauvegarder")+"..." : trUtf8("Sauvegarder"));
+            _confirmCloseMessageBox->setButtonText(QMessageBox::No,
+                trUtf8("Ne pas sauvegarder"));
+            _confirmCloseMessageBox->setButtonText(QMessageBox::Cancel,
+                trUtf8("Annuler"));
+        }
+
+        int i = _confirmCloseMessageBox->exec();
+
+        if(i == QMessageBox::Cancel)
+        {
+            return false;
+        }
+        else
+        {
+            if(i == QMessageBox::Yes)
             {
                 widget->save();
-                if(widget->widgetTextEdit()->getCurrentFile()->isModified())
+                if(widget->file()->isModified())
                 {
                     return false;
                 }
             }
         }
-        else
-        {
-            return false;
-        }
+
+    }
+    if(filename && !widget->file()->isUntitled())
+    {
+        *filename = new QString(widget->file()->getFilename());
     }
 
     if(widget == FileManager::Instance.currentWidgetFile())

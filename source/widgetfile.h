@@ -39,6 +39,7 @@ public:
     MiniSplitter * verticalSplitter() { return _verticalSplitter; }
 
     void open(QString filename);
+    void reload();
 
     bool isConsoleOpen(void);
     bool isErrorTableOpen(void);

@@ -342,6 +342,13 @@ void WidgetFile::saveAs()
         emit FileManager::Instance.sendFilenameChanged(this, filename);
     }
 }
+void WidgetFile::reload()
+{
+    if(!this->file()->isUntitled())
+    {
+        this->open(this->file()->getFilename());
+    }
+}
 
 void WidgetFile::open(QString filename)
 {
