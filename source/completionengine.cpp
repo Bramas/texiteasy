@@ -70,7 +70,6 @@ void CompletionEngine::loadFile(QString filename)
         line = in.readLine();
         if (!line.isEmpty()) _words.append(line.remove("\n"));
     }
-
 }
 
 void CompletionEngine::proposeCommand(int left, int top, int lineHeight, QString commandBegin)
@@ -81,12 +80,16 @@ void CompletionEngine::proposeCommand(int left, int top, int lineHeight, QString
         this->parentWidget()->setFocus();
         return;
     }
-    QRegExp commandRegex = QRegExp("^\\"+QString(commandBegin).replace('{',"\\{"), Qt::CaseInsensitive);
+    QRegExp commandRegexCaseInsensitive = QRegExp("^\\"+QString(commandBegin).replace('{',"\\{"), Qt::CaseInsensitive);
+    QRegExp commandRegex = QRegExp("^\\"+QString(commandBegin).replace('{',"\\{"));
     this->addCustomWordFromSource(); //dont know where to put it but it seems to be a fast function so it's ok!
-    QStringList found = this->_words.filter(commandRegex);//, Qt::CaseInsensitive));
-    QStringList customFound = this->_customWords.filter(commandRegex);//, Qt::CaseInsensitive));
-    found.append(customFound);
-    found.sort();
+
+    QStringList found =  this->_customWords.filter(commandRegex);
+    found.append(this->_customWords.filter(commandRegexCaseInsensitive));
+    found.append(this->_words.filter(commandRegex));
+    found.append(this->_words.filter(commandRegexCaseInsensitive));
+
+    found.removeDuplicates();
 
     if(found.empty() || (
             found.count() == 1 && (found.first().length() == commandBegin.length() || found.first().indexOf('#')  == commandBegin.length())))
@@ -122,7 +125,7 @@ void CompletionEngine::proposeCommand(int left, int top, int lineHeight, QString
     this->setItemSelected(this->item(0),true);
     this->setCurrentRow(0,QItemSelectionModel::Rows);
 
-    QRect geo(0,0,250,qMin(150,this->count()*this->sizeHintForRow(0)+5));
+    QRect geo(0,0,250,qMin(150,this->count()*this->sizeHintForRow(0)+15));
     left = qMin(left,parentWidget()->width()-geo.width());
     geo.moveTo(QPoint(left, top));
 
@@ -200,6 +203,16 @@ void CompletionEngine::keyPressEvent(QKeyEvent *event)
             event->key() == Qt::Key_Up ||
             event->key() == Qt::Key_Down)
     {
+        if(event->key() == Qt::Key_Up && this->currentRow() == 0)
+        {
+            this->setCurrentRow(this->count() - 1);
+            return;
+        }
+        if(event->key() == Qt::Key_Down && this->currentRow() == count() - 1)
+        {
+            this->setCurrentRow(0);
+            return;
+        }
         QListWidget::keyPressEvent(event);
         return;
     }
@@ -242,6 +255,8 @@ void CompletionEngine::addCustomWordFromSource()
         index = source.indexOf(patternBibitem, index + 1);
     }
     parseBibtexFile();
+    _customWords.removeDuplicates();
+    _customWords.sort();
 }
 
 void CompletionEngine::parseBibtexFile()
