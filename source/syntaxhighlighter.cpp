@@ -196,31 +196,29 @@ while(index < text.length())
     if(currentChar == '%' && !escapedChar)
     {
         //check if it is an argument resulting of an auto completion
-        if(nextChar.isLetterOrNumber() && int(nextChar.toLatin1()) >= '1' && int(nextChar.toLatin1()) <= '9')
+        if(nextChar == '{' || (nextChar.isLetterOrNumber() && int(nextChar.toLatin1()) >= '1' && int(nextChar.toLatin1()) <= '9'))
         {
-            //if(index >= text.length() - 2 || !QString(text.at(index + 2)).contains(QRegExp("[0-9]")))
+            //this an argument of the form %[1-9]
+            setFormat(index, 2, formatArgument);
+            blockData->characterData[index + 0].state = CompletionArgument;
+            blockData->characterData[index + 1].state = CompletionArgument;
+            index += 2;
+
+            if(nextChar == '{' || (index < text.length() && text.at(index) == '{'))
             {
-                //this an argument of the form %[1-9]
-                setFormat(index, 2, formatArgument);
-                blockData->characterData[index + 0].state = CompletionArgument;
-                blockData->characterData[index + 1].state = CompletionArgument;
-                index += 2;
-                continue;
+                while(index < text.length() && text.at(index) != '}')
+                {
+                    blockData->characterData[index].state = CompletionArgument;
+                    setFormat(index, 1, formatArgument);
+                    ++index;
+                }
+                if(index < text.length())
+                {
+                    blockData->characterData[index].state = CompletionArgument;
+                    setFormat(index, 1, formatArgument);
+                    ++index;
+                }
             }
-        }else
-        if(nextChar == '@')
-        {
-            //this an argument of the form %@[a-zA-Z0-9]
-            blockData->characterData[index].state = CompletionArgument;
-            blockData->characterData[index+1].state = CompletionArgument;
-            int arg_length=2;
-            while(index + arg_length < text.length() && QString(text.at(index + arg_length)).contains(QRegExp("[a-zA-Z0-9]")))
-            {
-                blockData->characterData[index + arg_length].state = CompletionArgument;
-                ++arg_length;
-            }
-            setFormat(index, arg_length, formatArgument);
-            index += arg_length;
             continue;
         }
         //else it is a regular comment

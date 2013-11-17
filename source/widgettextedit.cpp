@@ -484,17 +484,33 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
 
 bool WidgetTextEdit::selectNextArgument()
 {
-    QTextCursor curIntArg = this->document()->find(QRegExp("%[0-9]"),this->textCursor().position());
-    QTextCursor curStrArg = this->document()->find(QRegExp("%@[a-zA-Z0-9]+"),this->textCursor().position());
+    //QTextCursor curIntArg = this->document()->find(QRegExp("%[0-9]"),this->textCursor().position());
+    QTextCursor curStrArg = this->document()->find(QRegExp("%[0-9]{0,1}\\{[^\\}]*\\}"),this->textCursor().position());
 
-    if(!curIntArg.isNull() && (curStrArg.isNull() || curIntArg.selectionStart() < curStrArg.selectionStart()))
+  /*  if(!curIntArg.isNull() && (curStrArg.isNull() || curIntArg.selectionStart() < curStrArg.selectionStart()))
     {
         this->setTextCursor(curIntArg);
         return true;
-    }
+    }*/
     if(!curStrArg.isNull())
     {
+        QTextCursor curStrArg2 = this->document()->find(curStrArg.selectedText(), curStrArg.position() + 1);
         this->setTextCursor(curStrArg);
+        if(!curStrArg2.isNull())
+        {
+            QList<QTextEdit::ExtraSelection> selections = extraSelections();
+            QTextEdit::ExtraSelection selection;
+            QTextCharFormat format = selection.format;
+            format.setBackground( QColor("#DDDDDD") );
+            format.setForeground( QColor("#333333") );
+            selection.format = format;
+            selection.cursor = curStrArg2;
+            selections.append( selection );
+            setExtraSelections( selections );
+
+            _multipleEdit.clear();
+            _multipleEdit.append(curStrArg2);
+        }
         return true;
     }
     return false;
@@ -1118,6 +1134,7 @@ bool WidgetTextEdit::onMacroTriggered(Macro macro)
         cap.pop_back();
         if(!arg.isEmpty())
         {
+            content.replace(QRegExp("%1\\{[^\\}]*\\}"), "%1");
             content = content.arg(arg);
         }
     }
