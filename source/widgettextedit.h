@@ -28,6 +28,7 @@
 #include <QMutex>
 #include <QAbstractTextDocumentLayout>
 #include "file.h"
+#include "macroengine.h"
 #include <QInputMethodEvent>
 
 #include <QDebug>
@@ -93,7 +94,8 @@ public:
     void deletePreviousTab();
     void setTextCursorPosition(int pos);
     WidgetFile * widgetFile() { return _widgetFile; }
-
+    bool triggerTabMacros();
+    bool onMacroTriggered(Macro macro);
 #ifdef OS_MAC
     Qt::KeyboardModifiers modifiers;
 #endif

@@ -74,7 +74,8 @@ SOURCES += main.cpp\
     hunspell/affixmgr.cxx \
     hunspell/affentry.cxx \
     dialogaddlatexcommand.cpp \
-    dialogmacros.cpp
+    dialogmacros.cpp \
+    macroengine.cpp
 
 HEADERS  += mainwindow.h \
     widgetlinenumber.h \
@@ -130,7 +131,8 @@ HEADERS  += mainwindow.h \
     hunspell/affixmgr.hxx \
     hunspell/affentry.hxx \
     dialogaddlatexcommand.h \
-    dialogmacros.h
+    dialogmacros.h \
+    macroengine.h
 
 FORMS    += mainwindow.ui \
     dialogwelcome.ui \

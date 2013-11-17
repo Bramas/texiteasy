@@ -1,3 +1,10 @@
-\begin{@env}
+<macro>
+    <description>Section</description>
+    <trigger>
+    	<keys>Ctrl+M</keys>
+    	<leftWord>(.*)</leftWord>
+    </trigger>
+    <content><![CDATA[\begin{@env}
 	@text
-\end{@env}
+\end{@env}]]></content>
+</macro>

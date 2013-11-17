@@ -491,3 +491,11 @@ void FileManager::handleMimeData(const QMimeData * mimeData)
 {
     _mainWindow->handleMimeData(mimeData);
 }
+
+void FileManager::onMacroTriggered(Macro macro)
+{
+    if(currentWidgetFile())
+    {
+        currentWidgetFile()->widgetTextEdit()->onMacroTriggered(macro);
+    }
+}

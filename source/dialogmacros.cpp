@@ -1,6 +1,7 @@
 #include "dialogmacros.h"
 #include "ui_dialogmacros.h"
 #include "configmanager.h"
+#include "macroengine.h"
 
 #include <QStandardItemModel>
 #include <QDebug>
@@ -29,7 +30,6 @@ DialogMacros::DialogMacros(QWidget *parent) :
         it.clear();
         it << new QStandardItem(macroName) << new QStandardItem("-");
         parentItem->appendRow(it);
-        qDebug()<<macroName<<it.first()->row();
     }
 
     list = dir.entryList(QDir::Dirs | QDir::Readable | QDir::NoDotAndDotDot, QDir::Name);
@@ -48,7 +48,6 @@ DialogMacros::DialogMacros(QWidget *parent) :
             it.clear();
             it << new QStandardItem(macroName) << new QStandardItem("-");
             upItem->appendRow(it);
-            qDebug()<<macroName<<it.first()->row();
         }
     }
 
@@ -63,9 +62,11 @@ DialogMacros::DialogMacros(QWidget *parent) :
     trUtf8("Figure");
     ui->tree->setModel(_model);
 
-
     connect(this->ui->tree, SIGNAL(clicked(QModelIndex)), this, SLOT(onClicked(QModelIndex)));
     connect(ui->plainTextEdit, SIGNAL(textChanged()), this, SLOT(setModified()));
+    connect(ui->lineEditDescription, SIGNAL(textChanged(QString)), this, SLOT(setModified(QString)));
+    connect(ui->lineEditKeys, SIGNAL(textChanged(QString)), this, SLOT(setModified(QString)));
+    connect(ui->lineEditLeftWord, SIGNAL(textChanged(QString)), this, SLOT(setModified(QString)));
 }
 
 DialogMacros::~DialogMacros()
@@ -97,45 +98,55 @@ void DialogMacros::onClicked(QModelIndex index)
     }
 
     // save the previous macro
-    saveLastClickedItem();
+    {
+        saveLastClickedItem();
+    }
 
 
     // load the new macro
+    QString name;
+    if(item->parent() && item->parent() != _model->invisibleRootItem())
     {
-        QString filename = _macrosPath;
-        if(item->parent() && item->parent() != _model->invisibleRootItem())
-        {
-            filename += item->parent()->data().toString()+"/";
-        }
-        filename += item->text()+ConfigManager::MacroSuffix;
-        QFile file(filename);
-        qDebug()<<"load : "<<filename;
-        if(file.open(QFile::ReadOnly | QFile::Text))
-        {
-            ui->plainTextEdit->setPlainText(file.readAll());
-            _modified = false;
-        }
+        name += item->parent()->data().toString()+"/";
     }
+    name += item->text();
+    loadMacro(name);
     _lastClickedItem = _model->indexFromItem(item);
+}
+
+void DialogMacros::loadMacro(QString name)
+{
+    Macro macro = MacroEngine::Instance.macros().value(name);
+    ui->plainTextEdit->setPlainText(macro.content);
+    ui->lineEditDescription->setText(macro.description);
+    ui->lineEditKeys->setText(macro.keys);
+    ui->lineEditLeftWord->setText(macro.leftWord);
+    _modified = false;
+
+    ui->plainTextEdit->setReadOnly(macro.readOnly);
+    ui->lineEditDescription->setReadOnly(macro.readOnly);
+    /*ui->lineEditKeys->setReadOnly(macro.readOnly);
+    ui->lineEditLeftWord->setReadOnly(macro.readOnly);*/
+
 }
 
 void DialogMacros::saveLastClickedItem()
 {
-    if(_lastClickedItem.isValid() && _modified)
+    if(!_lastClickedItem.isValid() || !_modified)
     {
-        QStandardItem * lastItem = _model->itemFromIndex(_lastClickedItem);
-        QString filename = _macrosPath;
-        if(lastItem->parent() && lastItem->parent() != _model->invisibleRootItem())
-        {
-            filename += lastItem->parent()->data().toString()+"/";
-        }
-        filename += lastItem->text()+ConfigManager::MacroSuffix;
-        QFile file(filename);
-        qDebug()<<"save : "<<filename;
-        if(file.open(QFile::WriteOnly | QFile::Text))
-        {
-            qDebug()<<"write : "<<ui->plainTextEdit->toPlainText().toUtf8();
-            file.write(ui->plainTextEdit->toPlainText().toUtf8());
-        }
+        return;
     }
+
+    QStandardItem * lastItem = _model->itemFromIndex(_lastClickedItem);
+    QString name;
+    if(lastItem->parent() && lastItem->parent() != _model->invisibleRootItem())
+    {
+        name += lastItem->parent()->data().toString()+"/";
+    }
+    name += lastItem->text();
+    MacroEngine::Instance.saveMacro(name,
+                                    ui->lineEditDescription->text(),
+                                    ui->lineEditKeys->text(),
+                                    ui->lineEditLeftWord->text(),
+                                    ui->plainTextEdit->toPlainText().toUtf8());
 }

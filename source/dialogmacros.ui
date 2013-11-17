@@ -27,18 +27,18 @@
    <property name="geometry">
     <rect>
      <x>300</x>
-     <y>50</y>
+     <y>120</y>
      <width>411</width>
-     <height>461</height>
+     <height>391</height>
     </rect>
    </property>
   </widget>
-  <widget class="QLineEdit" name="lineEdit">
+  <widget class="QLineEdit" name="lineEditDescription">
    <property name="geometry">
     <rect>
-     <x>390</x>
+     <x>430</x>
      <y>20</y>
-     <width>311</width>
+     <width>281</width>
      <height>21</height>
     </rect>
    </property>
@@ -48,12 +48,12 @@
     <rect>
      <x>300</x>
      <y>20</y>
-     <width>81</width>
+     <width>121</width>
      <height>19</height>
     </rect>
    </property>
    <property name="text">
-    <string>Nom :</string>
+    <string>Description :</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -99,6 +99,58 @@
    </property>
    <property name="text">
     <string>Enregistrer la macro</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_2">
+   <property name="geometry">
+    <rect>
+     <x>301</x>
+     <y>50</y>
+     <width>121</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Raccourci :</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEditKeys">
+   <property name="geometry">
+    <rect>
+     <x>430</x>
+     <y>50</y>
+     <width>281</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>301</x>
+     <y>80</y>
+     <width>121</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Mot sur la gauche :</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEditLeftWord">
+   <property name="geometry">
+    <rect>
+     <x>430</x>
+     <y>80</y>
+     <width>281</width>
+     <height>21</height>
+    </rect>
    </property>
   </widget>
  </widget>

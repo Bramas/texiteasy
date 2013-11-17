@@ -301,8 +301,13 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
     if(e->key() == Qt::Key_Tab)
     {
         _multipleEdit.clear();
+
         if(-1 == this->textCursor().block().text().left(this->textCursor().positionInBlock()).indexOf(QRegExp("^[ \t]*$")))
         {
+            if(triggerTabMacros())
+            {
+                return;
+            }
             if(this->selectNextArgument())
             {
                 return;
@@ -401,34 +406,40 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
         newLine();
         return;
     }
-    if(_multipleEdit.count() && !e->text().isEmpty() && !e->text().contains(QRegExp(QString::fromUtf8("[^a-zA-Z0-9èéàëêïîùüû&()\"'\\$§,;\\.+=\\-_*\\/\\\\!?%#@° ]"))))
+    if(_multipleEdit.count() && e->modifiers() == Qt::NoModifier && !e->text().isEmpty() && !e->text().contains(QRegExp(QString::fromUtf8("[^a-zA-Z0-9èéàëêïîùüû&()\"'\\$§,;\\.+=\\-_*\\/\\\\!?%#@° ]"))))
     {
         QTextCursor cur1 = this->textCursor();
         QTextCursor cur2 = _multipleEdit.first();
-        /*if(!cur1.selectedText().isEmpty())
-        {
-            cur2.setPosition(_multipleEdit.first());
-            cur2.movePosition(cur1.selectionStart() == cur1.position() ? QTextCursor::Right : QTextCursor::Left, QTextCursor::KeepAnchor, cur1.selectedText().length());
-        }*/
+        cur1.beginEditBlock();
         cur1.insertText(e->text());
-        _multipleEdit.first().insertText(e->text());
+        cur1.endEditBlock();
+        cur2.joinPreviousEditBlock();
+        cur2.insertText(e->text());
+        cur2.endEditBlock();
         this->setTextCursor(cur1);
         this->onCursorPositionChange();
         return;
     }
-    if(_multipleEdit.count() && (e->key() == Qt::Key_Delete || e->key() == Qt::Key_Backspace))
+    if(_multipleEdit.count() && e->modifiers() == Qt::NoModifier && (e->key() == Qt::Key_Delete || e->key() == Qt::Key_Backspace))
     {
         QTextCursor cur1 = this->textCursor();
         QTextCursor cur2 = _multipleEdit.first();
+        cur1.beginEditBlock();
         if(e->key() == Qt::Key_Delete)
         {
             cur1.deleteChar();
-            _multipleEdit.first().deleteChar();
+            cur1.endEditBlock();
+            cur2.joinPreviousEditBlock();
+            cur2.deleteChar();
+            cur2.endEditBlock();
         }
         else
         {
             cur1.deletePreviousChar();
-            _multipleEdit.first().deletePreviousChar();
+            cur1.endEditBlock();
+            cur2.joinPreviousEditBlock();
+            cur2.deletePreviousChar();
+            cur2.endEditBlock();
         }
         this->setTextCursor(cur1);
         this->onCursorPositionChange();
@@ -460,13 +471,23 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
 
 bool WidgetTextEdit::selectNextArgument()
 {
-    QTextCursor cur = this->document()->find(QRegExp("@[^\\}\\]\\),]*"),this->textCursor().position());
-    if(cur.isNull())
+    QTextCursor cur = this->document()->find(QRegExp("%[0-9][^0-9]"),this->textCursor().position());
+    if(!cur.isNull())
     {
-        return false;
+        int start = qMin(cur.selectionStart(), cur.selectionEnd());
+        cur.setPosition(start);
+        cur.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 2);
+        this->setTextCursor(cur);
+        return true;
     }
-    this->setTextCursor(cur);
-    return true;
+    cur = this->document()->find(QRegExp("%@[a-zA-Z0-9]+"),this->textCursor().position());
+    if(!cur.isNull())
+    {
+        this->setTextCursor(cur);
+        return true;
+    }
+    return false;
+
 }
 
 void WidgetTextEdit::wheelEvent(QWheelEvent * event)
@@ -991,7 +1012,6 @@ QString WidgetTextEdit::wordOnLeft()
     QRegExp lastWordPatter("([a-zA-Z0-9èéàëêïîùüû\\-_*]+)$");
     if(lineBegining.indexOf(lastWordPatter) != -1)
     {
-        qDebug()<<lastWordPatter.capturedTexts().last();
         return lastWordPatter.capturedTexts().last();
     }
     return QString();
@@ -1072,4 +1092,60 @@ void WidgetTextEdit::wrapEnvironment()
     cursor.endEditBlock();
     this->setTextCursor(cursor);
     this->selectNextArgument();
+}
+
+bool WidgetTextEdit::triggerTabMacros()
+{
+    QList<Macro> list = MacroEngine::Instance.tabMacros();
+    foreach(const Macro &macro, list)
+    {
+        if(onMacroTriggered(macro))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool WidgetTextEdit::onMacroTriggered(Macro macro)
+{
+    QTextCursor cursor = textCursor();
+    QString word;
+    if(cursor.hasSelection())
+    {
+        word = cursor.selectedText();
+    }
+    else
+    {
+        word = this->wordOnLeft();
+    }
+    QRegExp pattern("^"+macro.leftWord+"$");
+    if(!word.contains(pattern))
+    {
+        return false;
+    }
+    if(!cursor.hasSelection())
+    {
+        cursor.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor, word.length());
+    }
+    QString content = macro.content;
+    QStringList cap = pattern.capturedTexts();
+    cap.pop_back();
+    while(cap.count())
+    {
+        QString arg = cap.back();
+        cap.pop_back();
+        if(!arg.isEmpty())
+        {
+            content = content.arg(arg);
+        }
+    }
+    cursor.deleteChar();
+    int pos = cursor.position();
+    this->insertPlainText(content);
+    cursor.setPosition(pos);
+    this->setTextCursor(cursor);
+    selectNextArgument();
+    return true;
+
 }

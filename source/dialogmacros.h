@@ -22,8 +22,10 @@ protected:
     void closeEvent(QCloseEvent *);
 private slots:
     void setModified(bool b = true) { _modified = b; }
+    void setModified(QString) { _modified = true; }
 private:
     void saveLastClickedItem();
+    void loadMacro(QString name);
 private:
     Ui::DialogMacros *ui;
     QString _macrosPath;

@@ -38,6 +38,7 @@
 #include "minisplitter.h"
 #include "widgetsimpleoutput.h"
 #include "widgetproject.h"
+#include "macroengine.h"
 
 #include <QMenu>
 #include <QAction>
@@ -92,6 +93,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(_emptyWidget, SIGNAL(mouseDoubleClick()), this, SLOT(newFile()));
 
     DialogMacros * _dialogMacro = new DialogMacros(0);
+    this->addActions(MacroEngine::Instance.actions());
 
     _widgetStatusBar = new WidgetStatusBar(this);
     ui->actionLinkSync->setChecked(ConfigManager::Instance.isPdfSynchronized());
@@ -200,7 +202,6 @@ MainWindow::MainWindow(QWidget *parent) :
     {
         this->openLastSession();
     }
-
     return;
 }
 

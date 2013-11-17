@@ -5,6 +5,7 @@
 #include <QList>
 #include <QMutex>
 #include "file.h"
+#include "macroengine.h"
 #include "widgetfile.h"
 
 class QMimeData;
@@ -34,6 +35,8 @@ public:
     void setMainWindow(MainWindow * m) { _mainWindow = m; }
     void handleMimeData(const QMimeData * mimeData);
     WidgetPdfViewerWrapper * widgetPdfViewerWrapper() { return _widgetPdfViewerWrapper; }
+
+    void onMacroTriggered(Macro macro);
 
 signals:
     void cursorPositionChanged(int,int);

@@ -25,6 +25,7 @@
 #include "application.h"
 #include "configmanager.h"
 #include "filemanager.h"
+#include "macroengine.h"
 #include <QSettings>
 #include <QFontDatabase>
 #include <QDebug>
@@ -58,6 +59,7 @@ int main(int argc, char *argv[])
     qDebug()<<QString("Start ")+APPLICATION_NAME+QString(" version ")+CURRENT_VERSION;
     FileManager::Instance.init();
     ConfigManager::Instance.init();
+    MacroEngine::Instance.loadMacros();
     MainWindow w;
     w.show();
     a.connect(&a, SIGNAL(requestOpenFile(QString)), &w, SLOT(open(QString)));

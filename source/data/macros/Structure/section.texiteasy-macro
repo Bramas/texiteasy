@@ -1,1 +1,10 @@
-\section{@name}
+<macro readOnly="1">
+    <description>Section</description>
+    <trigger>
+    	<keys>Tab</keys>
+    	<leftWord>
+    		sect.*
+    	</leftWord>
+    </trigger>
+    <content><![CDATA[\section{@name}]]></content>
+</macro>
