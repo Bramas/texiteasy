@@ -71,6 +71,7 @@ public:
     QVector<CharacterData> characterData;
     QVector<ParenthesisInfo *> parentheses();
     QVector<LatexBlockInfo *> latexblocks();
+    QVector<QPair<QString,QPair<int,int> > > arguments;
     void insertPar( ParenthesisInfo *info );
     void insertLat( LatexBlockInfo *info );
     void insertDollar(int pos ) { this->_dollars.append(pos); }

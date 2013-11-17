@@ -110,20 +110,87 @@ void WidgetTextEdit::insertText(const QString &text)
 {
     WIDGET_TEXT_EDIT_PARENT_CLASS::insertPlainText(text);
 }
+
+typedef QPair<QString,QPair<int,int> > Argument;
+
 void WidgetTextEdit::paintEvent(QPaintEvent *event)
 {
+
     WIDGET_TEXT_EDIT_PARENT_CLASS::paintEvent(event);
     QPainter painter(viewport());
+    painter.setFont(ConfigManager::Instance.getTextCharFormats("normal").font());
 
+
+    QPen textPen = ConfigManager::Instance.getTextCharFormats("normal").foreground().color();
+    painter.setPen(textPen);
     if(_multipleEdit.count())
     {
         QTextLine line = _multipleEdit.first().block().layout()->lineForTextPosition(_multipleEdit.first().positionInBlock());
-        qreal left = line.cursorToX(_multipleEdit.first().positionInBlock());;
-        qreal top = line.position().y() + line.height() + this->blockTop(_multipleEdit.first().block()) + this->contentOffsetTop();
-        QPoint curPoint(left,top);
-        QPoint diff(0,line.height());
-        painter.drawLine(curPoint - diff, curPoint);
+        if(line.isValid())
+        {
+            qreal left = line.cursorToX(_multipleEdit.first().positionInBlock());;
+            qreal top = line.position().y() + line.height() + this->blockTop(_multipleEdit.first().block()) + this->contentOffsetTop();
+            QPoint curPoint(left,top);
+            QPoint diff(0,line.height());
+            painter.drawLine(curPoint - diff, curPoint);
+        }
     }
+    QBrush defaultBrush(QColor(200, 0, 0));
+    QBrush selectedBrush(QColor(200, 0, 200));
+    QPen borderSelectedPen = QColor(250, 0, 250);
+    QPen borderPen = QColor(250, 0, 0);
+    QTextBlock block = this->document()->firstBlock();
+
+    while(block.isValid())
+    {
+        BlockData *data = static_cast<BlockData *>(block.userData());
+        if(data && data->arguments.count())
+        {
+            foreach(const Argument &arg, data->arguments)
+            {
+                QTextLayout * layout = block.layout();
+                if(layout)
+                {
+                    QTextLine line = layout->lineForTextPosition(arg.second.first);
+                    QTextLine line2 = layout->lineForTextPosition(arg.second.second);
+                    if(line.isValid() && line2.isValid())
+                    {
+                        if(extraSelections().count() > 3
+                       && extraSelections().at(3).cursor.position() >= block.position() + arg.second.first
+                       && extraSelections().at(3).cursor.position() <= block.position() + arg.second.second)
+                        {
+                            painter.setBrush(selectedBrush);
+                            painter.setPen(borderSelectedPen);
+                        }
+                        else
+                        if(textCursor().position() >= block.position() + arg.second.first
+                                && textCursor().position() <= block.position() + arg.second.second)
+                        {
+                            painter.setBrush(selectedBrush);
+                            painter.setPen(borderSelectedPen);
+                        }
+                        else
+                        {
+                            painter.setBrush(defaultBrush);
+                            painter.setPen(borderPen);
+                        }
+
+                        int xLeft = line.cursorToX(arg.second.first);
+                        int width = line2.cursorToX(arg.second.second) - xLeft;
+                        int top = line.position().y() + blockTop(block) + contentOffset().y();
+                        int height = line2.rect().bottom() - line.position().y();
+                        QRect r(xLeft, top, width, height);
+
+                        painter.drawRoundedRect(r,3,3);
+                        painter.setPen(textPen);
+                        painter.drawText(r.bottomLeft() + QPoint(0, -5), arg.first);
+                    }
+                }
+            }
+        }
+        block = block.next();
+    }
+
     return;
 }
 void WidgetTextEdit::contextMenuEvent(QContextMenuEvent *event)
@@ -238,6 +305,41 @@ void WidgetTextEdit::onCursorPositionChange()
     QList<QTextEdit::ExtraSelection> selections;
     setExtraSelections(selections);
     this->highlightCurrentLine();
+
+    if(!textCursor().hasSelection())
+    {
+        BlockData *data = static_cast<BlockData *>( textCursor().block().userData() );
+        if (data) {
+            if(data->characterData[textCursor().positionInBlock()].state == SyntaxHighlighter::CompletionArgument)
+            {
+                QString text = textCursor().block().text();
+                int selStart = textCursor().positionInBlock() - 1;
+                int selEnd = selStart;
+                while(selStart > 0 && data->characterData[selStart].state == SyntaxHighlighter::CompletionArgument)
+                {
+                    --selStart;
+                }
+                QTextCursor cursor = textCursor();
+                cursor.setPosition(textCursor().block().position() + selStart);
+                this->setTextCursor(cursor);
+
+                this->selectNextArgument();
+                return;
+
+    /*            while(selEnd + 1 < text.length() && data->characterData[selEnd + 1].state == SyntaxHighlighter::CompletionArgument)
+                {
+                    ++selEnd;
+                }
+                ++selEnd;
+                QTextCursor cursor = textCursor();
+                cursor.setPosition(textCursor().block().position() + selStart);
+                cursor.setPosition(textCursor().block().position() + selEnd, QTextCursor::KeepAnchor);
+                this->setTextCursor(cursor);
+                */
+            }
+        }
+    }
+
     matchAll();
     this->currentFile->getViewer()->setLine(this->textCursor().blockNumber()+1);
 

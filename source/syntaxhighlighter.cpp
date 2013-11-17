@@ -32,6 +32,8 @@
 #include "widgettextedit.h"
 #include "file.h"
 
+#include <QBrush>
+
 QStringList initTextBlockCommands()
 {
     QStringList list;
@@ -151,7 +153,10 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
     QTextCharFormat formatMath = ConfigManager::Instance.getTextCharFormats("math");
     QTextCharFormat formatOther = ConfigManager::Instance.getTextCharFormats("other");
     QTextCharFormat formatVerbatim = formatOther;
-    QTextCharFormat formatArgument = formatCommand;
+    QTextCharFormat formatArgument;
+    QTextCharFormat formatArgumentDelimiter = formatArgument;
+                    formatArgumentDelimiter.setFontStretch(1);
+                    formatArgumentDelimiter.setFontLetterSpacing(1);
 
      setFormat(0, text.size(), formatNormal);
 
@@ -198,16 +203,25 @@ while(index < text.length())
         //check if it is an argument resulting of an auto completion
         if(nextChar == '{' || (nextChar.isLetterOrNumber() && int(nextChar.toLatin1()) >= '1' && int(nextChar.toLatin1()) <= '9'))
         {
+            int argumentBegin = index;
             //this an argument of the form %[1-9]
-            setFormat(index, 2, formatArgument);
+            setFormat(index, 2, formatArgumentDelimiter);
             blockData->characterData[index + 0].state = CompletionArgument;
             blockData->characterData[index + 1].state = CompletionArgument;
             index += 2;
 
+            QString argument;
             if(nextChar == '{' || (index < text.length() && text.at(index) == '{'))
             {
+                if(index < text.length() && text.at(index) == '{')
+                {
+                    blockData->characterData[index].state = CompletionArgument;
+                    setFormat(index, 1, formatArgumentDelimiter);
+                    ++index;
+                }
                 while(index < text.length() && text.at(index) != '}')
                 {
+                    argument += text.at(index);
                     blockData->characterData[index].state = CompletionArgument;
                     setFormat(index, 1, formatArgument);
                     ++index;
@@ -215,10 +229,11 @@ while(index < text.length())
                 if(index < text.length())
                 {
                     blockData->characterData[index].state = CompletionArgument;
-                    setFormat(index, 1, formatArgument);
+                    setFormat(index, 1, formatArgumentDelimiter);
                     ++index;
                 }
             }
+            blockData->arguments.append(QPair<QString,QPair<int,int> >(argument,QPair<int,int>(argumentBegin, index)));
             continue;
         }
         //else it is a regular comment
