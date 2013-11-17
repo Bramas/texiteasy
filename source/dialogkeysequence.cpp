@@ -13,6 +13,7 @@
 #include <QMenu>
 #include <QEvent>
 #include <QAction>
+#include <QDebug>
 #include <QContextMenuEvent>
 
 
@@ -84,7 +85,7 @@ void DialogKeySequence::handleKeyEvent(QKeyEvent *e)
     if (m_num > 3)
         m_num = 0;
     m_keySequence = QKeySequence(k0, k1, k2, k3);
-    ui.lineEdit->setText(m_keySequence.toString(QKeySequence::PortableText));
+    ui.lineEdit->setText(m_keySequence.toString(QKeySequence::NativeText));
     e->accept();
     emit keySequenceChanged(m_keySequence);
 }
@@ -134,7 +135,7 @@ void DialogKeySequence::focusOutEvent(QFocusEvent *e)
 void DialogKeySequence::keyPressEvent(QKeyEvent *e)
 {
     handleKeyEvent(e);
-    e->accept();
+    e->ignore();
 }
 
 void DialogKeySequence::keyReleaseEvent(QKeyEvent *e)

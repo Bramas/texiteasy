@@ -2,20 +2,20 @@
  *   copyright       : (C) 2013 by Quentin BRAMAS                          *
  *   http://texiteasy.com                                                  *
  *                                                                         *
- *   This file is part of texiteasy.                                          *
+ *   This file is part of texiteasy.                                       *
  *                                                                         *
- *   texiteasy is free software: you can redistribute it and/or modify        *
+ *   texiteasy is free software: you can redistribute it and/or modify     *
  *   it under the terms of the GNU General Public License as published by  *
  *   the Free Software Foundation, either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
- *   texiteasy is distributed in the hope that it will be useful,             *
+ *   texiteasy is distributed in the hope that it will be useful,          *
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
  *   GNU General Public License for more details.                          *
  *                                                                         *
  *   You should have received a copy of the GNU General Public License     *
- *   along with texiteasy.  If not, see <http://www.gnu.org/licenses/>.       *                         *
+ *   along with texiteasy.  If not, see <http://www.gnu.org/licenses/>.    *
  *                                                                         *
  ***************************************************************************/
 
@@ -56,6 +56,13 @@ ConfigManager ConfigManager::Instance;
 QString ConfigManager::Extensions = trUtf8("Latex (*.tex *.latex);;BibTex(*.bib)");
 
 QString ConfigManager::MacroSuffix = ".texiteasy-macro";
+const QStringList ConfigManager::DefaultLatexCommands =
+        QString("pdflatex -synctex=1 -shell-escape -interaction=nonstopmode -enable-write18 %1\n"
+        "xelatex -synctex=1 -interaction=nonstopmode %1\n"
+        "latexmk -e \"$pdflatex=q/pdflatex -synctex=1 -interaction=nonstopmode/\" -pdf %1\n"
+                "latex -interaction=nonstopmode %1 ; dvipdfm %1.dvi").split('\n');
+const QStringList ConfigManager::DefaultLatexCommandNames =
+        QString("PdfLatex\nXeLatex\nLatexmk\nLatex + dvipdfm").split('\n');
 
 ConfigManager::ConfigManager() :
     mainWindow(0),
@@ -108,15 +115,12 @@ void ConfigManager::init()
         settings.setValue("bibtex","bibtex \"%1\"");
     }
 
+
     if(!settings.contains("defaultLatex"))
     {
         settings.setValue("defaultLatex","PdfLatex");
-        settings.setValue("latexCommandNames", QStringList("PdfLatex"));
-    #if OS_WINDOWS
-        settings.setValue("latexCommands", QStringList("pdflatex.exe -synctex=1 -shell-escape -interaction=nonstopmode -enable-write18 %1"));
-    #else
-        settings.setValue("latexCommands", QStringList("pdflatex -synctex=1 -shell-escape -interaction=nonstopmode -enable-write18 %1"));
-    #endif
+        settings.setValue("latexCommandNames", DefaultLatexCommandNames);
+        settings.setValue("latexCommands", DefaultLatexCommands);
     }
 
     settings.endGroup();

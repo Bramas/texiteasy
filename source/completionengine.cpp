@@ -2,22 +2,23 @@
  *   copyright       : (C) 2013 by Quentin BRAMAS                          *
  *   http://texiteasy.com                                                  *
  *                                                                         *
- *   This file is part of texiteasy.                                          *
+ *   This file is part of texiteasy.                                       *
  *                                                                         *
- *   texiteasy is free software: you can redistribute it and/or modify        *
+ *   texiteasy is free software: you can redistribute it and/or modify     *
  *   it under the terms of the GNU General Public License as published by  *
  *   the Free Software Foundation, either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
- *   texiteasy is distributed in the hope that it will be useful,             *
+ *   texiteasy is distributed in the hope that it will be useful,          *
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
  *   GNU General Public License for more details.                          *
  *                                                                         *
  *   You should have received a copy of the GNU General Public License     *
- *   along with texiteasy.  If not, see <http://www.gnu.org/licenses/>.       *                         *
+ *   along with texiteasy.  If not, see <http://www.gnu.org/licenses/>.    *
  *                                                                         *
  ***************************************************************************/
+
 
 #include "completionengine.h"
 #include <QListWidgetItem>
@@ -30,6 +31,28 @@
 #include "widgettextedit.h"
 #include "widgettooltip.h"
 
+bool completionStringLessThan(const QString &s1, const QString &s2)
+{
+    int i = 0;
+    int length = qMin(s1.size(), s2.size());
+    while(i < length && s1.at(i) == s2.at(i))   ++i;
+
+    //first Difference
+    if(i == length)
+    {
+        return length == s1.size();
+    }
+
+    if(s1.at(i) == '{')
+    {
+        return true;
+    }
+    if(s2.at(i) == '{')
+    {
+        return false;
+    }
+    return s1.at(i) < s2.at(i);
+}
 
 CompletionEngine::CompletionEngine(WidgetTextEdit *parent) :
     QListWidget(parent),
@@ -46,9 +69,9 @@ CompletionEngine::CompletionEngine(WidgetTextEdit *parent) :
     this->loadFile(":/completion/amsmath.cwl");
 
     connect(this, SIGNAL(currentRowChanged(int)), this, SLOT(cellSelected(int)));
-
     _words.removeDuplicates();
-    _words.sort();
+    qSort(_words.begin(), _words.end(), completionStringLessThan);
+    //_words.sort();
     //qDebug()<<"Completion engine Initialized : "<<_words.count()<<" words";
 }
 CompletionEngine::~CompletionEngine()
@@ -190,7 +213,11 @@ QString CompletionEngine::acceptedWord()
 
 void CompletionEngine::keyPressEvent(QKeyEvent *event)
 {
-
+    if(event->key() == Qt::Key_Tab)
+    {
+        _widgetTextEdit->setFocus(event);
+        return;
+    }
     if(event->key() == Qt::Key_Alt ||
             event->key() == Qt::Key_AltGr ||
             event->key() == Qt::Key_Control ||

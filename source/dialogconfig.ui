@@ -53,7 +53,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>3</number>
+    <number>2</number>
    </property>
    <widget class="QWidget" name="pageGeneral">
     <widget class="QWidget" name="formLayoutWidget_2">
@@ -211,12 +211,12 @@
      </attribute>
      <column>
       <property name="text">
-       <string>Action</string>
+       <string notr="true">Action</string>
       </property>
      </column>
      <column>
       <property name="text">
-       <string>Raccourci</string>
+       <string notr="true">Raccourci</string>
       </property>
      </column>
     </widget>
@@ -310,12 +310,12 @@
         </row>
         <column>
          <property name="text">
-          <string>Nom</string>
+          <string notr="true">Nom</string>
          </property>
         </column>
         <column>
          <property name="text">
-          <string>Commande</string>
+          <string notr="true">Commande</string>
          </property>
         </column>
         <item row="0" column="0">

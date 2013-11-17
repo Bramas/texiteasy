@@ -2,20 +2,20 @@
  *   copyright       : (C) 2013 by Quentin BRAMAS                          *
  *   http://texiteasy.com                                                  *
  *                                                                         *
- *   This file is part of texiteasy.                                          *
+ *   This file is part of texiteasy.                                       *
  *                                                                         *
- *   texiteasy is free software: you can redistribute it and/or modify        *
+ *   texiteasy is free software: you can redistribute it and/or modify     *
  *   it under the terms of the GNU General Public License as published by  *
  *   the Free Software Foundation, either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
- *   texiteasy is distributed in the hope that it will be useful,             *
+ *   texiteasy is distributed in the hope that it will be useful,          *
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
  *   GNU General Public License for more details.                          *
  *                                                                         *
  *   You should have received a copy of the GNU General Public License     *
- *   along with texiteasy.  If not, see <http://www.gnu.org/licenses/>.       *                         *
+ *   along with texiteasy.  If not, see <http://www.gnu.org/licenses/>.    *
  *                                                                         *
  ***************************************************************************/
 
@@ -140,7 +140,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->ui->actionCut, SIGNAL(triggered()), &FileManager::Instance, SLOT(cut()));
     connect(this->ui->actionPaste, SIGNAL(triggered()), &FileManager::Instance, SLOT(paste()));
     connect(this->ui->actionFindReplace, SIGNAL(triggered()), &FileManager::Instance, SLOT(openFindReplaceWidget()));
-    connect(this->ui->actionEnvironment, SIGNAL(triggered()), &FileManager::Instance, SLOT(wrapEnvironment()));
     connect(this->ui->actionDefaultCommandLatex,SIGNAL(triggered()), &FileManager::Instance,SLOT(builTex()));
     connect(this->ui->actionBibtex,SIGNAL(triggered()), &FileManager::Instance,SLOT(bibtex()));
     connect(this->ui->actionClean,SIGNAL(triggered()), &FileManager::Instance,SLOT(clean()));
@@ -180,21 +179,22 @@ MainWindow::MainWindow(QWidget *parent) :
     this->ui->menuOuvrir_R_cent->insertSeparator(lastAction);
 
 
-    initBuildMenu();
-    connect(&ConfigManager::Instance, SIGNAL(changed()), this, SLOT(initBuildMenu()));
-
     {
         QList<QAction *> actionsList = this->findChildren<QAction *>();
         QSettings settings;
         settings.beginGroup("shortcuts");
-        //foreach(QAction * action, actionsList) {
-        //    if(settings.contains(action->text()))
+        foreach(QAction * action, actionsList) {
+            if(settings.contains(action->text()))
             {
-                //action->setShortcut(QKeySequence(settings.value(action->text()).toString()));
+                action->setShortcut(QKeySequence(settings.value(action->text()).toString()));
             }
-        //}
-        dialogConfig->addEditableActions(actionsList);
+        }
     }
+
+    initBuildMenu();
+
+    connect(&ConfigManager::Instance, SIGNAL(changed()), this, SLOT(initBuildMenu()));
+
 
     setAcceptDrops(true);
 
@@ -371,13 +371,19 @@ bool MainWindow::canBeInserted(QString filename)
 
 void MainWindow::initBuildMenu()
 {
+
+    QSettings settings;
+    settings.beginGroup("shortcuts");
+
     this->ui->menuOtherBuilder->clear();
     this->ui->actionDefaultCommandLatex->setText(ConfigManager::Instance.defaultLatex());
     QStringList commandNameList = ConfigManager::Instance.latexCommandNames();
     foreach(const QString & name, commandNameList)
     {
         QAction * action = new QAction(name, this->ui->menuOtherBuilder);
-        action->setPriority(QAction::LowPriority);
+        action->setObjectName(name);
+        action->setShortcut(QKeySequence(settings.value(name).toString()));
+        //action->setPriority(QAction::LowPriority);
         /*if(!name.compare(ConfigManager::Instance.defaultLatex()))
         {
             delete action;

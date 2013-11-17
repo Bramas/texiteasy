@@ -1,7 +1,7 @@
-<macro>
+<macro readOnly="1">
     <description>Begin End Environment</description>
     <trigger>
-    	<keys>Ctrl+M</keys>
+    	<keys>Ctrl+E</keys>
     	<leftWord>
     		(.*)
     	</leftWord>

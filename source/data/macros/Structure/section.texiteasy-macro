@@ -1,4 +1,4 @@
-<macro>
+<macro readOnly="1">
     <description>Section</description>
     <trigger>
     	<keys>Tab</keys>

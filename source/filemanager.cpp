@@ -287,11 +287,6 @@ void FileManager::paste()
     if(this->currentWidgetFile())
         this->currentWidgetFile()->widgetTextEdit()->paste();
 }
-void FileManager::wrapEnvironment()
-{
-    if(this->currentWidgetFile())
-        this->currentWidgetFile()->widgetTextEdit()->wrapEnvironment();
-}
 void FileManager::jumpToPdfFromSource()
 {
     if(this->currentWidgetFile())

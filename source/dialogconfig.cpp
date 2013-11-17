@@ -2,20 +2,20 @@
  *   copyright       : (C) 2013 by Quentin BRAMAS                          *
  *   http://texiteasy.com                                                  *
  *                                                                         *
- *   This file is part of texiteasy.                                          *
+ *   This file is part of texiteasy.                                       *
  *                                                                         *
- *   texiteasy is free software: you can redistribute it and/or modify        *
+ *   texiteasy is free software: you can redistribute it and/or modify     *
  *   it under the terms of the GNU General Public License as published by  *
  *   the Free Software Foundation, either version 3 of the License, or     *
  *   (at your option) any later version.                                   *
  *                                                                         *
- *   texiteasy is distributed in the hope that it will be useful,             *
+ *   texiteasy is distributed in the hope that it will be useful,          *
  *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
  *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
  *   GNU General Public License for more details.                          *
  *                                                                         *
  *   You should have received a copy of the GNU General Public License     *
- *   along with texiteasy.  If not, see <http://www.gnu.org/licenses/>.       *                         *
+ *   along with texiteasy.  If not, see <http://www.gnu.org/licenses/>.    *
  *                                                                         *
  ***************************************************************************/
 
@@ -34,8 +34,8 @@
 
 DialogConfig::DialogConfig(MainWindow *parent) :
     QDialog(parent),
-    ui(new Ui::DialogConfig),
-    _parent(parent)
+    _mainWindows(parent),
+    ui(new Ui::DialogConfig)
 {
     ui->setupUi(this);
     connect(this->ui->pushButton_saveAndQuit,SIGNAL(clicked()),this,SLOT(saveAndClose()));
@@ -48,7 +48,6 @@ DialogConfig::DialogConfig(MainWindow *parent) :
     connect(this->ui->pushButton_addLatex, SIGNAL(clicked()), this, SLOT(addNewCommand()));
     connect(this->ui->tableWidgetLatexCommands, SIGNAL(itemSelectionChanged()), this, SLOT(onCurrentLatexCommandChanged()));
     connect(this->ui->pushButton_removeLatex, SIGNAL(clicked()), this, SLOT(deleteSelectedLatex()));
-
 
 
     // Page General
@@ -123,7 +122,7 @@ void DialogConfig::save()
     //
 
     ConfigManager::Instance.setReplaceDefaultFont(this->ui->checkBox_replaceDefaultFont->isChecked());
-    _parent->setTheme(this->ui->comboBox_themes->currentText());
+    _mainWindows->setTheme(this->ui->comboBox_themes->currentText());
     ConfigManager::Instance.setPointSize(this->ui->spinBoxPointSize->value());
     if(this->ui->checkBox_replaceDefaultFont->isChecked())
     {
@@ -137,10 +136,13 @@ void DialogConfig::save()
 
     QSettings settings;
     settings.beginGroup("shortcuts");
+    QList<QKeySequence> list;
     for (int row = 0; row < this->ui->tableWidget_keyBinding->rowCount(); ++row) {
         QAction *action = _actionsList[row];
-        action->setShortcut(QKeySequence(this->ui->tableWidget_keyBinding->item(row, 1)->text()));
-        settings.setValue(action->text(),action->shortcut());
+        list.clear();
+        list << QKeySequence(this->ui->tableWidget_keyBinding->item(row, 1)->text());
+        action->setShortcuts(list);
+        settings.setValue(action->text(), action->shortcut());
     }
 
     ConfigManager::Instance.sendChangedSignal();
@@ -150,6 +152,11 @@ void DialogConfig::show()
 {
     QSettings settings;
     settings.beginGroup("theme");
+
+    _actionsList.clear();
+    this->ui->tableWidget_keyBinding->clear();
+    ui->tableWidget_keyBinding->setRowCount(0);
+    this->addEditableActions(_mainWindows->findChildren<QAction *>());
 
     // Page General
 
@@ -215,6 +222,17 @@ void DialogConfig::show()
     this->ui->spinBoxTabWidth->setValue(ConfigManager::Instance.tabWidth());
     this->ui->checkBoxIndentationUsingSpace->setChecked(ConfigManager::Instance.isUsingSpaceIndentation());
 
+    {
+        QTableWidgetItem * item = new QTableWidgetItem(trUtf8("Nom"));
+        ui->tableWidgetLatexCommands->setHorizontalHeaderItem(0, item);
+        item = new QTableWidgetItem(trUtf8("Commande"));
+        ui->tableWidgetLatexCommands->setHorizontalHeaderItem(1, item);
+
+        item = new QTableWidgetItem(trUtf8("Action"));
+        ui->tableWidget_keyBinding->setHorizontalHeaderItem(0, item);
+        item = new QTableWidgetItem(trUtf8("Raccourci"));
+        ui->tableWidget_keyBinding->setHorizontalHeaderItem(1, item);
+    }
 
     QDialog::show();
 }

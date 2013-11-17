@@ -119,7 +119,6 @@
     <addaction name="actionPaste"/>
     <addaction name="separator"/>
     <addaction name="actionFindReplace"/>
-    <addaction name="actionEnvironment"/>
    </widget>
    <widget class="QMenu" name="menuAide">
     <property name="title">
@@ -313,14 +312,6 @@
     <enum>QAction::AboutRole</enum>
    </property>
   </action>
-  <action name="actionEnvironment">
-   <property name="text">
-    <string>Environement</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+E</string>
-   </property>
-  </action>
   <action name="actionLinkSync">
    <property name="checkable">
     <bool>true</bool>
@@ -358,6 +349,9 @@
   <action name="actionOpenMacrosDialog">
    <property name="text">
     <string>Ouvrir l'éditeur de macros</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
    </property>
   </action>
  </widget>

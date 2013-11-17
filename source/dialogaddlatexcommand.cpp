@@ -1,5 +1,28 @@
+/***************************************************************************
+ *   copyright       : (C) 2013 by Quentin BRAMAS                          *
+ *   http://texiteasy.com                                                  *
+ *                                                                         *
+ *   This file is part of texiteasy.                                       *
+ *                                                                         *
+ *   texiteasy is free software: you can redistribute it and/or modify     *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation, either version 3 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   texiteasy is distributed in the hope that it will be useful,          *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with texiteasy.  If not, see <http://www.gnu.org/licenses/>.    *
+ *                                                                         *
+ ***************************************************************************/
+
+
 #include "dialogaddlatexcommand.h"
 #include "ui_dialogaddlatexcommand.h"
+#include "configmanager.h"
 
 DialogAddLatexCommand::DialogAddLatexCommand(QWidget *parent) :
     QDialog(parent),
@@ -7,17 +30,13 @@ DialogAddLatexCommand::DialogAddLatexCommand(QWidget *parent) :
 {
     ui->setupUi(this);
     this->ui->comboBox->addItem(trUtf8("Personalisé"),"");
-#ifdef OS_WINDOWS
-    this->ui->comboBox->addItem("PdfLatex","pdflatex.exe -synctex=1 -shell-escape -interaction=nonstopmode -enable-write18 %1");
-    this->ui->comboBox->addItem("XeLatex","xelatex.exe -synctex=1 -interaction=nonstopmode %1");
-    this->ui->comboBox->addItem("Latexmk","latexmk.exe -e \"$pdflatex=q/pdflatex -synctex=1 -interaction=nonstopmode/\" -pdf %1");
-    this->ui->comboBox->addItem("Latex + dvipdfm","latex.exe -interaction=nonstopmode %1 ; dvipdfm.exe %1.dvi");
-#else
-    this->ui->comboBox->addItem("PdfLatex","pdflatex -synctex=1 -shell-escape -interaction=nonstopmode -enable-write18 %1");
-    this->ui->comboBox->addItem("XeLatex","xelatex -synctex=1 -interaction=nonstopmode %1");
-    this->ui->comboBox->addItem("Latexmk","latexmk -e \"$pdflatex=q/pdflatex -synctex=1 -interaction=nonstopmode/\" -pdf %1");
-    this->ui->comboBox->addItem("Latex + dvipdfm","latex -interaction=nonstopmode %1 ; dvipdfm %1.dvi");
-#endif
+
+    int i = 0;
+    foreach(const QString& name, ConfigManager::DefaultLatexCommandNames)
+    {
+        this->ui->comboBox->addItem(name, ConfigManager::DefaultLatexCommands.at(i++));
+    }
+
     connect(this->ui->comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(onCurrentItemChanged(int)));
 }
 

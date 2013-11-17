@@ -15,9 +15,10 @@
  *   GNU General Public License for more details.                          *
  *                                                                         *
  *   You should have received a copy of the GNU General Public License     *
- *   along with texiteasy.  If not, see <http://www.gnu.org/licenses/>.    *                         *
+ *   along with texiteasy.  If not, see <http://www.gnu.org/licenses/>.    *
  *                                                                         *
  ***************************************************************************/
+
 
 #include "hunspell/hunspell.hxx"
 #include "widgettextedit.h"
@@ -298,25 +299,7 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
         this->_completionEngine->setFocus();
         return;
     }
-    if(e->key() == Qt::Key_Tab)
-    {
-        _multipleEdit.clear();
-
-        if(-1 == this->textCursor().block().text().left(this->textCursor().positionInBlock()).indexOf(QRegExp("^[ \t]*$")))
-        {
-            if(this->selectNextArgument())
-            {
-                return;
-            }
-            if(triggerTabMacros())
-            {
-                return;
-            }
-        }
-        insertPlainText(ConfigManager::Instance.tabToString());
-        return;
-    }
-    if(this->focusWidget() != this)
+    if(this->focusWidget() != this || (_completionEngine->isVisible() && e->key() == Qt::Key_Tab))
     {
         _multipleEdit.clear();
         QString insertWord = this->_completionEngine->acceptedWord();
@@ -343,6 +326,34 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
                 this->setTextCursor(cur);
             }
         }
+        return;
+    }
+    if(e->key() == Qt::Key_Tab)
+    {
+        _multipleEdit.clear();
+        QTextCursor cursor = this->textCursor();
+        if(-1 == cursor.block().text().left(cursor.positionInBlock()).indexOf(QRegExp("^[ \t]*$")))
+        {
+            if(this->selectNextArgument())
+            {
+                return;
+            }
+            if(triggerTabMacros())
+            {
+                return;
+            }
+            if(cursor.positionInBlock() < cursor.block().text().size())
+            {
+                QChar c = cursor.block().text().at(cursor.positionInBlock());
+                if(c == '}' || c == ']')
+                {
+                    cursor.movePosition(QTextCursor::Right, QTextCursor::MoveAnchor);
+                    this->setTextCursor(cursor);
+                    return;
+                }
+            }
+        }
+        insertPlainText(ConfigManager::Instance.tabToString());
         return;
     }
     if(e->key() == Qt::Key_Dollar)
@@ -464,8 +475,10 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
         }
     }
     WIDGET_TEXT_EDIT_PARENT_CLASS::keyPressEvent(e);
-
-    this->matchCommand();
+    if(e->modifiers() == Qt::NoModifier && e->key() != Qt::Key_ApplicationRight && e->key() != Qt::Key_ApplicationLeft && e->key() != Qt::Key_Alt && e->key() != Qt::Key_AltGr && e->key() != Qt::Key_Control)
+    {
+        this->matchCommand();
+    }
 
 }
 
@@ -1006,6 +1019,12 @@ QString WidgetTextEdit::wordOnLeft()
     {
         return cursor.selectedText();
     }
+
+    BlockData *data = static_cast<BlockData *>(cursor.block().userData() );
+    if(data && data->characterData[cursor.positionInBlock() - 1].state == SyntaxHighlighter::Command)
+    {
+        return "";
+    }
     QString lineBegining = cursor.block().text().left(cursor.positionInBlock());
     QRegExp lastWordPatter("([a-zA-Z0-9èéàëêïîùüû\\-_*]+)$");
     if(lineBegining.indexOf(lastWordPatter) != -1)
@@ -1054,42 +1073,6 @@ void WidgetTextEdit::setTextCursorPosition(int pos)
     QTextCursor cursor = this->textCursor();
     cursor.setPosition(pos);
     this->setTextCursor(cursor);
-}
-
-void WidgetTextEdit::wrapEnvironment()
-{
-    QString word = this->wordOnLeft();
-    QTextCursor cursor = this->textCursor();
-    cursor.beginEditBlock();
-    if(!word.isEmpty())
-    {
-        if(!cursor.hasSelection())
-        {
-            cursor.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor, word.length());
-        }
-        cursor.deleteChar();
-    }
-    else
-    {
-        word = "@env";
-    }
-    int pos = cursor.position();
-    cursor.insertText("\\begin{"+word+"}\n");
-    cursor.endEditBlock();
-    newLine();
-    cursor = textCursor();
-    cursor.joinPreviousEditBlock();
-    cursor.insertText(ConfigManager::Instance.tabToString()+"@text\n");
-    cursor.endEditBlock();
-    newLine();
-    deletePreviousTab();
-    cursor = textCursor();
-    cursor.joinPreviousEditBlock();
-    cursor.insertText("\\end{"+word+"}");
-    cursor.setPosition(pos);
-    cursor.endEditBlock();
-    this->setTextCursor(cursor);
-    this->selectNextArgument();
 }
 
 bool WidgetTextEdit::triggerTabMacros()

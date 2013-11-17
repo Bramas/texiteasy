@@ -1,3 +1,24 @@
+/***************************************************************************
+ *   copyright       : (C) 2013 by Quentin BRAMAS                          *
+ *   http://texiteasy.com                                                  *
+ *                                                                         *
+ *   This file is part of texiteasy.                                       *
+ *                                                                         *
+ *   texiteasy is free software: you can redistribute it and/or modify     *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation, either version 3 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   texiteasy is distributed in the hope that it will be useful,          *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with texiteasy.  If not, see <http://www.gnu.org/licenses/>.    *
+ *                                                                         *
+ ***************************************************************************/
+
 #include "macroengine.h"
 #include "configmanager.h"
 #include "filemanager.h"
@@ -7,7 +28,7 @@
 
 MacroEngine MacroEngine::Instance;
 const QString MacroEngine::EmptyMacroString =
-"<macro>\n"
+"<macro %4>\n"
 "    <description>%1</description>\n"
 "    <trigger>\n"
 "    	<keys>%2</keys>\n"
@@ -15,7 +36,7 @@ const QString MacroEngine::EmptyMacroString =
 "    		%3\n"
 "    	</leftWord>\n"
 "    </trigger>\n"
-"    <content><![CDATA[%4]]></content>\n"
+"    <content><![CDATA[%5]]></content>\n"
 "</macro>";
 
 MacroEngine::MacroEngine() :
@@ -142,12 +163,22 @@ void MacroEngine::saveMacro(QString name, QString description, QString keys, QSt
         qWarning()<<"Unable to open macro file "<<name;
         return;
     }
+    Macro macro = _macros.value(name);
+
+    QString readOnly("");
+    if(!macro.name.isEmpty() && macro.readOnly)
+    {
+        readOnly = "readOnly=\"1\"";
+    }
+
     file.write(EmptyMacroString
                .arg(description)
                .arg(keys)
                .arg(leftWord)
+               .arg(readOnly)
                .arg(content).toUtf8());
-    Macro macro = _macros.value(name);
+    file.close();
+
     if(macro.name.isEmpty())
     {
         loadMacro(name);
