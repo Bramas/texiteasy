@@ -152,6 +152,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
     QTextCharFormat formatMath = ConfigManager::Instance.getTextCharFormats("math");
     QTextCharFormat formatOther = ConfigManager::Instance.getTextCharFormats("other");
     QTextCharFormat formatVerbatim = formatOther;
+    QTextCharFormat formatArgument = formatCommand;
 
      setFormat(0, text.size(), formatNormal);
 
@@ -195,6 +196,35 @@ while(index < text.length())
     // if the end of line is commented, we break the loop and we keep the current state (we do not save state = Comment)
     if(currentChar == '%' && !escapedChar)
     {
+        //check if it is an argument resulting of an auto completion
+        if(nextChar.isLetterOrNumber() && int(nextChar.toLatin1()) >= '1' && int(nextChar.toLatin1()) <= '9')
+        {
+            //if(index >= text.length() - 2 || !QString(text.at(index + 2)).contains(QRegExp("[0-9]")))
+            {
+                //this an argument of the form %[1-9]
+                setFormat(index, 2, formatArgument);
+                blockData->characterData[index + 0].state = CompletionArgument;
+                blockData->characterData[index + 1].state = CompletionArgument;
+                index += 2;
+                continue;
+            }
+        }else
+        if(nextChar == '@')
+        {
+            //this an argument of the form %@[a-zA-Z0-9]
+            blockData->characterData[index].state = CompletionArgument;
+            blockData->characterData[index+1].state = CompletionArgument;
+            int arg_length=2;
+            while(index + arg_length < text.length() && QString(text.at(index + arg_length)).contains(QRegExp("[a-zA-Z0-9]")))
+            {
+                blockData->characterData[index + arg_length].state = CompletionArgument;
+                ++arg_length;
+            }
+            setFormat(index, arg_length, formatArgument);
+            index += arg_length;
+            continue;
+        }
+        //else it is a regular comment
         setFormat(index, text.size() - index, formatComment);
         for(int comment_idx = index; comment_idx < text.size(); ++comment_idx)
         {

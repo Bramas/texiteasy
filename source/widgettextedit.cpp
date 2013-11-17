@@ -304,11 +304,11 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
 
         if(-1 == this->textCursor().block().text().left(this->textCursor().positionInBlock()).indexOf(QRegExp("^[ \t]*$")))
         {
-            if(triggerTabMacros())
+            if(this->selectNextArgument())
             {
                 return;
             }
-            if(this->selectNextArgument())
+            if(triggerTabMacros())
             {
                 return;
             }
@@ -471,19 +471,17 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
 
 bool WidgetTextEdit::selectNextArgument()
 {
-    QTextCursor cur = this->document()->find(QRegExp("%[0-9][^0-9]"),this->textCursor().position());
-    if(!cur.isNull())
+    QTextCursor curIntArg = this->document()->find(QRegExp("%[0-9]"),this->textCursor().position());
+    QTextCursor curStrArg = this->document()->find(QRegExp("%@[a-zA-Z0-9]+"),this->textCursor().position());
+
+    if(!curIntArg.isNull() && (curStrArg.isNull() || curIntArg.selectionStart() < curStrArg.selectionStart()))
     {
-        int start = qMin(cur.selectionStart(), cur.selectionEnd());
-        cur.setPosition(start);
-        cur.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, 2);
-        this->setTextCursor(cur);
+        this->setTextCursor(curIntArg);
         return true;
     }
-    cur = this->document()->find(QRegExp("%@[a-zA-Z0-9]+"),this->textCursor().position());
-    if(!cur.isNull())
+    if(!curStrArg.isNull())
     {
-        this->setTextCursor(cur);
+        this->setTextCursor(curStrArg);
         return true;
     }
     return false;

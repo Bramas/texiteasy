@@ -1,10 +1,10 @@
-<macro readOnly="1">
+<macro>
     <description>Section</description>
     <trigger>
     	<keys>Tab</keys>
     	<leftWord>
-    		sect.*
+    		sec|sect|secti|sectio|section
     	</leftWord>
     </trigger>
-    <content><![CDATA[\section{@name}]]></content>
+    <content><![CDATA[\section{%@name}]]></content>
 </macro>

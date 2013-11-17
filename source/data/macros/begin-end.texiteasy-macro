@@ -1,10 +1,12 @@
 <macro>
-    <description>Section</description>
+    <description>Begin End Environment</description>
     <trigger>
     	<keys>Ctrl+M</keys>
-    	<leftWord>(.*)</leftWord>
+    	<leftWord>
+    		(.*)
+    	</leftWord>
     </trigger>
-    <content><![CDATA[\begin{@env}
-	@text
-\end{@env}]]></content>
+    <content><![CDATA[\begin{%1}
+	%@text
+\end{%1}]]></content>
 </macro>
