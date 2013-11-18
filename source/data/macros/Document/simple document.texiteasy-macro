@@ -1,0 +1,14 @@
+<macro readOnly="1">
+    <description>Simple Document</description>
+    <trigger>
+    	<keys>Ctrl+Shift+N</keys>
+    	<leftWord>
+    		(.*)
+    	</leftWord>
+    </trigger>
+    <content><![CDATA[\documentclass{%1{Type}}
+
+\begin{document}
+	%{Text}
+\end{document}]]></content>
+</macro>

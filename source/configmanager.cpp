@@ -559,7 +559,10 @@ void ConfigManager::recursiveCopy(QString from, QString to, QFile::Permissions p
     QStringList files = fromDir.entryList(QDir::NoDotAndDotDot | QDir::Files);
     foreach (QString fileName, files)
     {
-        qDebug()<<"file : "<<from+"/"+fileName;
+        if(QFile::exists(to+"/"+fileName))
+        {
+            QFile(to+"/"+fileName).remove();
+        }
         QFile file(from+"/"+fileName);
         file.copy(to+"/"+fileName);
         QFile::setPermissions(to+"/"+fileName, permission);
@@ -567,7 +570,6 @@ void ConfigManager::recursiveCopy(QString from, QString to, QFile::Permissions p
     QStringList dirs = fromDir.entryList(QDir::NoDotAndDotDot | QDir::Dirs);
     foreach (QString dir, dirs)
     {
-        qDebug()<<"dir : "<<from+"/"+dir;
         recursiveCopy(from+"/"+dir, to+"/"+dir, permission);
     }
 }
@@ -746,6 +748,7 @@ void ConfigManager::checkRevision()
     case 0x000602:
     case 0x000603:
     case 0x000700:
+    case 0x000800:
     {
         {
             recursiveCopy(":/data/macros", macrosPath(),
@@ -762,7 +765,6 @@ void ConfigManager::checkRevision()
     }
 
 
-    case 0x000800:
         break;
     }
     settings.setValue("version_hex",CURRENT_VERSION_HEX);

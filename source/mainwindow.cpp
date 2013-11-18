@@ -419,8 +419,10 @@ void MainWindow::onFilenameChanged(QString filename)
     addFilenameToLastOpened(filename);
     this->setWindowTitle(_tabWidget->currentText()+" - texiteasy");
 
+#ifdef OS_MAC
     setWindowIcon(style()->standardIcon(QStyle::SP_FileIcon, 0, this));
     setWindowFilePath(FileManager::Instance.currentWidgetFile()->file()->getFilename());
+#endif
 }
 
 void MainWindow::addFilenameToLastOpened(QString filename)
@@ -533,7 +535,9 @@ void MainWindow::onCurrentFileChanged(WidgetFile * widget)
     {
         ui->verticalLayout->addWidget(_emptyWidget);
         _widgetStatusBar->updateButtons();
+#ifdef OS_MAC
         setWindowIcon(QIcon());
+#endif
         return;
     }
     ui->verticalLayout->addWidget(widget);
@@ -555,6 +559,7 @@ void MainWindow::onCurrentFileChanged(WidgetFile * widget)
     //window title
     this->setWindowTitle(_tabWidget->currentText()+" - texiteasy");
     this->setWindowModified(widget->file()->isModified());
+#ifdef OS_MAC
     if(widget->file()->isUntitled())
     {
         setWindowIcon(QIcon());
@@ -563,6 +568,7 @@ void MainWindow::onCurrentFileChanged(WidgetFile * widget)
     {
         setWindowIcon(style()->standardIcon(QStyle::SP_FileIcon, 0, this));
     }
+#endif
     setWindowFilePath(widget->file()->getFilename());
 
     FileManager::Instance.checkCurrentFileSystemChanges();

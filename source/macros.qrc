@@ -2,5 +2,9 @@
     <qresource prefix="/">
         <file>data/macros/begin-end.texiteasy-macro</file>
         <file>data/macros/Structure/section.texiteasy-macro</file>
+        <file>data/macros/Structure/paragraph.texiteasy-macro</file>
+        <file>data/macros/Structure/subsection.texiteasy-macro</file>
+        <file>data/macros/Structure/subsubsection.texiteasy-macro</file>
+        <file>data/macros/Document/simple document.texiteasy-macro</file>
     </qresource>
 </RCC>

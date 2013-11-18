@@ -306,7 +306,8 @@ void WidgetTextEdit::onCursorPositionChange()
     setExtraSelections(selections);
     this->highlightCurrentLine();
 
-    if(!textCursor().hasSelection())
+    if(!textCursor().hasSelection()
+            || (textCursor().selectedText().contains(QRegExp("^%{0,1}[0-9]{0,1}\\{{0,1}[a-zA-Z0-9]*\\}{0,1}$"))))
     {
         BlockData *data = static_cast<BlockData *>( textCursor().block().userData() );
         if (data) {
@@ -339,6 +340,18 @@ void WidgetTextEdit::onCursorPositionChange()
             }
         }
     }
+    else
+    if(textCursor().hasSelection())
+    {
+        //TODO
+        //if part of the selection include a part of an argument => enlarge the selection to include all the argument
+        BlockData *data = static_cast<BlockData *>( textCursor().block().userData() );
+        if (data) {
+            if(data->characterData[textCursor().positionInBlock()].state == SyntaxHighlighter::CompletionArgument)
+            {
+
+            }
+        }
 
     matchAll();
     this->currentFile->getViewer()->setLine(this->textCursor().blockNumber()+1);

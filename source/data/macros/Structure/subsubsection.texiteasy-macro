@@ -1,0 +1,10 @@
+<macro readOnly="1">
+    <description>Subsubsection</description>
+    <trigger>
+    	<keys>Tab</keys>
+    	<leftWord>
+    		subsub(se|sec|sect|secti|sectio|section)
+    	</leftWord>
+    </trigger>
+    <content><![CDATA[\subsubsection{%{name}}]]></content>
+</macro>
