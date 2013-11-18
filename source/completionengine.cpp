@@ -192,10 +192,23 @@ QString CompletionEngine::acceptedWord()
     }
     QString word = this->selectedItems().first()->text();
 
-    QRegExp beginCommand("\\\\begin\\{([^\\}]+)\\}");
+    QRegExp beginCommand("\\\\begin\\{");
     if(word.indexOf(beginCommand) != -1)
     {
-        QString environment = beginCommand.capturedTexts().last();
+        QString environment;
+        int idx = 7;
+        int opened = 1;
+        while(idx < word.length())
+        {
+            if(word.at(idx) == '{') ++opened;
+            if(word.at(idx) == '}') --opened;
+            if(!opened)
+            {
+                break;
+            }
+            environment += word.at(idx);
+            ++idx;
+        }
         QString endCommand(QString("\\end{")+environment+"}");
 
         if(word.indexOf("{\\n}") != -1) //the command takes care of the content between begin and end.
@@ -205,7 +218,7 @@ QString CompletionEngine::acceptedWord()
         }
         else
         {
-            word += QString("\n    @text\n")+endCommand;
+            word += QString("\n    %{text}\n")+endCommand;
         }
     }
     return word;//.right(word.size() - _commandBegin.size());

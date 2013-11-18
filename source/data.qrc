@@ -49,7 +49,5 @@
         <file>data/img/incorporatedPdf.png</file>
         <file>data/img/incorporatedPdfHover.png</file>
         <file>data/img/separatedPdfHover.png</file>
-        <file>data/macros/begin-end.texiteasy-macro</file>
-        <file>data/macros/Structure/section.texiteasy-macro</file>
     </qresource>
 </RCC>

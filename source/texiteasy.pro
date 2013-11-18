@@ -169,7 +169,8 @@ INSTALLS = target
 RESOURCES += \
     data.qrc \
     completion.qrc \
-    commands.qrc
+    commands.qrc \
+    macros.qrc
 
 win32 {
     LIBS += -LC:/Qt/prerequisites-i686/lib -lpoppler-qt5

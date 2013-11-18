@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>data/macros/begin-end.texiteasy-macro</file>
+        <file>data/macros/Structure/section.texiteasy-macro</file>
+    </qresource>
+</RCC>
