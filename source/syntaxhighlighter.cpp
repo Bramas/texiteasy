@@ -155,7 +155,9 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
     QTextCharFormat formatVerbatim = formatOther;
     QTextCharFormat formatArgument;
     QTextCharFormat formatArgumentDelimiter = formatArgument;
+#if QT_VERSION > 0x050000
                     formatArgumentDelimiter.setFontStretch(1);
+#endif
                     formatArgumentDelimiter.setFontLetterSpacing(1);
                     formatArgumentDelimiter.setForeground(QBrush(QColor(0,0,0,0)));
 
