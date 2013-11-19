@@ -29,6 +29,7 @@
 #include <QMap>
 #include <QList>
 
+class QMenu;
 class QAction;
 
 class MacroXmlHandler : public QXmlDefaultHandler
@@ -84,6 +85,8 @@ public:
     static const QString EmptyMacroString;
 
     const QMap<QString, Macro> & macros() const { return _macros; }
+    QMenu * createMacrosMenu(QMenu *root);
+    QAction * createAction(Macro macro);
     void loadMacros();
     void loadMacro(QString name);
     void saveMacro(QString name, QString description, QString keys, QString leftWord, QString content);
@@ -103,6 +106,7 @@ private:
 
     QMap<QString, Macro> _macros;
     QStringList _tabMacroNames;
+    QList<QMenu*> _macroMenus;
     //QMap<QString, QAction *> _macroActions;
 
 };

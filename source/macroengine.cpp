@@ -25,6 +25,7 @@
 #include <QDir>
 #include <QFile>
 #include <QAction>
+#include <QMenu>
 
 MacroEngine MacroEngine::Instance;
 const QString MacroEngine::EmptyMacroString =
@@ -123,23 +124,59 @@ void MacroEngine::loadMacro(QString name)
     macro.description = _handler->description();
     macro.readOnly = _handler->isReadOnly();
 
+
+    macro.action = createAction(macro);
+
+    _macros.insert(macro.name, macro);
+    if(!macro.keys.compare("Tab", Qt::CaseInsensitive))
+    {
+        _tabMacroNames.append(macro.name);
+    }
+
+}
+
+QAction * MacroEngine::createAction(Macro macro)
+{
+    QString name = macro.name;
     if(name.contains('/'))
     {
         name = name.split('/').at(1);
     }
-
     QAction * a = new QAction(name, this);
     a->setShortcut(QKeySequence(macro.keys));
-    a->setProperty("macroName", name);
-    macro.action = a;
+    a->setProperty("macroName", macro.name);
     connect(a, SIGNAL(triggered()), this, SLOT(onMacroTriggered()));
+    return a;
+}
 
-    _macros.insert(name, macro);
-    if(!macro.keys.compare("Tab", Qt::CaseInsensitive))
+QMenu * MacroEngine::createMacrosMenu(QMenu * root)
+{
+    QMap<QString, QMenu*> macrosSubmenu;
+    QMenu * macroMenu;
+    foreach(const Macro& macro, macros())
     {
-        _tabMacroNames.append(name);
-    }
+        QString name = macro.name;
+        if(name.contains('/'))
+        {
+            QStringList l = name.split('/');
+            name = l.at(1);
+            QString folder = l.at(0);
+            macroMenu = macrosSubmenu.value(folder, 0);
+            if(!macroMenu)
+            {
+                macroMenu = root->addMenu(trUtf8(folder.toUtf8().data()));
+                macrosSubmenu.insert(folder, macroMenu);
+            }
+            macroMenu->addAction(createAction(macro));
 
+        }
+        else
+        {
+            root->addAction(createAction(macro));
+        }
+    }
+    _macroMenus.append(root);
+    return root;
 }
 
 void MacroEngine::onMacroTriggered()
@@ -208,6 +245,42 @@ void MacroEngine::saveMacro(QString name, QString description, QString keys, QSt
             _tabMacroNames.removeOne(name);
         }
     }
+
+    /*
+    bool found = false;
+    foreach(QMenu * menu, _macroMenus)
+    {
+        foreach(QAction * a, menu->actions())
+        {
+            QString name = a->property("macroName").toString();
+            if(!name.compare(macro.name))
+            {
+                a->setShortcut(QKeySequence(macro.keys));
+                found = true;
+            }
+        }
+        if(!found)
+        {
+            if(name.contains('/'))
+            {
+                QStringList l = name.split('/');
+                name = l.at(1);
+                QString folder = l.at(0);
+                QMenu * macroMenu = 0;
+                if(!macroMenu)
+                {
+                    macroMenu = menu->addMenu(folder);
+                }
+                macroMenu->addAction(createAction(macro));
+
+            }
+            else
+            {
+                menu->addAction(createAction(macro));
+            }
+        }
+    }
+*/
 }
 
 bool MacroXmlHandler::startElement(const QString &namespaceURI, const QString &localName, const QString &qName, const QXmlAttributes &atts)

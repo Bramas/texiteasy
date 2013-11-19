@@ -65,7 +65,8 @@ WidgetTextEdit::WidgetTextEdit(WidgetFile * parent) :
     _lineCount(0),
     _syntaxHighlighter(0),
     updatingIndentation(false),
-    _widgetLineNumber(0)
+    _widgetLineNumber(0),
+    _macrosMenu(0)
 
 {
     _widgetFile = parent;
@@ -261,6 +262,11 @@ void WidgetTextEdit::contextMenuEvent(QContextMenuEvent *event)
         }
     }
     menu->addActions(defaultMenu->actions());
+    menu->addSeparator();
+    MacroEngine::Instance.createMacrosMenu(menu);
+
+
+
     menu->exec(event->globalPos());
     delete menu;
 }

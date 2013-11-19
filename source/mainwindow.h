@@ -74,6 +74,7 @@ public:
     bool canBeOpened(QString filename);
     bool canBeInserted(QString filename);
     bool handleMimeData(const QMimeData* mimeData);
+    QMenu * macroMenu();
     ~MainWindow();
 
 public slots:

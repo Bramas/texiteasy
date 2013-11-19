@@ -189,30 +189,8 @@ MainWindow::MainWindow(QWidget *parent) :
             }
         }
     }
-    QMap<QString, QMenu*> macrosSubmenu;
-    QMenu * macroMenu;
-    foreach(const Macro& macro, MacroEngine::Instance.macros())
-    {
-        QString name = macro.name;
-        if(name.contains('/'))
-        {
-            QStringList l = name.split('/');
-            name = l.at(1);
-            QString folder = l.at(0);
-            macroMenu = macrosSubmenu.value(folder, 0);
-            if(!macroMenu)
-            {
-                macroMenu = new QMenu(trUtf8(folder.toUtf8().data()), ui->menuMacros);
-                macrosSubmenu.insert(folder, macroMenu);
-                ui->menuMacros->addMenu(macroMenu);
-            }
-            macroMenu->addAction(macro.action);
-        }
-        else
-        {
-            ui->menuMacros->addAction(macro.action);
-        }
-    }
+    //QPair<QList<QMenu*> >, QList<QAction*> > menus = MacroEngine::Instance.createMacrosMenus();
+    MacroEngine::Instance.createMacrosMenu(ui->menuMacros);
 
     initBuildMenu();
 
@@ -426,6 +404,10 @@ void MainWindow::initBuildMenu()
         }
     }
 
+}
+QMenu * MainWindow::macroMenu()
+{
+    return ui->menuMacros;
 }
 
 void MainWindow::newFile()

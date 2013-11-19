@@ -190,7 +190,7 @@ private:
     WidgetInsertCommand * _widgetInsertCommand;
     WidgetLineNumber * _widgetLineNumber;
     WidgetFile * _widgetFile;
-    MainWindow * _mainWindow;
+    QMenu * _macrosMenu;
 
 
 };
