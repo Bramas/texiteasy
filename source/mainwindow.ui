@@ -137,6 +137,7 @@
      <string>Macros</string>
     </property>
     <addaction name="actionOpenMacrosDialog"/>
+    <addaction name="separator"/>
    </widget>
    <addaction name="menuFichier"/>
    <addaction name="menuEdition"/>

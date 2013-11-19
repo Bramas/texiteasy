@@ -93,7 +93,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(_emptyWidget, SIGNAL(mouseDoubleClick()), this, SLOT(newFile()));
 
     DialogMacros * _dialogMacro = new DialogMacros(0);
-    this->addActions(MacroEngine::Instance.actions());
 
     _widgetStatusBar = new WidgetStatusBar(this);
     ui->actionLinkSync->setChecked(ConfigManager::Instance.isPdfSynchronized());
@@ -188,6 +187,30 @@ MainWindow::MainWindow(QWidget *parent) :
             {
                 action->setShortcut(QKeySequence(settings.value(action->text()).toString()));
             }
+        }
+    }
+    QMap<QString, QMenu*> macrosSubmenu;
+    QMenu * macroMenu;
+    foreach(const Macro& macro, MacroEngine::Instance.macros())
+    {
+        QString name = macro.name;
+        if(name.contains('/'))
+        {
+            QStringList l = name.split('/');
+            name = l.at(1);
+            QString folder = l.at(0);
+            macroMenu = macrosSubmenu.value(folder, 0);
+            if(!macroMenu)
+            {
+                macroMenu = new QMenu(trUtf8(folder.toUtf8().data()), ui->menuMacros);
+                macrosSubmenu.insert(folder, macroMenu);
+                ui->menuMacros->addMenu(macroMenu);
+            }
+            macroMenu->addAction(macro.action);
+        }
+        else
+        {
+            ui->menuMacros->addAction(macro.action);
         }
     }
 

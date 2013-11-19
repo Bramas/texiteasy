@@ -1235,7 +1235,7 @@ bool WidgetTextEdit::triggerTabMacros()
     QList<Macro> list = MacroEngine::Instance.tabMacros();
     foreach(const Macro &macro, list)
     {
-        if(onMacroTriggered(macro))
+        if(onMacroTriggered(macro, true))
         {
             return true;
         }
@@ -1243,8 +1243,9 @@ bool WidgetTextEdit::triggerTabMacros()
     return false;
 }
 
-bool WidgetTextEdit::onMacroTriggered(Macro macro)
+bool WidgetTextEdit::onMacroTriggered(Macro macro, bool soft)
 {
+    qDebug()<<macro.name;
     QTextCursor cursor = textCursor();
     QString word;
     if(cursor.hasSelection())
@@ -1256,28 +1257,33 @@ bool WidgetTextEdit::onMacroTriggered(Macro macro)
         word = this->wordOnLeft();
     }
     QRegExp pattern("^"+macro.leftWord+"$");
-    if(!word.contains(pattern))
+    bool patternExists = word.contains(pattern);
+    if(!patternExists && soft)
     {
         return false;
     }
-    if(!cursor.hasSelection())
-    {
-        cursor.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor, word.length());
-    }
     QString content = macro.content;
-    QStringList cap = pattern.capturedTexts();
-    cap.pop_back();
-    while(cap.count())
+    if(patternExists)
     {
-        QString arg = cap.back();
-        cap.pop_back();
-        if(!arg.isEmpty())
+        if(!cursor.hasSelection())
         {
-            content.replace(QRegExp("%1\\{[^\\}]*\\}"), "%1");
-            content = content.arg(arg);
+            cursor.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor, word.length());
+        }
+        cursor.deleteChar();
+        QStringList cap = pattern.capturedTexts();
+        cap.pop_back();
+        while(cap.count())
+        {
+            QString arg = cap.back();
+            cap.pop_back();
+            if(!arg.isEmpty())
+            {
+                content.replace(QRegExp("%1\\{[^\\}]*\\}"), "%1");
+                content = content.arg(arg);
+            }
         }
     }
-    cursor.deleteChar();
+
     int pos = cursor.position();
     this->insertPlainText(content);
     cursor.setPosition(pos);

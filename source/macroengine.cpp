@@ -123,6 +123,11 @@ void MacroEngine::loadMacro(QString name)
     macro.description = _handler->description();
     macro.readOnly = _handler->isReadOnly();
 
+    if(name.contains('/'))
+    {
+        name = name.split('/').at(1);
+    }
+
     QAction * a = new QAction(name, this);
     a->setShortcut(QKeySequence(macro.keys));
     a->setProperty("macroName", name);
