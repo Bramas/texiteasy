@@ -748,7 +748,6 @@ void ConfigManager::checkRevision()
     case 0x000602:
     case 0x000603:
     case 0x000700:
-    case 0x000800:
     {
         {
             recursiveCopy(":/data/macros", macrosPath(),
@@ -764,7 +763,7 @@ void ConfigManager::checkRevision()
         }
     }
 
-
+    case 0x000800:
         break;
     }
     settings.setValue("version_hex",CURRENT_VERSION_HEX);

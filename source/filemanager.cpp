@@ -112,9 +112,9 @@ void FileManager::deleteMasterConnexions(WidgetFile *widget, AssociatedFile::Typ
     // remove connexion with the master file
     if(widget->masterFile())
     {
-        widget->masterFile()->file()->removeOpenAssociatedFile(widget->file());
+        //widget->masterFile()->file()->removeOpenAssociatedFile(widget->file());
         disconnect(widget->masterFile()->file()->getBuilder(), SIGNAL(pdfChanged()),widget->widgetPdfViewer()->widgetPdfDocument(),SLOT(updatePdf()));
-        disconnect(widget->file()->getBuilder(), SIGNAL(pdfChanged()),widget->masterFile()->widgetPdfViewer()->widgetPdfDocument(),SLOT(updatePdf()));
+        //disconnect(widget->file()->getBuilder(), SIGNAL(pdfChanged()),widget->masterFile()->widgetPdfViewer()->widgetPdfDocument(),SLOT(updatePdf()));
 
         if(widget->file()->format() == File::BIBTEX)
         {

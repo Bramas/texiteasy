@@ -143,6 +143,8 @@ void WidgetTextEdit::paintEvent(QPaintEvent *event)
     QPen borderPen = QColor(250, 0, 0);
     QTextBlock block = this->document()->firstBlock();
 
+
+
     while(block.isValid())
     {
         BlockData *data = static_cast<BlockData *>(block.userData());
@@ -1251,7 +1253,6 @@ bool WidgetTextEdit::triggerTabMacros()
 
 bool WidgetTextEdit::onMacroTriggered(Macro macro, bool soft)
 {
-    qDebug()<<macro.name;
     QTextCursor cursor = textCursor();
     QString word;
     if(cursor.hasSelection())
@@ -1275,20 +1276,26 @@ bool WidgetTextEdit::onMacroTriggered(Macro macro, bool soft)
         {
             cursor.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor, word.length());
         }
-        cursor.deleteChar();
+        if(cursor.hasSelection())
+        {
+            cursor.deleteChar();
+        }
         QStringList cap = pattern.capturedTexts();
-        cap.pop_back();
+        cap.pop_front();
+        int idx = 1;
         while(cap.count())
         {
-            QString arg = cap.back();
-            cap.pop_back();
+            QString arg = cap.front();
+            cap.pop_front();
             if(!arg.isEmpty())
             {
-                content.replace(QRegExp("%1\\{[^\\}]*\\}"), "%1");
-                content = content.arg(arg);
+                content.replace(QRegExp("\\$\\{"+QString::number(idx)+":[^\\}]*\\}"),arg);
             }
+            ++idx;
         }
     }
+    QRegExp argumentPattern("\\$\\{([0-9]:){0,1}([^\\}]*)\\}");
+    content.replace(argumentPattern, "%{\\2}");
 
     int pos = cursor.position();
     this->insertPlainText(content);

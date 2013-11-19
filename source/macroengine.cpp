@@ -212,7 +212,6 @@ void MacroEngine::saveMacro(QString name, QString description, QString keys, QSt
     {
         readOnly = "readOnly=\"1\"";
     }
-
     file.write(EmptyMacroString
                .arg(description)
                .arg(keys)
@@ -245,42 +244,6 @@ void MacroEngine::saveMacro(QString name, QString description, QString keys, QSt
             _tabMacroNames.removeOne(name);
         }
     }
-
-    /*
-    bool found = false;
-    foreach(QMenu * menu, _macroMenus)
-    {
-        foreach(QAction * a, menu->actions())
-        {
-            QString name = a->property("macroName").toString();
-            if(!name.compare(macro.name))
-            {
-                a->setShortcut(QKeySequence(macro.keys));
-                found = true;
-            }
-        }
-        if(!found)
-        {
-            if(name.contains('/'))
-            {
-                QStringList l = name.split('/');
-                name = l.at(1);
-                QString folder = l.at(0);
-                QMenu * macroMenu = 0;
-                if(!macroMenu)
-                {
-                    macroMenu = menu->addMenu(folder);
-                }
-                macroMenu->addAction(createAction(macro));
-
-            }
-            else
-            {
-                menu->addAction(createAction(macro));
-            }
-        }
-    }
-*/
 }
 
 bool MacroXmlHandler::startElement(const QString &namespaceURI, const QString &localName, const QString &qName, const QXmlAttributes &atts)
