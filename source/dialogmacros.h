@@ -25,10 +25,13 @@
 #include <QDialog>
 #include <QModelIndex>
 
+
+
 namespace Ui {
 class DialogMacros;
 }
 class QStandardItemModel;
+class QStandardItem;
 class DialogMacros : public QDialog
 {
     Q_OBJECT
@@ -39,6 +42,8 @@ public:
 
 public slots:
     void onClicked(QModelIndex index);
+    void setMacroReadOnly(bool readOnly);
+    void onItemChanged(QStandardItem*);
 protected:
     void closeEvent(QCloseEvent *);
 private slots:

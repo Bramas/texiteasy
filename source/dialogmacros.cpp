@@ -50,7 +50,9 @@ DialogMacros::DialogMacros(QWidget *parent) :
     foreach(const QString & macroName, list)
     {
         it.clear();
-        it << new QStandardItem(macroName) << new QStandardItem("-");
+        QStandardItem * i = new QStandardItem(macroName);
+        i->setData(macroName);
+        it << i << new QStandardItem("-");
         parentItem->appendRow(it);
     }
 
@@ -68,7 +70,9 @@ DialogMacros::DialogMacros(QWidget *parent) :
         foreach(const QString & macroName, subList)
         {
             it.clear();
-            it << new QStandardItem(macroName) << new QStandardItem("-");
+            QStandardItem * i = new QStandardItem(macroName);
+            i->setData(dirName+"/"+macroName);
+            it << i << new QStandardItem("-");
             upItem->appendRow(it);
         }
     }
@@ -89,6 +93,11 @@ DialogMacros::DialogMacros(QWidget *parent) :
     connect(ui->lineEditDescription, SIGNAL(textChanged(QString)), this, SLOT(setModified(QString)));
     connect(ui->lineEditKeys, SIGNAL(textChanged(QString)), this, SLOT(setModified(QString)));
     connect(ui->lineEditLeftWord, SIGNAL(textChanged(QString)), this, SLOT(setModified(QString)));
+    connect(ui->checkBoxReadOnly, SIGNAL(toggled(bool)), this, SLOT(setMacroReadOnly(bool)));
+
+    connect(_model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onItemChanged(QStandardItem*)));
+
+
 }
 
 DialogMacros::~DialogMacros()
@@ -101,6 +110,10 @@ void DialogMacros::closeEvent(QCloseEvent *)
     saveLastClickedItem();
 }
 
+void DialogMacros::onItemChanged(QStandardItem* item)
+{
+    qDebug()<<"rename "<<item->data().toString()<<" -> "<<item->text()<<" "<<MacroEngine::Instance.rename(item->data().toString(), item->text());
+}
 
 void DialogMacros::onClicked(QModelIndex index)
 {
@@ -136,6 +149,12 @@ void DialogMacros::onClicked(QModelIndex index)
     _lastClickedItem = _model->indexFromItem(item);
 }
 
+void DialogMacros::setMacroReadOnly(bool readOnly)
+{
+    ui->plainTextEdit->setReadOnly(readOnly);
+    ui->lineEditDescription->setReadOnly(readOnly);
+}
+
 void DialogMacros::loadMacro(QString name)
 {
     Macro macro = MacroEngine::Instance.macros().value(name);
@@ -145,6 +164,7 @@ void DialogMacros::loadMacro(QString name)
     ui->lineEditLeftWord->setText(macro.leftWord);
     _modified = false;
 
+    ui->checkBoxReadOnly->setChecked(macro.readOnly);
     ui->plainTextEdit->setReadOnly(macro.readOnly);
     ui->lineEditDescription->setReadOnly(macro.readOnly);
     /*ui->lineEditKeys->setReadOnly(macro.readOnly);

@@ -75,7 +75,8 @@ MainWindow::MainWindow(QWidget *parent) :
     _confirmCloseMessageBox(0),
     dialogConfig(new DialogConfig(this)),
     dialogWelcome(new DialogWelcome(this)),
-    _emptyWidget(new WidgetEmpty(0))
+    _emptyWidget(new WidgetEmpty(0)),
+    _menuMacrosAction(0)
 {
     ui->setupUi(this);
     ConfigManager::Instance.setMainWindow(this);
@@ -187,15 +188,10 @@ MainWindow::MainWindow(QWidget *parent) :
         }
     }
 
-
-    //QPair<QList<QMenu*> >, QList<QAction*> > menus = MacroEngine::Instance.createMacrosMenus();
-    QMenu * menu = new QMenu(tr("&Macros"));
-    _menuMacrosAction = ui->menuBar->insertMenu(ui->menuOptions->menuAction(), menu);
-    MacroEngine::Instance.createMacrosMenu(menu);
-
+    initMacrosMenu();
+    connect(&MacroEngine::Instance, SIGNAL(changed()), this, SLOT(initMacrosMenu()));
 
     initBuildMenu();
-
     connect(&ConfigManager::Instance, SIGNAL(changed()), this, SLOT(initBuildMenu()));
 
 
@@ -370,6 +366,17 @@ bool MainWindow::canBeInserted(QString filename)
         return true;
     }
     return false;
+}
+
+void MainWindow::initMacrosMenu()
+{
+    if(_menuMacrosAction)
+    {
+        this->ui->menuBar->removeAction(_menuMacrosAction);
+    }
+    QMenu * menu = new QMenu(tr("&Macros"));
+    _menuMacrosAction = ui->menuBar->insertMenu(ui->menuOptions->menuAction(), menu);
+    MacroEngine::Instance.createMacrosMenu(menu);
 }
 
 void MainWindow::initBuildMenu()

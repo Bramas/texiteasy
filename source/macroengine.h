@@ -57,6 +57,8 @@ public:
     virtual bool startCDATA();
     virtual bool endCDATA();
     bool characters(const QString & ch) { if(_readChar) _stringBuffer+=ch; return true; }
+
+
 protected:
     QString _stringBuffer;
     QString _keys;
@@ -93,7 +95,10 @@ public:
     void saveMacro(QString name, QString description, QString keys, QString leftWord, QString content);
     QList<QAction*> actions() const;
     QList<Macro> tabMacros() const;
+
+    bool rename(QString macroFullName, QString newLastName);
 signals:
+    void changed();
 
 public slots:
     void onMacroTriggered();

@@ -155,7 +155,7 @@ QAction * MacroEngine::createAction(Macro macro)
 
 QMenu * MacroEngine::createMacrosMenu(QMenu * root)
 {
-    QAction * a = root->addAction("Ouvrir l'éditeur de macros");
+    QAction * a = root->addAction(trUtf8("Ouvrir l'éditeur de macros"));
     connect(a, SIGNAL(triggered()), _dialogMacro,SLOT(show()));
     root->addSeparator();
 
@@ -252,6 +252,38 @@ void MacroEngine::saveMacro(QString name, QString description, QString keys, QSt
             _tabMacroNames.removeOne(name);
         }
     }
+    emit changed();
+}
+
+bool MacroEngine::rename(QString macroFullName, QString newLastName)
+{
+    Macro macro = _macros.value(macroFullName);
+    if(macro.name.isEmpty())
+    {
+        qWarning()<<"macro "<<macroFullName<<" does not exists.";
+        return false;
+    }
+    QFile file(_macrosPath+macro.name+ConfigManager::MacroSuffix);
+    if(!file.exists())
+    {
+        qWarning()<<"file "<<_macrosPath+macro.name+ConfigManager::MacroSuffix<<" does not exists.";
+        return false;
+    }
+    QString oldName = macro.name;
+    macro.name.replace(QRegExp("^([^\\/]+\/){0,1}[^\\/]*$"), "\\1"+newLastName);
+    if(file.rename(_macrosPath+macro.name+ConfigManager::MacroSuffix))
+    {
+        _macros.remove(oldName);
+        _macros.insert(macro.name, macro);
+        emit changed();
+        return true;
+    }
+    else
+    {
+        qWarning()<<"Unable to rename macro to "<<_macrosPath+macro.name+ConfigManager::MacroSuffix;
+    }
+    return false;
+
 }
 
 bool MacroXmlHandler::startElement(const QString &namespaceURI, const QString &localName, const QString &qName, const QXmlAttributes &atts)

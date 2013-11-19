@@ -97,6 +97,7 @@ public slots:
     void addFilenameToLastOpened(QString filename);
     void onFilenameChanged(QString filename);
     void initBuildMenu();
+    void initMacrosMenu();
 private slots:
     void addUpdateMenu();
 protected:
