@@ -22,6 +22,7 @@
 #include "macroengine.h"
 #include "configmanager.h"
 #include "filemanager.h"
+#include "dialogmacros.h"
 #include <QDir>
 #include <QFile>
 #include <QAction>
@@ -77,6 +78,9 @@ QList<Macro> MacroEngine::tabMacros() const
 
 void MacroEngine::loadMacros()
 {
+
+    _dialogMacro = new DialogMacros(0);
+
     _macrosPath = ConfigManager::Instance.macrosPath();
 
     QDir dir(_macrosPath);
@@ -151,6 +155,10 @@ QAction * MacroEngine::createAction(Macro macro)
 
 QMenu * MacroEngine::createMacrosMenu(QMenu * root)
 {
+    QAction * a = root->addAction("Ouvrir l'éditeur de macros");
+    connect(a, SIGNAL(triggered()), _dialogMacro,SLOT(show()));
+    root->addSeparator();
+
     QMap<QString, QMenu*> macrosSubmenu;
     QMenu * macroMenu;
     foreach(const Macro& macro, macros())

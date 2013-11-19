@@ -47,7 +47,7 @@
      <x>0</x>
      <y>0</y>
      <width>991</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFichier">
@@ -132,17 +132,9 @@
     </property>
     <addaction name="actionPdfViewerInItsOwnWidget"/>
    </widget>
-   <widget class="QMenu" name="menuMacros">
-    <property name="title">
-     <string>Macros</string>
-    </property>
-    <addaction name="actionOpenMacrosDialog"/>
-    <addaction name="separator"/>
-   </widget>
    <addaction name="menuFichier"/>
    <addaction name="menuEdition"/>
    <addaction name="menuBuild"/>
-   <addaction name="menuMacros"/>
    <addaction name="menuOptions"/>
    <addaction name="menuAide"/>
    <addaction name="menuView"/>
@@ -345,14 +337,6 @@
    </property>
    <property name="text">
     <string>Afficheur pdf séparé</string>
-   </property>
-  </action>
-  <action name="actionOpenMacrosDialog">
-   <property name="text">
-    <string>Ouvrir l'éditeur de macros</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+M</string>
    </property>
   </action>
  </widget>

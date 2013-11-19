@@ -74,7 +74,6 @@ public:
     bool canBeOpened(QString filename);
     bool canBeInserted(QString filename);
     bool handleMimeData(const QMimeData* mimeData);
-    QMenu * macroMenu();
     ~MainWindow();
 
 public slots:
@@ -121,6 +120,7 @@ private:
     QVBoxLayout * _verticalLayout;
     WidgetStatusBar * _widgetStatusBar;
     WidgetEmpty * _emptyWidget;
+    QAction * _menuMacrosAction;
 };
 
 #endif // MAINWINDOW_H

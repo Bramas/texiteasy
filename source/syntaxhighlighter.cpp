@@ -201,6 +201,34 @@ while(index < text.length())
     // if the end of line is commented, we break the loop and we keep the current state (we do not save state = Comment)
     if(currentChar == '%' && !escapedChar)
     {
+        if(index+4 < text.length())
+        {
+            if(text.at(index+1) == '#' && text.at(index+2) == '{' && text.at(index+3) == '{' && text.at(index+4) == '{')
+            {
+                int tmp = index + 4;
+                QString argument;
+                while(tmp + 1 < text.length() && QString(text.at(tmp + 1)).contains(QRegExp("[a-zA-Z0-9 ]")))
+                {
+                    argument += text.at(tmp + 1);
+                    ++tmp;
+                }
+                if(tmp + 4 < text.length() && text.at(tmp+1) == '}' && text.at(tmp+2) == '}' && text.at(tmp+3) == '}' && text.at(tmp+4) == '#')
+                {
+                    // only here we know that it is an argument.
+                    setFormat(index, 5, formatArgumentDelimiter);
+                    for(int idx = index; idx < tmp + 5; ++idx)
+                    {
+                        blockData->characterData[idx].state = CompletionArgument;
+                    }
+                    setFormat(index + 5, argument.length(), formatArgument);
+                    setFormat(tmp + 1, 4, formatArgumentDelimiter);
+                    blockData->arguments.append(QPair<QString,QPair<int,int> >(argument,QPair<int,int>(index, tmp + 4)));
+                    index = tmp + 5;
+                    continue;
+                }
+            }
+        }
+        /*
         //check if it is an argument resulting of an auto completion
         if(nextChar == '{' || (nextChar.isLetterOrNumber() && int(nextChar.toLatin1()) >= '1' && int(nextChar.toLatin1()) <= '9'))
         {
@@ -236,7 +264,7 @@ while(index < text.length())
             }
             blockData->arguments.append(QPair<QString,QPair<int,int> >(argument,QPair<int,int>(argumentBegin, index)));
             continue;
-        }
+        }*/
         //else it is a regular comment
         setFormat(index, text.size() - index, formatComment);
         for(int comment_idx = index; comment_idx < text.size(); ++comment_idx)

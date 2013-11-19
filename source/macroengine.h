@@ -31,6 +31,7 @@
 
 class QMenu;
 class QAction;
+class DialogMacros;
 
 class MacroXmlHandler : public QXmlDefaultHandler
 {
@@ -103,6 +104,7 @@ private:
     MacroXmlHandler * _handler;
     QXmlSimpleReader _xmlReader;
     QString _macrosPath;
+    DialogMacros * _dialogMacro;
 
     QMap<QString, Macro> _macros;
     QStringList _tabMacroNames;

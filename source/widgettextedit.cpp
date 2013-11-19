@@ -136,11 +136,15 @@ void WidgetTextEdit::paintEvent(QPaintEvent *event)
             painter.drawLine(curPoint - diff, curPoint);
         }
     }
-
-    QBrush defaultBrush(QColor(200, 0, 0));
-    QBrush selectedBrush(QColor(200, 0, 200));
-    QPen borderSelectedPen = QColor(250, 0, 250);
-    QPen borderPen = QColor(250, 0, 0);
+/*
+    QBrush defaultBrush(ConfigManager::Instance.getTextCharFormats("normal").background().color().lighter(300));
+    QBrush selectedBrush(ConfigManager::Instance.getTextCharFormats("normal").background().color().lighter());
+    QPen borderSelectedPen = ConfigManager::Instance.getTextCharFormats("normal").foreground().color().darker();
+    QPen borderPen = ConfigManager::Instance.getTextCharFormats("normal").foreground().color();*/
+    QBrush defaultBrush(ConfigManager::Instance.getTextCharFormats("normal").background().color().darker(200));
+    QBrush selectedBrush(ConfigManager::Instance.getTextCharFormats("normal").background().color().darker(150));
+    QPen borderSelectedPen = ConfigManager::Instance.getTextCharFormats("normal").foreground().color().lighter();
+    QPen borderPen = ConfigManager::Instance.getTextCharFormats("normal").foreground().color();
     QTextBlock block = this->document()->firstBlock();
 
 
@@ -159,24 +163,40 @@ void WidgetTextEdit::paintEvent(QPaintEvent *event)
                     QTextLine line2 = layout->lineForTextPosition(arg.second.second);
                     if(line.isValid() && line2.isValid())
                     {
-                        if(extraSelections().count() > 3
-                       && extraSelections().at(3).cursor.position() >= block.position() + arg.second.first
-                       && extraSelections().at(3).cursor.position() <= block.position() + arg.second.second)
+                        bool extra = false;
+                        //foreach(QTextEdit::ExtraSelection sel, extraSelections())
+                        foreach(QTextCursor cur, _multipleEdit)
                         {
-                            painter.setBrush(selectedBrush);
-                            painter.setPen(borderSelectedPen);
+                            if(cur.position() >= block.position() + arg.second.first
+                            && cur.position() <= block.position() + arg.second.second
+                                    || (    cur.hasSelection()
+                                        &&  cur.selectionStart() <= block.position() + arg.second.second
+                                        &&  cur.selectionEnd() >= block.position() + arg.second.first
+                                        ))
+                            {
+                                painter.setBrush(selectedBrush);
+                                painter.setPen(borderSelectedPen);
+                                extra = true;
+                            }
                         }
-                        else
-                        if(textCursor().position() >= block.position() + arg.second.first
-                                && textCursor().position() <= block.position() + arg.second.second)
+                        if(!extra)
                         {
-                            painter.setBrush(selectedBrush);
-                            painter.setPen(borderSelectedPen);
-                        }
-                        else
-                        {
-                            painter.setBrush(defaultBrush);
-                            painter.setPen(borderPen);
+                            if(textCursor().position() >= block.position() + arg.second.first
+                                && textCursor().position() <= block.position() + arg.second.second
+                                || (    textCursor().hasSelection()
+                                    &&  textCursor().selectionStart() <= block.position() + arg.second.second
+                                    &&  textCursor().selectionEnd() >= block.position() + arg.second.first
+                                    )
+                                )
+                            {
+                                painter.setBrush(selectedBrush);
+                                painter.setPen(borderSelectedPen);
+                            }
+                            else
+                            {
+                                painter.setBrush(defaultBrush);
+                                painter.setPen(borderPen);
+                            }
                         }
 
                         int xLeft = line.cursorToX(arg.second.first);
@@ -632,7 +652,7 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
 bool WidgetTextEdit::selectNextArgument()
 {
     //QTextCursor curIntArg = this->document()->find(QRegExp("%[0-9]"),this->textCursor().position());
-    QTextCursor curStrArg = this->document()->find(QRegExp("%[0-9]{0,1}\\{[^\\}]*\\}"),this->textCursor().position());
+    QTextCursor curStrArg = this->document()->find(QRegExp("%#\\{\\{\\{[^\\}]*\\}\\}\\}#"),this->textCursor().position());
 
   /*  if(!curIntArg.isNull() && (curStrArg.isNull() || curIntArg.selectionStart() < curStrArg.selectionStart()))
     {
@@ -1295,7 +1315,7 @@ bool WidgetTextEdit::onMacroTriggered(Macro macro, bool soft)
         }
     }
     QRegExp argumentPattern("\\$\\{([0-9]:){0,1}([^\\}]*)\\}");
-    content.replace(argumentPattern, "%{\\2}");
+    content.replace(argumentPattern, "%#{{{\\2}}}#");
 
     int pos = cursor.position();
     this->insertPlainText(content);

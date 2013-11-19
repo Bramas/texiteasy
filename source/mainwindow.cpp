@@ -63,7 +63,6 @@
 #include "widgetfile.h"
 #include "filemanager.h"
 #include "widgettab.h"
-#include "dialogmacros.h"
 
 #include <QList>
 
@@ -92,7 +91,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->verticalLayout->addWidget(_emptyWidget);
     connect(_emptyWidget, SIGNAL(mouseDoubleClick()), this, SLOT(newFile()));
 
-    DialogMacros * _dialogMacro = new DialogMacros(0);
 
     _widgetStatusBar = new WidgetStatusBar(this);
     ui->actionLinkSync->setChecked(ConfigManager::Instance.isPdfSynchronized());
@@ -143,7 +141,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->ui->actionBibtex,SIGNAL(triggered()), &FileManager::Instance,SLOT(bibtex()));
     connect(this->ui->actionClean,SIGNAL(triggered()), &FileManager::Instance,SLOT(clean()));
     connect(this->ui->actionView, SIGNAL(triggered()), &FileManager::Instance,SLOT(jumpToPdfFromSource()));
-    connect(this->ui->actionOpenMacrosDialog, SIGNAL(triggered()), _dialogMacro,SLOT(show()));
 
 
     connect(&FileManager::Instance, SIGNAL(filenameChanged(QString)), this, SLOT(onFilenameChanged(QString)));
@@ -189,8 +186,13 @@ MainWindow::MainWindow(QWidget *parent) :
             }
         }
     }
+
+
     //QPair<QList<QMenu*> >, QList<QAction*> > menus = MacroEngine::Instance.createMacrosMenus();
-    MacroEngine::Instance.createMacrosMenu(ui->menuMacros);
+    QMenu * menu = new QMenu(tr("&Macros"));
+    _menuMacrosAction = ui->menuBar->insertMenu(ui->menuOptions->menuAction(), menu);
+    MacroEngine::Instance.createMacrosMenu(menu);
+
 
     initBuildMenu();
 
@@ -404,10 +406,6 @@ void MainWindow::initBuildMenu()
         }
     }
 
-}
-QMenu * MainWindow::macroMenu()
-{
-    return ui->menuMacros;
 }
 
 void MainWindow::newFile()
