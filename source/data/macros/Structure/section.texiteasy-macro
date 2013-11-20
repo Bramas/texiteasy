@@ -6,5 +6,5 @@
     		sec|sect|secti|sectio|section
     	</leftWord>
     </trigger>
-    <content><![CDATA[\section{%{name}}]]></content>
+    <content><![CDATA[\section{${name}}]]></content>
 </macro>

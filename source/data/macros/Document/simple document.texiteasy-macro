@@ -6,9 +6,9 @@
     		(.*)
     	</leftWord>
     </trigger>
-    <content><![CDATA[\documentclass{%1{Type}}
+    <content><![CDATA[\documentclass{${1:Type}}
 
 \begin{document}
-	%{Text}
+        ${Text}
 \end{document}]]></content>
 </macro>

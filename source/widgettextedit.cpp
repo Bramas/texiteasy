@@ -520,6 +520,11 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
                 }
             }
         }
+        if(cursor.hasSelection())
+        {
+            indentSelectedText();
+            return;
+        }
         insertPlainText(ConfigManager::Instance.tabToString());
         return;
     }
@@ -785,6 +790,10 @@ void WidgetTextEdit::matchAll()
 void WidgetTextEdit::displayWidgetInsertCommand()
 {
     QTextLine line = this->textCursor().block().layout()->lineForTextPosition(this->textCursor().positionInBlock());
+    if(!line.isValid())
+    {
+        return;
+    }
     qreal top = line.position().y() + line.height() + 5  + this->blockTop(this->textCursor().block()) + this->contentOffsetTop();
     QRect geo = WidgetInsertCommand::instance()->geometry();
     geo.moveTo(QPoint(0, top));
@@ -818,6 +827,10 @@ void WidgetTextEdit::matchCommand()
         possibleCommand = possibleCommand.right(length);
 
         QTextLine line = this->textCursor().block().layout()->lineForTextPosition(this->textCursor().positionInBlock());
+        if(!line.isValid())
+        {
+            return;
+        }
         qreal left = line.cursorToX(this->textCursor().positionInBlock());
         qreal top = line.position().y() + line.height() + 5;
         this->_completionEngine->proposeCommand(left,top + this->blockTop(this->textCursor().block()) + this->contentOffsetTop(), line.height(),possibleCommand);
@@ -1324,4 +1337,22 @@ bool WidgetTextEdit::onMacroTriggered(Macro macro, bool soft)
     selectNextArgument();
     return true;
 
+}
+
+void WidgetTextEdit::indentSelectedText()
+{
+    QTextCursor cursor = textCursor();
+    int startPos = cursor.selectionStart();
+    int endPos = cursor.selectionEnd();
+    QString tabString = ConfigManager::Instance.tabToString();
+
+    cursor.setPosition(startPos);
+    QTextBlock block = cursor.block();
+    while(block.isValid() && block.position() <= endPos)
+    {
+        cursor.setPosition(block.position());
+        cursor.insertText(tabString);
+        endPos += tabString.size();
+        block = block.next();
+    }
 }

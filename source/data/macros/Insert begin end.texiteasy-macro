@@ -6,7 +6,7 @@
     		(.*)
     	</leftWord>
     </trigger>
-    <content><![CDATA[\begin{%1{environment}}
-	%{text}
-\end{%1{environment}}]]></content>
+    <content><![CDATA[\begin{${1:environment}}
+        ${text}
+\end{${1:environment}}]]></content>
 </macro>

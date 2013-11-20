@@ -71,7 +71,7 @@ public:
 
     QRectF blockGeometry(const QTextBlock &textBlock) { return this->blockBoundingGeometry(textBlock); }
     int contentOffsetTop() { return this->contentOffset().y(); }
-
+    void indentSelectedText();
 
     int textHeight() { return this->blockBottom(this->document()->end()); }
     File * getCurrentFile() { return this->currentFile; }

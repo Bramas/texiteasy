@@ -6,5 +6,5 @@
     		sub(se|sec|sect|secti|sectio|section)
     	</leftWord>
     </trigger>
-    <content><![CDATA[\subsection{%{name}}]]></content>
+    <content><![CDATA[\subsection{${name}}]]></content>
 </macro>

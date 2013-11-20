@@ -218,9 +218,11 @@ QString CompletionEngine::acceptedWord()
         }
         else
         {
-            word += QString("\n    %{text}\n")+endCommand;
+            word += QString("\n    @text\n")+endCommand;
         }
     }
+
+    word.replace(QRegExp("@([a-zA-Z0-9]+)"), "%#{{{\\1}}}#");
     return word;//.right(word.size() - _commandBegin.size());
 }
 

@@ -6,5 +6,5 @@
     		pa(r|ra|rag|ragr|ragra|ragrap|ragraph)
     	</leftWord>
     </trigger>
-    <content><![CDATA[\paragraph{%{name}}]]></content>
+    <content><![CDATA[\paragraph{${name}}]]></content>
 </macro>
