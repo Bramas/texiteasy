@@ -64,11 +64,16 @@ DialogMacros::DialogMacros(QWidget *parent) :
         parentItem->appendRow(it);
     }
 
-    list = dir.entryList(QDir::Dirs | QDir::Readable | QDir::NoDotAndDotDot, QDir::Name);
+    QMap<QString, QStandardItem> parents;
+
     QStandardItem * upItem;
-    foreach(const QString & dirName, list)
+    foreach(const Macro & macro, MacroEngine::orderedMacros())
     {
         it.clear();
+        if(macro.name.contains('/'))
+        {
+
+        }
         upItem = new QStandardItem(trUtf8(dirName.toUtf8().data()));
         upItem->setData(dirName);
         upItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
