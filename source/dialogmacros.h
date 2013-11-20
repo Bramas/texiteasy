@@ -44,6 +44,7 @@ public slots:
     void onClicked(QModelIndex index);
     void setMacroReadOnly(bool readOnly);
     void onItemChanged(QStandardItem*);
+    void onNewItemRequested();
 protected:
     void closeEvent(QCloseEvent *);
 private slots:
@@ -52,6 +53,7 @@ private slots:
 private:
     void saveLastClickedItem();
     void loadMacro(QString name);
+    void saveOrder();
 private:
     Ui::DialogMacros *ui;
     QString _macrosPath;

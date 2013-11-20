@@ -284,6 +284,10 @@ void File::autoSave()
     out.setCodec(_codec.toLatin1());
     //out.setGenerateByteOrderMark(true);
     out << this->data;
+    file.close();
+#ifdef OS_WINDOWS
+    QProcess::execute(QString("attrib +h \"%1\"").arg(this->getAutoSaveFilename()));
+#endif
 }
 void File::findTexDirectives()
 {

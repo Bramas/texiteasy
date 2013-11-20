@@ -26,6 +26,7 @@
 #include "macroengine.h"
 
 #include <QStandardItemModel>
+#include <QMessageBox>
 #include <QDebug>
 
 DialogMacros::DialogMacros(QWidget *parent) :
@@ -38,7 +39,7 @@ DialogMacros::DialogMacros(QWidget *parent) :
 
 
     _model = new QStandardItemModel;
-    _model->setColumnCount(2);
+    _model->setColumnCount(1);
     QStandardItem *parentItem = _model->invisibleRootItem();
     _macrosPath = ConfigManager::Instance.macrosPath();
     QDir dir(_macrosPath);
@@ -51,11 +52,15 @@ DialogMacros::DialogMacros(QWidget *parent) :
     {
         it.clear();
         QStandardItem * i = new QStandardItem(macroName);
+        i->setDropEnabled(false);
+        i->setDragEnabled(true);
         i->setData(macroName);
         it << i;
         i = new QStandardItem(MacroEngine::Instance.macros().value(macroName).keys);
+        i->setDropEnabled(false);
+        i->setDragEnabled(false);
         i->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-        it << i;
+        //it << i;
         parentItem->appendRow(it);
     }
 
@@ -63,22 +68,35 @@ DialogMacros::DialogMacros(QWidget *parent) :
     QStandardItem * upItem;
     foreach(const QString & dirName, list)
     {
+        it.clear();
         upItem = new QStandardItem(trUtf8(dirName.toUtf8().data()));
         upItem->setData(dirName);
         upItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-        parentItem->appendRow(upItem);
+        upItem->setDropEnabled(true);
+        upItem->setDragEnabled(false);
+        QStandardItem * i = new QStandardItem("");
+        i->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+        i->setDropEnabled(false);
+        i->setDragEnabled(false);
+        it << upItem;
+        //it << i;
+        parentItem->appendRow(it);
 
         QStringList subList = QDir(_macrosPath+dirName).entryList(QDir::Files | QDir::Readable, QDir::Name).filter(QRegExp("\\"+ConfigManager::MacroSuffix+"$"));
         subList.replaceInStrings(QRegExp("\\"+ConfigManager::MacroSuffix+"$"), "");
         foreach(const QString & macroName, subList)
         {
             it.clear();
-            QStandardItem * i = new QStandardItem(macroName);
+            i = new QStandardItem(macroName);
+            i->setDropEnabled(false);
+            i->setDragEnabled(true);
             i->setData(dirName+"/"+macroName);
             it << i;
             i = new QStandardItem(MacroEngine::Instance.macros().value(dirName+"/"+macroName).keys);
+            i->setDropEnabled(false);
+            i->setDragEnabled(false);
             i->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-            it << i;
+            //it << i;
             upItem->appendRow(it);
         }
     }
@@ -89,18 +107,22 @@ DialogMacros::DialogMacros(QWidget *parent) :
     // Provide translation for default folder
     trUtf8("Document");
     trUtf8("Structure");
-    trUtf8("Mathématiques");
-    trUtf8("Listes");
-    trUtf8("Tableau");
+    trUtf8("Mathematics");
+    trUtf8("List");
+    trUtf8("Table");
     trUtf8("Figure");
     ui->tree->setModel(_model);
 
     QHeaderView * h = ui->tree->header();
-    //h->resizeSections(QHeaderView::ResizeToContents);
-    h->resizeSection(0,ui->tree->width()-75);
+    /*h->resizeSection(0,ui->tree->width()-75);
     h->resizeSection(1, 74);
     h->setStretchLastSection(true);
-    ui->tree->setHeader(h);
+    ui->tree->setHeader(h);*/
+
+    ui->tree->setDragEnabled(true);
+    ui->tree->setDropIndicatorShown(true);
+    ui->tree->setDragDropMode(QAbstractItemView::InternalMove);
+    ui->tree->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     connect(this->ui->tree, SIGNAL(clicked(QModelIndex)), this, SLOT(onClicked(QModelIndex)));
     connect(ui->plainTextEdit, SIGNAL(textChanged()), this, SLOT(setModified()));
@@ -110,6 +132,10 @@ DialogMacros::DialogMacros(QWidget *parent) :
     connect(ui->checkBoxReadOnly, SIGNAL(toggled(bool)), this, SLOT(setMacroReadOnly(bool)));
 
     connect(_model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onItemChanged(QStandardItem*)));
+    connect(ui->pushButtonNewMacro, SIGNAL(clicked()), this, SLOT(onNewItemRequested()));
+
+
+    //connect(_model, SIGNAL())
 
 
 }
@@ -122,13 +148,42 @@ DialogMacros::~DialogMacros()
 void DialogMacros::closeEvent(QCloseEvent *)
 {
     saveLastClickedItem();
+    saveOrder();
 }
 
 void DialogMacros::onItemChanged(QStandardItem* item)
 {
-    MacroEngine::Instance.rename(item->data().toString(), item->text());
+    if(item->text().contains(QRegExp("[\"\\*:<>?\\\\\\/\\|]")))
+    {
+        QMessageBox::warning(this, trUtf8("Wrong name."), trUtf8("Macro name cannot contains the following characters : \"*:<>?\\/|"));
+        QString name = item->data().toString();
+        if(name.contains('/'))
+        {
+            name = name.split('/').at(1);
+        }
+        item->setText(name);
+        return;
+    }
+    QStandardItem * parent = item->parent();
+    QString newName = item->text();
+    if(parent)
+    {
+        newName = parent->data().toString()+"/"+newName;
+    }
+    if(MacroEngine::Instance.rename(item->data().toString(), newName))
+    {
+        item->setData(newName);
+    }
 }
-
+void DialogMacros::onNewItemRequested()
+{
+    qDebug()<<"new Item";
+    QStandardItem * item = new QStandardItem();
+    _model->appendRow(item);
+    ui->tree->setCurrentIndex(_model->indexFromItem(item));
+    ui->tree->edit(_model->indexFromItem(item));
+    return;
+}
 void DialogMacros::onClicked(QModelIndex index)
 {
     QStandardItem * itemParent;
@@ -181,9 +236,32 @@ void DialogMacros::loadMacro(QString name)
     ui->checkBoxReadOnly->setChecked(macro.readOnly);
     ui->plainTextEdit->setReadOnly(macro.readOnly);
     ui->lineEditDescription->setReadOnly(macro.readOnly);
-    /*ui->lineEditKeys->setReadOnly(macro.readOnly);
-    ui->lineEditLeftWord->setReadOnly(macro.readOnly);*/
 
+}
+void DialogMacros::saveOrder()
+{
+    QStringList macrosOrder;
+    for(int idx = 0; idx < _model->rowCount(); ++idx)
+    {
+        QStandardItem * item = _model->item(idx);
+        if(item->hasChildren())
+        {
+            for(int sub_idx = 0; sub_idx < item->rowCount(); ++sub_idx)
+            {
+                QStandardItem * subitem = item->child(sub_idx);
+                onItemChanged(subitem);
+                macrosOrder << subitem->data().toString();
+            }
+        }
+        else
+        {
+            onItemChanged(item);
+            macrosOrder << item->data().toString();
+        }
+    }
+    QSettings settings;
+    settings.beginGroup("Macros");
+    settings.setValue("macrosOrder", macrosOrder);
 }
 
 void DialogMacros::saveLastClickedItem()

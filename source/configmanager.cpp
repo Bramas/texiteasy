@@ -782,8 +782,8 @@ void ConfigManager::checkRevision()
                                                           );
         }
     }
-
     case 0x000800:
+
         break;
     }
     settings.setValue("version_hex",CURRENT_VERSION_HEX);

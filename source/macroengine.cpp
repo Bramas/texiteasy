@@ -86,6 +86,7 @@ void MacroEngine::loadMacros()
 {
     _macrosPath = ConfigManager::Instance.macrosPath();
 
+
     QDir dir(_macrosPath);
     QStringList list = dir.entryList(QDir::Files | QDir::Readable, QDir::Name).filter(QRegExp("\\"+ConfigManager::MacroSuffix+"$"));
     list.replaceInStrings(QRegExp("\\"+ConfigManager::MacroSuffix+"$"), "");
@@ -159,6 +160,7 @@ QAction * MacroEngine::createAction(Macro macro)
 QMenu * MacroEngine::createMacrosMenu(QMenu * root)
 {
 
+
     QSettings settings;
     settings.beginGroup("shortcuts");
 
@@ -169,7 +171,7 @@ QMenu * MacroEngine::createMacrosMenu(QMenu * root)
 
     QMap<QString, QMenu*> macrosSubmenu;
     QMenu * macroMenu;
-    foreach(const Macro& macro, macros())
+    foreach(const Macro& macro, orderedMacros())
     {
         QString name = macro.name;
         if(name.contains('/'))
@@ -209,7 +211,7 @@ void MacroEngine::onMacroTriggered()
     }
 }
 
-void MacroEngine::saveMacro(QString name, QString description, QString keys, QString leftWord, QString content)
+void MacroEngine::saveMacro(QString name, QString description="", QString keys ="", QString leftWord="", QString content="")
 {
     if(name.isEmpty())
     {
@@ -263,12 +265,24 @@ void MacroEngine::saveMacro(QString name, QString description, QString keys, QSt
     emit changed();
 }
 
-bool MacroEngine::rename(QString macroFullName, QString newLastName)
+bool MacroEngine::rename(QString oldName, QString newName)
 {
-    Macro macro = _macros.value(macroFullName);
+    Macro macro;
+    if(oldName.isEmpty())
+    {
+        saveMacro(newName,newName);
+        return true;
+    }
+    if(!oldName.compare(newName))
+    {
+        return false;
+    }
+
+    macro = _macros.value(oldName);
+
     if(macro.name.isEmpty())
     {
-        qWarning()<<"macro "<<macroFullName<<" does not exists.";
+        qWarning()<<"macro "<<oldName<<" does not exists.";
         return false;
     }
     QFile file(_macrosPath+macro.name+ConfigManager::MacroSuffix);
@@ -277,8 +291,9 @@ bool MacroEngine::rename(QString macroFullName, QString newLastName)
         qWarning()<<"file "<<_macrosPath+macro.name+ConfigManager::MacroSuffix<<" does not exists.";
         return false;
     }
-    QString oldName = macro.name;
-    macro.name.replace(QRegExp("^([^\\/]+\/){0,1}[^\\/]*$"), "\\1"+newLastName);
+    macro.name = newName;
+    //QString oldName = macro.name;
+    //macro.name.replace(QRegExp("^([^\\/]+\/){0,1}[^\\/]*$"), "\\1"+newLastName);
     if(file.rename(_macrosPath+macro.name+ConfigManager::MacroSuffix))
     {
         _macros.remove(oldName);
@@ -288,11 +303,34 @@ bool MacroEngine::rename(QString macroFullName, QString newLastName)
     }
     else
     {
-        qWarning()<<"Unable to rename macro to "<<_macrosPath+macro.name+ConfigManager::MacroSuffix;
+        qWarning()<<"Unable to rename macro "<<oldName+ConfigManager::MacroSuffix<<" to "<<macro.name+ConfigManager::MacroSuffix;
     }
     return false;
 
 }
+QList<Macro> MacroEngine::orderedMacros()
+{
+    QList<Macro> list;
+    QSettings settings;
+    settings.beginGroup("Macros");
+    foreach(const QString & macroName, settings.value("macrosOrder").toStringList())
+    {
+        Macro macro = _macros.value(macroName);
+        if(!macro.name.isEmpty())
+        {
+            list << macro;
+        }
+    }
+    foreach(const Macro & macro, _macros)
+    {
+        if(!list.contains(macro))
+        {
+            list << macro;
+        }
+    }
+    return list;
+}
+
 
 bool MacroXmlHandler::startElement(const QString &namespaceURI, const QString &localName, const QString &qName, const QXmlAttributes &atts)
 {

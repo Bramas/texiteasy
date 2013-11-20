@@ -83,6 +83,11 @@ struct Macro
     QString description;
     QAction * action;
     bool readOnly = false;
+
+    bool operator==(const Macro & other)
+    {
+        return this->name == other.name;
+    }
 };
 
 /**
@@ -101,6 +106,8 @@ public:
     static const QString EmptyMacroString;
 
     const QMap<QString, Macro> & macros() const { return _macros; }
+
+    QList<Macro> orderedMacros();
     QMenu * createMacrosMenu(QMenu *root);
     QAction * createAction(Macro macro);
     void init();
@@ -110,7 +117,7 @@ public:
     QList<QAction*> actions() const;
     QList<Macro> tabMacros() const;
 
-    bool rename(QString macroFullName, QString newLastName);
+    bool rename(QString oldName, QString newName);
 signals:
     void changed();
 

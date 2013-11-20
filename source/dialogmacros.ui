@@ -59,7 +59,7 @@
     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton">
+  <widget class="QPushButton" name="pushButtonNewFolder">
    <property name="geometry">
     <rect>
      <x>10</x>
@@ -72,7 +72,7 @@
     <string>Nouveau dossier</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton_2">
+  <widget class="QPushButton" name="pushButtonNewMacro">
    <property name="geometry">
     <rect>
      <x>150</x>
