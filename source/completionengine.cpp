@@ -164,7 +164,7 @@ void CompletionEngine::cellSelected(int row)
 {
     if(_widgetTooltip)
     {
-        delete _widgetTooltip;
+        _widgetTooltip->deleteLater();
         _widgetTooltip = 0;
     }
     if(row < 0)

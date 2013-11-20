@@ -112,9 +112,7 @@ void FileManager::deleteMasterConnexions(WidgetFile *widget, AssociatedFile::Typ
     // remove connexion with the master file
     if(widget->masterFile())
     {
-        //widget->masterFile()->file()->removeOpenAssociatedFile(widget->file());
-        disconnect(widget->masterFile()->file()->getBuilder(), SIGNAL(pdfChanged()),widget->widgetPdfViewer()->widgetPdfDocument(),SLOT(updatePdf()));
-        //disconnect(widget->file()->getBuilder(), SIGNAL(pdfChanged()),widget->masterFile()->widgetPdfViewer()->widgetPdfDocument(),SLOT(updatePdf()));
+        widget->masterFile()->file()->removeOpenAssociatedFile(widget->file());
 
         if(widget->file()->format() == File::BIBTEX)
         {
@@ -133,9 +131,6 @@ void FileManager::deleteMasterConnexions(WidgetFile *widget, AssociatedFile::Typ
     // restore everything with the open associatedFiles
     foreach(File * openAssoc, widget->file()->openAssociatedFiles())
     {
-
-        //disconnect(openAssoc->getBuilder(), SIGNAL(pdfChanged()),widget->widgetPdfViewer()->widgetPdfDocument(),SLOT(updatePdf()));
-
         if(openAssoc->format() == File::BIBTEX)
         {
             openAssoc->getBuilder()->setFile(openAssoc);
@@ -336,7 +331,7 @@ void FileManager::close(WidgetFile *widget)
         --_currentWidgetFileId;
     }
     _widgetFiles.removeOne(widget);
-    delete widget;
+    widget->deleteLater();
 }
 void FileManager::setPdfSynchronized(bool pdfSynchronized)
 {
@@ -381,7 +376,7 @@ void FileManager::setPdfViewerInItsOwnWidget(bool ownWidget)
             widgetFile->addWidgetPdfViewerToSplitter();
         }
         _widgetPdfViewerWrapper->close();
-        delete _widgetPdfViewerWrapper;
+        _widgetPdfViewerWrapper->deleteLater();
         _widgetPdfViewerWrapper = 0;
     }
 }

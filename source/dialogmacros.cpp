@@ -52,7 +52,10 @@ DialogMacros::DialogMacros(QWidget *parent) :
         it.clear();
         QStandardItem * i = new QStandardItem(macroName);
         i->setData(macroName);
-        it << i << new QStandardItem("-");
+        it << i;
+        i = new QStandardItem(MacroEngine::Instance.macros().value(macroName).keys);
+        i->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+        it << i;
         parentItem->appendRow(it);
     }
 
@@ -72,10 +75,14 @@ DialogMacros::DialogMacros(QWidget *parent) :
             it.clear();
             QStandardItem * i = new QStandardItem(macroName);
             i->setData(dirName+"/"+macroName);
-            it << i << new QStandardItem("-");
+            it << i;
+            i = new QStandardItem(MacroEngine::Instance.macros().value(dirName+"/"+macroName).keys);
+            i->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+            it << i;
             upItem->appendRow(it);
         }
     }
+    //ui->tree->header()->setStretchLastSection(true);
 
 
 
@@ -87,6 +94,13 @@ DialogMacros::DialogMacros(QWidget *parent) :
     trUtf8("Tableau");
     trUtf8("Figure");
     ui->tree->setModel(_model);
+
+    QHeaderView * h = ui->tree->header();
+    //h->resizeSections(QHeaderView::ResizeToContents);
+    h->resizeSection(0,ui->tree->width()-75);
+    h->resizeSection(1, 74);
+    h->setStretchLastSection(true);
+    ui->tree->setHeader(h);
 
     connect(this->ui->tree, SIGNAL(clicked(QModelIndex)), this, SLOT(onClicked(QModelIndex)));
     connect(ui->plainTextEdit, SIGNAL(textChanged()), this, SLOT(setModified()));
@@ -112,7 +126,7 @@ void DialogMacros::closeEvent(QCloseEvent *)
 
 void DialogMacros::onItemChanged(QStandardItem* item)
 {
-    qDebug()<<"rename "<<item->data().toString()<<" -> "<<item->text()<<" "<<MacroEngine::Instance.rename(item->data().toString(), item->text());
+    MacroEngine::Instance.rename(item->data().toString(), item->text());
 }
 
 void DialogMacros::onClicked(QModelIndex index)

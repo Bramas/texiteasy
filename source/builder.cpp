@@ -48,7 +48,7 @@ Builder::~Builder()
 #ifdef DEBUG_DESTRUCTOR
     qDebug()<<"delete Builder";
 #endif
-    delete process;
+    process->deleteLater();
 }
 
 void Builder::setFile(File *file)

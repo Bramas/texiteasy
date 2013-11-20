@@ -51,6 +51,12 @@ MacroEngine::MacroEngine() :
     _xmlReader.setLexicalHandler(_handler);
 }
 
+void MacroEngine::init()
+{
+    loadMacros();
+    _dialogMacro = new DialogMacros(0);
+}
+
 QList<QAction*> MacroEngine::actions() const
 {
     QList<QAction*> list;
@@ -78,9 +84,6 @@ QList<Macro> MacroEngine::tabMacros() const
 
 void MacroEngine::loadMacros()
 {
-
-    _dialogMacro = new DialogMacros(0);
-
     _macrosPath = ConfigManager::Instance.macrosPath();
 
     QDir dir(_macrosPath);
@@ -155,7 +158,12 @@ QAction * MacroEngine::createAction(Macro macro)
 
 QMenu * MacroEngine::createMacrosMenu(QMenu * root)
 {
+
+    QSettings settings;
+    settings.beginGroup("shortcuts");
+
     QAction * a = root->addAction(trUtf8("Ouvrir l'éditeur de macros"));
+    a->setShortcut(QKeySequence(settings.value(trUtf8("Ouvrir l'éditeur de macros")).toString()));
     connect(a, SIGNAL(triggered()), _dialogMacro,SLOT(show()));
     root->addSeparator();
 

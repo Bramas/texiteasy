@@ -19,6 +19,13 @@
  *                                                                         *
  ***************************************************************************/
 
+/**
+ * @file mainwindow.h
+ * @brief The main window
+ * @author Quentin BRAMAS
+ */
+
+
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
@@ -64,6 +71,10 @@ protected:
     }
 };
 
+/**
+ * @class MainWindow
+ * @brief The MainWindow class is the main class that call all other widgets. it contains all the menus.
+ */
 class MainWindow : public QMainWindow
 {
     Q_OBJECT

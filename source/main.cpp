@@ -19,6 +19,13 @@
  *                                                                         *
  ***************************************************************************/
 
+/**
+ * @file main.cpp
+ * @brief TexitEasy main c file
+ * @author Quentin BRAMAS
+ *
+ *
+ */
 
 #include "mainwindow.h"
 #include "application.h"
@@ -58,7 +65,7 @@ int main(int argc, char *argv[])
     qDebug()<<QString("Start ")+APPLICATION_NAME+QString(" version ")+CURRENT_VERSION;
     FileManager::Instance.init();
     ConfigManager::Instance.init();
-    MacroEngine::Instance.loadMacros();
+    MacroEngine::Instance.init();
     MainWindow w;
     w.show();
     a.connect(&a, SIGNAL(requestOpenFile(QString)), &w, SLOT(open(QString)));

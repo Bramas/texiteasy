@@ -13,6 +13,16 @@ class MainWindow;
 class QMessageBox;
 typedef QWidget WidgetPdfViewerWrapper;
 
+/**
+ * @brief Provides informations about opened files.
+ * @author Quentin BRAMAS
+ *
+ * This class provide usefull information about which file is currently opened.
+ * Other class can ask for the current file information, and can be informed when the state of the current
+ * file change.
+ * A lots of slots are just used to call the same slots on the current file.
+ */
+
 class FileManager : public QObject
 {
     Q_OBJECT
@@ -59,9 +69,7 @@ public slots:
 
     void sendFilenameChanged(WidgetFile* w, QString name) { emit filenameChanged(w,name); emit filenameChanged(name); }
 
-    /**
-     * The main parts of the slots are just used to call the same slots on the current file
-     */
+
     void save() { this->currentWidgetFile()->save(); }
     void saveAs() { this->currentWidgetFile()->saveAs(); }
     void builTex(void);

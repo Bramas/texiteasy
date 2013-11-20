@@ -33,6 +33,11 @@ class QMenu;
 class QAction;
 class DialogMacros;
 
+/**
+ * @brief The MacroXmlHandler class read a macro file and store useful information (description, keys ...)
+ * @author Quentin BRAMAS
+ */
+
 class MacroXmlHandler : public QXmlDefaultHandler
 {
 public:
@@ -80,6 +85,14 @@ struct Macro
     bool readOnly = false;
 };
 
+/**
+ * @brief The MacroEngine class loads the macros directory, and store macros.
+ * @author Quentin BRAMAS
+ *
+ * The MacroEngine class create actions for macros and listen to action trigger. When an action is triggered it informes the filemanager.
+ * The class also create menus with macros.
+ */
+
 class MacroEngine : public QObject
 {
     Q_OBJECT
@@ -90,6 +103,7 @@ public:
     const QMap<QString, Macro> & macros() const { return _macros; }
     QMenu * createMacrosMenu(QMenu *root);
     QAction * createAction(Macro macro);
+    void init();
     void loadMacros();
     void loadMacro(QString name);
     void saveMacro(QString name, QString description, QString keys, QString leftWord, QString content);
