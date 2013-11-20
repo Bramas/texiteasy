@@ -187,7 +187,7 @@ public:
 
     const QMap<QString, QString> & texDirectives(){ return _texDirectives; }
 
-
+    void removeAutosaveFile();
 public slots:
     /**
      * @brief autoSave

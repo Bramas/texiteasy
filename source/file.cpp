@@ -55,14 +55,19 @@ File::~File()
 #ifdef DEBUG_DESTRUCTOR
     qDebug()<<"delete File";
 #endif
+    removeAutosaveFile();
+    delete builder;
+    delete _autoSaveTimer;
+}
+void File::removeAutosaveFile()
+{
     QFile f(getAutoSaveFilename());
     if(f.exists())
     {
         f.remove();
     }
-    delete builder;
-    delete _autoSaveTimer;
 }
+
 void File::save(bool recursively)
 {
     this->save(QString(""), recursively);
@@ -104,6 +109,7 @@ void File::save(QString filename, bool recursively)
             associtedFile->save(true);
         }
     }
+    removeAutosaveFile();
 
     this->setModified(false);
     _lastSaved = this->fileInfo().lastModified();
@@ -267,10 +273,12 @@ void File::autoSave()
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
         return;
 
-    if(_modified)
+    if(!_modified)
     {
-        this->data = this->_widgetTextEdit->toPlainText();
+       return;
     }
+
+    this->data = this->_widgetTextEdit->toPlainText();
 
     QTextStream out(&file);
     out.setCodec(_codec.toLatin1());
