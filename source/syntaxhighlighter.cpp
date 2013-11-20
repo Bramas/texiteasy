@@ -158,7 +158,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
 #if QT_VERSION > 0x050000
                     formatArgumentDelimiter.setFontStretch(1);
 #endif
-                    formatArgumentDelimiter.setFontLetterSpacing(1);
+                    formatArgumentDelimiter.setFontLetterSpacing(10);
                     formatArgumentDelimiter.setForeground(QBrush(QColor(0,0,0,0)));
 
      setFormat(0, text.size(), formatNormal);

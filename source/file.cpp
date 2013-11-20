@@ -31,6 +31,7 @@
 #include <QTimer>
 #include <QDebug>
 #include <QRegExp>
+#include <QMessageBox>
 
 #define AUTO_SAVE 120000
 
@@ -54,6 +55,11 @@ File::~File()
 #ifdef DEBUG_DESTRUCTOR
     qDebug()<<"delete File";
 #endif
+    QFile f(getAutoSaveFilename());
+    if(f.exists())
+    {
+        f.remove();
+    }
     delete builder;
     delete _autoSaveTimer;
 }
@@ -125,9 +131,26 @@ const QString File::open(QString filename, QString codec)
     {
         this->filename = filename;
     }
+
+    QString loadedFilename = this->filename;
+    bool autosaveLoad = false;
+
+    if(QFile(getAutoSaveFilename()).exists())
+    {
+        if(0 == QMessageBox::warning(0, trUtf8("auto savefile exists"),
+                             trUtf8("An autosave file of %1 exists (maybe caused by a wrong shutdown of %2). Do you want to load the autosave?").arg(fileInfo().fileName()).arg(APPLICATION_NAME),
+                             trUtf8("Load the autosave"),
+                             trUtf8("Ignore")))
+        {
+            loadedFilename = getAutoSaveFilename();
+            autosaveLoad = true;
+        }
+
+    }
+
     // Open the file
 
-    QFile file(this->filename);
+    QFile file(loadedFilename);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
         return QString("");
 
@@ -198,7 +221,7 @@ const QString File::open(QString filename, QString codec)
 
 
     this->refreshLineNumber();
-    this->setModified(false);
+    this->setModified(autosaveLoad);
     _autoSaveTimer->stop();
     _autoSaveTimer->start(AUTO_SAVE);
     _lastSaved = this->fileInfo().lastModified();
@@ -243,6 +266,11 @@ void File::autoSave()
     QFile file(this->getAutoSaveFilename());
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
         return;
+
+    if(_modified)
+    {
+        this->data = this->_widgetTextEdit->toPlainText();
+    }
 
     QTextStream out(&file);
     out.setCodec(_codec.toLatin1());

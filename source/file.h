@@ -137,8 +137,11 @@ public:
 
     QString getAutoSaveFilename() const
     {
-        QDir dir;
-        return this->getAuxPath()+dir.separator()+this->fileInfo().baseName()+"_autosave.tex";
+#ifdef OS_WINDOWS
+        return this->getPath()+"/~"+this->fileInfo().fileName()+"_autosave";
+#else
+        return this->getPath()+"/."+this->fileInfo().fileName()+"_autosave";
+#endif
     }
 
     QFileInfo fileInfo() const { return QFileInfo(this->filename); }

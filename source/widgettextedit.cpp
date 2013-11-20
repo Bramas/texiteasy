@@ -121,9 +121,7 @@ void WidgetTextEdit::paintEvent(QPaintEvent *event)
     QPainter painter(viewport());
     painter.setFont(ConfigManager::Instance.getTextCharFormats("normal").font());
 
-
-    QPen textPen = ConfigManager::Instance.getTextCharFormats("normal").foreground().color();
-    painter.setPen(textPen);
+    painter.setPen(ConfigManager::Instance.getTextCharFormats("normal").foreground().color());
     if(_multipleEdit.count())
     {
         QTextLine line = _multipleEdit.first().block().layout()->lineForTextPosition(_multipleEdit.first().positionInBlock());
@@ -141,12 +139,17 @@ void WidgetTextEdit::paintEvent(QPaintEvent *event)
     QBrush selectedBrush(ConfigManager::Instance.getTextCharFormats("normal").background().color().lighter());
     QPen borderSelectedPen = ConfigManager::Instance.getTextCharFormats("normal").foreground().color().darker();
     QPen borderPen = ConfigManager::Instance.getTextCharFormats("normal").foreground().color();*/
-    QBrush defaultBrush(ConfigManager::Instance.getTextCharFormats("normal").background().color().darker(200));
-    QBrush selectedBrush(ConfigManager::Instance.getTextCharFormats("normal").background().color().darker(150));
-    QPen borderSelectedPen = ConfigManager::Instance.getTextCharFormats("normal").foreground().color().lighter();
-    QPen borderPen = ConfigManager::Instance.getTextCharFormats("normal").foreground().color();
-    QTextBlock block = this->document()->firstBlock();
+    QBrush defaultBrush(ConfigManager::Instance.getTextCharFormats("argument").background().color());
+    QBrush selectedBrush(ConfigManager::Instance.getTextCharFormats("argument:selected").background().color());
 
+
+    QPen textSelectedPen = ConfigManager::Instance.getTextCharFormats("argument:selected").foreground().color();
+    QPen textPen = ConfigManager::Instance.getTextCharFormats("argument").foreground().color();
+
+    QPen borderSelectedPen = ConfigManager::Instance.getTextCharFormats("argument-border:selected").foreground().color();
+    QPen borderPen = ConfigManager::Instance.getTextCharFormats("argument-border").foreground().color();
+
+    QTextBlock block = this->document()->firstBlock();
 
 
     while(block.isValid())
@@ -163,6 +166,7 @@ void WidgetTextEdit::paintEvent(QPaintEvent *event)
                     QTextLine line2 = layout->lineForTextPosition(arg.second.second);
                     if(line.isValid() && line2.isValid())
                     {
+                        bool selected = false;
                         bool extra = false;
                         //foreach(QTextEdit::ExtraSelection sel, extraSelections())
                         foreach(QTextCursor cur, _multipleEdit)
@@ -177,6 +181,7 @@ void WidgetTextEdit::paintEvent(QPaintEvent *event)
                                 painter.setBrush(selectedBrush);
                                 painter.setPen(borderSelectedPen);
                                 extra = true;
+                                selected = true;
                             }
                         }
                         if(!extra)
@@ -191,6 +196,7 @@ void WidgetTextEdit::paintEvent(QPaintEvent *event)
                             {
                                 painter.setBrush(selectedBrush);
                                 painter.setPen(borderSelectedPen);
+                                selected = true;
                             }
                             else
                             {
@@ -199,15 +205,18 @@ void WidgetTextEdit::paintEvent(QPaintEvent *event)
                             }
                         }
 
-                        int xLeft = line.cursorToX(arg.second.first);
-                        int width = line2.cursorToX(arg.second.second) - xLeft;
-                        int top = line.position().y() + blockTop(block) + contentOffset().y();
-                        int height = line2.rect().bottom() - line.position().y();
-                        QRect r(xLeft, top, width, height);
+                        qreal xLeft = line.cursorToX(arg.second.first);
+                        qreal width = line2.cursorToX(arg.second.second) - xLeft;
+                        qreal top = line.position().y() + blockTop(block) + contentOffset().y();
+                        qreal height = line2.rect().bottom() - line.position().y();
+                        QRectF r(xLeft, top, width, height);
 
-                        painter.drawRoundedRect(r,3,3);
-                        painter.setPen(textPen);
-                        painter.drawText(r.bottomLeft() + QPoint(0, -5), arg.first);
+                        qreal invisibleMargin = painter.fontMetrics().width("{") / 4.0;
+
+                        painter.drawRoundedRect(r,5,5);
+                        painter.setPen(selected ? textSelectedPen : textPen);
+
+                        painter.drawText(r.bottomLeft() + QPoint(1 + invisibleMargin, -5), arg.first);
                     }
                 }
             }

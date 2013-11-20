@@ -388,7 +388,6 @@ void WidgetFile::open(QString filename)
         connect(a, SIGNAL(triggered()), &FileManager::Instance, SLOT(openAssociatedFile()));
         this->addAction(a);
     }
-    file()->setModified(false);
 }
 
 void WidgetFile::setFileToBuild(File *file)
