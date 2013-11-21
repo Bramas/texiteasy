@@ -711,6 +711,7 @@ void ConfigManager::checkRevision()
     case 0x000602:
     case 0x000603:
     case 0x000700:
+    case 0x000800:
     {
         qDebug()<<"texiteasy 0.7.0 => 0.8.0";
         //remove some old files and update theme
@@ -782,7 +783,6 @@ void ConfigManager::checkRevision()
                                                           );
         }
     }
-    case 0x000800:
 
         break;
     }

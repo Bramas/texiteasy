@@ -1,0 +1,12 @@
+<macro readOnly="1">
+    <description>Insert description</description>
+    <trigger>
+    	<keys>Tab</keys>
+    	<leftWord>
+    		de(s|sc|scr|scri|scrip|script|scripti|scriptio|scription)
+    	</leftWord>
+    </trigger>
+    <content><![CDATA[\begin{description}
+\item[ ] ${Text}
+\end{description}]]></content>
+</macro>

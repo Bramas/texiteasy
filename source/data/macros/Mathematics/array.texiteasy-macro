@@ -1,0 +1,20 @@
+<macro readOnly="1">
+    <description>Insert array</description>
+    <trigger>
+    	<keys></keys>
+    	<leftWord>
+    		(.*)
+    	</leftWord>
+    </trigger>
+    <content><![CDATA[
+\[
+\left(
+\begin{array}{ccc}
+${}  &   &   \\
+  &   &   \\
+  &   &   
+\end{array}
+\right)
+\]
+]]></content>
+</macro>

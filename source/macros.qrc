@@ -6,5 +6,10 @@
         <file>data/macros/Structure/subsubsection.texiteasy-macro</file>
         <file>data/macros/Document/simple document.texiteasy-macro</file>
         <file>data/macros/Insert begin end.texiteasy-macro</file>
+        <file>data/macros/Mathematics/equation.texiteasy-macro</file>
+        <file>data/macros/Mathematics/array.texiteasy-macro</file>
+        <file>data/macros/Lists/itemize.texiteasy-macro</file>
+        <file>data/macros/Lists/description.texiteasy-macro</file>
+        <file>data/macros/Lists/enumerate.texiteasy-macro</file>
     </qresource>
 </RCC>

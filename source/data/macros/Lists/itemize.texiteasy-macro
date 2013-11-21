@@ -1,0 +1,12 @@
+<macro readOnly="1">
+    <description>Insert itemize</description>
+    <trigger>
+    	<keys>Tab</keys>
+    	<leftWord>
+    		it(e|em|emi|emiz|emize)
+    	</leftWord>
+    </trigger>
+    <content><![CDATA[\begin{itemize}
+\item ${Text}
+\end{itemize}]]></content>
+</macro>

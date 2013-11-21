@@ -1,0 +1,12 @@
+<macro readOnly="1">
+    <description>Insert equation</description>
+    <trigger>
+    	<keys></keys>
+    	<leftWord>
+    		(.*)
+    	</leftWord>
+    </trigger>
+    <content><![CDATA[\begin{equation}
+    ${Equation}
+\end{equation}]]></content>
+</macro>

@@ -1,0 +1,12 @@
+<macro readOnly="1">
+    <description>Insert enumerate</description>
+    <trigger>
+    	<keys>Tab</keys>
+    	<leftWord>
+    		en(u|um|ume|umer|umera|umerat|umerate)
+    	</leftWord>
+    </trigger>
+    <content><![CDATA[\begin{enumerate}
+\item ${Text}
+\end{enumerate}]]></content>
+</macro>
