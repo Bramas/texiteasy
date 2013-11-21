@@ -377,6 +377,7 @@ void MainWindow::initMacrosMenu()
     QMenu * menu = new QMenu(tr("&Macros"));
     _menuMacrosAction = ui->menuBar->insertMenu(ui->menuOptions->menuAction(), menu);
     MacroEngine::Instance.createMacrosMenu(menu);
+    this->addActions(menu->actions());
 }
 
 void MainWindow::initBuildMenu()

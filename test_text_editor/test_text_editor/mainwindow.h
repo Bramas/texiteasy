@@ -6,6 +6,8 @@
 namespace Ui {
 class MainWindow;
 }
+class Tester;
+class TextEditor;
 
 class MainWindow : public QMainWindow
 {
@@ -14,8 +16,12 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+public slots:
+    void onTextChanged();
     
 private:
+    TextEditor * _textEditor;
+    Tester * _tester;
     Ui::MainWindow *ui;
 };
 

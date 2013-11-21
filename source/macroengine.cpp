@@ -177,6 +177,7 @@ QMenu * MacroEngine::createMacrosMenu(QMenu * root)
     settings.beginGroup("shortcuts");
 
     QAction * a = root->addAction(trUtf8("Ouvrir l'éditeur de macros"));
+    a->setObjectName(trUtf8("Ouvrir l'éditeur de macros"));
     a->setShortcut(QKeySequence(settings.value(trUtf8("Ouvrir l'éditeur de macros")).toString()));
     connect(a, SIGNAL(triggered()), _dialogMacro,SLOT(show()));
     root->addSeparator();

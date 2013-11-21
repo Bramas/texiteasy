@@ -157,6 +157,7 @@ void DialogConfig::show()
     this->ui->tableWidget_keyBinding->clear();
     ui->tableWidget_keyBinding->setRowCount(0);
     this->addEditableActions(_mainWindows->findChildren<QAction *>());
+    this->addEditableActions(_mainWindows->actions());
 
     // Page General
 

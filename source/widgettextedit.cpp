@@ -1336,8 +1336,16 @@ bool WidgetTextEdit::onMacroTriggered(Macro macro, bool soft)
             ++idx;
         }
     }
+    ;
+    content.replace(QRegExp("^#[^\\n]*\n"), "");
+    content.replace(QRegExp("\n#[^\\n]*\n"), "\n");
+
     QRegExp argumentPattern("\\$\\{([0-9]:){0,1}([^\\}]*)\\}");
     content.replace(argumentPattern, "%#{{{\\2}}}#");
+
+
+
+
 
     int pos = cursor.position();
     this->insertPlainText(content);
