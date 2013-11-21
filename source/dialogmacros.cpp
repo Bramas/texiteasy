@@ -28,6 +28,26 @@
 #include <QStandardItemModel>
 #include <QMessageBox>
 #include <QDebug>
+#include <QMenu>
+#include <QTreeView>
+
+
+class TreeView : public QTreeView
+{
+public:
+    TreeView(QWidget * parent) : QTreeView(parent) { }
+protected:
+    void keyPressEvent(QKeyEvent *event)
+    {
+        QTreeView::keyPressEvent(event);
+        if(currentIndex().isValid())
+        {
+            emit pressed(currentIndex());
+        }
+    }
+};
+
+
 
 DialogMacros::DialogMacros(QWidget *parent) :
     QDialog(parent),
@@ -35,79 +55,61 @@ DialogMacros::DialogMacros(QWidget *parent) :
     _modified(false)
 {
     ui->setupUi(this);
-
-
+    QRect geo = ui->tree->geometry();
+    ui->tree->deleteLater();
+    ui->tree = new TreeView(this);
+    ui->tree->setGeometry(geo);
 
     _model = new QStandardItemModel;
     _model->setColumnCount(1);
-    QStandardItem *parentItem = _model->invisibleRootItem();
     _macrosPath = ConfigManager::Instance.macrosPath();
-    QDir dir(_macrosPath);
-    QStringList list = dir.entryList(QDir::Files | QDir::Readable, QDir::Name).filter(QRegExp("\\"+ConfigManager::MacroSuffix+"$"));
-    list.replaceInStrings(QRegExp("\\"+ConfigManager::MacroSuffix+"$"), "");
+
 
     QList<QStandardItem*> it;
-
-    foreach(const QString & macroName, list)
-    {
-        it.clear();
-        QStandardItem * i = new QStandardItem(macroName);
-        i->setDropEnabled(false);
-        i->setDragEnabled(true);
-        i->setData(macroName);
-        it << i;
-        i = new QStandardItem(MacroEngine::Instance.macros().value(macroName).keys);
-        i->setDropEnabled(false);
-        i->setDragEnabled(false);
-        i->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-        //it << i;
-        parentItem->appendRow(it);
-    }
-
-    QMap<QString, QStandardItem> parents;
-
+    QMap<QString, QStandardItem *> parents;
+    QString macroText;
     QStandardItem * upItem;
-    foreach(const Macro & macro, MacroEngine::orderedMacros())
+    QStandardItem * item;
+    foreach(const Macro & macro, MacroEngine::Instance.orderedMacros())
     {
+        upItem = _model->invisibleRootItem();
         it.clear();
+        macroText = macro.name;
         if(macro.name.contains('/'))
         {
-
+            QStringList l = macro.name.split('/');
+            QString folder = l.at(0);
+            macroText = l.at(1);
+            if(!parents.contains(folder))
+            {
+                upItem = new QStandardItem(trUtf8(folder.toUtf8().data()));
+                upItem->setData(folder);
+                upItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+                upItem->setDropEnabled(true);
+                upItem->setDragEnabled(false);
+                parents.insert(folder, upItem);
+                _model->appendRow(upItem);
+            }
+            else
+            {
+                upItem = parents.value(folder);
+            }
         }
-        upItem = new QStandardItem(trUtf8(dirName.toUtf8().data()));
-        upItem->setData(dirName);
-        upItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-        upItem->setDropEnabled(true);
-        upItem->setDragEnabled(false);
-        QStandardItem * i = new QStandardItem("");
-        i->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-        i->setDropEnabled(false);
-        i->setDragEnabled(false);
-        it << upItem;
-        //it << i;
-        parentItem->appendRow(it);
 
-        QStringList subList = QDir(_macrosPath+dirName).entryList(QDir::Files | QDir::Readable, QDir::Name).filter(QRegExp("\\"+ConfigManager::MacroSuffix+"$"));
-        subList.replaceInStrings(QRegExp("\\"+ConfigManager::MacroSuffix+"$"), "");
-        foreach(const QString & macroName, subList)
+        if(macro.name.contains('\\'))
         {
-            it.clear();
-            i = new QStandardItem(macroName);
-            i->setDropEnabled(false);
-            i->setDragEnabled(true);
-            i->setData(dirName+"/"+macroName);
-            it << i;
-            i = new QStandardItem(MacroEngine::Instance.macros().value(dirName+"/"+macroName).keys);
-            i->setDropEnabled(false);
-            i->setDragEnabled(false);
-            i->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-            //it << i;
-            upItem->appendRow(it);
+            //empty macro
+            continue;
         }
+        it.clear();
+        item = new QStandardItem(macroText);
+        item->setDropEnabled(false);
+        item->setDragEnabled(true);
+        item->setData(macro.name);
+        it << item;
+        upItem->appendRow(it);
+
     }
-    //ui->tree->header()->setStretchLastSection(true);
-
-
 
     // Provide translation for default folder
     trUtf8("Document");
@@ -129,7 +131,8 @@ DialogMacros::DialogMacros(QWidget *parent) :
     ui->tree->setDragDropMode(QAbstractItemView::InternalMove);
     ui->tree->setSelectionBehavior(QAbstractItemView::SelectRows);
 
-    connect(this->ui->tree, SIGNAL(clicked(QModelIndex)), this, SLOT(onClicked(QModelIndex)));
+    //connect(this->ui->tree, SIGNAL(clicked(QModelIndex)), this, SLOT(onClicked(QModelIndex)));
+    connect(this->ui->tree, SIGNAL(pressed(QModelIndex)), this, SLOT(onClicked(QModelIndex)));
     connect(ui->plainTextEdit, SIGNAL(textChanged()), this, SLOT(setModified()));
     connect(ui->lineEditDescription, SIGNAL(textChanged(QString)), this, SLOT(setModified(QString)));
     connect(ui->lineEditKeys, SIGNAL(textChanged(QString)), this, SLOT(setModified(QString)));
@@ -137,8 +140,11 @@ DialogMacros::DialogMacros(QWidget *parent) :
     connect(ui->checkBoxReadOnly, SIGNAL(toggled(bool)), this, SLOT(setMacroReadOnly(bool)));
 
     connect(_model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(onItemChanged(QStandardItem*)));
-    connect(ui->pushButtonNewMacro, SIGNAL(clicked()), this, SLOT(onNewItemRequested()));
+    connect(ui->pushButtonNewMacro, SIGNAL(clicked()), this, SLOT(onNewItem()));
+    connect(ui->pushButtonNewFolder, SIGNAL(clicked()), this, SLOT(onNewFolder()));
+    connect(ui->pushButtonDeleteMacro, SIGNAL(clicked()), this, SLOT(deleteCurrent()));
 
+    loadMacro("");
 
     //connect(_model, SIGNAL())
 
@@ -158,6 +164,16 @@ void DialogMacros::closeEvent(QCloseEvent *)
 
 void DialogMacros::onItemChanged(QStandardItem* item)
 {
+    if(!(item->flags() & Qt::ItemIsEditable))
+    {
+        //it is a folder. Item has been changed internaly.
+        return;
+    }
+    if(item->text().isEmpty() && item->data().toString().isEmpty())
+    {
+        _model->removeRow(item->row(), _model->indexFromItem(item->parent()));
+        return;
+    }
     if(item->text().contains(QRegExp("[\"\\*:<>?\\\\\\/\\|]")))
     {
         QMessageBox::warning(this, trUtf8("Wrong name."), trUtf8("Macro name cannot contains the following characters : \"*:<>?\\/|"));
@@ -178,15 +194,32 @@ void DialogMacros::onItemChanged(QStandardItem* item)
     if(MacroEngine::Instance.rename(item->data().toString(), newName))
     {
         item->setData(newName);
+        loadMacro(newName);
     }
+
 }
-void DialogMacros::onNewItemRequested()
+void DialogMacros::onNewItem()
 {
-    qDebug()<<"new Item";
     QStandardItem * item = new QStandardItem();
+    item->setDropEnabled(false);
+    item->setDragEnabled(true);
     _model->appendRow(item);
     ui->tree->setCurrentIndex(_model->indexFromItem(item));
     ui->tree->edit(_model->indexFromItem(item));
+    return;
+}
+void DialogMacros::onNewFolder()
+{
+    QStandardItem * upItem = new QStandardItem();
+    upItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+    upItem->setDropEnabled(true);
+    upItem->setDragEnabled(false);
+
+    _model->appendRow(upItem);
+    ui->tree->setCurrentIndex(_model->indexFromItem(upItem));
+    onClicked(_model->indexFromItem(upItem));
+    ui->lineEditDescription->setFocus();
+    _modified = true;
     return;
 }
 void DialogMacros::onClicked(QModelIndex index)
@@ -201,26 +234,37 @@ void DialogMacros::onClicked(QModelIndex index)
         itemParent = _model->invisibleRootItem();
     }
     QStandardItem * item = itemParent->child(index.row());
-    if(!(item->flags() & Qt::ItemIsEditable))
-    {
-        return;
-    }
+
 
     // save the previous macro
     {
         saveLastClickedItem();
+        _lastClickedItem = _model->indexFromItem(item);
     }
 
-
-    // load the new macro
-    QString name;
-    if(item->parent() && item->parent() != _model->invisibleRootItem())
+    if(!(item->flags() & Qt::ItemIsEditable))
     {
-        name += item->parent()->data().toString()+"/";
+        //set Empty content
+        loadFolder(item->data().toString());
+        ui->pushButtonDeleteMacro->setText(trUtf8("Delete folder"));
+        ui->pushButtonDeleteMacro->setEnabled(!item->hasChildren());
+        return;
     }
-    name += item->text();
-    loadMacro(name);
-    _lastClickedItem = _model->indexFromItem(item);
+    else
+    {
+        // load the new macro
+        QString name;
+        if(item->parent() && item->parent() != _model->invisibleRootItem())
+        {
+            name += item->parent()->data().toString()+"/";
+        }
+        name += item->text();
+        loadMacro(name);
+
+        ui->pushButtonDeleteMacro->setText(trUtf8("Delete macro"));
+        ui->pushButtonDeleteMacro->setEnabled(true);
+    }
+
 }
 
 void DialogMacros::setMacroReadOnly(bool readOnly)
@@ -228,9 +272,27 @@ void DialogMacros::setMacroReadOnly(bool readOnly)
     ui->plainTextEdit->setReadOnly(readOnly);
     ui->lineEditDescription->setReadOnly(readOnly);
 }
+void DialogMacros::loadFolder(QString name)
+{
+    ui->plainTextEdit->setPlainText("");
+    ui->lineEditDescription->setText(trUtf8(name.toUtf8().data()));
+    ui->lineEditKeys->setText("");
+    ui->lineEditLeftWord->setText("");
 
+    ui->label->setText(trUtf8("Name:"));
+    _modified = false;
+
+
+    ui->lineEditDescription->setReadOnly(false);
+    ui->lineEditDescription->setEnabled(true);
+    ui->plainTextEdit->setEnabled(false);
+    ui->lineEditKeys->setEnabled(false);
+    ui->lineEditLeftWord->setEnabled(false);
+    ui->checkBoxReadOnly->setEnabled(false);
+}
 void DialogMacros::loadMacro(QString name)
 {
+    ui->label->setText(trUtf8("Description:"));
     Macro macro = MacroEngine::Instance.macros().value(name);
     ui->plainTextEdit->setPlainText(macro.content);
     ui->lineEditDescription->setText(macro.description);
@@ -242,6 +304,12 @@ void DialogMacros::loadMacro(QString name)
     ui->plainTextEdit->setReadOnly(macro.readOnly);
     ui->lineEditDescription->setReadOnly(macro.readOnly);
 
+    bool enabled = !macro.name.isEmpty();
+    ui->plainTextEdit->setEnabled(enabled);
+    ui->lineEditDescription->setEnabled(enabled);
+    ui->lineEditKeys->setEnabled(enabled);
+    ui->lineEditLeftWord->setEnabled(enabled);
+    ui->checkBoxReadOnly->setEnabled(enabled);
 }
 void DialogMacros::saveOrder()
 {
@@ -268,6 +336,20 @@ void DialogMacros::saveOrder()
     settings.beginGroup("Macros");
     settings.setValue("macrosOrder", macrosOrder);
 }
+void DialogMacros::renameAllChildren(QStandardItem * item, QString newFolderName)
+{
+    if(item->hasChildren())
+    {
+        for(int sub_idx = 0; sub_idx < item->rowCount(); ++sub_idx)
+        {
+            QStandardItem * subitem = item->child(sub_idx);
+            QString name = subitem->data().toString();
+            name.replace(QRegExp("^[^\\/]*\\/"), newFolderName+"/");
+            subitem->setData(name);
+        }
+    }
+
+}
 
 void DialogMacros::saveLastClickedItem()
 {
@@ -276,16 +358,72 @@ void DialogMacros::saveLastClickedItem()
         return;
     }
 
+
     QStandardItem * lastItem = _model->itemFromIndex(_lastClickedItem);
-    QString name;
-    if(lastItem->parent() && lastItem->parent() != _model->invisibleRootItem())
+
+    if(!(lastItem->flags() & Qt::ItemIsEditable))
     {
-        name += lastItem->parent()->data().toString()+"/";
+        QString newName = ui->lineEditDescription->text();
+        if(MacroEngine::Instance.renameFolder(lastItem->data().toString(),newName
+                                        ))
+        {
+            _modified = false;
+            lastItem->setData(newName);
+            lastItem->setText(newName);
+            renameAllChildren(lastItem, newName);
+        }
+        else
+        {
+            if(lastItem->data().toString().isEmpty())
+            {
+                _model->removeRow(lastItem->row(), _model->indexFromItem(lastItem->parent()));
+            }
+        }
     }
-    name += lastItem->text();
-    MacroEngine::Instance.saveMacro(name,
-                                    ui->lineEditDescription->text(),
-                                    ui->lineEditKeys->text(),
-                                    ui->lineEditLeftWord->text(),
-                                    ui->plainTextEdit->toPlainText().toUtf8());
+    else
+    {
+        QString name;
+        if(lastItem->parent() && lastItem->parent() != _model->invisibleRootItem())
+        {
+            name += lastItem->parent()->data().toString()+"/";
+        }
+        name += lastItem->text();
+
+        MacroEngine::Instance.saveMacro(name,
+                                        ui->lineEditDescription->text(),
+                                        ui->lineEditKeys->text(),
+                                        ui->lineEditLeftWord->text(),
+                                        ui->plainTextEdit->toPlainText().toUtf8());
+
+    }
+    _modified = false;
 }
+
+void DialogMacros::deleteCurrent()
+{
+    QStandardItem * item = _model->itemFromIndex(ui->tree->currentIndex());
+    QString name = item->data().toString();
+    if(item->hasChildren())
+    {
+        QMessageBox::warning(this, trUtf8("Cannot delete folders."), trUtf8("You cannot delete folder %1, because it contains macros.")
+                                        .arg(item->text()));
+        return;
+    }
+    if(QMessageBox::information(this, trUtf8("Delete?"), trUtf8("Are you sure you want to delete %1.")
+                                .arg(name), trUtf8("Cancel"), trUtf8("Delete")))
+    {
+        if(MacroEngine::Instance.deleteMacro(name))
+        {
+            _model->removeRow(item->row(), _model->indexFromItem(item->parent()));
+            if(ui->tree->currentIndex().isValid())
+            {
+                onClicked(ui->tree->currentIndex());
+            }
+            else
+            {
+                loadMacro("");
+            }
+        }
+    }
+}
+

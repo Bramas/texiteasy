@@ -105,6 +105,12 @@ void MacroEngine::loadMacros()
         {
             loadMacro(dirName+"/"+macroName);
         }
+        if(subList.isEmpty())
+        {
+            Macro m;
+            m.name = dirName+"/\\";
+            _macros.insert(m.name, m);
+        }
     }
 }
 void MacroEngine::loadMacro(QString name)
@@ -152,7 +158,13 @@ QAction * MacroEngine::createAction(Macro macro)
     }
     QAction * a = new QAction(name, this);
     a->setShortcut(QKeySequence(macro.keys));
+    if(name.contains('\\')) //empty Macro
+    {
+        a->setText(trUtf8("empty"));
+        a->setEnabled(false);
+    }
     a->setProperty("macroName", macro.name);
+
     connect(a, SIGNAL(triggered()), this, SLOT(onMacroTriggered()));
     return a;
 }
@@ -211,6 +223,33 @@ void MacroEngine::onMacroTriggered()
     }
 }
 
+bool MacroEngine::renameFolder(QString oldName, QString newName)
+{
+    if(oldName.isEmpty() && newName.isEmpty())
+    {
+        return false;
+    }
+    if(oldName.isEmpty())
+    {
+        return QDir(_macrosPath).mkdir(newName);
+    }
+    QDir dir(_macrosPath);
+    if(!dir.exists(oldName))
+    {
+        qWarning()<<_macrosPath+oldName<<" does not exists.";
+        return false;
+    }
+    if(dir.rename(oldName, newName))
+    {
+            _macros.clear();
+            loadMacros();
+            emit changed();
+            return true;
+    }
+    qWarning()<<"Unable to rename "<<oldName<<" to "<<newName;
+    return false;
+}
+
 void MacroEngine::saveMacro(QString name, QString description="", QString keys ="", QString leftWord="", QString content="")
 {
     if(name.isEmpty())
@@ -264,10 +303,31 @@ void MacroEngine::saveMacro(QString name, QString description="", QString keys =
     }
     emit changed();
 }
+bool MacroEngine::deleteMacro(QString name)
+{
+    QFileInfo info(_macrosPath+name);
+    if(info.isDir())
+    {
+        QDir dir(_macrosPath);
+        return dir.rmdir(name);
+    }
+
+    QFile file(_macrosPath+name+ConfigManager::MacroSuffix);
+    if(!file.exists())
+    {
+        qWarning()<<"Try to delete macro "<<file.fileName()<<" but does not exists.";
+    }
+    return file.remove();
+
+}
 
 bool MacroEngine::rename(QString oldName, QString newName)
 {
     Macro macro;
+    if(oldName.isEmpty() && newName.isEmpty())
+    {
+        return false;
+    }
     if(oldName.isEmpty())
     {
         saveMacro(newName,newName);

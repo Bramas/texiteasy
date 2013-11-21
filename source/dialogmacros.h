@@ -26,7 +26,6 @@
 #include <QModelIndex>
 
 
-
 namespace Ui {
 class DialogMacros;
 }
@@ -44,15 +43,19 @@ public slots:
     void onClicked(QModelIndex index);
     void setMacroReadOnly(bool readOnly);
     void onItemChanged(QStandardItem*);
-    void onNewItemRequested();
+    void onNewItem();
+    void onNewFolder();
 protected:
     void closeEvent(QCloseEvent *);
 private slots:
     void setModified(bool b = true) { _modified = b; }
     void setModified(QString) { _modified = true; }
+    void deleteCurrent();
 private:
+    void renameAllChildren(QStandardItem * item, QString newFolderName);
     void saveLastClickedItem();
     void loadMacro(QString name);
+    void loadFolder(QString name);
     void saveOrder();
 private:
     Ui::DialogMacros *ui;

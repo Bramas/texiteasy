@@ -114,9 +114,11 @@ public:
     void loadMacros();
     void loadMacro(QString name);
     void saveMacro(QString name, QString description, QString keys, QString leftWord, QString content);
+    bool deleteMacro(QString name);
     QList<QAction*> actions() const;
     QList<Macro> tabMacros() const;
 
+    bool renameFolder(QString oldName, QString newName);
     bool rename(QString oldName, QString newName);
 signals:
     void changed();
