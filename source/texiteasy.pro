@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql xml network
+QT       += core gui sql xml network script
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -75,7 +75,8 @@ SOURCES += main.cpp\
     hunspell/affentry.cxx \
     dialogaddlatexcommand.cpp \
     dialogmacros.cpp \
-    macroengine.cpp
+    macroengine.cpp \
+    scriptengine.cpp
 
 HEADERS  += mainwindow.h \
     widgetlinenumber.h \
@@ -132,7 +133,8 @@ HEADERS  += mainwindow.h \
     hunspell/affentry.hxx \
     dialogaddlatexcommand.h \
     dialogmacros.h \
-    macroengine.h
+    macroengine.h \
+    scriptengine.h
 
 FORMS    += mainwindow.ui \
     dialogwelcome.ui \
@@ -170,7 +172,8 @@ RESOURCES += \
     data.qrc \
     completion.qrc \
     commands.qrc \
-    macros.qrc
+    macros.qrc \
+    icons.qrc
 
 win32 {
     LIBS += -LC:/Qt/prerequisites-i686/lib -lpoppler-qt5

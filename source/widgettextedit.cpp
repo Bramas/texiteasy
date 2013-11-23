@@ -66,7 +66,8 @@ WidgetTextEdit::WidgetTextEdit(WidgetFile * parent) :
     _syntaxHighlighter(0),
     updatingIndentation(false),
     _widgetLineNumber(0),
-    _macrosMenu(0)
+    _macrosMenu(0),
+    _scriptIsRunning(false)
 
 {
     _widgetFile = parent;
@@ -340,6 +341,8 @@ bool WidgetTextEdit::isCursorVisible()
 
 void WidgetTextEdit::onCursorPositionChange()
 {
+
+
     QList<QTextEdit::ExtraSelection> selections;
     setExtraSelections(selections);
     this->highlightCurrentLine();
@@ -396,6 +399,7 @@ void WidgetTextEdit::onCursorPositionChange()
         }
         if(change)
         {
+            qDebug()<<"avant : "<<textCursor().selectedText();
             QTextCursor cursor = textCursor();
             if(cursor.selectionStart() < cursor.position())
             {
@@ -409,6 +413,7 @@ void WidgetTextEdit::onCursorPositionChange()
                 cursor.setPosition(cStart.position(), QTextCursor::KeepAnchor);
                 this->setTextCursor(cursor);
             }
+            qDebug()<<textCursor().selectedText();
             return;
         }
     }
@@ -455,7 +460,6 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
         modifiers = e->modifiers() | Qt::AltModifier;
     }
 #endif
-
     if(e->key() == Qt::Key_Space && (e->modifiers() & (Qt::MetaModifier | Qt::ControlModifier)))
     {
         //this->matchCommand();
@@ -593,10 +597,16 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
     }
     else if ((e->key()==Qt::Key_Enter)||(e->key()==Qt::Key_Return))
     {
+        _multipleEdit.clear();
         QPlainTextEdit::keyPressEvent(e);
         // add exactly the same  space and tabulation as the previous line.
         newLine();
         return;
+    }
+    if(_scriptIsRunning && !hasArguments() && e->key() != Qt::Key_Backspace && (e->text().isEmpty() || e->text().contains(QRegExp(QString::fromUtf8("[^a-zA-Z0-9èéàëêïîùüû&()\"'\\$§,;\\.+=\\-_*\\/\\\\!?%#@° ]")))))
+    {
+        _scriptEngine.clear();
+        _scriptIsRunning = false;
     }
     if(_multipleEdit.count() && e->modifiers() == Qt::NoModifier && !e->text().isEmpty() && !e->text().contains(QRegExp(QString::fromUtf8("[^a-zA-Z0-9èéàëêïîùüû&()\"'\\$§,;\\.+=\\-_*\\/\\\\!?%#@° ]"))))
     {
@@ -656,11 +666,16 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
         }
     }
     WIDGET_TEXT_EDIT_PARENT_CLASS::keyPressEvent(e);
-    if(e->modifiers() == Qt::NoModifier && e->key() != Qt::Key_ApplicationRight && e->key() != Qt::Key_ApplicationLeft && e->key() != Qt::Key_Alt && e->key() != Qt::Key_AltGr && e->key() != Qt::Key_Control)
+    if(e->modifiers() == Qt::NoModifier && !e->text().isEmpty())
     {
         this->matchCommand();
     }
 
+}
+bool WidgetTextEdit::hasArguments()
+{
+    QTextCursor curStrArg = this->document()->find(QRegExp("%#\\{\\{\\{[^\\}]*\\}\\}\\}#"));
+    return !curStrArg.isNull();
 }
 
 bool WidgetTextEdit::selectNextArgument()
@@ -747,6 +762,13 @@ void WidgetTextEdit::initIndentation(void)
 
 void WidgetTextEdit::updateIndentation(void)
 {
+
+    if(_scriptIsRunning)
+    {
+        _scriptEngine.evaluate();
+    }
+
+
     if(this->document()->blockCount() != _lineCount)
     {
         this->currentFile->insertLine(this->textCursor().blockNumber(), this->document()->blockCount() - _lineCount);
@@ -1312,16 +1334,18 @@ bool WidgetTextEdit::onMacroTriggered(Macro macro, bool soft)
         return false;
     }
     QString content = macro.content;
+
+    if(patternExists && !cursor.hasSelection())
+    {
+         cursor.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor, word.length());
+    }
+    int pos = cursor.position();
+
+    _scriptEngine.parse(content, this);
+    _scriptIsRunning = true;
+
     if(patternExists)
     {
-        if(!cursor.hasSelection())
-        {
-            cursor.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor, word.length());
-        }
-        if(cursor.hasSelection())
-        {
-            cursor.deleteChar();
-        }
         QStringList cap = pattern.capturedTexts();
         cap.pop_front();
         int idx = 1;
@@ -1331,24 +1355,42 @@ bool WidgetTextEdit::onMacroTriggered(Macro macro, bool soft)
             cap.pop_front();
             if(!arg.isEmpty())
             {
-                content.replace(QRegExp("\\$\\{"+QString::number(idx)+":[^\\}]*\\}"),arg);
+                cursor = document()->find(QRegExp("\\$\\{"+QString::number(idx)+":[^\\}]*\\}"));
+                while(!cursor.isNull())
+                {
+                    cursor.removeSelectedText();
+                    cursor.insertText(arg);
+                    cursor = document()->find(QRegExp("\\$\\{"+QString::number(idx)+":[^\\}]*\\}"));
+                }
             }
             ++idx;
         }
     }
-    ;
-    content.replace(QRegExp("^#[^\\n]*\n"), "");
-    content.replace(QRegExp("\n#[^\\n]*\n"), "\n");
+    cursor = document()->find(QRegExp("^#[^\\n]*\n"));
+    while(!cursor.isNull())
+    {
+        cursor.removeSelectedText();
+        cursor = document()->find(QRegExp("^#[^\\n]*\n"));
+    }
+    cursor = document()->find(QRegExp("\n#[^\\n]*\n"));
+    while(!cursor.isNull())
+    {
+        cursor.removeSelectedText();
+        cursor.insertText("\n");
+        cursor = document()->find(QRegExp("\n#[^\\n]*\n"));
+    }
 
     QRegExp argumentPattern("\\$\\{([0-9]:){0,1}([^\\}]*)\\}");
-    content.replace(argumentPattern, "%#{{{\\2}}}#");
+    cursor = document()->find(argumentPattern);
+    while(!cursor.isNull())
+    {
+        cursor.selectedText().indexOf(argumentPattern);
+        cursor.removeSelectedText();
+        cursor.insertText("%#{{{"+argumentPattern.capturedTexts().at(2)+"}}}#");
+        cursor = document()->find(argumentPattern);
+    }
 
-
-
-
-
-    int pos = cursor.position();
-    this->insertPlainText(content);
+    cursor = textCursor();
     cursor.setPosition(pos);
     this->setTextCursor(cursor);
     selectNextArgument();

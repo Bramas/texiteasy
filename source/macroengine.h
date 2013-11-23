@@ -82,7 +82,8 @@ struct Macro
     QString leftWord;
     QString description;
     QAction * action;
-    bool readOnly = false;
+    bool readOnly;
+    Macro() : readOnly(false) {}
 
     bool operator==(const Macro & other)
     {

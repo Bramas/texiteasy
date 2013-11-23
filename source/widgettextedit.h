@@ -30,6 +30,7 @@
 #include "file.h"
 #include "macroengine.h"
 #include <QInputMethodEvent>
+#include "scriptengine.h"
 
 #include <QDebug>
 
@@ -126,6 +127,12 @@ public slots:
 protected:
     void insertFromMimeData(const QMimeData * source);
     void mousePressEvent(QMouseEvent *e) {
+
+        if(!hasArguments())
+        {
+            _scriptEngine.clear();
+            _scriptIsRunning = false;
+        }
         _multipleEdit.clear();
         WIDGET_TEXT_EDIT_PARENT_CLASS::mousePressEvent(e);
     }
@@ -142,6 +149,7 @@ private:
     void wheelEvent(QWheelEvent * event);
     void highlightCurrentLine(void);
     bool selectNextArgument(void);
+    bool hasArguments();
     void contextMenuEvent(QContextMenuEvent *event);
 
 #ifdef OS_MAC
@@ -191,6 +199,8 @@ private:
     WidgetLineNumber * _widgetLineNumber;
     WidgetFile * _widgetFile;
     QMenu * _macrosMenu;
+    ScriptEngine _scriptEngine;
+    bool _scriptIsRunning;
 
 
 };

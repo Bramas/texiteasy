@@ -21,8 +21,5 @@ MainWindow::~MainWindow()
 }
 void MainWindow::onTextChanged()
 {
-    if(!_tester->var.isEmpty())
-    {
-        _textEditor->setVar(_tester->declarations, _tester->var);
-    }
+
 }

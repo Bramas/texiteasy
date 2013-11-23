@@ -370,6 +370,11 @@ bool MainWindow::canBeInserted(QString filename)
 
 void MainWindow::initMacrosMenu()
 {
+    foreach(QAction * a, this->actions())
+    {
+        removeAction(a);
+    }
+
     if(_menuMacrosAction)
     {
         this->ui->menuBar->removeAction(_menuMacrosAction);

@@ -481,13 +481,7 @@ QStringList ConfigManager::themesList()
 }
 QString ConfigManager::dictionaryPath()
 {
-       QString dataLocation("");
-   #if QT_VERSION < 0x050000
-       dataLocation = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
-   #else
-       dataLocation = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
-   #endif
-       return dataLocation+"/dictionaries/";
+       return "data/dictionaries/";
 }
 QString ConfigManager::macrosPath()
 {
@@ -695,16 +689,7 @@ void ConfigManager::checkRevision()
                 theme.copy(themePath()+"dark.texiteasy-theme");
                 theme2.copy(themePath()+"light.texiteasy-theme");
             }
-            {
-                QDir().mkdir(dictionaryPath());
-                QDir dir(":/data/dictionaries");
-                QStringList dictionaries = dir.entryList(QDir::NoDotAndDotDot | QDir::Files);
-                foreach (QString dico, dictionaries)
-                {
-                    QFile dicoFile(":/data/dictionaries/"+dico);
-                    dicoFile.copy(dictionaryPath()+dico);
-                }
-            }
+
         }
     case 0x000600:
     case 0x000601:

@@ -6,13 +6,8 @@
 #include <QtScript/QScriptEngine>
 #include <QVector>
 #include <QMap>
+#include "scriptengine.h"
 
-struct ScriptBlock
-{
-    QTextCursor cursor;
-    int position;
-    QString script;
-};
 
 class Tester : public QPlainTextEdit
 {
@@ -39,37 +34,13 @@ public:
 protected:
     void keyPressEvent(QKeyEvent *e)
     {
-        if(e->text().contains(QRegExp("[a-zA-Z0-9_-=+*]")))
-        {
-            varValue += e->text();
-            var = "var "+currentVarName+" = \""+varValue+"\"";
-        }
-        else
-        if(e->key() == Qt::Key_Backspace)
-        {
-            varValue = varValue.left(varValue.size() - 1);
-            var = "var "+currentVarName+" = \""+varValue+"\"";
-        }else
         if(e->key() == Qt::Key_Tab)
         {
-            declarations.append(var);
-            stop=true;
             findNext();
             return;
         }
-        else
-        {
-            if(!stop)
-            {
-                declarations.append(var);
-                stop = true;
-            }
-        }
         QPlainTextEdit::keyPressEvent(e);
-        if(!stop)
-        {
-            emit keyPressed();
-        }
+        keyPressed();
     }
 
 signals:
@@ -85,27 +56,16 @@ class TextEditor : public QPlainTextEdit
     Q_OBJECT
 public:
     explicit TextEditor(QWidget *parent, Tester * tester);
-    void setVar(QStringList declaration, QString var)
-    {
-        _var = var+"\n";
-        foreach(QString var, declaration)
-        {
-            _var += var+"\n";
-        }
-        onTextChanged();
-    }
-    
-signals:
+    signals:
     
 public slots:
     void onTextChanged();
 
 private:
     QTextCursor _cursor;
-    QString _var;
     int _pos;
     Tester * _tester;
-    QVector<ScriptBlock> _scriptBlocks;
+    ScriptEngine _scriptEngine;
     
 };
 
