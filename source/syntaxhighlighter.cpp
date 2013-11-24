@@ -230,43 +230,6 @@ while(index < text.length())
                 }
             }
         }
-        /*
-        //check if it is an argument resulting of an auto completion
-        if(nextChar == '{' || (nextChar.isLetterOrNumber() && int(nextChar.toLatin1()) >= '1' && int(nextChar.toLatin1()) <= '9'))
-        {
-            int argumentBegin = index;
-            //this an argument of the form %[1-9]
-            setFormat(index, 2, formatArgumentDelimiter);
-            blockData->characterData[index + 0].state = CompletionArgument;
-            blockData->characterData[index + 1].state = CompletionArgument;
-            index += 2;
-
-            QString argument;
-            if(nextChar == '{' || (index < text.length() && text.at(index) == '{'))
-            {
-                if(index < text.length() && text.at(index) == '{')
-                {
-                    blockData->characterData[index].state = CompletionArgument;
-                    setFormat(index, 1, formatArgumentDelimiter);
-                    ++index;
-                }
-                while(index < text.length() && text.at(index) != '}')
-                {
-                    argument += text.at(index);
-                    blockData->characterData[index].state = CompletionArgument;
-                    setFormat(index, 1, formatArgument);
-                    ++index;
-                }
-                if(index < text.length())
-                {
-                    blockData->characterData[index].state = CompletionArgument;
-                    setFormat(index, 1, formatArgumentDelimiter);
-                    ++index;
-                }
-            }
-            blockData->arguments.append(QPair<QString,QPair<int,int> >(argument,QPair<int,int>(argumentBegin, index)));
-            continue;
-        }*/
         //else it is a regular comment
         setFormat(index, text.size() - index, formatComment);
         for(int comment_idx = index; comment_idx < text.size(); ++comment_idx)

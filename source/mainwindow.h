@@ -89,6 +89,7 @@ public:
 
 public slots:
 
+    void setWindowModified(bool b);
     void newFile();
     void open();
     void open(QString filename, int cursorPosition = 0);

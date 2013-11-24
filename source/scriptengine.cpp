@@ -1,6 +1,7 @@
 #include "scriptengine.h"
 #include <QDebug>
 
+#define DISP_DEBUG(a)
 
 QString scriptOutput;
 QScriptValue scriptPrint(QScriptContext *context, QScriptEngine *engine)
@@ -94,12 +95,12 @@ QString ScriptEngine::parse(QString text, QPlainTextEdit *editor)
         vb.rightCursor.setPosition(position + pIdx + p.capturedTexts().at(0).length() + 1);
         vb.cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, p.capturedTexts().at(0).length());
         _varTextCursor.append(vb);
-        //qDebug()<<position + pIdx;
+        DISP_DEBUG(qDebug()<<position + pIdx);
     }
 
     foreach(VarBlock vb, _varTextCursor)
     {
-        //qDebug()<<vb.name<<" = "<<vb.cursor.selectedText();
+        DISP_DEBUG(qDebug()<<vb.name<<" = "<<vb.cursor.selectedText());
     }
 
     return insert;
@@ -111,11 +112,12 @@ void ScriptEngine::evaluate()
     {
         return;
     }
+    _cursorsMutex.lock();
 
-    //qDebug()<<"_scriptBlocks[i].position";
+    DISP_DEBUG(qDebug()<<"_scriptBlocks[i].position");
     foreach(ScriptBlock sb, _scriptBlocks)
     {
-        ////qDebug()<<sb.cursor.selectionStart();
+        DISP_DEBUG(qDebug()<<sb.cursor.selectionStart());
     }
 
     updateCursors();
@@ -124,7 +126,7 @@ void ScriptEngine::evaluate()
     foreach(VarBlock vb, _varTextCursor)
     {
         QString v = vb.cursor.selectedText();
-        ////qDebug()<<vb.name<<" = "<<v;
+        DISP_DEBUG(qDebug()<<vb.name<<" = "<<v);
         this->evaluate("var "+vb.name+" = \""+v+"\"");
     }
 
@@ -136,10 +138,21 @@ void ScriptEngine::evaluate()
        scriptOutput.clear();
        this->evaluate(sb.script);
 
+       if(!sb.insert.compare(scriptOutput))
+       {
+           continue;
+       }
        if(sb.length)
        {
            sb.cursor.setPosition(sb.cursor.selectionStart());
            sb.cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, sb.length);
+           DISP_DEBUG(qDebug()<<sb.cursor.selectedText()<<" last-insert : "<<sb.insert);
+           if(sb.cursor.selectedText().compare(sb.insert))
+           {
+               _scriptBlocks.remove(i);
+               --i;
+               continue;
+           }
            sb.cursor.removeSelectedText();
        }
        else
@@ -151,10 +164,12 @@ void ScriptEngine::evaluate()
        {
             sb.cursor.insertText(scriptOutput);
             sb.cursor.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor, sb.length);
+            sb.insert = sb.cursor.selectedText();
        }
        else
        {
            sb.cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor);
+           sb.insert = "";
        }
        _scriptBlocks[i] = sb;
 
@@ -162,28 +177,29 @@ void ScriptEngine::evaluate()
 
     updateCursors();
 
-    //qDebug()<<"-------end";
+    DISP_DEBUG(qDebug()<<"-------end");
 
+    _cursorsMutex.unlock();
     _mutex.unlock();
 }
 
 void ScriptEngine::updateCursors()
 {
-    //qDebug()<<"_varTextCursor[i].position";
+    DISP_DEBUG(qDebug()<<"_varTextCursor[i].position");
     for(int i = 0; i < _varTextCursor.count(); ++i)
     {
         VarBlock vb = _varTextCursor.at(i);
-        //qDebug()<<vb.cursor.selectionStart()<<" "<<vb.leftCursor.position()<<","<<vb.rightCursor.position();
+        DISP_DEBUG(qDebug()<<vb.cursor.selectionStart()<<" "<<vb.leftCursor.position()<<","<<vb.rightCursor.position());
         if(vb.cursor.selectedText().isEmpty())
         {
             // in this case we lost the main cursor
             // if the two others are really close, we choose the left cursor
             // else we find it based on the position of the left cursor
-            //qDebug()<<"correction 1";
+            DISP_DEBUG(qDebug()<<"correction 1");
             vb.cursor = vb.leftCursor;
             if(vb.rightCursor.position() - vb.leftCursor.position() >= 2)
             {
-                //qDebug()<<"correction 1.2";
+                DISP_DEBUG(qDebug()<<"correction 1.2");
                 vb.cursor = vb.leftCursor;
                 vb.cursor.movePosition(QTextCursor::Right, QTextCursor::MoveAnchor);
                 vb.cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, vb.rightCursor.position() - vb.leftCursor.position() - 2);
@@ -192,7 +208,7 @@ void ScriptEngine::updateCursors()
         else
         if(vb.cursor.selectedText().length() != vb.rightCursor.position() - vb.leftCursor.position() - 2)
         {
-            //qDebug()<<"correction 2";
+            DISP_DEBUG(qDebug()<<"correction 2");
             //in this case we lost the two other cursors
             vb.leftCursor = vb.cursor;
             vb.rightCursor = vb.cursor;
@@ -200,6 +216,6 @@ void ScriptEngine::updateCursors()
             vb.rightCursor.setPosition(vb.cursor.selectionEnd() + 1);
         }
         _varTextCursor[i] = vb;
-        //qDebug()<<vb.cursor.selectionStart()<<" "<<vb.leftCursor.position()<<","<<vb.rightCursor.position();
+        DISP_DEBUG(qDebug()<<vb.cursor.selectionStart()<<" "<<vb.leftCursor.position()<<","<<vb.rightCursor.position());
     }
 }

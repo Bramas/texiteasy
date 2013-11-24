@@ -47,6 +47,7 @@
 #include <QMenu>
 #include <QImage>
 #include <QLayout>
+#include <QMutexLocker>
 #include "QTextEdit"
 #include "filemanager.h"
 #include "widgetlinenumber.h"
@@ -152,7 +153,6 @@ void WidgetTextEdit::paintEvent(QPaintEvent *event)
 
     QTextBlock block = this->document()->firstBlock();
 
-
     while(block.isValid())
     {
         BlockData *data = static_cast<BlockData *>(block.userData());
@@ -210,14 +210,24 @@ void WidgetTextEdit::paintEvent(QPaintEvent *event)
                         qreal width = line2.cursorToX(arg.second.second) - xLeft;
                         qreal top = line.position().y() + blockTop(block) + contentOffset().y();
                         qreal height = line2.rect().bottom() - line.position().y();
-                        QRectF r(xLeft, top, width, height);
+                        QRectF rF(xLeft, top, width, height);
+                        QRect r(xLeft, top, width, height);
 
                         qreal invisibleMargin = painter.fontMetrics().width("{") / 4.0;
 
-                        painter.drawRoundedRect(r,5,5);
+                        painter.drawRoundedRect(rF,5,5);
                         painter.setPen(selected ? textSelectedPen : textPen);
 
-                        painter.drawText(r.bottomLeft() + QPoint(1 + invisibleMargin, -5), arg.first);
+                        painter.drawText(rF.bottomLeft() + QPoint(1 + invisibleMargin, -5), arg.first);
+                        //update the rect if it is upside for the arguments that are upside the current text cursor, or below for the arguments that are below the current text cursor.
+                        if(block.position() + arg.second.second + 2 < textCursor().position() && r.top() < event->rect().top())
+                        {
+                            update(r);
+                        }
+                        if(block.position() + arg.second.first - 2 > textCursor().position() && r.top() > event->rect().top())
+                        {
+                            update(r);
+                        }
                     }
                 }
             }
@@ -341,81 +351,87 @@ bool WidgetTextEdit::isCursorVisible()
 
 void WidgetTextEdit::onCursorPositionChange()
 {
-
-
     QList<QTextEdit::ExtraSelection> selections;
     setExtraSelections(selections);
     this->highlightCurrentLine();
 
-    if(!textCursor().hasSelection())
+    if(!_scriptEngine.cursorsMutex()->tryLock())
     {
-        // if the cursor is positionned on an argument => we select the whole argument
-        BlockData *data = static_cast<BlockData *>( textCursor().block().userData() );
-        if (data) {
-            if(data->characterData[textCursor().positionInBlock()].state == SyntaxHighlighter::CompletionArgument)
-            {
-                QString text = textCursor().block().text();
-                int selStart = textCursor().positionInBlock() - 1;
-                while(selStart > 0 && data->characterData[selStart].state == SyntaxHighlighter::CompletionArgument)
+        QTimer::singleShot(10, this, SLOT(onCursorPositionChange()));
+    }else
+    {
+        if(!textCursor().hasSelection())
+        {
+            // if the cursor is positionned on an argument => we select the whole argument
+            BlockData *data = static_cast<BlockData *>( textCursor().block().userData() );
+            if (data) {
+                if((textCursor().positionInBlock() < data->characterData.count() && data->characterData[textCursor().positionInBlock()].state == SyntaxHighlighter::CompletionArgument)
+                   || (textCursor().positionInBlock() > 0 && data->characterData[textCursor().positionInBlock()-1].state == SyntaxHighlighter::CompletionArgument))
                 {
-                    --selStart;
+                    QString text = textCursor().block().text();
+                    int selStart = textCursor().positionInBlock() - 1;
+                    while(selStart > 0 && data->characterData[selStart].state == SyntaxHighlighter::CompletionArgument)
+                    {
+                        --selStart;
+                    }
+                    QTextCursor cursor = textCursor();
+                    cursor.setPosition(textCursor().block().position() + selStart);
+                    this->setTextCursor(cursor);
+                    this->selectNextArgument();
+                    _scriptEngine.cursorsMutex()->unlock();
+                    return;
                 }
+            }
+        }
+        if(textCursor().hasSelection())
+        {
+            //if part of the selection include a part of an argument => enlarge the selection to include all the argument
+            //TODO: clean this part
+            QTextCursor cStart = textCursor();
+            cStart.setPosition(qMin(textCursor().selectionStart(), textCursor().selectionEnd()));
+            QTextCursor cEnd = textCursor();
+            cEnd.setPosition(qMax(textCursor().selectionStart(), textCursor().selectionEnd()));
+            BlockData *dataStart = static_cast<BlockData *>( cStart.block().userData() );
+            BlockData *dataEnd = static_cast<BlockData *>( cEnd.block().userData() );
+            bool change = false;
+            if (dataStart) {
+                while(cStart.positionInBlock() > 0
+                      && dataStart->characterData[cStart.positionInBlock()].state == SyntaxHighlighter::CompletionArgument
+                      && dataStart->characterData[cStart.positionInBlock() - 1].state == SyntaxHighlighter::CompletionArgument)
+                {
+                    change = true;
+                    cStart.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor);
+                }
+            }
+            if (dataEnd) {
+                while(cEnd.positionInBlock() > 0 && cEnd.positionInBlock() < cEnd.block().text().length()
+                      && dataEnd->characterData[cEnd.positionInBlock() - 1].state == SyntaxHighlighter::CompletionArgument
+                      && dataEnd->characterData[cEnd.positionInBlock()].state == SyntaxHighlighter::CompletionArgument)
+                {
+                    change = true;
+                    cEnd.movePosition(QTextCursor::Right, QTextCursor::MoveAnchor);
+                }
+            }
+            if(change)
+            {
                 QTextCursor cursor = textCursor();
-                cursor.setPosition(textCursor().block().position() + selStart);
-                this->setTextCursor(cursor);
-                this->selectNextArgument();
+                if(cursor.selectionStart() < cursor.position())
+                {
+                    cursor.setPosition(cStart.position());
+                    cursor.setPosition(cEnd.position(), QTextCursor::KeepAnchor);
+                    this->setTextCursor(cursor);
+                }
+                else
+                {
+                    cursor.setPosition(cEnd.position());
+                    cursor.setPosition(cStart.position(), QTextCursor::KeepAnchor);
+                    this->setTextCursor(cursor);
+                }
+                _scriptEngine.cursorsMutex()->unlock();
                 return;
             }
         }
-    }
-    if(textCursor().hasSelection())
-    {
-        //if part of the selection include a part of an argument => enlarge the selection to include all the argument
-        //TODO: clean this part
-        QTextCursor cStart = textCursor();
-        cStart.setPosition(qMin(textCursor().selectionStart(), textCursor().selectionEnd()));
-        QTextCursor cEnd = textCursor();
-        cEnd.setPosition(qMax(textCursor().selectionStart(), textCursor().selectionEnd()));
-        BlockData *dataStart = static_cast<BlockData *>( cStart.block().userData() );
-        BlockData *dataEnd = static_cast<BlockData *>( cEnd.block().userData() );
-        bool change = false;
-        if (dataStart) {
-            while(cStart.positionInBlock() > 0
-                  && dataStart->characterData[cStart.positionInBlock()].state == SyntaxHighlighter::CompletionArgument
-                  && dataStart->characterData[cStart.positionInBlock() - 1].state == SyntaxHighlighter::CompletionArgument)
-            {
-                change = true;
-                cStart.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor);
-            }
-        }
-        if (dataEnd) {
-            while(cEnd.positionInBlock() > 0 && cEnd.positionInBlock() < cEnd.block().text().length()
-                  && dataEnd->characterData[cEnd.positionInBlock() - 1].state == SyntaxHighlighter::CompletionArgument
-                  && dataEnd->characterData[cEnd.positionInBlock()].state == SyntaxHighlighter::CompletionArgument)
-            {
-                change = true;
-                cEnd.movePosition(QTextCursor::Right, QTextCursor::MoveAnchor);
-            }
-        }
-        if(change)
-        {
-            qDebug()<<"avant : "<<textCursor().selectedText();
-            QTextCursor cursor = textCursor();
-            if(cursor.selectionStart() < cursor.position())
-            {
-                cursor.setPosition(cStart.position());
-                cursor.setPosition(cEnd.position(), QTextCursor::KeepAnchor);
-                this->setTextCursor(cursor);
-            }
-            else
-            {
-                cursor.setPosition(cEnd.position());
-                cursor.setPosition(cStart.position(), QTextCursor::KeepAnchor);
-                this->setTextCursor(cursor);
-            }
-            qDebug()<<textCursor().selectedText();
-            return;
-        }
+        _scriptEngine.cursorsMutex()->unlock();
     }
     // else we do the usual match
 
@@ -670,6 +686,10 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
     {
         this->matchCommand();
     }
+    if(e->key() == Qt::Key_Right)
+    {
+        onCursorPositionChange();
+    }
 
 }
 bool WidgetTextEdit::hasArguments()
@@ -691,6 +711,14 @@ bool WidgetTextEdit::selectNextArgument()
     if(!curStrArg.isNull())
     {
         QTextCursor curStrArg2 = this->document()->find(curStrArg.selectedText(), curStrArg.position() + 1);
+        if(curStrArg2.isNull())
+        {
+            curStrArg2 = this->document()->find(curStrArg.selectedText(), 0);
+            if(curStrArg2.position() == curStrArg.position())
+            {
+                curStrArg2 = QTextCursor();
+            }
+        }
         this->setTextCursor(curStrArg);
         if(!curStrArg2.isNull())
         {

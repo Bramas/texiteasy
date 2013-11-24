@@ -573,9 +573,9 @@ void MainWindow::onCurrentFileChanged(WidgetFile * widget)
     }
 
     //window title
-    this->setWindowTitle(_tabWidget->currentText()+" - texiteasy");
     this->setWindowModified(widget->file()->isModified());
 #ifdef OS_MAC
+    this->setWindowTitle(_tabWidget->currentText()+" - texiteasy");
     if(widget->file()->isUntitled())
     {
         setWindowIcon(QIcon());
@@ -726,4 +726,18 @@ void MainWindow::addUpdateMenu()
 #endif
     connect(openWebsiteAction, SIGNAL(triggered()), &ConfigManager::Instance, SLOT(openUpdateWebsite()));
 
+}
+void MainWindow::setWindowModified(bool b)
+{
+
+#ifdef OS_MAC
+    QMainWindow::setWindowModified(b);
+#else
+    QString star("");
+    if(FileManager::Instance.currentWidgetFile() && FileManager::Instance.currentWidgetFile()->file()->isModified())
+    {
+        star = "*";
+    }
+    this->setWindowTitle(_tabWidget->currentText()+star+" - texiteasy");
+#endif
 }

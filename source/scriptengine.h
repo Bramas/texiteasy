@@ -13,6 +13,7 @@ struct ScriptBlock
     QTextCursor cursor;
     int position;
     int length;
+    QString insert;
     QString script;
 };
 struct VarBlock
@@ -35,7 +36,7 @@ public:
     void appendToCurrentVar(QString s) { _currentVarValue + s; }
     void setCurrentVar(QString var) { _currentVar = var; _currentVarValue = ""; }
     void clear() { _scriptBlocks.clear(); _varTextCursor.clear(); }
-
+    QMutex * cursorsMutex() { return &_cursorsMutex; }
 signals:
 
 public slots:
@@ -46,6 +47,7 @@ private:
     QString _currentVarValue;
     QString _currentVar;
     QMutex _mutex;
+    QMutex _cursorsMutex;
 
 };
 
