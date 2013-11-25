@@ -484,7 +484,11 @@ QString ConfigManager::dictionaryPath()
 #ifdef OS_MAC
     return "../Resources/dictionaries/";
 #else
+#ifdef OS_LINUX
+    return "/usr/share/texiteasy/dictionaries/";
+#else
     return "data/dictionaries/";
+#endif
 #endif
 }
 QString ConfigManager::macrosPath()
