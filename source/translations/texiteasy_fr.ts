@@ -45,7 +45,7 @@
         <translation>Commande prédéfinies :</translation>
     </message>
     <message>
-        <location filename="../dialogaddlatexcommand.cpp" line="9"/>
+        <location filename="../dialogaddlatexcommand.cpp" line="32"/>
         <source>Personalisé</source>
         <translation>Personalisé</translation>
     </message>
@@ -156,12 +156,12 @@
         <translation>Lageur d&apos;une tabulation</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="214"/>
+        <location filename="../dialogconfig.cpp" line="232"/>
         <source>Action</source>
         <translation>Action</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="219"/>
+        <location filename="../dialogconfig.cpp" line="234"/>
         <source>Raccourci</source>
         <translation>Raccourci</translation>
     </message>
@@ -196,12 +196,12 @@
         <translation>Cacher les fichiers de compilation</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="313"/>
+        <location filename="../dialogconfig.cpp" line="227"/>
         <source>Nom</source>
         <translation>Nom</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="318"/>
+        <location filename="../dialogconfig.cpp" line="229"/>
         <source>Commande</source>
         <translation>Commande</translation>
     </message>
@@ -252,7 +252,7 @@
     </message>
     <message>
         <location filename="../dialogkeysequence.ui" line="37"/>
-        <location filename="../dialogkeysequence.cpp" line="42"/>
+        <location filename="../dialogkeysequence.cpp" line="43"/>
         <source>Clear</source>
         <translation>Effacer</translation>
     </message>
@@ -262,55 +262,146 @@
     <message>
         <location filename="../dialogmacros.ui" line="14"/>
         <source>Dialog</source>
-        <translation type="unfinished">Préférences</translation>
+        <translation>Préférences</translation>
+    </message>
+    <message>
+        <source>Nom :</source>
+        <translation type="obsolete">Nom :</translation>
     </message>
     <message>
         <location filename="../dialogmacros.ui" line="56"/>
-        <source>Nom :</source>
-        <translation type="unfinished">Nom :</translation>
+        <source>Description :</source>
+        <translation>Description :</translation>
     </message>
     <message>
         <location filename="../dialogmacros.ui" line="72"/>
         <source>Nouveau dossier</source>
-        <translation type="unfinished"></translation>
+        <translation>Nouveau dossier</translation>
     </message>
     <message>
-        <location filename="../dialogmacros.ui" line="85"/>
+        <location filename="../dialogmacros.ui" line="88"/>
         <source>Nouvelle macro</source>
-        <translation type="unfinished"></translation>
+        <translation>Nouvelle macro</translation>
     </message>
     <message>
-        <location filename="../dialogmacros.ui" line="101"/>
-        <source>Enregistrer la macro</source>
-        <translation type="unfinished"></translation>
+        <location filename="../dialogmacros.ui" line="104"/>
+        <source>Raccourci :</source>
+        <translation>Raccourci :</translation>
     </message>
     <message>
-        <location filename="../dialogmacros.cpp" line="42"/>
+        <location filename="../dialogmacros.ui" line="130"/>
+        <source>Mot sur la gauche :</source>
+        <translation>Mot sur la gauche :</translation>
+    </message>
+    <message>
+        <location filename="../dialogmacros.ui" line="156"/>
+        <source>Verrouillé</source>
+        <translation>Verrouillé</translation>
+    </message>
+    <message>
+        <location filename="../dialogmacros.ui" line="169"/>
+        <source>Supprimer la macro</source>
+        <translation>Supprimer la macro</translation>
+    </message>
+    <message>
+        <location filename="../dialogmacros.cpp" line="115"/>
         <source>Document</source>
         <translation>Document</translation>
     </message>
     <message>
-        <location filename="../dialogmacros.cpp" line="43"/>
+        <location filename="../dialogmacros.cpp" line="116"/>
         <source>Structure</source>
         <translation>Structure</translation>
     </message>
     <message>
-        <location filename="../dialogmacros.cpp" line="44"/>
-        <source>Mathématiques</source>
+        <location filename="../dialogmacros.cpp" line="117"/>
+        <source>Mathematics</source>
         <translation>Mathématiques</translation>
     </message>
     <message>
-        <location filename="../dialogmacros.cpp" line="45"/>
-        <source>Listes</source>
+        <location filename="../dialogmacros.cpp" line="118"/>
+        <source>List</source>
         <translation>Liste</translation>
     </message>
     <message>
-        <location filename="../dialogmacros.cpp" line="46"/>
-        <source>Tableau</source>
+        <location filename="../dialogmacros.cpp" line="119"/>
+        <source>Table</source>
         <translation>Tableau</translation>
     </message>
     <message>
-        <location filename="../dialogmacros.cpp" line="47"/>
+        <location filename="../dialogmacros.cpp" line="179"/>
+        <source>Wrong name.</source>
+        <translation>Mauvais nom.</translation>
+    </message>
+    <message>
+        <location filename="../dialogmacros.cpp" line="179"/>
+        <source>Macro name cannot contains the following characters : &quot;*:&lt;&gt;?\/|</source>
+        <translation>Le nom d&apos;une macro ne peut pas contenir les charactères suivants : &quot;*:&lt;&gt;?\/|</translation>
+    </message>
+    <message>
+        <location filename="../dialogmacros.cpp" line="249"/>
+        <source>Delete folder</source>
+        <translation>Supprimer le dossier</translation>
+    </message>
+    <message>
+        <location filename="../dialogmacros.cpp" line="264"/>
+        <source>Delete macro</source>
+        <translation>Supprimer la macro</translation>
+    </message>
+    <message>
+        <location filename="../dialogmacros.cpp" line="282"/>
+        <source>Name:</source>
+        <translation>Nom :</translation>
+    </message>
+    <message>
+        <location filename="../dialogmacros.cpp" line="295"/>
+        <source>Description:</source>
+        <translation>Description :</translation>
+    </message>
+    <message>
+        <location filename="../dialogmacros.cpp" line="408"/>
+        <source>Cannot delete folders.</source>
+        <translation>Impossible de supprimer les dossiers.</translation>
+    </message>
+    <message>
+        <location filename="../dialogmacros.cpp" line="408"/>
+        <source>You cannot delete folder %1, because it contains macros.</source>
+        <translation>Vous ne pouvez pas supprimer le dossier %1, car il contient des macros.</translation>
+    </message>
+    <message>
+        <location filename="../dialogmacros.cpp" line="412"/>
+        <source>Delete?</source>
+        <translation>Supprimer?</translation>
+    </message>
+    <message>
+        <location filename="../dialogmacros.cpp" line="412"/>
+        <source>Are you sure you want to delete %1.</source>
+        <translation>Êtes-vous sûr de vouloir supprimer %1.</translation>
+    </message>
+    <message>
+        <location filename="../dialogmacros.cpp" line="413"/>
+        <source>Cancel</source>
+        <translation>Annuler</translation>
+    </message>
+    <message>
+        <location filename="../dialogmacros.cpp" line="413"/>
+        <source>Delete</source>
+        <translation>Supprimer</translation>
+    </message>
+    <message>
+        <source>Mathématiques</source>
+        <translation type="obsolete">Mathématiques</translation>
+    </message>
+    <message>
+        <source>Listes</source>
+        <translation type="obsolete">Liste</translation>
+    </message>
+    <message>
+        <source>Tableau</source>
+        <translation type="obsolete">Tableau</translation>
+    </message>
+    <message>
+        <location filename="../dialogmacros.cpp" line="120"/>
         <source>Figure</source>
         <translation>Figure</translation>
     </message>
@@ -339,26 +430,64 @@
     </message>
 </context>
 <context>
+    <name>File</name>
+    <message>
+        <location filename="../file.cpp" line="146"/>
+        <source>auto savefile exists</source>
+        <translation>Fichier de sauvegarde automatique existe</translation>
+    </message>
+    <message>
+        <location filename="../file.cpp" line="147"/>
+        <source>An autosave file of %1 exists (maybe caused by a wrong shutdown of %2). Do you want to load the autosave?</source>
+        <translation>Un fichier de sauvegarde automatique de %1 exists (Peut-être dû à une erreur lors de la dernière fermeture de %2). Voulez-vous charger le fichier autosave?</translation>
+    </message>
+    <message>
+        <location filename="../file.cpp" line="148"/>
+        <source>Load the autosave</source>
+        <translation>Charger le fichier de sauvegarde</translation>
+    </message>
+    <message>
+        <location filename="../file.cpp" line="149"/>
+        <source>Ignore</source>
+        <translation>Ignorer</translation>
+    </message>
+</context>
+<context>
     <name>FileManager</name>
     <message>
-        <location filename="../filemanager.cpp" line="466"/>
+        <location filename="../filemanager.cpp" line="456"/>
         <source>Le fichier %1 à été modifié en dehors de %2. Voulez-vous le charger à nouveau ?</source>
         <translation>Le fichier %1 à été modifié en dehors de %2. Voulez-vous le charger à nouveau ?</translation>
     </message>
     <message>
-        <location filename="../filemanager.cpp" line="468"/>
+        <location filename="../filemanager.cpp" line="458"/>
         <source>Un fichier à été modifié.</source>
         <translation>Un fichier à été modifié.</translation>
     </message>
     <message>
-        <location filename="../filemanager.cpp" line="475"/>
+        <location filename="../filemanager.cpp" line="465"/>
         <source>Charger à nouveau</source>
         <translation>Charger à nouveau</translation>
     </message>
     <message>
-        <location filename="../filemanager.cpp" line="476"/>
+        <location filename="../filemanager.cpp" line="466"/>
         <source>Ignorer</source>
         <translation>Ignorer</translation>
+    </message>
+</context>
+<context>
+    <name>MacroEngine</name>
+    <message>
+        <location filename="../macroengine.cpp" line="163"/>
+        <source>empty</source>
+        <translation>vide</translation>
+    </message>
+    <message>
+        <location filename="../macroengine.cpp" line="179"/>
+        <location filename="../macroengine.cpp" line="180"/>
+        <location filename="../macroengine.cpp" line="181"/>
+        <source>Ouvrir l&apos;éditeur de macros</source>
+        <translation>Ouvrir l&apos;éditeur de macros</translation>
     </message>
 </context>
 <context>
@@ -404,47 +533,46 @@
         <translation>Edition</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="126"/>
+        <location filename="../mainwindow.ui" line="125"/>
         <source>Aide</source>
         <translation>Aide</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="132"/>
+        <location filename="../mainwindow.ui" line="131"/>
         <source>View</source>
         <translation>Affichage</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="138"/>
         <source>Macros</source>
-        <translation>Macros</translation>
+        <translation type="obsolete">Macros</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="152"/>
+        <location filename="../mainwindow.ui" line="144"/>
         <source>Ouvrir</source>
         <translation>Ouvrir</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="155"/>
+        <location filename="../mainwindow.ui" line="147"/>
         <source>Ctrl+O</source>
         <translation>Ctrl+O</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="160"/>
+        <location filename="../mainwindow.ui" line="152"/>
         <source>Enregistrer Sous</source>
         <translation>Enregistrer sous</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="163"/>
+        <location filename="../mainwindow.ui" line="155"/>
         <source>Ctrl+Shift+S</source>
         <translation>Ctrl+Shift+S</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="168"/>
+        <location filename="../mainwindow.ui" line="160"/>
         <source>Enregistrer</source>
         <translation>Enregistrer</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="171"/>
+        <location filename="../mainwindow.ui" line="163"/>
         <source>Ctrl+S</source>
         <translation>Ctrl+S</translation>
     </message>
@@ -453,233 +581,235 @@
         <translation type="obsolete">PdfLatex</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="179"/>
+        <location filename="../mainwindow.ui" line="171"/>
         <source>Ctrl+B</source>
         <translation>Ctrl+B</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="184"/>
+        <location filename="../mainwindow.ui" line="176"/>
         <source>Préférences</source>
         <translation>Préférences</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="187"/>
+        <location filename="../mainwindow.ui" line="179"/>
         <source>Ctrl+P</source>
         <translation>Ctrl+P</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="201"/>
+        <location filename="../mainwindow.ui" line="193"/>
         <source>Afficher automatiquement le pdf</source>
         <translation>Afficher automatiquement le pdf</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="212"/>
+        <location filename="../mainwindow.ui" line="204"/>
         <source>Nouveau</source>
         <translation>Nouveau</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="215"/>
+        <location filename="../mainwindow.ui" line="207"/>
         <source>Ctrl+N</source>
         <translation>Ctrl+N</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="220"/>
+        <location filename="../mainwindow.ui" line="212"/>
         <source>Encodage</source>
         <translation>Encodage</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="223"/>
+        <location filename="../mainwindow.ui" line="215"/>
         <source>Ctrl+Shift+E</source>
         <translation>Ctrl+Shift+E</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="228"/>
+        <location filename="../mainwindow.ui" line="220"/>
         <source>Quitter</source>
         <translation>Quitter</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="233"/>
-        <location filename="../mainwindow.cpp" line="590"/>
+        <location filename="../mainwindow.ui" line="225"/>
+        <location filename="../mainwindow.cpp" line="619"/>
         <source>Annuler</source>
         <translation>Annuler</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="236"/>
+        <location filename="../mainwindow.ui" line="228"/>
         <source>Ctrl+Z</source>
         <translation>Ctrl+Z</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="241"/>
+        <location filename="../mainwindow.ui" line="233"/>
         <source>Refaire</source>
         <translation>Refaire</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="244"/>
+        <location filename="../mainwindow.ui" line="236"/>
         <source>Ctrl+Y</source>
         <translation>Ctrl+Y</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="249"/>
+        <location filename="../mainwindow.ui" line="241"/>
         <source>Couper</source>
         <translation>Couper</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="252"/>
+        <location filename="../mainwindow.ui" line="244"/>
         <source>Ctrl+X</source>
         <translation>Ctrl+X</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="257"/>
+        <location filename="../mainwindow.ui" line="249"/>
         <source>Copier</source>
         <translation>Copier</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="260"/>
+        <location filename="../mainwindow.ui" line="252"/>
         <source>Ctrl+C</source>
         <translation>Ctrl+C</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="265"/>
+        <location filename="../mainwindow.ui" line="257"/>
         <source>Coller</source>
         <translation>Coller</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="268"/>
+        <location filename="../mainwindow.ui" line="260"/>
         <source>Ctrl+V</source>
         <translation>Ctrl+V</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="273"/>
+        <location filename="../mainwindow.ui" line="265"/>
         <source>Rechercher / Remplacer</source>
         <translation>Rechercher / Remplacer</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="276"/>
+        <location filename="../mainwindow.ui" line="268"/>
         <source>Ctrl+F</source>
         <translation>Ctrl+F</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="281"/>
+        <location filename="../mainwindow.ui" line="273"/>
         <source>Voir le pdf</source>
         <translation>Voir le pdf</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="284"/>
+        <location filename="../mainwindow.ui" line="276"/>
         <source>Ctrl+D</source>
         <translation>Ctrl+D</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="289"/>
+        <location filename="../mainwindow.ui" line="281"/>
         <source>Ouvrir le dossier thème</source>
         <translation>Ouvrir le dossier thème</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="292"/>
+        <location filename="../mainwindow.ui" line="284"/>
         <source>Ctrl+T</source>
         <translation>Ctrl+T</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="297"/>
+        <location filename="../mainwindow.ui" line="289"/>
         <source>Supprimer l&apos;historique</source>
         <translation>Supprimer l&apos;historique</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="302"/>
+        <location filename="../mainwindow.ui" line="294"/>
         <source>Bibtex</source>
         <translation>Bibtex</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="305"/>
+        <location filename="../mainwindow.ui" line="297"/>
         <source>Ctrl+Shift+B</source>
         <translation>Ctrl+Shift+B</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="310"/>
+        <location filename="../mainwindow.ui" line="302"/>
         <source>A propos de TexitEasy</source>
         <translation>A propos de TexitEasy</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="318"/>
         <source>Environement</source>
-        <translation>Environement</translation>
+        <translation type="obsolete">Environement</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="321"/>
         <source>Ctrl+E</source>
-        <translation>Ctrl+E</translation>
+        <translation type="obsolete">Ctrl+E</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="329"/>
+        <location filename="../mainwindow.ui" line="313"/>
         <source>Synchroniser le pdf</source>
         <translation>Synchroniser le pdf</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="334"/>
+        <location filename="../mainwindow.ui" line="318"/>
         <source>test</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="339"/>
+        <location filename="../mainwindow.ui" line="323"/>
         <source>Ouvrir les derniers documents</source>
         <translation>Ouvrir les derniers documents</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="342"/>
+        <location filename="../mainwindow.ui" line="326"/>
         <source>Ctrl+Shift+O</source>
         <translation>Ctrl+Shift+O</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="347"/>
+        <location filename="../mainwindow.ui" line="331"/>
         <source>Nettoyer</source>
         <translation>Nettoyer</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="355"/>
+        <location filename="../mainwindow.ui" line="339"/>
         <source>Afficheur pdf séparé</source>
         <translation>Afficheur pdf séparé</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="360"/>
         <source>Ouvrir l&apos;éditeur de macros</source>
-        <translation>Ouvrir l&apos;éditeur de macros</translation>
+        <translation type="obsolete">Ouvrir l&apos;éditeur de macros</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="466"/>
+        <location filename="../mainwindow.cpp" line="382"/>
+        <source>&amp;Macros</source>
+        <translation>&amp;Macros</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="491"/>
         <source>Ouvrir un fichier</source>
         <translation>Ouvrir un fichier</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="504"/>
+        <location filename="../mainwindow.cpp" line="529"/>
         <source>Attention</source>
         <translation>Attention</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="504"/>
+        <location filename="../mainwindow.cpp" line="529"/>
         <source>Le compilateur %1 n&apos;est pas définie, veuillez le créer dans les options.</source>
         <translation>Le compilateur %1 n&apos;est pas définie, veuillez le créer dans les options.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="577"/>
+        <location filename="../mainwindow.cpp" line="606"/>
         <source>Quitter?</source>
         <translation>Quitter?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="578"/>
+        <location filename="../mainwindow.cpp" line="607"/>
         <source>Le fichier%1 a été modifié.</source>
         <translation>Le fichier%1 a été modifié.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="579"/>
+        <location filename="../mainwindow.cpp" line="608"/>
         <source>Voullez-vous sauvegarder les changements?</source>
         <translation>Voullez-vous sauvegarder les changements?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="586"/>
+        <location filename="../mainwindow.cpp" line="615"/>
         <source>Sauvegarder</source>
         <translation>Sauvegarder</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="588"/>
+        <location filename="../mainwindow.cpp" line="617"/>
         <source>Ne pas sauvegarder</source>
         <translation>Ne pas sauvegarder</translation>
     </message>
@@ -700,8 +830,8 @@
         <translation type="obsolete">Latex (*.tex *.latex);;BibTex(*.bib)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="684"/>
-        <location filename="../mainwindow.cpp" line="690"/>
+        <location filename="../mainwindow.cpp" line="713"/>
+        <location filename="../mainwindow.cpp" line="719"/>
         <source>Mettre à jour TexitEasy</source>
         <translation>Mettre à jour TexitEasy</translation>
     </message>
@@ -907,7 +1037,7 @@
 <context>
     <name>WidgetTextEdit</name>
     <message>
-        <location filename="../widgettextedit.cpp" line="185"/>
+        <location filename="../widgettextedit.cpp" line="297"/>
         <source>Ajouter au dictionnaire</source>
         <translation>Ajouter au dictionnaire</translation>
     </message>

@@ -481,7 +481,11 @@ QStringList ConfigManager::themesList()
 }
 QString ConfigManager::dictionaryPath()
 {
-       return "data/dictionaries/";
+#ifdef OS_MAC
+    return "../Resources/dictionaries/";
+#else
+    return "data/dictionaries/";
+#endif
 }
 QString ConfigManager::macrosPath()
 {

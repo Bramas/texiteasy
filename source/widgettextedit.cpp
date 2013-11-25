@@ -1366,6 +1366,7 @@ bool WidgetTextEdit::onMacroTriggered(Macro macro, bool soft)
     if(patternExists && !cursor.hasSelection())
     {
          cursor.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor, word.length());
+         this->setTextCursor(cursor);
     }
     int pos = cursor.position();
 
@@ -1421,6 +1422,7 @@ bool WidgetTextEdit::onMacroTriggered(Macro macro, bool soft)
     cursor = textCursor();
     cursor.setPosition(pos);
     this->setTextCursor(cursor);
+    _multipleEdit.clear();
     selectNextArgument();
     return true;
 

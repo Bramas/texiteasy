@@ -8,6 +8,10 @@ mkdir ../../../build/Qt_5_1_1_clang_64bit-Release/texiteasy.app/Contents/PlugIns
 cp /Users/quentinbramas/Qt/5.1.1/clang_64/plugins/platforms/libqcocoa.dylib ../../../build/Qt_5_1_1_clang_64bit-Release/texiteasy.app/Contents/PlugIns/platforms/libqcocoa.dylib
 
 
+mkdir ../../../build/Qt_5_1_1_clang_64bit-Release/texiteasy.app/Contents/Resources/dictionaries
+cp ../../source/data/dictionaries/* ../../../build/Qt_5_1_1_clang_64bit-Release/texiteasy.app/Contents/Resources/dictionaries
+
+
 
 
 sudo macdeployqt ../../../build/Qt_5_1_1_clang_64bit-Release/texiteasy.app
