@@ -481,8 +481,9 @@ QStringList ConfigManager::themesList()
 }
 QString ConfigManager::dictionaryPath()
 {
+
 #ifdef OS_MAC
-    return "texiteasy.app/Contents/Resources/dictionaries/";
+    return QApplication::applicationDirPath()+"/../Resources/dictionaries/";
 #else
 #ifdef OS_LINUX
     return "/usr/share/texiteasy/dictionaries/";
