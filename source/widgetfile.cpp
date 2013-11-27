@@ -41,9 +41,11 @@ WidgetFile::WidgetFile(QWidget *parent) :
     _horizontalSplitter = new MiniSplitter(Qt::Horizontal);
     _verticalSplitter = new MiniSplitter(Qt::Vertical);
 
+
+
     QGridLayout * layout = new QGridLayout();
-    layout->addWidget(_widgetLineNumber,0,0);
-    layout->addWidget(_horizontalSplitter,0,1);
+    //layout->addWidget(_widgetLineNumber,0,0);
+    layout->addWidget(_horizontalSplitter,0,0);
     layout->setColumnMinimumWidth(0,40);
     layout->setContentsMargins(0,0,0,0);
     layout->setSpacing(0);
@@ -61,7 +63,43 @@ WidgetFile::WidgetFile(QWidget *parent) :
     sizes << width()/2 << width()/2;
     _horizontalSplitter->setSizes(sizes);
 
-    _verticalSplitter->addWidget(this->_widgetTextEdit);
+
+    _widgetTextEdit2 = new WidgetTextEdit(this);
+    WidgetLineNumber * eLineNumber = new WidgetLineNumber(this);
+    _widgetTextEdit2->setSyntaxHighlighter(_syntaxHighlighter);
+    _widgetTextEdit2->setDocument(_widgetTextEdit->document());
+    eLineNumber->setWidgetTextEdit(_widgetTextEdit2);
+   _widgetTextEdit2->setWidgetLineNumber(eLineNumber);
+
+    MiniSplitter * editorSplitter = new MiniSplitter(Qt::Vertical);
+    QHBoxLayout * editorLayout;
+    QWidget * w;
+
+
+    editorLayout = new QHBoxLayout(_verticalSplitter);
+    editorLayout->setContentsMargins(5,0,0,0);
+    editorLayout->setSpacing(0);
+    editorLayout->addWidget(eLineNumber);
+    editorLayout->addWidget(_widgetTextEdit2);
+    w =  new QWidget();
+    w->setLayout(editorLayout);
+    editorSplitter->addWidget(w);
+
+
+    editorLayout = new QHBoxLayout(_verticalSplitter);
+    editorLayout->setContentsMargins(5,0,0,0);
+    editorLayout->setSpacing(0);
+    editorLayout->addWidget(this->_widgetLineNumber);
+    editorLayout->addWidget(this->_widgetTextEdit);
+    w =  new QWidget();
+    w->setLayout(editorLayout);
+    editorSplitter->addWidget(w);
+
+
+
+
+
+    _verticalSplitter->addWidget(editorSplitter);
     _verticalSplitter->addWidget(this->_widgetFindReplace);
     _verticalSplitter->addWidget(this->_widgetSimpleOutput);
     _verticalSplitter->addWidget(this->_widgetConsole);
@@ -109,35 +147,9 @@ void WidgetFile::initTheme()
     Pal.setColor(QPalette::Background, ConfigManager::Instance.getTextCharFormats("line-number").background().color());
     this->setAutoFillBackground(true);
     this->setPalette(Pal);
-    _widgetTextEdit->setStyleSheet(QString("QPlainTextEdit { border: 0px solid ")+
-                                        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("textedit-border").foreground().color())+"; "+
-                                        QString("border-right: 1px solid ")+
-                                        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("textedit-border").foreground().color())+"; "+
-                                        QString("color: ")+
-                                        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+"; "+
-                                        QString("background-color: ")+
-                                        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color())+
-                                "; }");
-    _widgetTextEdit->setCurrentCharFormat(ConfigManager::Instance.getTextCharFormats("normal"));
-    QTextCursor cur = _widgetTextEdit->textCursor();
-    cur.setCharFormat(ConfigManager::Instance.getTextCharFormats("normal"));
-    _widgetTextEdit->setTextCursor(cur);
-    //this->widgetTextEdit->setCurrentFont(ConfigManager::Instance.getTextCharFormats("normal").font());
 
-
-#ifdef OS_MAC
-    if(ConfigManager::Instance.getTextCharFormats("normal").background().color().value()<100) // if it's a dark color
-    {
-        QPixmap whiteBeamPixmap("/Users/quentinbramas/Projects/texiteasy/texiteasy-repository/source/data/cursor/whiteBeam.png");
-        QCursor whiteBeam(whiteBeamPixmap);
-        _widgetTextEdit->viewport()->setCursor(whiteBeam);
-    }
-    else
-    {
-        _widgetTextEdit->viewport()->setCursor(Qt::IBeamCursor);
-    }
-#endif
-
+    _widgetTextEdit->initTheme();
+    _widgetTextEdit2->initTheme();
     {
         QPalette Pal(palette());
         // set black background

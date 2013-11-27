@@ -1445,3 +1445,38 @@ void WidgetTextEdit::indentSelectedText()
         block = block.next();
     }
 }
+void WidgetTextEdit::initTheme()
+{
+
+    this->setStyleSheet(QString("QPlainTextEdit { border: 0px solid ")+
+                                        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("textedit-border").foreground().color())+"; "+
+                                        QString("border-right: 1px solid ")+
+                                        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("textedit-border").foreground().color())+"; "+
+                                        QString("border-bottom: 2px solid ")+
+                                        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("textedit-border").foreground().color())+"; "+
+                                        QString("color: ")+
+                                        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+"; "+
+                                        QString("background-color: ")+
+                                        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color())+
+                                "; }");
+    this->setCurrentCharFormat(ConfigManager::Instance.getTextCharFormats("normal"));
+    QTextCursor cur = this->textCursor();
+    cur.setCharFormat(ConfigManager::Instance.getTextCharFormats("normal"));
+    this->setTextCursor(cur);
+    //this->widgetTextEdit->setCurrentFont(ConfigManager::Instance.getTextCharFormats("normal").font());
+
+
+#ifdef OS_MAC
+    if(ConfigManager::Instance.getTextCharFormats("normal").background().color().value()<100) // if it's a dark color
+    {
+        QPixmap whiteBeamPixmap("/Users/quentinbramas/Projects/texiteasy/texiteasy-repository/source/data/cursor/whiteBeam.png");
+        QCursor whiteBeam(whiteBeamPixmap);
+        this->viewport()->setCursor(whiteBeam);
+    }
+    else
+    {
+        this->viewport()->setCursor(Qt::IBeamCursor);
+    }
+#endif
+
+}

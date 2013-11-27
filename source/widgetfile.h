@@ -76,6 +76,7 @@ public slots:
 private:
     QString _dictionary;
     WidgetTextEdit * _widgetTextEdit;
+    WidgetTextEdit * _widgetTextEdit2;
     MiniSplitter * _horizontalSplitter;
     MiniSplitter * _verticalSplitter;
     WidgetConsole * _widgetConsole;

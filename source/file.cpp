@@ -269,14 +269,15 @@ void File::autoSave()
     {
         return;
     }
-    QFile file(this->getAutoSaveFilename());
-    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
-        return;
-
     if(!_modified)
     {
        return;
     }
+
+    QFile file(this->getAutoSaveFilename());
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text))
+        return;
+
 
     this->data = this->_widgetTextEdit->toPlainText();
 
