@@ -96,8 +96,12 @@ MainWindow::MainWindow(QWidget *parent) :
     _widgetStatusBar = new WidgetStatusBar(this);
     ui->actionLinkSync->setChecked(ConfigManager::Instance.isPdfSynchronized());
     _widgetStatusBar->setLinkSyncAction(ui->actionLinkSync);
+
     ui->actionPdfViewerInItsOwnWidget->setChecked(ConfigManager::Instance.pdfViewerInItsOwnWidget());
     _widgetStatusBar->setPdfViewerWidgetAction(ui->actionPdfViewerInItsOwnWidget);
+
+    ui->actionSplitEditor->setChecked(ConfigManager::Instance.splitEditor());
+    _widgetStatusBar->setSplitEditorAction(ui->actionSplitEditor);
     this->setStatusBar(_widgetStatusBar);
 
     connect(&FileManager::Instance, SIGNAL(currentFileModified(bool)), this, SLOT(setWindowModified(bool)));
@@ -142,6 +146,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->ui->actionBibtex,SIGNAL(triggered()), &FileManager::Instance,SLOT(bibtex()));
     connect(this->ui->actionClean,SIGNAL(triggered()), &FileManager::Instance,SLOT(clean()));
     connect(this->ui->actionView, SIGNAL(triggered()), &FileManager::Instance,SLOT(jumpToPdfFromSource()));
+    connect(this->ui->actionSplitEditor, SIGNAL(toggled(bool)), &FileManager::Instance,SLOT(splitEditor(bool)));
+    connect(this->ui->actionSplitEditor, SIGNAL(toggled(bool)), &ConfigManager::Instance,SLOT(setSplitEditor(bool)));
 
 
     connect(&FileManager::Instance, SIGNAL(filenameChanged(QString)), this, SLOT(onFilenameChanged(QString)));

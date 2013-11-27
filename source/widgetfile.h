@@ -54,6 +54,7 @@ public:
     QString dictionary() { return _dictionary; }
     void setDictionary(QString dico);
 
+
     void addWidgetPdfViewerToSplitter();
 
 signals:
@@ -61,6 +62,7 @@ signals:
 
 public slots:
 
+    void splitEditor(bool split);
     void openConsole(void);
     void openErrorTable(void);
 
@@ -79,6 +81,7 @@ private:
     WidgetTextEdit * _widgetTextEdit2;
     MiniSplitter * _horizontalSplitter;
     MiniSplitter * _verticalSplitter;
+    MiniSplitter * _editorSplitter;
     WidgetConsole * _widgetConsole;
     WidgetFindReplace * _widgetFindReplace;
     WidgetLineNumber * widgetLineNumber;

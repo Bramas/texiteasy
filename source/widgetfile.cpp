@@ -71,7 +71,8 @@ WidgetFile::WidgetFile(QWidget *parent) :
     eLineNumber->setWidgetTextEdit(_widgetTextEdit2);
    _widgetTextEdit2->setWidgetLineNumber(eLineNumber);
 
-    MiniSplitter * editorSplitter = new MiniSplitter(Qt::Vertical);
+    _editorSplitter = new MiniSplitter(Qt::Vertical);
+    _editorSplitter->setHandleWidth(4);
     QHBoxLayout * editorLayout;
     QWidget * w;
 
@@ -83,7 +84,7 @@ WidgetFile::WidgetFile(QWidget *parent) :
     editorLayout->addWidget(_widgetTextEdit2);
     w =  new QWidget();
     w->setLayout(editorLayout);
-    editorSplitter->addWidget(w);
+    _editorSplitter->addWidget(w);
 
 
     editorLayout = new QHBoxLayout(_verticalSplitter);
@@ -93,13 +94,14 @@ WidgetFile::WidgetFile(QWidget *parent) :
     editorLayout->addWidget(this->_widgetTextEdit);
     w =  new QWidget();
     w->setLayout(editorLayout);
-    editorSplitter->addWidget(w);
+    _editorSplitter->addWidget(w);
 
 
 
-
-
-    _verticalSplitter->addWidget(editorSplitter);
+    _horizontalSplitter->setHandleWidth(4);
+    _horizontalSplitter->setBackgroundColor(ConfigManager::Instance.getTextCharFormats("line-number").foreground().color());
+    _editorSplitter->setBackgroundColor(ConfigManager::Instance.getTextCharFormats("line-number").foreground().color());
+    _verticalSplitter->addWidget(_editorSplitter);
     _verticalSplitter->addWidget(this->_widgetFindReplace);
     _verticalSplitter->addWidget(this->_widgetSimpleOutput);
     _verticalSplitter->addWidget(this->_widgetConsole);
@@ -132,6 +134,8 @@ WidgetFile::WidgetFile(QWidget *parent) :
     cur.deletePreviousChar();
     _widgetTextEdit->setTextCursor(cur);
     _widgetTextEdit->getCurrentFile()->setModified(false);
+
+    this->splitEditor(ConfigManager::Instance.splitEditor());
 }
 
 WidgetFile::~WidgetFile()
@@ -430,4 +434,41 @@ void WidgetFile::setDictionary(QString dico)
 
     syntaxHighlighter()->rehighlight();
     widgetTextEdit()->onCursorPositionChange();
+}
+
+void WidgetFile::splitEditor(bool split)
+{
+    qDebug()<<"split "<<split<<" "<<_editorSplitter->height()<<" "<<_editorSplitter->sizes();
+    if(!_editorSplitter->height() || !_editorSplitter->sizes().at(1))
+    {
+        qDebug()<<"split "<<split<<" "<<_editorSplitter->height()<<" "<<_editorSplitter->sizes();
+        QList<int> sizes;
+        sizes << (int)split << 1;
+        _editorSplitter->setCollapsible(0, !split);
+        _editorSplitter->setSizes(sizes);
+        qDebug()<<"split "<<split<<" "<<_editorSplitter->height()<<" "<<sizes<<" "<<_editorSplitter->sizes();
+        return;
+    }
+    QList<int> sizes = _editorSplitter->sizes();
+    if(split == sizes.first())
+    {
+        //already split or not split
+        return;
+    }
+    if(split)
+    {
+        _editorSplitter->setBackgroundColor(ConfigManager::Instance.getTextCharFormats("line-number").foreground().color());
+        _editorSplitter->setHandleWidth(4);
+        sizes[0] = _editorSplitter->height()/2;
+        sizes[1] = _editorSplitter->height()/2;
+        _editorSplitter->setCollapsible(0, false);
+        _editorSplitter->setSizes(sizes);
+        return;
+    }
+    _editorSplitter->setBackgroundColor(QColor(0,0,0,0));
+    _editorSplitter->setHandleWidth(0);
+    _editorSplitter->setCollapsible(0, true);
+    sizes[0] = 0;
+    sizes[1] = _editorSplitter->height();
+    _editorSplitter->setSizes(sizes);
 }

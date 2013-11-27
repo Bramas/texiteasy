@@ -21,6 +21,40 @@ WidgetStatusBar::WidgetStatusBar(QWidget *parent) :
     ui->setupUi(this);
     this->setContextMenuPolicy(Qt::PreventContextMenu);
 
+
+
+
+    {
+    _labelSplitEditor = new WidgetStatusBarButton(this);
+    QImage incorporatedImage(":/data/img/incorporatedPdf.png");
+    QImage  separatedImage(":/data/img/separatedPdf.png");
+    QImage incorporatedHoverImage(":/data/img/incorporatedPdfHover.png");
+    QImage  separatedHoverImage(":/data/img/separatedPdfHover.png");
+    if(ConfigManager::Instance.darkTheme())
+    {
+        incorporatedImage.invertPixels();
+        separatedImage.invertPixels();
+        incorporatedHoverImage.invertPixels();
+        separatedHoverImage.invertPixels();
+    }
+    _labelSplitEditor->setCheckable(true);
+    _labelSplitEditor->setPixmaps(new QPixmap(QPixmap::fromImage(incorporatedImage)),
+                                              new QPixmap(QPixmap::fromImage(separatedImage)),
+                                              new QPixmap(QPixmap::fromImage(incorporatedHoverImage)),
+                                              new QPixmap(QPixmap::fromImage(separatedHoverImage))
+                                              );
+    this->addPermanentWidget(_labelSplitEditor);
+    }
+
+
+
+
+
+
+
+
+
+
     _labelConsole = new QLabel(QString("<div style='margin:0px;'><a class='link' style='text-decoration:none; color:")+
                                 ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
                                "' href='#'>"+trUtf8("Console")+"</a></div>");
@@ -86,6 +120,7 @@ WidgetStatusBar::WidgetStatusBar(QWidget *parent) :
     _labelLinkSync->setCheckable(true);
     _labelLinkSync->setPixmaps(new QPixmap(QPixmap::fromImage(unlinkImage)), new QPixmap(QPixmap::fromImage(linkImage)));
     this->addPermanentWidget(_labelLinkSync);
+
 
 
 

@@ -42,11 +42,17 @@ public:
     MiniSplitterHandle(Qt::Orientation orientation, QSplitter *parent)
             : QSplitterHandle(orientation, parent)
     {
+        _backgroundColor = QColor(0,0,0,0);
         setMask(QRegion(contentsRect()));
         setAttribute(Qt::WA_MouseNoMask, true);
+
+    }
+    void setBackgroundColor(QColor color) {
+        _backgroundColor = color;
     }
     ~MiniSplitterHandle();
 protected:
+    QColor _backgroundColor;
     void resizeEvent(QResizeEvent *event);
     void paintEvent(QPaintEvent *event);
 };
@@ -66,10 +72,18 @@ void MiniSplitterHandle::resizeEvent(QResizeEvent *event)
     QSplitterHandle::resizeEvent(event);
 }
 
-void MiniSplitterHandle::paintEvent(QPaintEvent * /*event*/)
+void MiniSplitterHandle::paintEvent(QPaintEvent * event)
 {
     QPainter painter(this);
-    //painter.fillRect(event->rect(), StyleHelper::borderColor());
+    painter.fillRect(event->rect(), _backgroundColor);
+}
+
+void MiniSplitter::setBackgroundColor(QColor color)
+{
+    for(int i = 1; i < this->count(); ++i)
+    {
+        dynamic_cast<MiniSplitterHandle*>(this->handle(i))->setBackgroundColor(color);
+    }
 }
 
 QSplitterHandle *MiniSplitter::createHandle()
@@ -80,7 +94,7 @@ QSplitterHandle *MiniSplitter::createHandle()
 MiniSplitter::MiniSplitter(QWidget *parent)
     : QSplitter(parent)
 {
-    setHandleWidth(1);
+    setHandleWidth(2);
     setChildrenCollapsible(false);
     setProperty("minisplitter", true);
 }
@@ -88,7 +102,7 @@ MiniSplitter::MiniSplitter(QWidget *parent)
 MiniSplitter::MiniSplitter(Qt::Orientation orientation)
     : QSplitter(orientation)
 {
-    setHandleWidth(1);
+    setHandleWidth(2);
     setChildrenCollapsible(false);
     setProperty("minisplitter", true);
 }

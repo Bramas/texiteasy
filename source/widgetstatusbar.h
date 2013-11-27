@@ -100,6 +100,7 @@ public slots:
     void updateButtons();
     void setLinkSyncAction(QAction * action) { _labelLinkSync->setAction(action); }
     void setPdfViewerWidgetAction(QAction * action) { _labelPdfViewerInItsOwnWidget->setAction(action); }
+    void setSplitEditorAction(QAction * action) { _labelSplitEditor->setAction(action); }
     void showTemporaryMessage(QString message) { this->showMessage(message, 4000); }
     
 private:
@@ -111,6 +112,7 @@ private:
     WidgetStatusBarButton * _labelLinkSync;
     WidgetStatusBarButton * _labelPdfViewerInItsOwnWidget;
     WidgetStatusBarButton * _labelDictionary;
+    WidgetStatusBarButton * _labelSplitEditor;
 
     QLabel * _labelConsole;
     QLabel * _labelErrorTable;

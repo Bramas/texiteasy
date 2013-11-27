@@ -33,6 +33,7 @@
 //#include "core_global.h"
 
 #include <QSplitter>
+#include <QColor>
 
 QT_BEGIN_NAMESPACE
 class QSplitterHandle;
@@ -44,6 +45,7 @@ class MiniSplitter : public QSplitter
 public:
     MiniSplitter(QWidget *parent = 0);
     MiniSplitter(Qt::Orientation orientation);
+    void setBackgroundColor(QColor color);
 /*public slots:
     void onResize(int pos, int index);
 

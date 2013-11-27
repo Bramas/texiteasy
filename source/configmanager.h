@@ -184,6 +184,8 @@ public:
 
     bool pdfViewerInItsOwnWidget() { QSettings settings; return settings.value("pdfViewerItsOwnWidget", false).toBool(); }
 
+    bool splitEditor() { QSettings settings; return settings.value("splitEditor", false).toBool(); }
+
     bool isThisVersionHaveToBeReminded(QString version);
     void dontRemindMeThisVersion(QString version);
 
@@ -206,6 +208,7 @@ public slots:
 
     void setPdfSynchronized(bool pdfSynchronized) { QSettings settings; settings.setValue("pdfSynchronized", pdfSynchronized); }
     void setPdfViewerInItsOwnWidget(bool b) { QSettings settings; settings.setValue("pdfViewerItsOwnWidget", b); }
+    void setSplitEditor(bool split) { QSettings settings; settings.setValue("splitEditor", split); }
     void openThemeFolder();
     void openUpdateWebsite() { QString link = TEXITEASY_UPDATE_WEBSITE;
                                QDesktopServices::openUrl(QUrl(link)); }
