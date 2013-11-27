@@ -37,6 +37,7 @@ public:
     WidgetPdfViewer * widgetPdfViewer() { return _widgetPdfViewer; }
     SyntaxHighlighter * syntaxHighlighter() { return _syntaxHighlighter; }
     MiniSplitter * verticalSplitter() { return _verticalSplitter; }
+    MiniSplitter * editorSplitter() { return _editorSplitter; }
 
     void open(QString filename);
     void reload();

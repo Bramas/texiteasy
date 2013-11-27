@@ -59,7 +59,7 @@ public:
 
 public slots:
     void toggleChecked();
-    void setChecked(bool checked) { if(_checked != checked) this->toggleCheckedWithoutTriggeringAction(); }
+    void setChecked(bool checked);
 private slots:
     void toggleCheckedWithoutTriggeringAction();
 

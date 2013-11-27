@@ -26,11 +26,11 @@ WidgetStatusBar::WidgetStatusBar(QWidget *parent) :
 
     {
     _labelSplitEditor = new WidgetStatusBarButton(this);
-    QImage incorporatedImage(":/data/img/incorporatedPdf.png");
-    QImage  separatedImage(":/data/img/separatedPdf.png");
-    QImage incorporatedHoverImage(":/data/img/incorporatedPdfHover.png");
-    QImage  separatedHoverImage(":/data/img/separatedPdfHover.png");
-    if(ConfigManager::Instance.darkTheme())
+    QImage incorporatedImage(":/data/img/splitbutton_horizontal.png");
+    QImage  separatedImage(":/data/img/splitbutton_closetop.png");
+    QImage incorporatedHoverImage(":/data/img/splitbutton_horizontal.png");
+    QImage  separatedHoverImage(":/data/img/splitbutton_closetop.png");
+    if(!ConfigManager::Instance.darkTheme())
     {
         incorporatedImage.invertPixels();
         separatedImage.invertPixels();
@@ -177,8 +177,14 @@ void WidgetStatusBar::updateButtons()
         _labelDictionary->setEnabled(false);
         return;
     }
+    //update split button
+
+    QList<int> editorSizes = FileManager::Instance.currentWidgetFile()->editorSplitter()->sizes();
+    _labelSplitEditor->setChecked(editorSizes.first());
+
+
     // udate Console widget and errorTable widget
-    QList<int> sizes = FileManager::Instance.currentWidgetFile()->verticalSplitter()->sizes();
+     QList<int> sizes= FileManager::Instance.currentWidgetFile()->verticalSplitter()->sizes();
     if(sizes[2] == 0)
     {
         _labelErrorTable->setStyleSheet(QString("background-color:transparent"));
@@ -285,6 +291,19 @@ void WidgetStatusBarButton::enterEvent(QEvent *)
         }
     }
 }
+void WidgetStatusBarButton::setChecked(bool checked)
+{
+    if(this->action() && checked != this->action()->isChecked())
+    {
+        this->action()->toggle();
+        return;
+    }
+    if(_checked != checked)
+    {
+        this->toggleCheckedWithoutTriggeringAction();
+    }
+}
+
 void WidgetStatusBarButton::toggleChecked()
 {
     _checked = ! _checked;

@@ -135,7 +135,7 @@ WidgetFile::WidgetFile(QWidget *parent) :
     _widgetTextEdit->setTextCursor(cur);
     _widgetTextEdit->getCurrentFile()->setModified(false);
 
-    this->splitEditor(ConfigManager::Instance.splitEditor());
+    this->splitEditor(false);
 }
 
 WidgetFile::~WidgetFile()
@@ -438,19 +438,24 @@ void WidgetFile::setDictionary(QString dico)
 
 void WidgetFile::splitEditor(bool split)
 {
-    qDebug()<<"split "<<split<<" "<<_editorSplitter->height()<<" "<<_editorSplitter->sizes();
     if(!_editorSplitter->height() || !_editorSplitter->sizes().at(1))
     {
-        qDebug()<<"split "<<split<<" "<<_editorSplitter->height()<<" "<<_editorSplitter->sizes();
         QList<int> sizes;
         sizes << (int)split << 1;
         _editorSplitter->setCollapsible(0, !split);
         _editorSplitter->setSizes(sizes);
-        qDebug()<<"split "<<split<<" "<<_editorSplitter->height()<<" "<<sizes<<" "<<_editorSplitter->sizes();
+        if(split)
+        {
+            _editorSplitter->setBackgroundColor(ConfigManager::Instance.getTextCharFormats("line-number").foreground().color());
+        }
+        else
+        {
+            _editorSplitter->setBackgroundColor(QColor(0,0,0,0));
+        }
         return;
     }
     QList<int> sizes = _editorSplitter->sizes();
-    if(split == sizes.first())
+    if(split == (bool)sizes.first())
     {
         //already split or not split
         return;
