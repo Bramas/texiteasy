@@ -1,7 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>data/icons/appicon.png</file>
-        <file>data/cursor/whiteBeam.tiff</file>
         <file>data/img/incorporatedPdf.png</file>
         <file>data/img/incorporatedPdfHover.png</file>
         <file>data/img/separatedPdf.png</file>
@@ -10,5 +9,6 @@
         <file>data/img/unlinkSync.png</file>
         <file>data/img/splitbutton_closetop.png</file>
         <file>data/img/splitbutton_horizontal.png</file>
+        <file>data/cursor/whiteBeam.png</file>
     </qresource>
 </RCC>

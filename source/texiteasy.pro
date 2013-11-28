@@ -13,8 +13,8 @@ TEMPLATE = app
 
 APPLICATION_NAME = \\\"'TexitEasy'\\\"
 TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com'\\\"
-VERSION = \\\"'0.8.0'\\\"
-VERSION_HEX = 0x000800
+VERSION = \\\"'0.8.1'\\\"
+VERSION_HEX = 0x000801
 
 #DEFINES += LIB_DEPLOY
 

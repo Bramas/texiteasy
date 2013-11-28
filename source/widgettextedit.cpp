@@ -1467,7 +1467,7 @@ void WidgetTextEdit::initTheme()
 #ifdef OS_MAC
     if(ConfigManager::Instance.getTextCharFormats("normal").background().color().value()<100) // if it's a dark color
     {
-        QPixmap whiteBeamPixmap("/Users/quentinbramas/Projects/texiteasy/texiteasy-repository/source/data/cursor/whiteBeam.png");
+        QPixmap whiteBeamPixmap(":/data/cursor/whiteBeam.png");
         QCursor whiteBeam(whiteBeamPixmap);
         this->viewport()->setCursor(whiteBeam);
     }

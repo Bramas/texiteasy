@@ -375,9 +375,12 @@ void FileManager::setPdfViewerInItsOwnWidget(bool ownWidget)
         {
             widgetFile->addWidgetPdfViewerToSplitter();
         }
-        _widgetPdfViewerWrapper->close();
-        _widgetPdfViewerWrapper->deleteLater();
-        _widgetPdfViewerWrapper = 0;
+        if(_widgetPdfViewerWrapper)
+        {
+            _widgetPdfViewerWrapper->close();
+            _widgetPdfViewerWrapper->deleteLater();
+            _widgetPdfViewerWrapper = 0;
+        }
     }
 }
 void FileManager::ensurePdfViewerIsVisible()
