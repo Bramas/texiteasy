@@ -98,7 +98,7 @@ WidgetFile::WidgetFile(QWidget *parent) :
 
 
 
-    _horizontalSplitter->setHandleWidth(4);
+    _horizontalSplitter->setHandleWidth(1);
     _horizontalSplitter->setBackgroundColor(ConfigManager::Instance.getTextCharFormats("line-number").foreground().color());
     _editorSplitter->setBackgroundColor(ConfigManager::Instance.getTextCharFormats("line-number").foreground().color());
     _verticalSplitter->addWidget(_editorSplitter);

@@ -84,6 +84,8 @@ private:
     QStringList _tabsName;
     QList<WidgetFile *> _widgets;
     QList<int> _tabsNameWidth;
+    QList<int> _tabsRealWidth;
+    QList<int> _tabsAddWidth;
     bool _currentChangedSignalWillBeSend;
     int _currentIndex;
     int _widgetOverId;

@@ -13,6 +13,10 @@
 #include "widgettextedit.h"
 #include "widgetfile.h"
 #include "filemanager.h"
+#include <time.h>
+#include <QtCore/qmath.h>
+
+const int OptimalTabWidth = 200;
 
 WidgetTab::WidgetTab(QWidget *parent) :
     QWidget(parent),
@@ -71,6 +75,112 @@ void WidgetTab::paintEvent(QPaintEvent * event)
     int index = 0;
     int cummulatedWidth = 10;
     painter.translate(10,0);
+    _tabsRealWidth.clear();
+    _tabsAddWidth.clear();
+    int totalWidth = 0;
+    int tabWithLowWidthCount = 0;
+    int tabWithMaxWidthCount = 0;
+    int maxWidth = 0;
+    int subMaxWidth = 0;
+    for(int i = 0; i < _tabsName.count(); ++i)
+    {
+        int w = tabWidth(i, painter.font());
+        totalWidth += w + _margin;
+        _tabsRealWidth << w;
+        _tabsAddWidth << 0;
+        if(w < OptimalTabWidth)
+        {
+            ++tabWithLowWidthCount;
+        }
+
+        if(w == maxWidth)
+        {
+            ++tabWithMaxWidthCount;
+        }
+        else
+        if(w > maxWidth)
+        {
+            subMaxWidth = maxWidth;
+            maxWidth = w;
+            tabWithMaxWidthCount = 1;
+        }
+        else
+        if(w > subMaxWidth)
+        {
+            subMaxWidth = w;
+        }
+    }
+    totalWidth -= _margin;
+    if(totalWidth + 20 < width())
+    {
+        // expand tabs that are below the optimal width
+        int availableWidth = width() - 20 - totalWidth;
+        while(tabWithLowWidthCount && availableWidth >= tabWithLowWidthCount)
+        {
+            int possibleAdd = qMin(OptimalTabWidth, qFloor(availableWidth / tabWithLowWidthCount));
+            tabWithLowWidthCount = 0;
+            for(int i = 0; i < _tabsName.count(); ++i)
+            {
+                if(_tabsRealWidth.at(i) + _tabsAddWidth.at(i) < OptimalTabWidth)
+                {
+                    int add = qMin(OptimalTabWidth - _tabsRealWidth.at(i) - _tabsAddWidth.at(i), possibleAdd);
+                    _tabsAddWidth[i] += add;
+                    availableWidth -= add;
+                    if(_tabsRealWidth.at(i) + _tabsAddWidth.at(i) < OptimalTabWidth)
+                    {
+                        ++tabWithLowWidthCount;
+                    }
+                }
+            }
+        }
+    }
+    else if (totalWidth + 20 > width())
+    {
+        // descrease the width of tabs that are over the optimal tab width
+
+        int widthToDecrease = 20 + totalWidth - width();
+        int k=10;
+        while(widthToDecrease >= 0 && k-->0)
+        {
+            int lastMaxWidth = maxWidth;
+            int removal = qMin(maxWidth - subMaxWidth, qFloor(1 + widthToDecrease / tabWithMaxWidthCount));
+            subMaxWidth = maxWidth = 0;
+            tabWithMaxWidthCount = 0;
+            for(int i = 0; i < _tabsName.count(); ++i)
+            {
+
+                if(_tabsRealWidth.at(i) + _tabsAddWidth.at(i) == lastMaxWidth)
+                {
+
+                    _tabsAddWidth[i] -= removal;
+                    widthToDecrease -= removal;
+                    if(_tabsRealWidth.at(i) + _tabsAddWidth.at(i) < OptimalTabWidth)
+                    {
+                        ++tabWithLowWidthCount;
+                    }
+                }
+
+                if(_tabsRealWidth.at(i) + _tabsAddWidth.at(i) == maxWidth)
+                {
+                    ++tabWithMaxWidthCount;
+                }
+                else
+                if(_tabsRealWidth.at(i) + _tabsAddWidth.at(i) > maxWidth)
+                {
+                    subMaxWidth = maxWidth;
+                    maxWidth = _tabsRealWidth.at(i) + _tabsAddWidth.at(i);
+                    tabWithMaxWidthCount = 1;
+                }
+                else
+                if(_tabsRealWidth.at(i) + _tabsAddWidth.at(i) > subMaxWidth)
+                {
+                    subMaxWidth = _tabsRealWidth.at(i) + _tabsAddWidth.at(i);
+                }
+            }
+        }
+    }
+
+
     _tabsNameWidth.clear();
     _tabsNameWidth.append(cummulatedWidth);
     int xBegin, yBegin, xEnd, yEnd;
@@ -87,7 +197,7 @@ void WidgetTab::paintEvent(QPaintEvent * event)
             painter.setBrush(defaultRectBrush);
         }
         painter.setPen(rectPen);
-        painter.drawRoundedRect(0, 5, tabWidth(index, painter.font()), 30, 5, 5);
+        painter.drawRoundedRect(0, 5, _tabsRealWidth.at(index) + _tabsAddWidth.at(index), 30, 5, 5);
         painter.translate(_padding, 0);
         this->drawMoreButton(&painter, index);
 
@@ -99,8 +209,9 @@ void WidgetTab::paintEvent(QPaintEvent * event)
         {
             painter.setPen(defaultPen);
         }
-        painter.drawText(0, 22, tabName);
-        painter.translate(fm.width(tabName),0);
+        QRect r(0,10,fm.width(tabName) + _tabsAddWidth.at(index),30);
+        painter.drawText(r,Qt::TextSingleLine, tabName);
+        painter.translate(fm.width(tabName) + _tabsAddWidth.at(index),0);
 
         if(index == _overCloseId)
         {
