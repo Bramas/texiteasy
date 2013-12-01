@@ -214,7 +214,7 @@ void WidgetPdfDocument::initDocument()
     {
         return;
     }
-    _document = Poppler::Document::load(_file->getPdfFilename().toLatin1());//PdfDocument::load(_file->getFilename());//new PdfDocument(_file->getFilename());
+    _document = Poppler::Document::load(_file->getPdfFilename());//PdfDocument::load(_file->getFilename());//new PdfDocument(_file->getFilename());
 
     if(!_document || _document->isLocked())
     {
