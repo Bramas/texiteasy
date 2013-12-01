@@ -16,7 +16,7 @@
 #include <time.h>
 #include <QtCore/qmath.h>
 
-const int OptimalTabWidth = 200;
+const int OptimalTabWidth = 180;
 
 WidgetTab::WidgetTab(QWidget *parent) :
     QWidget(parent),
