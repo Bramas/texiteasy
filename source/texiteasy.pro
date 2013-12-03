@@ -12,16 +12,16 @@ TARGET = texiteasy
 TEMPLATE = app
 
 APPLICATION_NAME = \\\"'TexitEasy'\\\"
-TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com'\\\"
-VERSION = \\\"'0.8.1'\\\"
-VERSION_HEX = 0x000801
+VERSION = \\\"'0.8.2'\\\"
+VERSION_HEX = 0x000802
+
 
 #DEFINES += LIB_DEPLOY
 
 DEFINES += "CURRENT_VERSION_HEX=$${VERSION_HEX}"
 DEFINES += "CURRENT_VERSION=$${VERSION}"
 DEFINES += "APPLICATION_NAME=$${APPLICATION_NAME}"
-DEFINES += "TEXITEASY_UPDATE_WEBSITE=$${TEXITEASY_UPDATE_WEBSITE}"
+
 
 #DEFINES += DEBUG_DESTRUCTOR
 
@@ -183,22 +183,27 @@ win32 {
     RC_FILE = win.rc
 
     DEFINES += OS_WINDOWS
-    LAST_VERSION_URL = \\\"'https://raw.github.com/Bramas/texiteasy/master/VERSION_WIN'\\\"
+    LAST_VERSION_URL = \\\"'http://texiteasy.com/posts/latest_version/win'\\\"
+    TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com/posts/download_latest/win'\\\"
 
 }
 unix:!mac{
     LIBS += -lz -L/usr/local/lib -lpoppler-qt4
     DEFINES += OS_LINUX
-    LAST_VERSION_URL = \\\"'https://raw.github.com/Bramas/texiteasy/master/VERSION_LINUX'\\\"
+    LAST_VERSION_URL = \\\"'http://texiteasy.com/posts/latest_version/linux'\\\"
+    TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com/posts/download_latest/linux'\\\"
 }
 mac{
     INCLUDEPATH += /usr/local/include
     LIBS += -L/usr/local/lib -lz -lpoppler-qt5
     ICON = texiteasy.icns
     DEFINES += OS_MAC
-    LAST_VERSION_URL = \\\"'https://raw.github.com/Bramas/texiteasy/master/VERSION_MAC'\\\"
+    LAST_VERSION_URL = \\\"'http://texiteasy.com/posts/latest_version/mac'\\\"
+    TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com/posts/download_latest/mac'\\\"
     #CONFIG += x86 x86_64
 }
+
+DEFINES += "TEXITEASY_UPDATE_WEBSITE=$${TEXITEASY_UPDATE_WEBSITE}"
 DEFINES += "LAST_VERSION_URL=$${LAST_VERSION_URL}"
 
 OTHER_FILES += \

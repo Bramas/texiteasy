@@ -778,6 +778,7 @@ void ConfigManager::checkRevision()
     }
     case 0x000800:
     case 0x000801:
+    case 0x000802:
 
         break;
     }

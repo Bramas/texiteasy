@@ -39,12 +39,6 @@ BlockData::~BlockData()
         //characterData = 0;
     }
 }
-/*
-The same reasoning is used with all robots and it gives :
-\[\sumC{C(\tau+1)}{r_1(\tau+1)} + \sumC{C(\tau+1)}{r_1(\tau+1)} \leq
-\sumC{C(\tau)}{r_1(\tau)}+\sumC{C(\tau)}{r_2(\tau)}\]
-Which means either
-*/
 
 QVector<ParenthesisInfo *> BlockData::parentheses() {
     return _parentheses;
