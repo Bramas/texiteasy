@@ -1,16 +1,17 @@
 #!/bin/bash
 
-VERSION="0.8.0"
+VERSION="0.8.2"
 
-SCRIPT=$(readlink -f $0)
+#SCRIPT=$(readlink -f $0)
 # Absolute path this script is in, thus /home/user/bin
-SCRIPTPATH=$(dirname $SCRIPT)
-echo "executing script from $SCRIPTPATH"
+#DEST_PATH=$(dirname $SCRIPT)
+DEST_PATH="/Users/quentinbramas/Documents"
+echo "DEST_PATH = $DEST_PATH"
 
 mkdir /tmp/texiteasy-$VERSION
 cp -r ../source/* /tmp/texiteasy-$VERSION
 mkdir /tmp/texiteasy-$VERSION/share
 cp -r deb/share/* /tmp/texiteasy-$VERSION/share
 cd /tmp
-tar czf $SCRIPTPATH/texiteasy.tar.gz texiteasy-$VERSION
+tar czf $DEST_PATH/texiteasy.tar.gz texiteasy-$VERSION
 #mv /tmp/texiteasy-0.1.10.tar.gz /tmp/myscript/texiteasy-$VERSION.tar.gz
