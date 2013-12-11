@@ -480,9 +480,9 @@ void FileManager::onFileSystemChanged(WidgetFile * widget)
 
 }
 
-void FileManager::handleMimeData(const QMimeData * mimeData)
+bool FileManager::handleMimeData(const QMimeData * mimeData)
 {
-    _mainWindow->handleMimeData(mimeData);
+    return _mainWindow->handleMimeData(mimeData);
 }
 
 void FileManager::onMacroTriggered(Macro macro)

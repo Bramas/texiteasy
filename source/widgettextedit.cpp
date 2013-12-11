@@ -831,12 +831,12 @@ void WidgetTextEdit::insertFromMimeData(const QMimeData *source)
 {
     if(source->hasUrls())
     {
-        FileManager::Instance.handleMimeData(source);
+        if(FileManager::Instance.handleMimeData(source))
+        {
+            return;
+        }
     }
-    else
-    {
-        WIDGET_TEXT_EDIT_PARENT_CLASS::insertFromMimeData(source);
-    }
+    WIDGET_TEXT_EDIT_PARENT_CLASS::insertFromMimeData(source);
 }
 
 void WidgetTextEdit::matchAll()
