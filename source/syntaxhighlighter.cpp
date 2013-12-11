@@ -54,9 +54,17 @@ QStringList initOtherBlockCommands()
          << "newtheorem" << "bibitem" << "hypersetup";
     return list;
 }
+QStringList initCommandsWithOptions()
+{
+    QStringList list;
+    list << "usepackage" << "newcommand" << "includegraphics" << "begin"
+         << "item";
+    return list;
+}
 
 QStringList SyntaxHighlighter::otherBlockCommands = initOtherBlockCommands();
 QStringList SyntaxHighlighter::textBlockCommands = initTextBlockCommands();
+QStringList SyntaxHighlighter::commandsWithOptions = initCommandsWithOptions();
 
 SyntaxHighlighter::SyntaxHighlighter(WidgetFile *widgetFile) :
     QSyntaxHighlighter(widgetFile->widgetTextEdit()->document())
@@ -183,7 +191,7 @@ while(index < text.length())
 {
     currentChar = text.at(index);
     overrideCurrentState = -1;
-    //qDebug()<<index<<" : "<<currentChar<<" state : "<<state<<", parentheislevel : "<<(blockData->blockEndingState.parenthesisLevel);
+    //qDebug()<<index<<" : "<<currentChar<<" state : "<<state<<", crocherlevel : "<<(*crocherLevel);
     if(index < text.length() - 1)
     {
         nextChar = text.at(index + 1);
@@ -238,6 +246,7 @@ while(index < text.length())
         }
         break;
     }
+
     if(currentChar == '{' && !escapedChar)
     {
         parenthesisLevel->top() += 1;
@@ -457,6 +466,15 @@ while(index < text.length())
                     state = Option;
                     stateAfterOption =  Math;
                     --index;
+                }
+            }
+            if(!commandsWithOptions.contains(commandBuffer))
+            {
+                crocherLevel->pop();
+                state = stateAfterOption;
+                if(state != previousState)
+                {
+                    parenthesisLevel->push(0);
                 }
             }
         }

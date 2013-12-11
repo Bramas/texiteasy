@@ -28,34 +28,30 @@
 
 WidgetPdfViewer::WidgetPdfViewer(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::WidgetPdfViewer),
+    //ui(new Ui::WidgetPdfViewer),
     _widgetPdfDocument(new WidgetPdfDocument(this))
 {
-    ui->setupUi(this);
+    //ui->setupUi(this);
 
+    _verticalLayout = new QVBoxLayout(this);
+    this->setLayout(_verticalLayout);
+    _verticalLayout->addWidget(_widgetPdfDocument);
+    _verticalLayout->setSpacing(0);
+    _verticalLayout->setMargin(0);
+    _verticalLayout->setContentsMargins(0,0,0,0);
+    /*
     this->ui->pushButtonZoomIn->setVisible(false);
     this->ui->pushButtonZoomOut->setVisible(false);
-    this->ui->verticalLayout->removeWidget(this->ui->pushButtonZoomIn);
-    this->ui->verticalLayout->removeWidget(this->ui->pushButtonZoomOut);
     this->ui->verticalLayout->addWidget(_widgetPdfDocument);
-/*
-     QPixmap zoomOut(":/icons/data/icons/zoom-out.png");
-     QIcon buttonIconZoomOut(zoomOut);
-     this->ui->pushButtonZoomOut->setIcon(buttonIconZoomOut);
-     this->ui->pushButtonZoomOut->setIconSize(zoomOut.rect().size());
-
-     QPixmap zoomIn(":/icons/data/icons/zoom-in.png");
-     QIcon buttonIconZoomIn(zoomIn);
-     this->ui->pushButtonZoomIn->setIcon(buttonIconZoomIn);
-     this->ui->pushButtonZoomIn->setIconSize(zoomIn.rect().size());
-
-     connect(this->ui->pushButtonZoomIn, SIGNAL(clicked()), this->_widgetPdfDocument, SLOT(zoomIn()));
-     connect(this->ui->pushButtonZoomOut, SIGNAL(clicked()), this->_widgetPdfDocument, SLOT(zoomOut()));*/
+    this->ui->verticalLayout->setMargin(0);
+    this->ui->verticalLayout->setContentsMargins(0,0,0,0);
+    this->ui->verticalLayout->setSpacing(0);
+    this->setContentsMargins(0,0,0,0);
+    */
 }
 
 WidgetPdfViewer::~WidgetPdfViewer()
 {
-    delete ui;
 }
 
 void WidgetPdfViewer::restorPdfDocumentParent()
@@ -65,9 +61,9 @@ void WidgetPdfViewer::restorPdfDocumentParent()
 
 void WidgetPdfViewer::setWidgetPdfDocument(WidgetPdfDocument * widgetPdfDocument)
 {
-    while(this->ui->verticalLayout->count())
+    while(_verticalLayout->count())
     {
-        this->ui->verticalLayout->removeItem(this->ui->verticalLayout->itemAt(0));
+        _verticalLayout->removeItem(_verticalLayout->itemAt(0));
     }
     if(widgetPdfDocument == _widgetPdfDocument)
     {
@@ -78,6 +74,6 @@ void WidgetPdfViewer::setWidgetPdfDocument(WidgetPdfDocument * widgetPdfDocument
         _widgetPdfDocument->setVisible(false);
     }
     widgetPdfDocument->setParent(this);
-    this->ui->verticalLayout->addWidget(widgetPdfDocument);
+    _verticalLayout->addWidget(widgetPdfDocument);
 }
 

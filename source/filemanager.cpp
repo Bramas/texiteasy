@@ -252,6 +252,20 @@ void FileManager::setCurrentPdfToPdfViewer()
     }
 }
 
+void FileManager::openCurrentPdf()
+{
+    if(!this->currentWidgetFile())
+    {
+        return;
+    }
+    QFileInfo pdfFile(this->currentWidgetFile()->file()->getPdfFilename());
+    if(!pdfFile.exists())
+    {
+        return;
+    }
+    QDesktopServices::openUrl(QUrl("file://"+pdfFile.absoluteFilePath()));
+}
+
 File * FileManager::file(int index)
 {
     return _widgetFiles.at(index)->file();

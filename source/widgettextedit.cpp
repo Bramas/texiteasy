@@ -1276,7 +1276,7 @@ QString WidgetTextEdit::wordOnLeft()
     }
 
     BlockData *data = static_cast<BlockData *>(cursor.block().userData() );
-    if(data && data->characterData[cursor.positionInBlock() - 1].state == SyntaxHighlighter::Command)
+    if(data && cursor.positionInBlock() > 0 && data->characterData[cursor.positionInBlock() - 1].state == SyntaxHighlighter::Command)
     {
         return "";
     }

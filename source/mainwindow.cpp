@@ -147,6 +147,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->ui->actionClean,SIGNAL(triggered()), &FileManager::Instance,SLOT(clean()));
     connect(this->ui->actionView, SIGNAL(triggered()), &FileManager::Instance,SLOT(jumpToPdfFromSource()));
     connect(this->ui->actionSplitEditor, SIGNAL(toggled(bool)), &FileManager::Instance,SLOT(splitEditor(bool)));
+    connect(this->ui->actionOpenPdf, SIGNAL(triggered()), &FileManager::Instance,SLOT(openCurrentPdf()));
 
 
     connect(&FileManager::Instance, SIGNAL(filenameChanged(QString)), this, SLOT(onFilenameChanged(QString)));

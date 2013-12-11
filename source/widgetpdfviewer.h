@@ -27,6 +27,7 @@
 namespace Ui {
 class WidgetPdfViewer;
 }
+class QVBoxLayout;
 
 class WidgetPdfDocument;
 
@@ -47,6 +48,7 @@ private:
     Ui::WidgetPdfViewer *ui;
 
     WidgetPdfDocument *_widgetPdfDocument;
+    QVBoxLayout * _verticalLayout;
 };
 
 #endif // WIDGETPDFVIEWER_H

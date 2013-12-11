@@ -99,6 +99,7 @@ public slots:
     void ensurePdfViewerIsVisible();
 
     void setCurrentPdfToPdfViewer();
+    void openCurrentPdf();
 
 
 private slots:

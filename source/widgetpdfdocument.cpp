@@ -61,6 +61,7 @@ WidgetPdfDocument::WidgetPdfDocument(QWidget *parent) :
     _zoom(1)
 
 {
+    this->setContentsMargins(0,0,0,0);
     this->setMouseTracking(true);
     this->setCursor(Qt::OpenHandCursor);
     connect(&this->_timer, SIGNAL(timeout()),this, SLOT(update()));

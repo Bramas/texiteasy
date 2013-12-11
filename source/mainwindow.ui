@@ -133,12 +133,19 @@
     <addaction name="actionPdfViewerInItsOwnWidget"/>
     <addaction name="actionSplitEditor"/>
    </widget>
+   <widget class="QMenu" name="menuPdf">
+    <property name="title">
+     <string>Pdf</string>
+    </property>
+    <addaction name="actionOpenPdf"/>
+   </widget>
    <addaction name="menuFichier"/>
    <addaction name="menuEdition"/>
    <addaction name="menuBuild"/>
    <addaction name="menuOptions"/>
    <addaction name="menuAide"/>
    <addaction name="menuView"/>
+   <addaction name="menuPdf"/>
   </widget>
   <action name="actionOpen">
    <property name="text">
@@ -346,6 +353,11 @@
    </property>
    <property name="text">
     <string>Split the editor</string>
+   </property>
+  </action>
+  <action name="actionOpenPdf">
+   <property name="text">
+    <string>Open</string>
    </property>
   </action>
  </widget>
