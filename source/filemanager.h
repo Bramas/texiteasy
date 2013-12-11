@@ -44,7 +44,7 @@ public:
     WidgetFile * widgetFile(int index) { return _widgetFiles.at(index); }
     void setMainWindow(MainWindow * m) { _mainWindow = m; }
     MainWindow * mainWindow() { return _mainWindow; }
-    void handleMimeData(const QMimeData * mimeData);
+    bool handleMimeData(const QMimeData * mimeData);
     WidgetPdfViewerWrapper * widgetPdfViewerWrapper() { return _widgetPdfViewerWrapper; }
 
     void onMacroTriggered(Macro macro);
