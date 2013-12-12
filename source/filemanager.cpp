@@ -263,7 +263,7 @@ void FileManager::openCurrentPdf()
     {
         return;
     }
-    QDesktopServices::openUrl(QUrl("file://"+pdfFile.absoluteFilePath()));
+    QDesktopServices::openUrl(QUrl("file:///"+pdfFile.absoluteFilePath()));
 }
 
 File * FileManager::file(int index)
