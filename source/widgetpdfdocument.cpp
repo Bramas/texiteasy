@@ -28,6 +28,7 @@
 #include <QRectF>
 #include <QColor>
 #include <QtCore>
+#include "configmanager.h"
 #include "file.h"
 
 #ifdef OS_MAC
@@ -72,7 +73,6 @@ WidgetPdfDocument::WidgetPdfDocument(QWidget *parent) :
     connect(_scroll, SIGNAL(valueChanged(int)), this, SLOT(onScroll(int)));
     connect(this, SIGNAL(translated(int)), _scroll, SLOT(setValue(int)));
     connect(&_requestNewResolutionTimer, SIGNAL(timeout()), this, SLOT(refreshPages()));
-
 }
 WidgetPdfDocument::~WidgetPdfDocument()
 {
@@ -351,7 +351,8 @@ QImage * WidgetPdfDocument::page(int page)
         return _pages[page];
     }
     _loadedPages[page] = true;
-    return  _pages[page] = new QImage(this->_document->page(page)->renderToImage(this->_zoom*72.0,this->_zoom*72.0));
+    qreal ratio = ConfigManager::Instance.devicePixelRatio()*72.0;
+    return  _pages[page] = new QImage(this->_document->page(page)->renderToImage(this->_zoom*ratio,this->_zoom*ratio));
 
 }
 void WidgetPdfDocument::goToPage(int page, int top, int height)

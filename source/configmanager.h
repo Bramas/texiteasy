@@ -54,6 +54,9 @@ public:
 
     ~ConfigManager();
 
+    void setDevicePixelRatio(qreal ratio) { _devicePixelRatio = ratio; }
+    qreal devicePixelRatio() { return _devicePixelRatio; }
+
     static const QStringList DefaultLatexCommandNames;
     static const QStringList DefaultLatexCommands;
 
@@ -227,6 +230,7 @@ private:
     void replaceDefaultFont();
     ConfigManager();
 
+    qreal _devicePixelRatio;
     QApplication * _application;
     QMutex _charFormatMutex;
     QWidget * mainWindow;

@@ -65,6 +65,7 @@ int main(int argc, char *argv[])
     qDebug()<<QString("Start ")+APPLICATION_NAME+QString(" version ")+CURRENT_VERSION;
     FileManager::Instance.init();
     ConfigManager::Instance.init();
+    ConfigManager::Instance.setDevicePixelRatio(a.devicePixelRatio());
     MacroEngine::Instance.init();
     MainWindow w;
     w.show();
