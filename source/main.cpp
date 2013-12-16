@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
 
     if(argc > 1)
     {
-        QString filename = argv[1];
+        QString filename = QString::fromLocal8Bit(argv[1]);
         w.open(filename);
     }
     return a.exec();
