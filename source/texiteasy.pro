@@ -17,6 +17,7 @@ VERSION_HEX = 0x000804
 
 
 #DEFINES += LIB_DEPLOY
+#DEFINES += PORTABLE_EXECUTABLE
 
 DEFINES += "CURRENT_VERSION_HEX=$${VERSION_HEX}"
 DEFINES += "CURRENT_VERSION=$${VERSION}"
@@ -185,6 +186,9 @@ win32 {
     DEFINES += OS_WINDOWS
     LAST_VERSION_URL = \\\"'http://texiteasy.com/posts/latest_version/win'\\\"
     TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com/posts/download_latest/win'\\\"
+
+    #LAST_VERSION_URL = \\\"'http://texiteasy.com/posts/latest_version/win_portable'\\\"
+    #TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com/posts/download_latest/win_portable'\\\"
 
 }
 unix:!mac{

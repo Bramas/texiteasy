@@ -54,6 +54,8 @@ public:
 
     ~ConfigManager();
 
+    QString settingsPath() const { return _settingsPath; }
+
     void setDevicePixelRatio(qreal ratio) { _devicePixelRatio = ratio; }
     qreal devicePixelRatio() { return _devicePixelRatio; }
 
@@ -176,6 +178,7 @@ public:
     QString bibtexCommand(bool fullPath = false) { QSettings settings; return (fullPath ? settings.value("builder/latexPath").toString() : QString(""))+settings.value("builder/bibtex").toString(); }
     QString pdflatexCommand(bool fullPath = false) { QSettings settings; return (fullPath ? settings.value("builder/latexPath").toString() : QString(""))+settings.value("builder/pdflatex").toString(); }
     QString latexPath() { QSettings settings; return settings.value("builder/latexPath").toString(); }
+    QString applicationPath() { return _applicationPath; }
 
     QString commandDatabaseFilename() { QSettings settings; return settings.value("commandDatabaseFilename").toString(); }
 
@@ -201,7 +204,9 @@ public:
     static QString Extensions;
     static QString MacroSuffix;
 
-    void init();
+    QString dataLocation();
+
+    void init(QString in_applicationPath);
 public slots:
     /**
      * @brief signalVersionIsOutdated
@@ -237,6 +242,8 @@ private:
     QMap<QString,QTextCharFormat> * textCharFormats;
     QString _theme;
     QString _pdflatexExe;
+    QString _settingsPath;
+    QString _applicationPath;
 };
 
 

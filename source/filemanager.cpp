@@ -20,10 +20,10 @@ FileManager::FileManager(QObject *parent) :
     _mainWindow(0),
     _widgetPdfViewerWrapper(0)
 {
-    _pdfSynchronized = ConfigManager::Instance.isPdfSynchronized();
 }
 void FileManager::init()
 {
+    _pdfSynchronized = ConfigManager::Instance.isPdfSynchronized();
     if(ConfigManager::Instance.pdfViewerInItsOwnWidget())
     {
         //initWidgetPdfViewerWrapper();

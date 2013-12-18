@@ -59,7 +59,13 @@ void Builder::setFile(File *file)
 bool Builder::setupPathEnvironment()
 {
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+
+#if PORTABLE_EXECUTABLE
+    QDir dir(ConfigManager::Instance.applicationPath()+"/"+ConfigManager::Instance.latexPath());
+    QString extraPath = dir.absolutePath();
+#else
     QString extraPath = ConfigManager::Instance.latexPath();
+#endif
 #ifdef OS_MAC
     if (extraPath.isEmpty())
     {
@@ -71,7 +77,7 @@ bool Builder::setupPathEnvironment()
     }
     process->setProcessEnvironment(env);
 #endif
-#ifdef OS_WIN
+#ifdef OS_WINDOWS
     if (!extraPath.isEmpty())
     {
         env.insert("PATH", env.value("PATH") + ";"+extraPath);

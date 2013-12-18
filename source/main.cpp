@@ -63,9 +63,9 @@ int main(int argc, char *argv[])
     QFontDatabase::addApplicationFont(":/data/fonts/consolaz.ttf");
 
     qDebug()<<QString("Start ")+APPLICATION_NAME+QString(" version ")+CURRENT_VERSION;
-    FileManager::Instance.init();
-    ConfigManager::Instance.init();
+    ConfigManager::Instance.init(QFileInfo(QString::fromLocal8Bit(argv[0])).absolutePath());
     ConfigManager::Instance.setDevicePixelRatio(a.devicePixelRatio());
+    FileManager::Instance.init();
     MacroEngine::Instance.init();
     MainWindow w;
     w.show();

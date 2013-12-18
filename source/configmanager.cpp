@@ -75,15 +75,27 @@ ConfigManager::ConfigManager() :
     QSettings::setDefaultFormat(QSettings::IniFormat);
  }
 
-void ConfigManager::init()
+void ConfigManager::init(QString in_applicationPath)
 {
 
     qDebug()<<"Init ConfigManager";
+    _applicationPath = in_applicationPath;
+
+#ifdef PORTABLE_EXECUTABLE
+    _settingsPath = in_applicationPath+"/Settings";
+    QSettings::setPath(QSettings::IniFormat, QSettings::UserScope, _settingsPath);
+#endif
+
     checkRevision();
 
     QSettings settings;
 
-
+#ifdef PORTABLE_EXECUTABLE
+    if(!settings.contains("pdfSynchronized"))
+    {
+        settings.setValue("pdfSynchronized", false);
+    }
+#endif
     if(!settings.contains("defaultDictionary"))
     {
         if(dictionnaries().contains(QLocale::system().name()))
@@ -343,20 +355,10 @@ void ConfigManager::setPointSize(int size)
 void ConfigManager::save()
 {
     QDir dir;
-    QString dataLocation("");
-#if QT_VERSION < 0x050000
-    dataLocation = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
-#else
-    dataLocation = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
-#endif
-    if(dataLocation.isEmpty())
+    QString dataPath = dataLocation();
+    if(!dir.exists(dataPath))
     {
-            //QMessageBox::warning(this->mainWindow,QObject::tr("Attention"), QObject::tr("QStandardPaths::DataLocation est introuvable."));
-            return;
-    }
-    if(!dir.exists(dataLocation))
-    {
-        dir.mkpath(dataLocation);
+        dir.mkpath(dataPath);
     }
     QSettings settings;
     settings.beginGroup("theme");
@@ -378,17 +380,7 @@ void ConfigManager::save()
 bool ConfigManager::load(QString theme)
 {
     QDir dir;
-    QString dataLocation("");
-#if QT_VERSION < 0x050000
-    dataLocation = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
-#else
-    dataLocation = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
-#endif
-    if(dataLocation.isEmpty())
-    {
-            //QMessageBox::warning(this->mainWindow,QObject::tr("Attention"), QObject::tr("QStandardPaths::DataLocation est introuvable."));
-            return false;
-    }
+    QString dataPath = dataLocation();
     if(theme.isEmpty())
     {
         QSettings settings;
@@ -488,29 +480,34 @@ QString ConfigManager::dictionaryPath()
 #ifdef OS_LINUX
     return "/usr/share/texiteasy/dictionaries/";
 #else
-    return "data/dictionaries/";
+    return applicationPath()+"/data/dictionaries/";
 #endif
 #endif
 }
+
+QString ConfigManager::dataLocation()
+{
+
+#ifdef PORTABLE_EXECUTABLE
+    return _settingsPath;
+#else
+    QString location("");
+    #if QT_VERSION < 0x050000
+        location = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
+    #else
+        location = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
+    #endif
+    return location;
+#endif
+}
+
 QString ConfigManager::macrosPath()
 {
-       QString dataLocation("");
-   #if QT_VERSION < 0x050000
-       dataLocation = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
-   #else
-       dataLocation = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
-   #endif
-       return dataLocation+"/macros/";
+       return dataLocation()+"/macros/";
 }
 QString ConfigManager::themePath()
 {
-       QString dataLocation("");
-   #if QT_VERSION < 0x050000
-       dataLocation = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
-   #else
-       dataLocation = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
-   #endif
-       return dataLocation+"/themes/";
+       return dataLocation()+"/themes/";
 }
 
 
@@ -583,15 +580,12 @@ void ConfigManager::checkRevision()
 
     int fromVersion = settings.value("version_hex",0x000000).toInt();
 
-    QString dataLocation("");
     QString documentLocation("");
     QString programLocation("");
 #if QT_VERSION < 0x050000
-    dataLocation = QDesktopServices::storageLocation(QDesktopServices::DataLocation);
     documentLocation = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
     programLocation = QDesktopServices::storageLocation(QDesktopServices::ApplicationsLocation);
 #else
-    dataLocation = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
     documentLocation = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
     programLocation = QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation);
 #endif
@@ -600,18 +594,20 @@ void ConfigManager::checkRevision()
         case 0:
         {
                 qDebug()<<"First launch of TexitEasy";
-            if(dataLocation.isEmpty())
-            {
-                return;
-            }
             if(settings.contains("lastFolder"))
             {
                 settings.setValue("lastFolder",documentLocation);
             }
-            QDir().mkpath(dataLocation);
+            QDir().mkpath(dataLocation());
 
             QString pdflatexCommand = "pdflatex";
     #ifdef OS_WINDOWS
+#ifdef PORTABLE_EXECUTABLE
+            QDir dir(_applicationPath);
+            dir.cdUp();
+            dir.mkdir("MikTex");
+            settings.setValue("builder/latexPath", "../MikTex/miktex/bin");
+#else
             pdflatexCommand = "pdflatex.exe";
             {
                 QDir dir(programLocation);
@@ -630,7 +626,8 @@ void ConfigManager::checkRevision()
 
                 }
             }
-    #endif
+#endif
+#endif
             if(-2 == QProcess::execute(settings.value("latexPath").toString()+pdflatexCommand+" --version"))
             {
                 qDebug()<<"latex not found ask for a the path";
@@ -644,8 +641,8 @@ void ConfigManager::checkRevision()
             {
                 QDir dir;
                 QFile commandsSqllite(":/data/commands.sqlite");
-                commandsSqllite.copy(dataLocation+dir.separator()+"commands.sqlite");
-                QFile::setPermissions(dataLocation+dir.separator()+"commands.sqlite",
+                commandsSqllite.copy(dataLocation()+dir.separator()+"commands.sqlite");
+                QFile::setPermissions(dataLocation()+dir.separator()+"commands.sqlite",
                                   QFile::ReadOwner |
                                   QFile::WriteOwner |
                                   QFile::ReadGroup |
@@ -655,7 +652,7 @@ void ConfigManager::checkRevision()
                                   QFile::ReadUser |
                                   QFile::WriteUser
                                   );
-                settings.setValue("commandDatabaseFilename",dataLocation+dir.separator()+"commands.sqlite");
+                settings.setValue("commandDatabaseFilename",dataLocation()+dir.separator()+"commands.sqlite");
             }
 
             qDebug()<<"texiteasy =>0.6.0";
@@ -665,8 +662,8 @@ void ConfigManager::checkRevision()
 
                 //remove some old files
                 {
-                    QFile localtheme(dataLocation+dir.separator()+"dark.sim-theme");
-                    QFile localtheme2(dataLocation+dir.separator()+"light.sim-theme");
+                    QFile localtheme(dataLocation()+dir.separator()+"dark.sim-theme");
+                    QFile localtheme2(dataLocation()+dir.separator()+"light.sim-theme");
                     localtheme.remove();
                     localtheme2.remove();
                 }
