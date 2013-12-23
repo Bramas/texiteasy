@@ -5,6 +5,7 @@
 #include <QString>
 #include <QMessageBox>
 #include <QTimer>
+#include <QProcess>
 #include "configmanager.h"
 UpdateChecker::UpdateChecker()
 {
@@ -49,14 +50,29 @@ void UpdateChecker::onFinished(QNetworkReply *reply)
     QTimer::singleShot(1000,&ConfigManager::Instance, SLOT(signalVersionIsOutdated()));
     if(ConfigManager::Instance.isThisVersionHaveToBeReminded(version))
     {
-        if( 1 == QMessageBox::information(0, trUtf8("Nouvelle version"), trUtf8("Un nouvelle version est disponnible, vous pouvez la télécharger depuis le site officiel")+
-                                 " "+QString("<a href='")+TEXITEASY_UPDATE_WEBSITE+QString("'>texiteasy.com</a><br><br>")+
-                                 trUtf8("Votre version: ")+CURRENT_VERSION+QString("<br>")+trUtf8("Nouvelle version:")+version,
-                                 trUtf8("La prochaine fois"),trUtf8("Ne plus me prevenir de cette mise à jour")
-                                 ))
+#ifdef OS_LINUX
+        int rep = QMessageBox::information(0, trUtf8("Nouvelle version"), trUtf8("Un nouvelle version est disponnible, vous pouvez la télécharger depuis le site officiel")+
+                                           " "+QString("<a href='")+TEXITEASY_UPDATE_WEBSITE+QString("'>texiteasy.com</a><br><br>")+
+                                           trUtf8("Votre version: ")+CURRENT_VERSION+QString("<br>")+trUtf8("Nouvelle version:")+version,
+                                                    trUtf8("La prochaine fois"),trUtf8("Ne plus me prevenir de cette mise à jour")
+                                           );
+#else
+        int rep = QMessageBox::information(0, trUtf8("Nouvelle version"), trUtf8("Un nouvelle version est disponnible.")+"<br><br>"+
+                                           trUtf8("Votre version: ")+CURRENT_VERSION+QString("<br>")+trUtf8("Nouvelle version:")+version,
+                                                    trUtf8("La prochaine fois"),trUtf8("Ne plus me prevenir de cette mise à jour"), trUtf8("Mettre à jour")
+                                           );
+#endif
+        if(1 == rep)
         {
             //if this answer is "dont remind me"
             ConfigManager::Instance.dontRemindMeThisVersion(version);
+        }
+        else
+        if(2 == rep)
+        {
+            qDebug()<<ConfigManager::Instance.applicationPath()+"/texiteasy_updat.exe";
+            QProcess * p = new QProcess;
+            p->start(ConfigManager::Instance.applicationPath()+"/texiteasy_updat.exe");
         }
     }
 }

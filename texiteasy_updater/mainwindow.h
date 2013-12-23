@@ -6,23 +6,23 @@
 namespace Ui {
 class MainWindow;
 }
-class Tester;
-class TextEditor;
+class Download;
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-    
+
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
 public slots:
-    void onTextChanged();
-    
+    void onDownloaded();
+    void onFinished(int);
+
 private:
-    TextEditor * _textEditor;
-    Tester * _tester;
     Ui::MainWindow *ui;
+     Download * dl;
 };
 
 #endif // MAINWINDOW_H
