@@ -43,11 +43,13 @@ public slots:
     void collapsed(void);
     void onError(void);
     void onSuccess(void);
+    void setOutput(QString newText);
 
 protected:
     //void paintEvent(QPaintEvent *);
     void mouseMoveEvent(QMouseEvent * event);
     void mousePressEvent(QMouseEvent * event);
+
 
 private:
     bool _collapsed;

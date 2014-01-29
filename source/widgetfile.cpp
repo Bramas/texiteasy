@@ -424,14 +424,20 @@ QString WidgetFile::spellCheckerEncoding()
 void WidgetFile::setDictionary(QString dico)
 {
     _dictionary = dico;
-    _spellChecker = new Hunspell((ConfigManager::Instance.dictionaryPath() + _dictionary).toLatin1()+".aff",
-                                 (ConfigManager::Instance.dictionaryPath() + _dictionary).toLatin1()+".dic");
-    QTextCodec *codec = QTextCodec::codecForName(spellCheckerEncoding().toLatin1());
-    foreach(const QString & word, ConfigManager::Instance.userDictionnary(_dictionary))
+    if(dico == ConfigManager::NoDictionnary)
     {
-        _spellChecker->add(codec->fromUnicode(word).data());
+        _spellChecker = 0;
     }
-
+    else
+    {
+        _spellChecker = new Hunspell((ConfigManager::Instance.dictionaryPath() + _dictionary).toLatin1()+".aff",
+                                     (ConfigManager::Instance.dictionaryPath() + _dictionary).toLatin1()+".dic");
+        QTextCodec *codec = QTextCodec::codecForName(spellCheckerEncoding().toLatin1());
+        foreach(const QString & word, ConfigManager::Instance.userDictionnary(_dictionary))
+        {
+            _spellChecker->add(codec->fromUnicode(word).data());
+        }
+    }
     syntaxHighlighter()->rehighlight();
     widgetTextEdit()->onCursorPositionChange();
 }

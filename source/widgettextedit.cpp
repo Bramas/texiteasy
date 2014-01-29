@@ -246,63 +246,66 @@ void WidgetTextEdit::contextMenuEvent(QContextMenuEvent *event)
     BlockData *data = static_cast<BlockData *>(cursor.block().userData() );
     QTextCodec *codec = QTextCodec::codecForName(widgetFile()->spellCheckerEncoding().toLatin1());
 
-
-    int blockPos = cursor.block().position();
-    int colstart, colend;
-    colend = colstart = cursor.positionInBlock();
-    if (data && colstart < data->length() && data->characterData[colstart].misspelled==true)
+    if(widgetFile()->spellChecker())
     {
-        while (colstart >= 0 && (data->characterData[colstart].misspelled==true))
+        int blockPos = cursor.block().position();
+        int colstart, colend;
+        colend = colstart = cursor.positionInBlock();
+        if (data && colstart < data->length() && data->characterData[colstart].misspelled==true)
         {
-            --colstart;
-        }
-        ++colstart;
-        while (colend < data->length() && (data->characterData[colend].misspelled==true))
-        {
-            colend++;
-        }
-        cursor.setPosition(blockPos+colstart,QTextCursor::MoveAnchor);
-        cursor.setPosition(blockPos+colend,QTextCursor::KeepAnchor);
-        QString    word          = cursor.selectedText();
-        QByteArray encodedString = codec->fromUnicode(word);
-        bool check = widgetFile()->spellChecker()->spell(encodedString.data());
-        if (!check)
-        {
-            char ** wlst;
-            int ns = widgetFile()->spellChecker()->suggest(&wlst, encodedString.data());
-            if (ns > 0)
+            while (colstart >= 0 && (data->characterData[colstart].misspelled==true))
             {
-                QStringList suggWords;
-                for (int i=0; i < ns; i++)
+                --colstart;
+            }
+            ++colstart;
+            while (colend < data->length() && (data->characterData[colend].misspelled==true))
+            {
+                colend++;
+            }
+            cursor.setPosition(blockPos+colstart,QTextCursor::MoveAnchor);
+            cursor.setPosition(blockPos+colend,QTextCursor::KeepAnchor);
+            QString    word          = cursor.selectedText();
+            QByteArray encodedString = codec->fromUnicode(word);
+            bool check = widgetFile()->spellChecker()->spell(encodedString.data());
+            if (!check)
+            {
+                char ** wlst;
+                int ns = widgetFile()->spellChecker()->suggest(&wlst, encodedString.data());
+                if (ns > 0)
                 {
-                    suggWords.append(codec->toUnicode(wlst[i]));
-                }
-                widgetFile()->spellChecker()->free_list(&wlst, ns);
-                if(!suggWords.contains(word))
-                {
-                    this->setTextCursor(cursor);
-
-                    QAction * action;
-                    QFont spellmenufont (qApp->font());
-                    spellmenufont.setBold(true);
-                    foreach (const QString &suggestion, suggWords)
+                    QStringList suggWords;
+                    for (int i=0; i < ns; i++)
                     {
-                        action = new QAction(suggestion, menu);
-                        menu->insertAction(menu->actionAt(QPoint(0,0)), action);
-                        connect(action, SIGNAL(triggered()), this, SLOT(correctWord()));
-                        action->setFont(spellmenufont);
+                        suggWords.append(codec->toUnicode(wlst[i]));
                     }
-                    spellmenufont.setBold(false);
-                    spellmenufont.setItalic(true);
-                    action = new QAction(trUtf8("Ajouter au dictionnaire"), menu);
-                    menu->insertAction(menu->actionAt(QPoint(0,0)), action);
-                    connect(action, SIGNAL(triggered()), this, SLOT(addToDictionnary()));
-                    menu->addSeparator();
-                }
+                    widgetFile()->spellChecker()->free_list(&wlst, ns);
+                    if(!suggWords.contains(word))
+                    {
+                        this->setTextCursor(cursor);
 
-             }
-        }
-    }
+                        QAction * action;
+                        QFont spellmenufont (qApp->font());
+                        spellmenufont.setBold(true);
+                        foreach (const QString &suggestion, suggWords)
+                        {
+                            action = new QAction(suggestion, menu);
+                            menu->insertAction(menu->actionAt(QPoint(0,0)), action);
+                            connect(action, SIGNAL(triggered()), this, SLOT(correctWord()));
+                            action->setFont(spellmenufont);
+                        }
+                        spellmenufont.setBold(false);
+                        spellmenufont.setItalic(true);
+                        action = new QAction(trUtf8("Ajouter au dictionnaire"), menu);
+                        menu->insertAction(menu->actionAt(QPoint(0,0)), action);
+                        connect(action, SIGNAL(triggered()), this, SLOT(addToDictionnary()));
+                        menu->addSeparator();
+                    }
+
+                 }
+            }
+        }// if the current file is misspelled
+    }// if there is a dictionnary
+
     menu->addActions(defaultMenu->actions());
     menu->addSeparator();
     MacroEngine::Instance.createMacrosMenu(menu);

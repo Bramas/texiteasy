@@ -26,7 +26,9 @@
 #include <QDebug>
 #include <QSizePolicy>
 #include <QTextBlock>
+#include <QScrollBar>
 #include "builder.h"
+#include "filemanager.h"
 
 WidgetConsole::WidgetConsole() :
     QPlainTextEdit(0),
@@ -62,7 +64,7 @@ void WidgetConsole::paintEvent(QPaintEvent *)
 void WidgetConsole::setBuilder(Builder *builder)
 {
     this->_builder = builder;
-    if(!this->_builder)
+    if(!this->_builder || !FileManager::Instance.currentWidgetFile())
     {
         return;
     }
@@ -70,7 +72,9 @@ void WidgetConsole::setBuilder(Builder *builder)
     connect(_builder, SIGNAL(error()),this, SLOT(onError()));
     connect(_builder, SIGNAL(success()),this, SLOT(onSuccess()));
     connect(_builder, SIGNAL(started()), this, SLOT(clear()));
-    connect(_builder, SIGNAL(outputUpdated(QString)), this, SLOT(setPlainText(QString)));
+    connect(_builder, SIGNAL(started()), FileManager::Instance.currentWidgetFile(), SLOT(openConsole()));
+    connect(_builder, SIGNAL(success()), FileManager::Instance.currentWidgetFile(), SLOT(closeConsole()));
+    connect(_builder, SIGNAL(outputUpdated(QString)), this, SLOT(setOutput(QString)));
 }
 
 void WidgetConsole::mouseMoveEvent(QMouseEvent * event)
@@ -131,4 +135,20 @@ void WidgetConsole::onSuccess()
 {
     //this->setPlainText(this->_builder->simpleOutput().join("\n"));
     this->collapsed();
+}
+
+void WidgetConsole::setOutput(QString newText)
+{
+    bool atEnd = false;
+    if(this->verticalScrollBar()->value() == this->verticalScrollBar()->maximum())
+    {
+        atEnd = true;
+    }
+    this->setPlainText(newText);
+    if(atEnd)
+    {
+        //qDebug()<<this->verticalScrollBar()->maximum();
+        this->verticalScrollBar()->setValue(this->verticalScrollBar()->maximum());
+        //this->scroll();
+    }
 }

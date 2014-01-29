@@ -132,7 +132,17 @@ public:
     QStringList     dictionnaries();
     void            setDictionary(QString dico )    { QSettings settings; settings.setValue("defaultDictionary", dico); }
     QString         currentDictionaryFilename()     { return dictionaryPath()+currentDictionary(); }
-    QString         currentDictionary()             { QSettings settings; return settings.value("defaultDictionary").toString(); }
+    QString         currentDictionary()
+    {
+        QSettings settings;
+        QString dico = settings.value("defaultDictionary").toString();
+        if(dictionnaries().contains(dico))
+        {
+            return dico;
+        }
+        return NoDictionnary;
+    }
+    static QString NoDictionnary;
     /**
      * @brief dictionnaryPath end with a separator character
      * @return

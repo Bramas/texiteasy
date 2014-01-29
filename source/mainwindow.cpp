@@ -510,6 +510,11 @@ void MainWindow::open(QString filename, int cursorPosition)
     {
         return;
     }
+    //check the filename
+    if(!QFileInfo(filename).exists())
+    {
+        return;
+    }
     this->addFilenameToLastOpened(filename);
 
     //check if it is already open

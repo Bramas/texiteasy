@@ -52,6 +52,7 @@
 #define DEBUG_THEME_PARSER(a)
 
 ConfigManager ConfigManager::Instance;
+QString ConfigManager::NoDictionnary = trUtf8("No Dictionnary");
 
 QString ConfigManager::Extensions = trUtf8("Latex (*.tex *.latex);;BibTex(*.bib)");
 
@@ -74,7 +75,6 @@ ConfigManager::ConfigManager() :
     QCoreApplication::setApplicationName("TexitEasy");
     QSettings::setDefaultFormat(QSettings::IniFormat);
  }
-
 void ConfigManager::init(QString in_applicationPath)
 {
 
@@ -473,9 +473,12 @@ QStringList ConfigManager::themesList()
 }
 QString ConfigManager::dictionaryPath()
 {
-
 #ifdef OS_MAC
-    return QApplication::applicationDirPath()+"/../Resources/dictionaries/";
+    #ifdef LIB_DEPLOY
+        return QApplication::applicationDirPath()+"/../Resources/dictionaries/";
+    #else
+        return QApplication::applicationDirPath()+"/../../../../Resources/dictionaries/";
+    #endif
 #else
 #ifdef OS_LINUX
     return "/usr/share/texiteasy/dictionaries/";
@@ -483,6 +486,7 @@ QString ConfigManager::dictionaryPath()
     return applicationPath()+"/data/dictionaries/";
 #endif
 #endif
+
 }
 
 QString ConfigManager::dataLocation()
@@ -516,6 +520,7 @@ QStringList ConfigManager::dictionnaries()
     QDir dir(dictionaryPath());
     QStringList list = dir.entryList(QDir::Files | QDir::Readable, QDir::Name).filter(QRegExp("\\.dic"));
     list.replaceInStrings(QRegExp("\\.dic$"), "");
+    list << NoDictionnary;
     return list;
 }
 
