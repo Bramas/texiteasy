@@ -61,9 +61,10 @@ const QStringList ConfigManager::DefaultLatexCommands =
         QString("pdflatex -synctex=1 -shell-escape -interaction=nonstopmode -enable-write18 %1\n"
         "xelatex -synctex=1 -interaction=nonstopmode %1\n"
         "latexmk -e \"$pdflatex=q/pdflatex -synctex=1 -interaction=nonstopmode/\" -pdf %1\n"
-                "latex -interaction=nonstopmode %1 ; dvipdfm %1.dvi").split('\n');
+                "latex -interaction=nonstopmode %1 ; dvipdfm %1.dvi\n"
+                "latex -interaction=nonstopmode %1 ; dvips %1.dvi ; ps2pdf %1.ps").split('\n');
 const QStringList ConfigManager::DefaultLatexCommandNames =
-        QString("PdfLatex\nXeLatex\nLatexmk\nLatex + dvipdfm").split('\n');
+        QString("PdfLatex\nXeLatex\nLatexmk\nLatex + dvipdfm\nLatex + dvips + ps2pdf").split('\n');
 
 ConfigManager::ConfigManager() :
     mainWindow(0),
@@ -531,6 +532,20 @@ QStringList ConfigManager::languagesList()
     return dir.entryList(QDir::Files | QDir::Readable, QDir::Name).replaceInStrings(QRegExp("^texiteasy_([a-zA-Z0-9]+)\\.qm$"), "\\1");
 }
 
+QString ConfigManager::latexCommand(QString name)
+{
+    if(name.isEmpty())
+    {
+        name = defaultLatex();
+    }
+    int i = latexCommandNames().indexOf(name);
+    QStringList list = latexCommands();
+    if(i >= 0 && i < list.count())
+    {
+        return list.at(i);
+    }
+    return QString::null;
+}
 
 void ConfigManager::applyTranslation()
 {
@@ -783,6 +798,21 @@ void ConfigManager::checkRevision()
     case 0x000802:
     case 0x000803:
     case 0x000804:
+
+        qDebug()<<"texiteasy 0.8.x => 0.9.0";
+        // append Latex + dvips + ps2pdf to default typesetting
+        if(settings.contains("builder/latexCommandNames"))
+        {
+            QStringList latexCommandNames = settings.value("builder/latexCommandNames").toStringList();
+            latexCommandNames << "Latex + dvips + ps2pdf";
+            settings.setValue("builder/latexCommandNames", latexCommandNames);
+
+            QStringList latexCommands = settings.value("builder/latexCommands").toStringList();
+            latexCommands << "latex -interaction=nonstopmode %1 ; dvips %1.dvi ; ps2pdf %1.ps";
+            settings.setValue("builder/latexCommands", latexCommands);
+        }
+
+    case 0x000900:
 
         break;
     }

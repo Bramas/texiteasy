@@ -12,6 +12,8 @@ TARGET = texiteasy_updat
 TEMPLATE = app
 
 
+DEFINES += LIB_DEPLOY
+
 SOURCES += main.cpp\
         mainwindow.cpp \
     download.cpp

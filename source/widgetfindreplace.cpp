@@ -1,8 +1,10 @@
 #include "widgetfindreplace.h"
 #include "ui_widgetfindreplace.h"
 #include "widgettextedit.h"
+#include "configmanager.h"
 #include <QDebug>
 #include <QString>
+#include <QLine>
 
 WidgetFindReplace::WidgetFindReplace(WidgetTextEdit *parent) :
     QWidget(parent),
@@ -11,9 +13,16 @@ WidgetFindReplace::WidgetFindReplace(WidgetTextEdit *parent) :
 {
     ui->setupUi(this);
 
+    QWidget * line = ui->line;
+    ui->verticalLayout->removeWidget(line);
+
+    line->setParent(this);
+    line->setGeometry(0,0,width(), 1);
+
     //this->setLayout(this->ui->horizontalLayout);
 
     connect(ui->pushButtonFind, SIGNAL(clicked()), this, SLOT(find()));
+    connect(ui->pushButtonFindPrev, SIGNAL(clicked()), this, SLOT(findBackward()));
     connect(ui->pushButtonReplace, SIGNAL(clicked()), this, SLOT(replace()));
     connect(ui->pushButtonReplaceAndFind, SIGNAL(clicked()), this, SLOT(replaceAndFind()));
     connect(ui->pushButtonReplaceAll, SIGNAL(clicked()), this, SLOT(replaceAll()));
@@ -25,6 +34,43 @@ WidgetFindReplace::WidgetFindReplace(WidgetTextEdit *parent) :
 WidgetFindReplace::~WidgetFindReplace()
 {
     delete ui;
+}
+
+void WidgetFindReplace::initTheme()
+{
+    this->setStyleSheet("background: "+
+                        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("line-number").background().color())+
+                        "; color:"+
+                        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
+                        "; border: 1px solid "+
+                        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("line-number").foreground().color())+
+                        ";");
+
+    this->ui->lineEditFind->setStyleSheet("border: 1px solid "+
+                                          ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("line-number").foreground().color())+
+                                          ";");
+    this->ui->pushButtonFindPrev->setStyleSheet("border: 1px solid "+
+                                          ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("line-number").foreground().color())+
+                                          ";");
+    this->ui->lineEditReplace->setStyleSheet("border: 1px solid "+
+                                          ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("line-number").foreground().color())+
+                                          ";");
+    this->ui->groupBox->setStyleSheet("border: 0px;");
+    this->ui->pushButtonFind->setStyleSheet("border: 1px solid "+
+                                            ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("line-number").foreground().color())+
+                                            ";");
+    this->ui->pushButtonClose->setStyleSheet("border: 1px solid "+
+                                            ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("line-number").foreground().color())+
+                                            ";");
+    this->ui->pushButtonReplace->setStyleSheet("border: 1px solid "+
+                                            ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("line-number").foreground().color())+
+                                            ";");
+    this->ui->pushButtonReplaceAll->setStyleSheet("border: 1px solid "+
+                                            ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("line-number").foreground().color())+
+                                            ";");
+    this->ui->pushButtonReplaceAndFind->setStyleSheet("border: 1px solid "+
+                                            ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("line-number").foreground().color())+
+                                            ";");
 }
 
 QPushButton * WidgetFindReplace::pushButtonClose()
@@ -45,17 +91,32 @@ void WidgetFindReplace::open()
         this->ui->lineEditFind->setText("");
     }
 }
-
-bool WidgetFindReplace::find(int from, bool canStartOver)
+bool WidgetFindReplace::findBackward(int from, bool canStartOver)
 {
-    QTextDocument::FindFlag options = QTextDocument::FindFlag(0x00000);
+    find(from, canStartOver, true);
+}
+
+bool WidgetFindReplace::find(int from, bool canStartOver, bool backward)
+{
+    QTextDocument::FindFlags options = QTextDocument::FindFlag(0x00000);
     if(this->ui->checkBoxCasse->isChecked())
     {
-        options = QTextDocument::FindCaseSensitively;
+        options = options | QTextDocument::FindCaseSensitively;
+    }
+    if(backward)
+    {
+        options = options | QTextDocument::FindBackward;
     }
     if(from == -1)
     {
-        from = _widgetTextEdit->textCursor().position();
+        if(backward)
+        {
+            from = _widgetTextEdit->textCursor().selectionStart();
+        }
+        else
+        {
+            from = _widgetTextEdit->textCursor().selectionEnd();
+        }
     }
 
     QTextCursor findResult;
@@ -77,7 +138,14 @@ bool WidgetFindReplace::find(int from, bool canStartOver)
 
     if(canStartOver)
     {
-        return find(0, false);
+        if(backward)
+        {
+            return find(_widgetTextEdit->toPlainText().size(), false, backward);
+        }
+        else
+        {
+            return find(0, false);
+        }
     }
     return false;
 }

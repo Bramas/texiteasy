@@ -37,6 +37,13 @@
      <item>
       <widget class="QLineEdit" name="lineEditReplace"/>
      </item>
+     <item>
+      <widget class="Line" name="line">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
@@ -51,35 +58,35 @@
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>50</y>
+        <y>60</y>
         <width>91</width>
-        <height>31</height>
+        <height>21</height>
        </rect>
       </property>
       <property name="text">
        <string>Remplacer</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButtonFind">
+     <widget class="QPushButton" name="pushButtonFindPrev">
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>10</y>
-        <width>91</width>
-        <height>31</height>
+        <y>20</y>
+        <width>41</width>
+        <height>21</height>
        </rect>
       </property>
       <property name="text">
-       <string>Rechercher</string>
+       <string>&lt;</string>
       </property>
      </widget>
      <widget class="QPushButton" name="pushButtonReplaceAndFind">
       <property name="geometry">
        <rect>
         <x>100</x>
-        <y>50</y>
+        <y>60</y>
         <width>171</width>
-        <height>31</height>
+        <height>21</height>
        </rect>
       </property>
       <property name="text">
@@ -90,9 +97,9 @@
       <property name="geometry">
        <rect>
         <x>280</x>
-        <y>50</y>
+        <y>60</y>
         <width>111</width>
-        <height>31</height>
+        <height>21</height>
        </rect>
       </property>
       <property name="text">
@@ -102,7 +109,7 @@
      <widget class="QPushButton" name="pushButtonClose">
       <property name="geometry">
        <rect>
-        <x>380</x>
+        <x>370</x>
         <y>0</y>
         <width>21</width>
         <height>20</height>
@@ -116,7 +123,7 @@
       <property name="geometry">
        <rect>
         <x>100</x>
-        <y>20</y>
+        <y>30</y>
         <width>251</width>
         <height>21</height>
        </rect>
@@ -129,13 +136,26 @@
       <property name="geometry">
        <rect>
         <x>100</x>
-        <y>0</y>
+        <y>10</y>
         <width>151</width>
         <height>21</height>
        </rect>
       </property>
       <property name="text">
        <string>Sensible à la casse</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="pushButtonFind">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>20</y>
+        <width>41</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>&gt;</string>
       </property>
      </widget>
     </widget>

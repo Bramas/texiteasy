@@ -117,15 +117,9 @@ void Builder::builTex(QString command)
     {
         _hiddingProcess->setWorkingDirectory(this->file->getPath());
 #ifdef OS_WINDOWS
-        QString commandHide = QString("attrib -h \"%1.aux\"").arg(_basename);
-        _hiddingProcess->start(commandHide);
-        _hiddingProcess->waitForReadyRead();
-        commandHide = QString("attrib -h \"%1.log\"").arg(_basename);
-        _hiddingProcess->start(commandHide);
-        _hiddingProcess->waitForReadyRead();
-        commandHide = QString("attrib -h \"%1.synctex.gz\"").arg(_basename);
-        _hiddingProcess->start(commandHide);
-        _hiddingProcess->waitForFinished();
+        QDir().mkdir(this->file->getRootPath()+"/.texiteasy");
+        command.replace(QRegExp(";((pdf|xe){0,1}(la){0,1}tex(mk){0,1}) "),"\\1 -aux-directory=.texiteasy ");
+        command.replace(QRegExp("^((pdf|xe){0,1}(la){0,1}tex(mk){0,1}) "),"\\1 -aux-directory=.texiteasy ");
 #else
     #ifdef OS_MAC
 
@@ -232,10 +226,13 @@ void Builder::hideAuxFiles()
     _hiddingProcess->setWorkingDirectory(this->file->getRootPath());
     QString basename = this->file->rootBasename();
 #ifdef OS_WINDOWS
-    QString command = QString("attrib +h \"%1.aux\"").arg(basename);
+     QString command = QString("attrib +h \".texiteasy\"");
     _hiddingProcess->start(command);
     _hiddingProcess->waitForFinished();
     command = QString("attrib +h \"%1.log\"").arg(basename);
+    _hiddingProcess->start(command);
+    _hiddingProcess->waitForFinished();
+    command = QString("attrib +h \"%1.synctex.gz\"").arg(basename);
     _hiddingProcess->start(command);
     _hiddingProcess->waitForFinished();
     command = QString("attrib +h \"%1.synctex.gz\"").arg(basename);

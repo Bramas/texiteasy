@@ -152,6 +152,7 @@ void WidgetFile::initTheme()
     this->setAutoFillBackground(true);
     this->setPalette(Pal);
 
+    _widgetFindReplace->initTheme();
     _widgetTextEdit->initTheme();
     _widgetTextEdit2->initTheme();
     {

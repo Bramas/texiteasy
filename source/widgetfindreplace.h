@@ -19,9 +19,11 @@ public:
 
     QPushButton * pushButtonClose();
     void open();
+    void initTheme();
 
 public slots:
-    bool find(int from = -1, bool canStartOver = true);
+    bool find(int from = -1, bool canStartOver = true, bool backward = false);
+    bool findBackward(int from = -1, bool canStartOver = true);
     void replace();
     bool replaceAndFind();
     void replaceAll();

@@ -215,7 +215,7 @@ void WidgetPdfDocument::initDocument()
     {
         return;
     }
-    _document = Poppler::Document::load(_file->getPdfFilename());//PdfDocument::load(_file->getFilename());//new PdfDocument(_file->getFilename());
+    _document = Poppler::Document::load(_file->getPdfFilename());
 
     if(!_document || _document->isLocked())
     {
@@ -244,7 +244,7 @@ void WidgetPdfDocument::initDocument()
     this->initScroll();
 
     QFileInfo fileInfo(this->_file->rootFilename());
-    QString syncFile = fileInfo.canonicalPath() + "/" + fileInfo.baseName();
+    QString syncFile = fileInfo.absoluteDir().path() + "/" + fileInfo.baseName();
     if(QFile::exists(syncFile+".synctex.gz"))
     {
         if(scanner != NULL )
