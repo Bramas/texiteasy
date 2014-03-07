@@ -120,6 +120,9 @@ public:
     bool            openLastSessionAtStartup() { QSettings settings; return settings.value("openLastSessionAtStartup", true).toBool(); }
 
 
+    bool            isDollarAuto() {  QSettings settings; return settings.value("dollarAuto", true).toBool();  }
+    void            setDollarAuto(bool b) {  QSettings settings; settings.setValue("dollarAuto", b);  }
+
     QStringList     themesList();
     const QString&  theme() { return _theme; }
     QString         themePath();

@@ -120,11 +120,6 @@ DialogMacros::DialogMacros(QWidget *parent) :
     trUtf8("Figure");
     ui->tree->setModel(_model);
 
-    QHeaderView * h = ui->tree->header();
-    /*h->resizeSection(0,ui->tree->width()-75);
-    h->resizeSection(1, 74);
-    h->setStretchLastSection(true);
-    ui->tree->setHeader(h);*/
 
     ui->tree->setDragEnabled(true);
     ui->tree->setDropIndicatorShown(true);

@@ -342,7 +342,7 @@ void WidgetStatusBarButton::mousePressEvent(QMouseEvent * event)
         this->action()->toggle();
         return;
     }
-    if(event->button() == Qt::RightButton || _leftClickContextMenu && event->button() == Qt::LeftButton)
+    if(event->button() == Qt::RightButton || (_leftClickContextMenu && event->button() == Qt::LeftButton))
     {
         if(this->actions().count())
         {

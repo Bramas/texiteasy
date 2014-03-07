@@ -172,8 +172,8 @@ void WidgetTextEdit::paintEvent(QPaintEvent *event)
                         //foreach(QTextEdit::ExtraSelection sel, extraSelections())
                         foreach(QTextCursor cur, _multipleEdit)
                         {
-                            if(cur.position() >= block.position() + arg.second.first
-                            && cur.position() <= block.position() + arg.second.second
+                            if((cur.position() >= block.position() + arg.second.first
+                            && cur.position() <= block.position() + arg.second.second)
                                     || (    cur.hasSelection()
                                         &&  cur.selectionStart() <= block.position() + arg.second.second
                                         &&  cur.selectionEnd() >= block.position() + arg.second.first
@@ -187,8 +187,8 @@ void WidgetTextEdit::paintEvent(QPaintEvent *event)
                         }
                         if(!extra)
                         {
-                            if(textCursor().position() >= block.position() + arg.second.first
-                                && textCursor().position() <= block.position() + arg.second.second
+                            if((textCursor().position() >= block.position() + arg.second.first
+                                && textCursor().position() <= block.position() + arg.second.second)
                                 || (    textCursor().hasSelection()
                                     &&  textCursor().selectionStart() <= block.position() + arg.second.second
                                     &&  textCursor().selectionEnd() >= block.position() + arg.second.first
@@ -335,7 +335,7 @@ void WidgetTextEdit::correctWord()
     }
 }
 
-void WidgetTextEdit::updateLineNumber(const QRect &rect, int dy)
+void WidgetTextEdit::updateLineNumber(const QRect &rect, int /*dy*/)
 {
     if(!_widgetLineNumber)
     {
@@ -573,7 +573,7 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
             this->setTextCursor(cur);
             return;
         }
-        if(start == end && bd->isAClosingDollar(start - this->textCursor().block().position()))
+        if(start == end && (!ConfigManager::Instance.isDollarAuto() || bd->isAClosingDollar(start - this->textCursor().block().position()) || (bd->characterData.size() && bd->characterData.last().state == SyntaxHighlighter::Math)))
         {
             cur.insertText(QString::fromUtf8("$"));
             this->setTextCursor(cur);

@@ -132,7 +132,7 @@ void Builder::builTex(QString command)
     #endif
 #endif
     }
-    command.replace(QRegExp("(%1(\.[a-zA-Z0-9]+){0,1})"),"\"\\1\"");
+    command.replace(QRegExp("(%1(\\.[a-zA-Z0-9]+){0,1})"),"\"\\1\"");
     command = command.arg(_basename);
 
     _commands = command.split(';');

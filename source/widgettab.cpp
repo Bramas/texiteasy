@@ -43,7 +43,7 @@ WidgetTab::WidgetTab(QWidget *parent) :
     connect(&FileManager::Instance, SIGNAL(currentFileModified()), this, SLOT(update()));
 }
 
-void WidgetTab::paintEvent(QPaintEvent * event)
+void WidgetTab::paintEvent(QPaintEvent * /*event*/)
 {
     QPainter painter(this);
     QFontMetrics fm(painter.font());
@@ -418,7 +418,7 @@ void WidgetTab::mouseMoveEvent(QMouseEvent * event)
         ++idx;
     }
 }
-void WidgetTab::contextMenuEvent(QContextMenuEvent * event)
+void WidgetTab::contextMenuEvent(QContextMenuEvent * /*event*/)
 {
     if(_overMoreId == -1)
     {

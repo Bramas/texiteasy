@@ -21,10 +21,10 @@ public:
         QWidget(parent),
         _action(0),
         _checked(false),
-        _defaultPixmap(0),
-        _defaultHoverPixmap(0),
         _checkedPixmap(0),
         _checkedHoverPixmap(0),
+        _defaultPixmap(0),
+        _defaultHoverPixmap(0),
         _label(new QLabel(this))
     {
         _checkable = false;
@@ -75,10 +75,10 @@ bool _leftClickContextMenu;
 bool _checkable;
 bool _checked;
 
-QPixmap * _defaultPixmap;
+QPixmap * _checkedHoverPixmap;
 QPixmap * _checkedPixmap;
 QPixmap * _defaultHoverPixmap;
-QPixmap * _checkedHoverPixmap;
+QPixmap * _defaultPixmap;
 QLabel  * _label;
 
 

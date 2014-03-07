@@ -100,7 +100,7 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
     if(previousBlock.isValid())
     {
         BlockData * previousData = static_cast<BlockData *>(previousBlock.userData());
-        if(previousData);
+        if(previousData)
         {
             blockData->blockStartingState = previousData->blockEndingState;
             blockData->blockEndingState = blockData->blockStartingState;
@@ -198,7 +198,7 @@ while(index < text.length())
     }
     else
     {
-        nextChar == QChar::Null;
+        nextChar = QChar::Null;
     }
     if((state == Command && commandBuffer.isNull()) || state == Verbatim || (state == Command && !commandBuffer.compare("verb") && QString(currentChar).contains(QRegExp("[^a-zA-Z]"))))
     {
@@ -265,6 +265,9 @@ while(index < text.length())
     }
     switch(state)
     {
+    case Comment:
+    case CompletionArgument:
+        break;
     case Text:
         if(currentChar != ' ' && currentChar != '\t' && parenthesisLevel->top() == 0 && parenthesisLevel->count() > 1)
         {
@@ -273,7 +276,7 @@ while(index < text.length())
         }
         else
         if(      (currentChar == '$'  && !escapedChar)
-             ||  (currentChar == '\\' && !escapedChar) && nextChar == '[')
+             ||  ((currentChar == '\\' && !escapedChar) && nextChar == '['))
         {
             state = Math;
             setFormat(index, 1, formatMath);
@@ -307,8 +310,8 @@ while(index < text.length())
         break;
     case Math:
         setFormat(index, 1, formatMath);
-        if(   currentChar == '\\' && !escapedChar && nextChar == ']'
-           || currentChar == '$' && !escapedChar && nextChar == '$')
+        if(   (currentChar == '\\' && !escapedChar && nextChar == ']')
+           || (currentChar == '$' && !escapedChar && nextChar == '$'))
         {
             state = Text;
             overrideCurrentState = Math;
@@ -664,7 +667,7 @@ if(nextBlock.isValid())
 {
     BlockData * nextData = static_cast<BlockData *>(nextBlock.userData());
     BlockState nextStartingData;
-    if(nextData && (nextStartingData = nextData->blockStartingState).state > -1);
+    if(nextData && (nextStartingData = nextData->blockStartingState).state > -1)
     {
         if(!nextStartingData.equals(blockData->blockEndingState))
         {

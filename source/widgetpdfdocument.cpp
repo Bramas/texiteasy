@@ -91,7 +91,7 @@ WidgetPdfDocument::~WidgetPdfDocument()
     }
     if(scanner != NULL)
     {
-        delete scanner;
+        synctex_scanner_free(scanner);
     }
 #ifdef DEBUG_DESTRUCTOR
     qDebug()<<"delete WidgetPdfDocument";
@@ -249,7 +249,7 @@ void WidgetPdfDocument::initDocument()
     {
         if(scanner != NULL )
         {
-            delete scanner;
+            synctex_scanner_free(scanner);
         }
         scanner = synctex_scanner_new_with_output_file(syncFile.toUtf8().data(), NULL, 1);
         if( scanner == NULL )

@@ -127,7 +127,6 @@ WidgetFile::WidgetFile(QWidget *parent) :
     _widgetConsole->setMaximumHeight(0);
     _widgetSimpleOutput->setBuilder(_widgetTextEdit->getCurrentFile()->getBuilder());
     _widgetSimpleOutput->setMaximumHeight(0);
-    int pos = _widgetTextEdit->textCursor().position();
     _widgetTextEdit->selectAll();
     _widgetTextEdit->textCursor().setBlockCharFormat(ConfigManager::Instance.getTextCharFormats("normal"));
     QTextCursor cur(_widgetTextEdit->textCursor());
