@@ -571,6 +571,7 @@ void WidgetPdfDocument::jumpToEditorFromAbsolutePos(const QPoint &pos)
 
     int page = absolute.y() / pageHeightWithMargin;
     QPoint relative(absolute.x(), absolute.y() - page * pageHeightWithMargin);
+    relative /= _zoom;
 
     if(relative.x() < 0 || relative.y() < 0)
     {
