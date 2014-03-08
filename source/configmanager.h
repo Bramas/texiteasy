@@ -203,7 +203,7 @@ public:
 
     static QString Extensions;
     static QString MacroSuffix;
-
+    static const QStringList CodecsAvailable;
     QString dataLocation();
 
     void init(QString in_applicationPath);

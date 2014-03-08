@@ -325,6 +325,26 @@ void FileManager::toggleErrorTable()
         this->currentWidgetFile()->toggleErrorTable();
     }
 }
+void FileManager::setEncoding(QString codec)
+{
+    if(this->currentWidgetFile())
+    {
+        this->currentWidgetFile()->file()->setCodec(codec);
+    }
+}
+void FileManager::reopenWithEncoding(QString codec)
+{
+    if(this->currentWidgetFile())
+    {
+        if(this->currentWidgetFile()->file()->isModified())
+        {
+            return;
+        }
+        this->currentWidgetFile()->file()->setCodec(codec);
+        this->currentWidgetFile()->reload();
+    }
+}
+
 void FileManager::initTheme()
 {
     foreach(WidgetFile * widgetFile, _widgetFiles)

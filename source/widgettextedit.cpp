@@ -562,7 +562,6 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
     }
     if(e->key() == Qt::Key_Dollar)
     {
-        /* TODO : use beginEditBlock */
         QTextCursor cur = this->textCursor();
         int start = cur.selectionStart();
         int end = cur.selectionEnd();
@@ -583,8 +582,6 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
         cur.setPosition(start);
         cur.insertText(QString::fromUtf8("$"));
         cur.setPosition(end+1);
-        cur.endEditBlock();
-        cur.beginEditBlock();
         cur.insertText(QString::fromUtf8("$"));
 
         if(end == start)
@@ -600,6 +597,7 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
     {
 
         QTextCursor cur = this->textCursor();
+        cur.beginEditBlock();
         int start = cur.selectionStart();
         int end = cur.selectionEnd();
         cur.setPosition(start);
@@ -610,6 +608,7 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
         {
             cur.movePosition(QTextCursor::Left);
         }
+        cur.endEditBlock();
         this->setTextCursor(cur);
         _multipleEdit.clear();
         return;

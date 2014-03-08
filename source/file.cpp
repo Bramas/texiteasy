@@ -40,7 +40,7 @@ AssociatedFile AssociatedFile::NoAssociation = { AssociatedFile::NONE, QString()
 File::File(WidgetFile *widgetFile, WidgetTextEdit* widgetTextEdit, QString filename) :
     _autoSaveTimer(new QTimer),
     builder(new Builder(this)),
-    _codec(QTextCodec::codecForLocale()->name()),
+    _codec(""),
     filename(filename),
     _modified(false),
     viewer(new Viewer(this)),
@@ -165,7 +165,14 @@ const QString File::open(QString filename, QString codec)
     QTextStream in(&file);
     if(codec.isEmpty())
     {
-        in.setCodec("UTF-8");
+        if(_codec.isEmpty())
+        {
+            in.setCodec("UTF-8");
+        }
+        else
+        {
+            in.setCodec(_codec.toLatin1());
+        }
     }
     else
     {
@@ -175,17 +182,16 @@ const QString File::open(QString filename, QString codec)
     data = in.readAll();
 
     this->findTexDirectives(); // find directive before look for associative files
-    if(codec.isEmpty() && _texDirectives.contains("encoding"))
+    if(_codec.isEmpty() && codec.isEmpty() && _texDirectives.contains("encoding"))
     {
         codec = _texDirectives.value("encoding");
         if(codec.compare("utf8", Qt::CaseInsensitive) && codec.compare("utf-8", Qt::CaseInsensitive) && codec.compare("utf 8", Qt::CaseInsensitive))
         {
-            qDebug()<<"reload "<<codec;
             return this->open(this->filename, codec);
         }
     }
 
-    if(codec.isEmpty() && data.contains(QString::fromUtf8("�")))
+    if(_codec.isEmpty() && codec.isEmpty() && data.contains(QString::fromUtf8("�")))
     {
         this->open(this->filename,"ISO 8859-1");
         return QString("");

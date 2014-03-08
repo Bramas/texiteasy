@@ -205,6 +205,10 @@ void WidgetStatusBar::updateButtons()
 
     _labelDictionary->setEnabled(true);
     _labelDictionary->setText(FileManager::Instance.currentWidgetFile()->dictionary());
+
+    //update Encoding label
+    _encodingLabel->setText(FileManager::Instance.currentWidgetFile()->file()->codec());
+
 }
 
 void WidgetStatusBar::initTheme()
