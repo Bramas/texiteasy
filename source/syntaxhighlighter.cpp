@@ -692,6 +692,6 @@ void SyntaxHighlighter::highlightExpression(const QString &text, const QString &
 
 bool SyntaxHighlighter::isWordSeparator(QChar c) const
 {
-    return QString(c).contains(QRegExp(QString::fromUtf8("[^a-zâãäåæçèéêëìíîïðñòóôõøùúûüýþÿı]"),Qt::CaseInsensitive));
+    return QString(c).contains(QRegExp(QString::fromUtf8("[^a-zâãäåàæçèéêëìíîïðñòóôõøùúûüýþÿı]"),Qt::CaseInsensitive));
 }
 
