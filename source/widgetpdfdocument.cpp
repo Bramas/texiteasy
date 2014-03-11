@@ -91,7 +91,7 @@ WidgetPdfDocument::~WidgetPdfDocument()
     }
     if(scanner != NULL)
     {
-        delete scanner;
+        synctex_scanner_free(scanner);
     }
 #ifdef DEBUG_DESTRUCTOR
     qDebug()<<"delete WidgetPdfDocument";
@@ -249,7 +249,7 @@ void WidgetPdfDocument::initDocument()
     {
         if(scanner != NULL )
         {
-            delete scanner;
+            synctex_scanner_free(scanner);
         }
         scanner = synctex_scanner_new_with_output_file(syncFile.toUtf8().data(), NULL, 1);
         if( scanner == NULL )
@@ -571,6 +571,7 @@ void WidgetPdfDocument::jumpToEditorFromAbsolutePos(const QPoint &pos)
 
     int page = absolute.y() / pageHeightWithMargin;
     QPoint relative(absolute.x(), absolute.y() - page * pageHeightWithMargin);
+    relative /= _zoom;
 
     if(relative.x() < 0 || relative.y() < 0)
     {

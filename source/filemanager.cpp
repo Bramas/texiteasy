@@ -106,7 +106,7 @@ void FileManager::createMasterConnexions(WidgetFile * widget, WidgetFile * maste
     connect(widget->file()->getBuilder(), SIGNAL(pdfChanged()),master->widgetPdfViewer()->widgetPdfDocument(),SLOT(updatePdf()));
 }
 
-void FileManager::deleteMasterConnexions(WidgetFile *widget, AssociatedFile::Type type)
+void FileManager::deleteMasterConnexions(WidgetFile *widget, AssociatedFile::Type /*type*/)
 {
     // if it has a master file
     // remove connexion with the master file
@@ -167,7 +167,7 @@ bool FileManager::open(QString filename)
     WidgetFile * associatedWidget;
     foreach(AssociatedFile associatedFile, this->currentWidgetFile()->file()->associatedFiles())
     {
-        if(associatedWidget = this->widgetFile(associatedFile.filename))
+        if((associatedWidget = this->widgetFile(associatedFile.filename)))
         {
             if(associatedFile.type == AssociatedFile::INPUT && !associatedWidget->file()->texDirectives().contains("root"))
             {
@@ -305,8 +305,10 @@ void FileManager::rehighlight()
 {
     foreach(WidgetFile * widgetFile, _widgetFiles)
     {
+        bool modified = widgetFile->file()->isModified();
         widgetFile->syntaxHighlighter()->rehighlight();
         widgetFile->widgetTextEdit()->onCursorPositionChange();
+        widgetFile->file()->setModified(modified); //because rehighlight call somehow setModify(true) :(
     }
 }
 void FileManager::toggleConsole()
@@ -323,6 +325,26 @@ void FileManager::toggleErrorTable()
         this->currentWidgetFile()->toggleErrorTable();
     }
 }
+void FileManager::setEncoding(QString codec)
+{
+    if(this->currentWidgetFile())
+    {
+        this->currentWidgetFile()->file()->setCodec(codec);
+    }
+}
+void FileManager::reopenWithEncoding(QString codec)
+{
+    if(this->currentWidgetFile())
+    {
+        if(this->currentWidgetFile()->file()->isModified())
+        {
+            return;
+        }
+        this->currentWidgetFile()->file()->setCodec(codec);
+        this->currentWidgetFile()->reload();
+    }
+}
+
 void FileManager::initTheme()
 {
     foreach(WidgetFile * widgetFile, _widgetFiles)

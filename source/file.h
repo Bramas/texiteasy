@@ -168,6 +168,7 @@ public:
     Viewer * getViewer() { return this->viewer; }
 
     QString codec() { return this->_codec; }
+    void setCodec(QString codec) { this->_codec = codec; }
 
     bool isModified() { return this->_modified; }
 
@@ -207,6 +208,15 @@ public slots:
             emit modified(_modified);
         }
     }
+
+    /**
+     * @brief change the codec to UTF-8
+     */
+    void setUtf8()
+    {
+        this->_codec = "UTF-8";
+    }
+
     void create(void)
     {
         this->_modified = false;

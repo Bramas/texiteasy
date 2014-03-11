@@ -393,7 +393,7 @@ QList<Macro> MacroEngine::orderedMacros()
 }
 
 
-bool MacroXmlHandler::startElement(const QString &namespaceURI, const QString &localName, const QString &qName, const QXmlAttributes &atts)
+bool MacroXmlHandler::startElement(const QString &/*namespaceURI*/, const QString &/*localName*/, const QString &qName, const QXmlAttributes &atts)
 {
     if(!qName.compare("macro", Qt::CaseInsensitive))
     {
@@ -406,7 +406,7 @@ bool MacroXmlHandler::startElement(const QString &namespaceURI, const QString &l
     }
     return true;
 }
-bool MacroXmlHandler::endElement(const QString &namespaceURI, const QString &localName, const QString &qName)
+bool MacroXmlHandler::endElement(const QString &/*namespaceURI*/, const QString &/*localName*/, const QString &qName)
 {
     if(!qName.compare("keys", Qt::CaseInsensitive))
     {

@@ -106,10 +106,20 @@ public slots:
      * @return true if the tab is closed, false otherwise.
      */
     bool closeTab(int, QString **filename = 0);
+    /**
+     * @brief if the file is modified, ask the user what he want to do
+     * @param widget
+     * @return true if the widget can be closed safely
+     */
+    bool widgetFileCanBeClosed(WidgetFile * widget);
     void addFilenameToLastOpened(QString filename);
     void onFilenameChanged(QString filename);
     void initBuildMenu();
     void initMacrosMenu();
+    void setUtf8();
+    void setOtherEncoding();
+    void reopenWithEncoding();
+
 private slots:
     void addUpdateMenu();
 protected:

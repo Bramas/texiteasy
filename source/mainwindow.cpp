@@ -55,6 +55,7 @@
 #include <QPixmap>
 #include <QTableWidget>
 #include <QMessageBox>
+#include <QInputDialog>
 #include <QDrag>
 #include "configmanager.h"
 #include "widgetconsole.h"
@@ -148,11 +149,47 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->ui->actionView, SIGNAL(triggered()), &FileManager::Instance,SLOT(jumpToPdfFromSource()));
     connect(this->ui->actionSplitEditor, SIGNAL(toggled(bool)), &FileManager::Instance,SLOT(splitEditor(bool)));
     connect(this->ui->actionOpenPdf, SIGNAL(triggered()), &FileManager::Instance,SLOT(openCurrentPdf()));
+    connect(this->ui->actionSaveWithUTF8, SIGNAL(triggered()), this,SLOT(setUtf8()));
+    connect(this->ui->actionSaveWithOtherEncoding, SIGNAL(triggered()), this,SLOT(setOtherEncoding()));
 
 
     connect(&FileManager::Instance, SIGNAL(filenameChanged(QString)), this, SLOT(onFilenameChanged(QString)));
 
     connect(&ConfigManager::Instance, SIGNAL(versionIsOutdated()), this, SLOT(addUpdateMenu()));
+
+
+    QMenu * parentMenu = this->ui->menuReopenWithEncoding;
+    foreach(const QString& codec, ConfigManager::CodecsAvailable)
+    {
+        QAction * action;
+        if(codec.contains('/'))
+        {
+            QStringList l = codec.split('/');
+            if(l.first().compare("-"))
+            {
+                parentMenu = new QMenu(l.first());
+                this->ui->menuReopenWithEncoding->addMenu(parentMenu);
+            }
+            action = new QAction(l.at(1), parentMenu);
+        }
+        else
+        {
+            parentMenu =this->ui->menuReopenWithEncoding;
+            action = new QAction(codec, parentMenu);
+        }
+        if(action->text().isEmpty())
+        {
+            delete action;
+            parentMenu->addSeparator();
+        }
+        else
+        {
+            action->setPriority(QAction::LowPriority);
+            parentMenu->addAction(action);
+            connect(action, SIGNAL(triggered()), this, SLOT(reopenWithEncoding()));
+        }
+    }
+
 
     QAction * lastAction = this->ui->menuTh_me->actions().last();
     foreach(const QString& theme, ConfigManager::Instance.themesList())
@@ -600,55 +637,65 @@ void MainWindow::onCurrentFileChanged(WidgetFile * widget)
 
     FileManager::Instance.checkCurrentFileSystemChanges();
 }
+bool MainWindow::widgetFileCanBeClosed(WidgetFile * widget)
+{
+    if(!widget->widgetTextEdit()->getCurrentFile()->isModified())
+    {
+        return true;
+    }
+
+    QString insertedFilename = "";
+    if(!widget->file()->isUntitled())
+    {
+        insertedFilename = " \""+widget->file()->fileInfo().baseName()+"\"";
+    }
+    if(!_confirmCloseMessageBox)
+    {
+        _confirmCloseMessageBox = new QMessageBox(trUtf8("Continuer?"),
+                                              trUtf8("Le fichier%1 a été modifié.").arg(insertedFilename) + "\n" +
+          trUtf8("Voullez-vous sauvegarder les changements?"),//Do you want to save your changes?"),
+            QMessageBox::Warning,
+            QMessageBox::Yes | QMessageBox::Default,
+            QMessageBox::No,
+            QMessageBox::Cancel | QMessageBox::Escape,
+            this, Qt::Sheet);
+        _confirmCloseMessageBox->setButtonText(QMessageBox::Yes,
+              widget->file()->isUntitled() ? trUtf8("Sauvegarder")+"..." : trUtf8("Sauvegarder"));
+        _confirmCloseMessageBox->setButtonText(QMessageBox::No,
+            trUtf8("Ne pas sauvegarder"));
+        _confirmCloseMessageBox->setButtonText(QMessageBox::Cancel,
+            trUtf8("Annuler"));
+    }
+
+    int i = _confirmCloseMessageBox->exec();
+
+    if(i == QMessageBox::Cancel)
+    {
+        return false;
+    }
+    else
+    {
+        if(i == QMessageBox::Yes)
+        {
+            widget->save();
+            if(widget->file()->isModified())
+            {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 bool MainWindow::closeTab(int index, QString ** filename)
 {
     WidgetFile * widget = _tabWidget->widget(index);
 
-    if(widget->widgetTextEdit()->getCurrentFile()->isModified())
+    if(!widgetFileCanBeClosed(widget))
     {
-        //if (!messageBox) {
-        QString insertedFilename = "";
-        if(!widget->file()->isUntitled())
-        {
-            insertedFilename = " \""+widget->file()->fileInfo().baseName()+"\"";
-        }
-        if(!_confirmCloseMessageBox)
-        {
-            _confirmCloseMessageBox = new QMessageBox(trUtf8("Quitter?"),
-                                                  trUtf8("Le fichier%1 a été modifié.").arg(insertedFilename) + "\n" +
-              trUtf8("Voullez-vous sauvegarder les changements?"),//Do you want to save your changes?"),
-                QMessageBox::Warning,
-                QMessageBox::Yes | QMessageBox::Default,
-                QMessageBox::No,
-                QMessageBox::Cancel | QMessageBox::Escape,
-                this, Qt::Sheet);
-            _confirmCloseMessageBox->setButtonText(QMessageBox::Yes,
-                  widget->file()->isUntitled() ? trUtf8("Sauvegarder")+"..." : trUtf8("Sauvegarder"));
-            _confirmCloseMessageBox->setButtonText(QMessageBox::No,
-                trUtf8("Ne pas sauvegarder"));
-            _confirmCloseMessageBox->setButtonText(QMessageBox::Cancel,
-                trUtf8("Annuler"));
-        }
-
-        int i = _confirmCloseMessageBox->exec();
-
-        if(i == QMessageBox::Cancel)
-        {
-            return false;
-        }
-        else
-        {
-            if(i == QMessageBox::Yes)
-            {
-                widget->save();
-                if(widget->file()->isModified())
-                {
-                    return false;
-                }
-            }
-        }
-
+        return false;
     }
+
     if(filename && !widget->file()->isUntitled())
     {
         *filename = new QString(widget->file()->getFilename());
@@ -686,6 +733,41 @@ void MainWindow::changeTheme()
     this->setTheme(text);
 
 }
+void MainWindow::setUtf8()
+{
+    FileManager::Instance.setEncoding("UTF-8");
+    FileManager::Instance.save();
+    _widgetStatusBar->updateButtons();
+}
+void MainWindow::setOtherEncoding()
+{
+    bool ok;
+    QString text = QInputDialog::getText(this, tr("Nom de l'encodage"),
+                                              tr("Nom de l'encodage: "), QLineEdit::Normal,
+                                         "", &ok);
+    if (!ok || text.isEmpty())
+    {
+        return;
+    }
+    FileManager::Instance.setEncoding(text);
+    FileManager::Instance.save();
+    _widgetStatusBar->updateButtons();
+}
+void MainWindow::reopenWithEncoding()
+{
+    QAction * action = qobject_cast<QAction*>(sender());
+    if(!action || !FileManager::Instance.currentWidgetFile())
+    {
+        return;
+    }
+    if(!widgetFileCanBeClosed(FileManager::Instance.currentWidgetFile()))
+    {
+        return;
+    }
+    FileManager::Instance.reopenWithEncoding(action->text());
+    _widgetStatusBar->updateButtons();
+}
+
 void MainWindow::setTheme(QString theme)
 {
     foreach(QAction * action, this->ui->menuTh_me->actions())

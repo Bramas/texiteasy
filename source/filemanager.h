@@ -49,6 +49,9 @@ public:
 
     void onMacroTriggered(Macro macro);
 
+    void reopenWithEncoding(QString codec);
+    void setEncoding(QString codec);
+
 signals:
     void cursorPositionChanged(int,int);
     void requestOpenFile(QString);

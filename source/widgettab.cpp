@@ -43,17 +43,15 @@ WidgetTab::WidgetTab(QWidget *parent) :
     connect(&FileManager::Instance, SIGNAL(currentFileModified()), this, SLOT(update()));
 }
 
-void WidgetTab::paintEvent(QPaintEvent * event)
+void WidgetTab::paintEvent(QPaintEvent * /*event*/)
 {
     QPainter painter(this);
     QFontMetrics fm(painter.font());
 
     bool darkTheme = ConfigManager::Instance.getTextCharFormats("line-number").background().color().value() < 150;
 
-    QPen defaultPen(darkTheme ? ConfigManager::Instance.getTextCharFormats("line-number").foreground().color().darker(150) :
-                                ConfigManager::Instance.getTextCharFormats("line-number").foreground().color().lighter(160));
-    QPen hoverPen(darkTheme ? ConfigManager::Instance.getTextCharFormats("line-number").foreground().color() :
-                              ConfigManager::Instance.getTextCharFormats("line-number").foreground().color().darker(150));
+    QPen defaultPen(ConfigManager::Instance.getTextCharFormats("tab-text").foreground().color());
+    QPen hoverPen(ConfigManager::Instance.getTextCharFormats("tab-active-text").foreground().color());
     QPen defaultClosePen(QColor(100,100,100));
     defaultClosePen.setWidth(2);
     QPen hoverClosePen(QColor(130,130,130));
@@ -418,7 +416,7 @@ void WidgetTab::mouseMoveEvent(QMouseEvent * event)
         ++idx;
     }
 }
-void WidgetTab::contextMenuEvent(QContextMenuEvent * event)
+void WidgetTab::contextMenuEvent(QContextMenuEvent * /*event*/)
 {
     if(_overMoreId == -1)
     {

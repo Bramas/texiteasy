@@ -34,8 +34,8 @@
 
 DialogConfig::DialogConfig(MainWindow *parent) :
     QDialog(parent),
-    _mainWindows(parent),
-    ui(new Ui::DialogConfig)
+    ui(new Ui::DialogConfig),
+    _mainWindows(parent)
 {
     ui->setupUi(this);
     connect(this->ui->pushButton_saveAndQuit,SIGNAL(clicked()),this,SLOT(saveAndClose()));
@@ -121,6 +121,7 @@ void DialogConfig::save()
     // Page Editor
     //
 
+    ConfigManager::Instance.setDollarAuto(this->ui->checkBoxDollarAuto->isChecked());
     ConfigManager::Instance.setReplaceDefaultFont(this->ui->checkBox_replaceDefaultFont->isChecked());
     _mainWindows->setTheme(this->ui->comboBox_themes->currentText());
     ConfigManager::Instance.setPointSize(this->ui->spinBoxPointSize->value());
@@ -197,6 +198,7 @@ void DialogConfig::show()
 
     // Page Editor
 
+    this->ui->checkBoxDollarAuto->setChecked(ConfigManager::Instance.isDollarAuto());
     this->ui->checkBox_replaceDefaultFont->setChecked(ConfigManager::Instance.isDefaultFontReplaced());
     this->ui->comboBox_fontFamilly->clear();
     QFontDatabase database;

@@ -205,6 +205,10 @@ void WidgetStatusBar::updateButtons()
 
     _labelDictionary->setEnabled(true);
     _labelDictionary->setText(FileManager::Instance.currentWidgetFile()->dictionary());
+
+    //update Encoding label
+    _encodingLabel->setText(FileManager::Instance.currentWidgetFile()->file()->codec());
+
 }
 
 void WidgetStatusBar::initTheme()
@@ -342,7 +346,7 @@ void WidgetStatusBarButton::mousePressEvent(QMouseEvent * event)
         this->action()->toggle();
         return;
     }
-    if(event->button() == Qt::RightButton || _leftClickContextMenu && event->button() == Qt::LeftButton)
+    if(event->button() == Qt::RightButton || (_leftClickContextMenu && event->button() == Qt::LeftButton))
     {
         if(this->actions().count())
         {
