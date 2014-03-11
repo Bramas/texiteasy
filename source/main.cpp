@@ -64,7 +64,13 @@ int main(int argc, char *argv[])
 
     qDebug()<<QString("Start ")+APPLICATION_NAME+QString(" version ")+CURRENT_VERSION;
     ConfigManager::Instance.init(QFileInfo(QString::fromLocal8Bit(argv[0])).absolutePath());
+
+#if QT_VERSION >= 0x050000
     ConfigManager::Instance.setDevicePixelRatio(a.devicePixelRatio());
+#else
+    ConfigManager::Instance.setDevicePixelRatio(1);
+#endif
+
     FileManager::Instance.init();
     MacroEngine::Instance.init();
     MainWindow w;

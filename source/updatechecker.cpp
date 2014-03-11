@@ -23,6 +23,7 @@ void UpdateChecker::onFinished(QNetworkReply *reply)
     version = version.trimmed();
     if(reply->error() != QNetworkReply::NoError || version.isEmpty())
     {
+        qDebug()<<"Unable to find the last version : "<<reply->errorString();
         return;
     }
     if(!version.compare(CURRENT_VERSION)) // if same version
@@ -39,7 +40,9 @@ void UpdateChecker::onFinished(QNetworkReply *reply)
     int b0 = b.at(0).toInt();
     int b1 = b.at(1).toInt();
     int b2 = b.at(2).toInt();
-    if(b0 > a0 || b1 > a1 || b2 > a2) // The local version is a beta that is not yet release officialy
+    if(      b0 > a0 ||
+            (b0 == a0 && b1 > a1) ||
+            (b0 == a0 && b1 == a1 && b2 > a2)) // The local version is a beta that is not yet release officialy
     {
         return;
     }

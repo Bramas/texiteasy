@@ -813,6 +813,7 @@ void ConfigManager::checkRevision()
         }
 
     case 0x000900:
+    case 0x000901:
 
         break;
     }

@@ -93,7 +93,7 @@ void WidgetFindReplace::open()
 }
 bool WidgetFindReplace::findBackward(int from, bool canStartOver)
 {
-    find(from, canStartOver, true);
+    return find(from, canStartOver, true);
 }
 
 bool WidgetFindReplace::find(int from, bool canStartOver, bool backward)
