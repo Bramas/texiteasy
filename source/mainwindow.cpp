@@ -228,9 +228,9 @@ MainWindow::MainWindow(QWidget *parent) :
         QSettings settings;
         settings.beginGroup("shortcuts");
         foreach(QAction * action, actionsList) {
-            if(settings.contains(action->text()))
+            if(!action->text().isEmpty() && settings.contains(action->text()))
             {
-                action->setShortcut(QKeySequence(settings.value(action->text()).toString()));
+                action->setShortcut(QKeySequence(settings.value(action->text(), QString("")).toString()));
             }
         }
     }

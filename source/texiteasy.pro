@@ -12,6 +12,7 @@ TARGET = texiteasy
 TEMPLATE = app
 
 APPLICATION_NAME = \\\"'TexitEasy'\\\"
+
 VERSION = \\\"'0.9.2'\\\"
 VERSION_HEX = 0x000902
 

@@ -244,10 +244,10 @@ void WidgetTextEdit::contextMenuEvent(QContextMenuEvent *event)
 
     QTextCursor cursor = cursorForPosition(event->pos());
     BlockData *data = static_cast<BlockData *>(cursor.block().userData() );
-    QTextCodec *codec = QTextCodec::codecForName(widgetFile()->spellCheckerEncoding().toLatin1());
 
     if(widgetFile()->spellChecker())
     {
+        QTextCodec *codec = QTextCodec::codecForName(widgetFile()->spellCheckerEncoding().toLatin1());
         int blockPos = cursor.block().position();
         int colstart, colend;
         colend = colstart = cursor.positionInBlock();
