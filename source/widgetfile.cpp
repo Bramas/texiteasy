@@ -438,7 +438,9 @@ void WidgetFile::setDictionary(QString dico)
             _spellChecker->add(codec->fromUnicode(word).data());
         }
     }
+    bool modified = file()->isModified();
     syntaxHighlighter()->rehighlight();
+    file()->setModified(modified);
     widgetTextEdit()->onCursorPositionChange();
 }
 

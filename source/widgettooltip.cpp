@@ -24,26 +24,55 @@
 #include <QLabel>
 #include <QRect>
 
-WidgetTooltip::WidgetTooltip(QWidget *parent) :
-    QWidget(parent)
+WidgetTooltip::WidgetTooltip(QWidget *parent, QWidget *completionEngine) :
+    QTextEdit(parent),
+    _completionEngine(completionEngine)
 {
     this->setStyleSheet("QWidget{ background-color:#dddddd; }");
+    QRect geo(0, 0, 350, 120);
+    this->setGeometry(geo);
+    this->setReadOnly(true);
 }
 
 void WidgetTooltip::setText(QString text)
 {
-    QLabel * label = new QLabel(text,this);
+    QTextEdit::setText(text);
+    /*QLabel * label = new QLabel(text,this);
 
     label->setWordWrap(true);
     QRect geo(0, 0, 200, 60);
     label->setGeometry(geo);
 
     geo = this->geometry();
-    this->setGeometry(geo.x(), geo.y(), label->width()+10, label->height()+10);
+    this->setGeometry(geo.x(), geo.y(), label->width()+10, label->height()+10);*/
 }
 
 void WidgetTooltip::setTopLeft(int left, int top)
 {
     QRect geo = this->geometry();
     this->setGeometry(left, top, geo.width(), geo.height());
+}
+
+void WidgetTooltip::setFocus()
+{
+    _completionEngine->setFocus();
+}
+
+void WidgetTooltip::mousePressEvent(QMouseEvent *e)
+{
+    QTextEdit::mousePressEvent(e);
+    _completionEngine->setFocus();
+}
+
+void WidgetTooltip::mouseReleaseEvent(QMouseEvent *e)
+{
+    QTextEdit::mouseReleaseEvent(e);
+    _completionEngine->setFocus();
+}
+
+
+void WidgetTooltip::wheelEvent(QWheelEvent *e)
+{
+    QTextEdit::wheelEvent(e);
+    _completionEngine->setFocus();
 }

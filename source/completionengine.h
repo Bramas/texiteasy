@@ -33,6 +33,7 @@ struct BibItem
 {
     QString key;
     QString title;
+    QString author;
 };
 
 class CompletionEngine : public QListWidget
@@ -50,6 +51,7 @@ public:
 public slots:
  //   void setFocus(void);
     void cellSelected(int);
+    void setVisible(bool visible);
 
 protected:
     void keyPressEvent(QKeyEvent *event);

@@ -151,6 +151,10 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->ui->actionOpenPdf, SIGNAL(triggered()), &FileManager::Instance,SLOT(openCurrentPdf()));
     connect(this->ui->actionSaveWithUTF8, SIGNAL(triggered()), this,SLOT(setUtf8()));
     connect(this->ui->actionSaveWithOtherEncoding, SIGNAL(triggered()), this,SLOT(setOtherEncoding()));
+    connect(this->ui->actionTexDirEncoding, SIGNAL(triggered()), this, SLOT(insertTexDirEncoding()));
+    connect(this->ui->actionTexDirProgram, SIGNAL(triggered()), this, SLOT(insertTexDirProgram()));
+    connect(this->ui->actionTexDirRoot, SIGNAL(triggered()), this, SLOT(insertTexDirRoot()));
+    connect(this->ui->actionTexDirSpellChecker, SIGNAL(triggered()), this, SLOT(insertTexDirSpellCheck()));
 
 
     connect(&FileManager::Instance, SIGNAL(filenameChanged(QString)), this, SLOT(onFilenameChanged(QString)));
@@ -782,6 +786,64 @@ void MainWindow::setTheme(QString theme)
     this->initTheme();
     FileManager::Instance.rehighlight();
 }
+
+
+void MainWindow::insertTexDirEncoding()
+{
+    if(!FileManager::Instance.currentWidgetFile())
+    {
+        return;
+    }
+    WidgetFile * widget = FileManager::Instance.currentWidgetFile();
+    QString t = "%!TEX encoding = ";
+    t += widget->file()->codec();
+    t += "\n";
+    t += widget->widgetTextEdit()->toPlainText();
+    widget->widgetTextEdit()->setPlainText(t);
+}
+void MainWindow::insertTexDirProgram()
+{
+    if(!FileManager::Instance.currentWidgetFile())
+    {
+        return;
+    }
+    WidgetFile * widget = FileManager::Instance.currentWidgetFile();
+    QString t = "%!TEX program = ";
+    t += ConfigManager::Instance.defaultLatex();
+    t += "\n";
+    t += widget->widgetTextEdit()->toPlainText();
+    widget->widgetTextEdit()->setPlainText(t);
+}
+void MainWindow::insertTexDirSpellCheck()
+{
+    if(!FileManager::Instance.currentWidgetFile())
+    {
+        return;
+    }
+    WidgetFile * widget = FileManager::Instance.currentWidgetFile();
+    QString t = "%!TEX spellcheck = ";
+    t += widget->dictionary();
+    t += "\n";
+    t += widget->widgetTextEdit()->toPlainText();
+    widget->widgetTextEdit()->setPlainText(t);
+}
+void MainWindow::insertTexDirRoot()
+{
+    if(!FileManager::Instance.currentWidgetFile())
+    {
+        return;
+    }
+    WidgetFile * widget = FileManager::Instance.currentWidgetFile();
+    QString t = "%!TEX root = ";
+    if(widget->masterFile())
+    {
+        t += widget->masterFile()->file()->getFilename();
+    }
+    t += "\n";
+    t += widget->widgetTextEdit()->toPlainText();
+    widget->widgetTextEdit()->setPlainText(t);
+}
+
 void MainWindow::initTheme()
 {
     QPalette Pal(palette());

@@ -24,18 +24,28 @@
 #define WIDGETTOOLTIP_H
 
 #include <QWidget>
+#include <QTextEdit>
 
-class WidgetTooltip : public QWidget
+class WidgetTooltip : public QTextEdit
 {
     Q_OBJECT
 public:
-    explicit WidgetTooltip(QWidget *parent = 0);
+    explicit WidgetTooltip(QWidget *parent, QWidget * completionEngine);
     void setTopLeft(int left, int top);
 
 signals:
 
 public slots:
     void setText(QString text);
+    void setFocus();
+
+protected:
+    void mousePressEvent(QMouseEvent *e);
+    void mouseReleaseEvent(QMouseEvent *e);
+    void wheelEvent(QWheelEvent *e);
+
+private:
+    QWidget * _completionEngine;
 
 };
 

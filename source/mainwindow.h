@@ -119,6 +119,10 @@ public slots:
     void setUtf8();
     void setOtherEncoding();
     void reopenWithEncoding();
+    void insertTexDirEncoding();
+    void insertTexDirProgram();
+    void insertTexDirSpellCheck();
+    void insertTexDirRoot();
 
 private slots:
     void addUpdateMenu();

@@ -128,7 +128,7 @@ void CompletionEngine::proposeCommand(int left, int top, int lineHeight, QString
     int dieseIndex, tooltipIndex;
     foreach(const QString &word, found)
     {
-        if((dieseIndex = word.indexOf(QRegExp("#"))) != -1)
+        if((dieseIndex = word.indexOf(QRegExp("[^\\\\]#"))) != -1)
         {
             this->insertItem(idx++,word.left(dieseIndex));
         }
@@ -160,6 +160,15 @@ void CompletionEngine::proposeCommand(int left, int top, int lineHeight, QString
 
 }
 
+QPoint absolutePosition(QWidget * w)
+{
+    if(w->parentWidget())
+    {
+        return w->geometry().topLeft() + absolutePosition(w->parentWidget());
+    }
+    return QPoint(0, 0);
+}
+
 void CompletionEngine::cellSelected(int row)
 {
     if(_widgetTooltip)
@@ -171,17 +180,25 @@ void CompletionEngine::cellSelected(int row)
     {
         return;
     }
-    if(this->item(row)->toolTip().isEmpty())
+    if(!this->item(row)->toolTip().isEmpty())
     {
-        return;
+        _widgetTooltip = new WidgetTooltip(this->parentWidget()->parentWidget()->parentWidget()->parentWidget()->parentWidget()->parentWidget(), this);
+        _widgetTooltip->setTopLeft(absolutePosition(this).x() + this->width(),
+                                   this->geometry().top() + 16 *
+                                   (row-this->verticalScrollBar()->value()));
+        _widgetTooltip->setText(this->item(row)->toolTip());
+        _widgetTooltip->show();
     }
-    _widgetTooltip = new WidgetTooltip(this->parentWidget()->parentWidget()->parentWidget()->parentWidget());
-    _widgetTooltip->setTopLeft(this->geometry().left() + this->width(),
-                               this->geometry().top()+
-                               16 *
-                               (row-this->verticalScrollBar()->value()));
-    _widgetTooltip->setText(this->item(row)->toolTip());
-    _widgetTooltip->show();
+}
+
+void CompletionEngine::setVisible(bool visible)
+{
+    if(_widgetTooltip)
+    {
+        _widgetTooltip->deleteLater();
+        _widgetTooltip = 0;
+    }
+    QListWidget::setVisible(visible);
 }
 
 QString CompletionEngine::acceptedWord()
@@ -258,10 +275,16 @@ void CompletionEngine::keyPressEvent(QKeyEvent *event)
         QListWidget::keyPressEvent(event);
         return;
     }
+    if(event->key() == Qt::Key_Escape)
+    {
+        this->setVisible(false);
+        _widgetTextEdit->setFocus();
+        return;
+    }
     if(event->text().contains(QRegExp("[^a-zA-Z\\{\\-_]")) || event->text().isEmpty())
     {
         this->setVisible(false);
-        dynamic_cast<WidgetTextEdit*>(this->parentWidget())->setFocus(event);
+        _widgetTextEdit->setFocus(event);
         return;
     }
     _widgetTextEdit->insertPlainText(event->text());
@@ -320,7 +343,7 @@ void CompletionEngine::parseBibtexFile()
     QList<BibItem> bibItemList = this->parseBibtexSource(bibFile.readAll());
     foreach(BibItem bibItem, bibItemList)
     {
-        _customWords.append("\\cite{"+bibItem.key+"}?"+bibItem.title);
+        _customWords.append("\\cite{"+bibItem.key+"}?<strong>"+bibItem.title+"</strong><div style=\"color:\\#444444;font-style: italic\">"+bibItem.author+"</div>");
     }
 
 }
@@ -339,7 +362,7 @@ QList<BibItem> CompletionEngine::parseBibtexSource(QString source)
     QString tempString("");
     QString currentFieldName("");
     BibItem tempBibItem;
-    QList<BibItem> bibItemList;
+    QMap<QString, BibItem> bibItemMap;
 
     while(currentChar != source.constEnd())
     {
@@ -389,7 +412,13 @@ QList<BibItem> CompletionEngine::parseBibtexSource(QString source)
                 if(!currentFieldName.compare("title"))
                 {
                     tempBibItem.title = tempString.trimmed();
-                    bibItemList.append(tempBibItem);
+                    bibItemMap[tempBibItem.key] = tempBibItem;
+                }
+                else
+                if(!currentFieldName.compare("author"))
+                {
+                    tempBibItem.author = tempString.trimmed();
+                    bibItemMap[tempBibItem.key] = tempBibItem;
                 }
                 tempString.clear();
                 currentState = IGNORING_CHAR;
@@ -421,5 +450,5 @@ QList<BibItem> CompletionEngine::parseBibtexSource(QString source)
         ++currentChar;
     }
 
-    return bibItemList;
+    return bibItemMap.values();
 }

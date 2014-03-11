@@ -74,6 +74,15 @@
       <string>Réouvrir avec l'encodage</string>
      </property>
     </widget>
+    <widget class="QMenu" name="menuTexDirectives">
+     <property name="title">
+      <string>Directives Tex</string>
+     </property>
+     <addaction name="actionTexDirProgram"/>
+     <addaction name="actionTexDirEncoding"/>
+     <addaction name="actionTexDirSpellChecker"/>
+     <addaction name="actionTexDirRoot"/>
+    </widget>
     <addaction name="actionNouveau"/>
     <addaction name="separator"/>
     <addaction name="actionOpen"/>
@@ -84,6 +93,8 @@
     <addaction name="actionSave"/>
     <addaction name="actionSaveAs"/>
     <addaction name="menuEncodage"/>
+    <addaction name="separator"/>
+    <addaction name="menuTexDirectives"/>
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
@@ -383,6 +394,31 @@
   <action name="actionSaveWithOtherEncoding">
    <property name="text">
     <string>Autre</string>
+   </property>
+  </action>
+  <action name="actionTex_directives">
+   <property name="text">
+    <string>Tex directives</string>
+   </property>
+  </action>
+  <action name="actionTexDirProgram">
+   <property name="text">
+    <string>Compilateur</string>
+   </property>
+  </action>
+  <action name="actionTexDirEncoding">
+   <property name="text">
+    <string>Encodage</string>
+   </property>
+  </action>
+  <action name="actionTexDirSpellChecker">
+   <property name="text">
+    <string>Langage</string>
+   </property>
+  </action>
+  <action name="actionTexDirRoot">
+   <property name="text">
+    <string>Fichier Racine</string>
    </property>
   </action>
  </widget>
