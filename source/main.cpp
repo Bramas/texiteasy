@@ -54,8 +54,17 @@ int main(int argc, char *argv[])
      QCoreApplication::setLibraryPaths(QStringList(dir.absolutePath()));
 #endif
 #endif
-    Application a(argc, argv);
+     Application a("TexitEasy",argc, argv);
 
+     QStringList args = QCoreApplication::arguments();
+
+    if ( a.isRunning() )
+    {
+        QString msg;
+        msg = args.join("#!#");
+        a.sendMessage( msg );
+        return 0;
+    }
 
     QFontDatabase::addApplicationFont(":/data/fonts/consola.ttf");
     QFontDatabase::addApplicationFont(":/data/fonts/consolab.ttf");
@@ -75,8 +84,10 @@ int main(int argc, char *argv[])
     MacroEngine::Instance.init();
     MainWindow w;
     w.show();
-    a.connect(&a, SIGNAL(requestOpenFile(QString)), &w, SLOT(open(QString)));
-
+    a.connect(&a, SIGNAL(requestOpenFile(QString)),
+                    &w, SLOT(open(QString)));
+    a.connect(&a, SIGNAL(messageReceived(const QString &) ),
+                    &w, SLOT(onOtherInstanceMessage(const QString &)));
 
     if(argc > 1)
     {

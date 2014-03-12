@@ -1,14 +1,15 @@
 #ifndef APPLICATION_H
 #define APPLICATION_H
 
-#include <QApplication>
 #include <QString>
 
-class Application : public QApplication
+#include "singleapp/qtsingleapplication.h"
+
+class Application : public QtSingleApplication
 {
     Q_OBJECT
 public:
-    explicit Application(int argc, char *argv[]);
+    explicit Application(const QString &id, int & argc, char ** argv );
 
 signals:
     void requestOpenFile(QString filename);

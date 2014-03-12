@@ -4,10 +4,8 @@
 #include <QDebug>
 #include "updatechecker.h"
 
-Application::Application(int argc, char *argv[]) :
-    QApplication(argc, argv)
+Application::Application(const QString &appId, int & argc, char ** argv ) : QtSingleApplication (appId, argc, argv )
 {
-
     UpdateChecker * updateChecker = new UpdateChecker();
 }
 

@@ -123,6 +123,10 @@ public slots:
     void insertTexDirProgram();
     void insertTexDirSpellCheck();
     void insertTexDirRoot();
+    /**
+     * @brief onOtherInstanceMessage
+     */
+    void onOtherInstanceMessage(const QString &);
 
 private slots:
     void addUpdateMenu();

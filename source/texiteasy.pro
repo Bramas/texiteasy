@@ -78,7 +78,13 @@ SOURCES += main.cpp\
     dialogaddlatexcommand.cpp \
     dialogmacros.cpp \
     macroengine.cpp \
-    scriptengine.cpp
+    scriptengine.cpp \
+    singleapp/qtsinglecoreapplication.cpp \
+    singleapp/qtsingleapplication.cpp \
+    singleapp/qtlockedfile.cpp \
+    singleapp/qtlockedfile_win.cpp \
+    singleapp/qtlockedfile_unix.cpp \
+    singleapp/qtlocalpeer.cpp
 
 HEADERS  += mainwindow.h \
     widgetlinenumber.h \
@@ -136,7 +142,11 @@ HEADERS  += mainwindow.h \
     dialogaddlatexcommand.h \
     dialogmacros.h \
     macroengine.h \
-    scriptengine.h
+    scriptengine.h \
+    singleapp/qtsinglecoreapplication.h \
+    singleapp/qtsingleapplication.h \
+    singleapp/qtlockedfile.h \
+    singleapp/qtlocalpeer.h
 
 FORMS    += mainwindow.ui \
     dialogwelcome.ui \

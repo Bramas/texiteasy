@@ -594,6 +594,15 @@ void MainWindow::open(QString filename, int cursorPosition)
     this->statusBar()->showMessage(filename,4000);
     this->_widgetStatusBar->setEncoding(FileManager::Instance.currentWidgetFile()->widgetTextEdit()->getCurrentFile()->codec());
 }
+void MainWindow::onOtherInstanceMessage(const QString & msg)
+{
+    QStringList argv = msg.split("#!#");
+    foreach(const QString &arg, argv)
+    {
+        this->open(arg);
+    }
+}
+
 void MainWindow::onCurrentFileChanged(WidgetFile * widget)
 {
     this->closeCurrentWidgetFile();
