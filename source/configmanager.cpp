@@ -52,9 +52,9 @@
 #define DEBUG_THEME_PARSER(a)
 
 ConfigManager ConfigManager::Instance;
-QString ConfigManager::NoDictionnary = trUtf8("No Dictionnary");
+QString ConfigManager::NoDictionnary = QObject::trUtf8("No Dictionnary");
 
-QString ConfigManager::Extensions = trUtf8("Latex (*.tex *.latex);;BibTex(*.bib)");
+QString ConfigManager::Extensions = QObject::trUtf8("Latex (*.tex *.latex);;BibTex(*.bib)");
 
 QString ConfigManager::MacroSuffix = ".texiteasy-macro";
 const QStringList ConfigManager::DefaultLatexCommands =

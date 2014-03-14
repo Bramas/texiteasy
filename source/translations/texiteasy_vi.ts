@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.0" language="vi_VN">
-<defaultcodec>UTF-8</defaultcodec>
 <context>
     <name>Builder</name>
     <message>
@@ -12,6 +11,14 @@
     <message>
         <location filename="../builder.cpp" line="181"/>
         <source>La compilation n&apos;a pas pu démarrer.</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>CompletionEngine</name>
+    <message>
+        <location filename="../completionengine.cpp" line="137"/>
+        <source>In &lt;strong&gt;math&lt;/strong&gt; environment</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -157,77 +164,82 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.cpp" line="232"/>
+        <location filename="../dialogconfig.cpp" line="234"/>
         <source>Action</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.cpp" line="234"/>
+        <location filename="../dialogconfig.cpp" line="236"/>
         <source>Raccourci</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="240"/>
+        <location filename="../dialogconfig.ui" line="254"/>
         <source>Chemin vers les executables latex</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="252"/>
+        <location filename="../dialogconfig.ui" line="266"/>
         <source>Parcourir</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="261"/>
+        <location filename="../dialogconfig.ui" line="275"/>
         <source>BibTex</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="268"/>
+        <location filename="../dialogconfig.ui" line="282"/>
         <source>bibtex %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="275"/>
+        <location filename="../dialogconfig.ui" line="289"/>
         <source>Commande Latex par défaut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="285"/>
+        <location filename="../dialogconfig.ui" line="299"/>
         <source>Cacher les fichiers de compilation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.cpp" line="227"/>
+        <location filename="../dialogconfig.cpp" line="229"/>
         <source>Nom</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.cpp" line="229"/>
+        <location filename="../dialogconfig.cpp" line="231"/>
         <source>Commande</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="338"/>
+        <location filename="../dialogconfig.ui" line="352"/>
         <source> + </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="348"/>
+        <location filename="../dialogconfig.ui" line="362"/>
         <source> - </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="394"/>
+        <location filename="../dialogconfig.ui" line="408"/>
         <source>Annuler</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="381"/>
+        <location filename="../dialogconfig.ui" line="395"/>
         <source>Valider</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="407"/>
+        <location filename="../dialogconfig.ui" line="194"/>
+        <source>$ automatique</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogconfig.ui" line="421"/>
         <source>Appliquer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -314,62 +326,62 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogmacros.cpp" line="179"/>
+        <location filename="../dialogmacros.cpp" line="174"/>
         <source>Wrong name.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogmacros.cpp" line="179"/>
+        <location filename="../dialogmacros.cpp" line="174"/>
         <source>Macro name cannot contains the following characters : &quot;*:&lt;&gt;?\/|</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogmacros.cpp" line="249"/>
+        <location filename="../dialogmacros.cpp" line="244"/>
         <source>Delete folder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogmacros.cpp" line="264"/>
+        <location filename="../dialogmacros.cpp" line="259"/>
         <source>Delete macro</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogmacros.cpp" line="282"/>
+        <location filename="../dialogmacros.cpp" line="277"/>
         <source>Name:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogmacros.cpp" line="295"/>
+        <location filename="../dialogmacros.cpp" line="290"/>
         <source>Description:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogmacros.cpp" line="408"/>
+        <location filename="../dialogmacros.cpp" line="403"/>
         <source>Cannot delete folders.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogmacros.cpp" line="408"/>
+        <location filename="../dialogmacros.cpp" line="403"/>
         <source>You cannot delete folder %1, because it contains macros.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogmacros.cpp" line="412"/>
+        <location filename="../dialogmacros.cpp" line="407"/>
         <source>Delete?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogmacros.cpp" line="412"/>
+        <location filename="../dialogmacros.cpp" line="407"/>
         <source>Are you sure you want to delete %1.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogmacros.cpp" line="413"/>
+        <location filename="../dialogmacros.cpp" line="408"/>
         <source>Cancel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogmacros.cpp" line="413"/>
+        <location filename="../dialogmacros.cpp" line="408"/>
         <source>Delete</source>
         <translation type="unfinished"></translation>
     </message>
@@ -428,22 +440,22 @@
 <context>
     <name>FileManager</name>
     <message>
-        <location filename="../filemanager.cpp" line="473"/>
+        <location filename="../filemanager.cpp" line="495"/>
         <source>Le fichier %1 à été modifié en dehors de %2. Voulez-vous le charger à nouveau ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../filemanager.cpp" line="475"/>
+        <location filename="../filemanager.cpp" line="497"/>
         <source>Un fichier à été modifié.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../filemanager.cpp" line="482"/>
+        <location filename="../filemanager.cpp" line="504"/>
         <source>Charger à nouveau</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../filemanager.cpp" line="483"/>
+        <location filename="../filemanager.cpp" line="505"/>
         <source>Ignorer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -481,309 +493,365 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
+        <location filename="../mainwindow.ui" line="66"/>
+        <source>Enregistrer avec l&apos;encodage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="74"/>
+        <source>Réouvrir avec l&apos;encodage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../mainwindow.ui" line="79"/>
+        <source>Directives Tex</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="103"/>
         <source>Compiler</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="83"/>
+        <location filename="../mainwindow.ui" line="107"/>
         <source>Autre compilation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="98"/>
+        <location filename="../mainwindow.ui" line="122"/>
         <source>Options</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="102"/>
+        <location filename="../mainwindow.ui" line="126"/>
         <source>Thème</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="112"/>
+        <location filename="../mainwindow.ui" line="136"/>
         <source>Edition</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="125"/>
+        <location filename="../mainwindow.ui" line="149"/>
         <source>Aide</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="131"/>
+        <location filename="../mainwindow.ui" line="155"/>
         <source>View</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="138"/>
+        <location filename="../mainwindow.ui" line="162"/>
         <source>Pdf</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="152"/>
+        <location filename="../mainwindow.ui" line="176"/>
         <source>Ouvrir</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="155"/>
+        <location filename="../mainwindow.ui" line="179"/>
         <source>Ctrl+O</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="160"/>
+        <location filename="../mainwindow.ui" line="184"/>
         <source>Enregistrer Sous</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="163"/>
+        <location filename="../mainwindow.ui" line="187"/>
         <source>Ctrl+Shift+S</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="168"/>
+        <location filename="../mainwindow.ui" line="192"/>
         <source>Enregistrer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="171"/>
+        <location filename="../mainwindow.ui" line="195"/>
         <source>Ctrl+S</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="179"/>
+        <location filename="../mainwindow.ui" line="203"/>
         <source>Ctrl+B</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="184"/>
+        <location filename="../mainwindow.ui" line="208"/>
         <source>Préférences</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="187"/>
+        <location filename="../mainwindow.ui" line="211"/>
         <source>Ctrl+P</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="201"/>
+        <location filename="../mainwindow.ui" line="225"/>
         <source>Afficher automatiquement le pdf</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="212"/>
+        <location filename="../mainwindow.ui" line="236"/>
         <source>Nouveau</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="215"/>
+        <location filename="../mainwindow.ui" line="239"/>
         <source>Ctrl+N</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="220"/>
+        <location filename="../mainwindow.ui" line="381"/>
+        <location filename="../mainwindow.ui" line="386"/>
+        <source>UTF-8</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="391"/>
+        <source>ISO 8859-1</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="396"/>
+        <source>Autre</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="401"/>
+        <source>Tex directives</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="406"/>
+        <source>Compilateur</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="411"/>
         <source>Encodage</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="223"/>
-        <source>Ctrl+Shift+E</source>
+        <location filename="../mainwindow.ui" line="416"/>
+        <source>Langage</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="228"/>
-        <source>Quitter</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="233"/>
-        <location filename="../mainwindow.cpp" line="630"/>
-        <source>Annuler</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="236"/>
-        <source>Ctrl+Z</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../mainwindow.ui" line="241"/>
-        <source>Refaire</source>
+        <location filename="../mainwindow.ui" line="421"/>
+        <source>Fichier Racine</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="244"/>
-        <source>Ctrl+Y</source>
+        <source>Quitter</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="249"/>
-        <source>Couper</source>
+        <location filename="../mainwindow.cpp" line="685"/>
+        <source>Annuler</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="252"/>
-        <source>Ctrl+X</source>
+        <source>Ctrl+Z</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="257"/>
-        <source>Copier</source>
+        <source>Refaire</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="260"/>
-        <source>Ctrl+C</source>
+        <source>Ctrl+Y</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="265"/>
-        <source>Coller</source>
+        <source>Couper</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="268"/>
-        <source>Ctrl+V</source>
+        <source>Ctrl+X</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="273"/>
-        <source>Rechercher / Remplacer</source>
+        <source>Copier</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="276"/>
-        <source>Ctrl+F</source>
+        <source>Ctrl+C</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="281"/>
-        <source>Voir le pdf</source>
+        <source>Coller</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="284"/>
-        <source>Ctrl+D</source>
+        <source>Ctrl+V</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="289"/>
-        <source>Ouvrir le dossier thème</source>
+        <source>Rechercher / Remplacer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="292"/>
-        <source>Ctrl+T</source>
+        <source>Ctrl+F</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="297"/>
-        <source>Supprimer l&apos;historique</source>
+        <source>Voir le pdf</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="302"/>
-        <source>Bibtex</source>
+        <location filename="../mainwindow.ui" line="300"/>
+        <source>Ctrl+D</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="305"/>
-        <source>Ctrl+Shift+B</source>
+        <source>Ouvrir le dossier thème</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="310"/>
-        <source>A propos de TexitEasy</source>
+        <location filename="../mainwindow.ui" line="308"/>
+        <source>Ctrl+T</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="313"/>
+        <source>Supprimer l&apos;historique</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="318"/>
+        <source>Bibtex</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="321"/>
-        <source>Synchroniser le pdf</source>
+        <source>Ctrl+Shift+B</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="326"/>
+        <source>A propos de TexitEasy</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="337"/>
+        <source>Synchroniser le pdf</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="342"/>
         <source>test</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="331"/>
+        <location filename="../mainwindow.ui" line="347"/>
         <source>Ouvrir les derniers documents</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="334"/>
+        <location filename="../mainwindow.ui" line="350"/>
         <source>Ctrl+Shift+O</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="339"/>
+        <location filename="../mainwindow.ui" line="355"/>
         <source>Nettoyer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="347"/>
+        <location filename="../mainwindow.ui" line="363"/>
         <source>Afficheur pdf séparé</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="355"/>
+        <location filename="../mainwindow.ui" line="371"/>
         <source>Split the editor</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="360"/>
+        <location filename="../mainwindow.ui" line="376"/>
         <source>Open</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="388"/>
+        <location filename="../mainwindow.cpp" line="429"/>
         <source>&amp;Macros</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="497"/>
+        <location filename="../mainwindow.cpp" line="538"/>
         <source>Ouvrir un fichier</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="540"/>
+        <location filename="../mainwindow.cpp" line="581"/>
         <source>Attention</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="540"/>
+        <location filename="../mainwindow.cpp" line="581"/>
         <source>Le compilateur %1 n&apos;est pas définie, veuillez le créer dans les options.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="617"/>
-        <source>Quitter?</source>
+        <location filename="../mainwindow.cpp" line="672"/>
+        <source>Continuer?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="618"/>
+        <location filename="../mainwindow.cpp" line="673"/>
         <source>Le fichier%1 a été modifié.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="619"/>
+        <location filename="../mainwindow.cpp" line="674"/>
         <source>Voullez-vous sauvegarder les changements?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="626"/>
+        <location filename="../mainwindow.cpp" line="681"/>
         <source>Sauvegarder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="628"/>
+        <location filename="../mainwindow.cpp" line="683"/>
         <source>Ne pas sauvegarder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="724"/>
-        <location filename="../mainwindow.cpp" line="730"/>
+        <location filename="../mainwindow.cpp" line="763"/>
+        <source>Nom de l&apos;encodage</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="764"/>
+        <source>Nom de l&apos;encodage: </source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="882"/>
+        <location filename="../mainwindow.cpp" line="888"/>
         <source>Mettre à jour TexitEasy</source>
         <translation type="unfinished"></translation>
     </message>
@@ -800,51 +868,61 @@
         <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="../configmanager.cpp" line="55"/>
+        <source>No Dictionnary</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../configmanager.cpp" line="57"/>
+        <source>Latex (*.tex *.latex);;BibTex(*.bib)</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>UpdateChecker</name>
     <message>
-        <location filename="../updatechecker.cpp" line="54"/>
-        <location filename="../updatechecker.cpp" line="59"/>
+        <location filename="../updatechecker.cpp" line="57"/>
+        <location filename="../updatechecker.cpp" line="62"/>
         <source>Nouvelle version</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="56"/>
+        <location filename="../updatechecker.cpp" line="59"/>
         <source>Mettre à jour</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="59"/>
+        <location filename="../updatechecker.cpp" line="62"/>
         <source>Un nouvelle version est disponnible, vous pouvez la télécharger depuis le site officiel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="55"/>
-        <location filename="../updatechecker.cpp" line="61"/>
+        <location filename="../updatechecker.cpp" line="58"/>
+        <location filename="../updatechecker.cpp" line="64"/>
         <source>Votre version: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="54"/>
+        <location filename="../updatechecker.cpp" line="57"/>
         <source>Un nouvelle version est disponnible.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="55"/>
-        <location filename="../updatechecker.cpp" line="61"/>
+        <location filename="../updatechecker.cpp" line="58"/>
+        <location filename="../updatechecker.cpp" line="64"/>
         <source>Nouvelle version:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="56"/>
-        <location filename="../updatechecker.cpp" line="62"/>
+        <location filename="../updatechecker.cpp" line="59"/>
+        <location filename="../updatechecker.cpp" line="65"/>
         <source>La prochaine fois</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="56"/>
-        <location filename="../updatechecker.cpp" line="62"/>
+        <location filename="../updatechecker.cpp" line="59"/>
+        <location filename="../updatechecker.cpp" line="65"/>
         <source>Ne plus me prevenir de cette mise à jour</source>
         <translation type="unfinished"></translation>
     </message>
@@ -852,13 +930,13 @@
 <context>
     <name>WidgetFile</name>
     <message>
-        <location filename="../widgetfile.cpp" line="349"/>
+        <location filename="../widgetfile.cpp" line="348"/>
         <source>Enregistrer un fichier</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgetfile.cpp" line="393"/>
-        <location filename="../widgetfile.cpp" line="403"/>
+        <location filename="../widgetfile.cpp" line="392"/>
+        <location filename="../widgetfile.cpp" line="402"/>
         <source>Ouvrir </source>
         <translation type="unfinished"></translation>
     </message>
@@ -981,13 +1059,13 @@
     </message>
     <message>
         <location filename="../widgetstatusbar.cpp" line="60"/>
-        <location filename="../widgetstatusbar.cpp" line="221"/>
+        <location filename="../widgetstatusbar.cpp" line="225"/>
         <source>Console</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../widgetstatusbar.cpp" line="65"/>
-        <location filename="../widgetstatusbar.cpp" line="224"/>
+        <location filename="../widgetstatusbar.cpp" line="228"/>
         <source>Erreurs</source>
         <translation type="unfinished"></translation>
     </message>
