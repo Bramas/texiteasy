@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 
      QStringList args = QCoreApplication::arguments();
 
-    if ( a.isRunning() )
+    if ( a.isRunning() && !args.contains("-n") && !args.contains("--new-window"))
     {
         QString msg;
         msg = args.join("#!#");
