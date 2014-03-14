@@ -130,7 +130,17 @@ void CompletionEngine::proposeCommand(int left, int top, int lineHeight, QString
     {
         if((dieseIndex = word.indexOf(QRegExp("[^\\\\]#"))) != -1)
         {
-            this->insertItem(idx++,word.left(dieseIndex));
+            QString command = word.left(dieseIndex + 1);
+            if(word.at(dieseIndex + 2) == 'm')
+            {
+                QListWidgetItem * item = new QListWidgetItem(command);
+                item->setToolTip(trUtf8("In <strong>math</strong> environment"));
+                this->insertItem(idx++, item);
+            }
+            else
+            {
+                this->insertItem(idx++,command);
+            }
         }
         else
         if((tooltipIndex = word.indexOf('?')) != -1)

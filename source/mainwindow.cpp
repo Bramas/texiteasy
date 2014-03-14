@@ -597,6 +597,11 @@ void MainWindow::open(QString filename, int cursorPosition)
 void MainWindow::onOtherInstanceMessage(const QString & msg)
 {
     QStringList argv = msg.split("#!#");
+    if(!argv.size())
+    {
+        return;
+    }
+    argv.pop_front();
     foreach(const QString &arg, argv)
     {
         this->open(arg);
