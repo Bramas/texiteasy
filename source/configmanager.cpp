@@ -754,34 +754,6 @@ void ConfigManager::checkRevision()
             localtheme.remove();
             localtheme2.remove();
         }
-        {
-
-
-        QFile theme(":/themes/dark.texiteasy-theme");
-        QFile theme2(":/themes/light.texiteasy-theme");
-        theme.copy(themePath()+"dark.texiteasy-theme");
-        theme2.copy(themePath()+"light.texiteasy-theme");
-        QFile::setPermissions(themePath()+"dark.texiteasy-theme",
-                          QFile::ReadOwner |
-                          QFile::WriteOwner |
-                          QFile::ReadGroup |
-                          QFile::WriteGroup |
-                          QFile::ReadOther |
-                          QFile::WriteOther |
-                          QFile::ReadUser |
-                          QFile::WriteUser
-                          );
-        QFile::setPermissions(themePath()+"light.texiteasy-theme",
-                          QFile::ReadOwner |
-                          QFile::WriteOwner |
-                          QFile::ReadGroup |
-                          QFile::WriteGroup |
-                          QFile::ReadOther |
-                          QFile::WriteOther |
-                          QFile::ReadUser |
-                          QFile::WriteUser
-                          );
-        }
         // install macros
         {
             recursiveCopy(":/data/macros", macrosPath(),
@@ -818,6 +790,36 @@ void ConfigManager::checkRevision()
     case 0x000900:
     case 0x000901:
     case 0x000902:
+
+    {
+
+
+        QFile theme(":/themes/dark.texiteasy-theme");
+        QFile theme2(":/themes/light.texiteasy-theme");
+        theme.copy(themePath()+"dark.texiteasy-theme");
+        theme2.copy(themePath()+"light.texiteasy-theme");
+        QFile::setPermissions(themePath()+"dark.texiteasy-theme",
+                          QFile::ReadOwner |
+                          QFile::WriteOwner |
+                          QFile::ReadGroup |
+                          QFile::WriteGroup |
+                          QFile::ReadOther |
+                          QFile::WriteOther |
+                          QFile::ReadUser |
+                          QFile::WriteUser
+                          );
+        QFile::setPermissions(themePath()+"light.texiteasy-theme",
+                          QFile::ReadOwner |
+                          QFile::WriteOwner |
+                          QFile::ReadGroup |
+                          QFile::WriteGroup |
+                          QFile::ReadOther |
+                          QFile::WriteOther |
+                          QFile::ReadUser |
+                          QFile::WriteUser
+                          );
+    }
+    case 0x001000:
 
         break;
     }

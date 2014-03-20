@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="0.8.2"
+VERSION="0.9.2"
 
 #SCRIPT=$(readlink -f $0)
 # Absolute path this script is in, thus /home/user/bin
