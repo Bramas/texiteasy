@@ -52,6 +52,7 @@
 #include "filemanager.h"
 #include "widgetlinenumber.h"
 #include "widgetfile.h"
+#include "textdocumentlayout.h"
 
 #define max(a,b) ((a) < (b) ? (b) : (a))
 #define min(a,b) ((a) > (b) ? (b) : (a))
@@ -71,6 +72,7 @@ WidgetTextEdit::WidgetTextEdit(WidgetFile * parent) :
     _scriptIsRunning(false)
 
 {
+    this->document()->setDocumentLayout(new TextDocumentLayout(this->document()));
     _widgetFile = parent;
     this->setContentsMargins(0,0,0,0);
     connect(this,SIGNAL(textChanged()),this->currentFile,SLOT(setModified()));
@@ -357,6 +359,19 @@ void WidgetTextEdit::onCursorPositionChange()
     QList<QTextEdit::ExtraSelection> selections;
     setExtraSelections(selections);
     this->highlightCurrentLine();
+/*
+
+    QTextCursor cursor(this->textCursor());
+    QTextBlockFormat blockFormat = cursor.blockFormat();
+    qDebug()<<" ancien "<<blockFormat.leftMargin();
+    blockFormat.setLeftMargin(150);
+    if(blockFormat.isValid() && !this->textCursor().isNull())
+    {
+        qDebug()<<"test";
+        cursor.setBlockFormat(blockFormat);
+        this->setTextCursor(cursor);
+    }
+*/
 
     if(!_scriptEngine.cursorsMutex()->tryLock())
     {
@@ -398,7 +413,7 @@ void WidgetTextEdit::onCursorPositionChange()
             BlockData *dataEnd = static_cast<BlockData *>( cEnd.block().userData() );
             bool change = false;
             if (dataStart) {
-                while(cStart.positionInBlock() > 0
+                while(cStart.positionInBlock() > 0 && cStart.positionInBlock() < dataStart->characterData.size()
                       && dataStart->characterData[cStart.positionInBlock()].state == SyntaxHighlighter::CompletionArgument
                       && dataStart->characterData[cStart.positionInBlock() - 1].state == SyntaxHighlighter::CompletionArgument)
                 {
@@ -779,10 +794,10 @@ void WidgetTextEdit::wheelEvent(QWheelEvent * event)
 void WidgetTextEdit::setBlockLeftMargin(const QTextBlock &textBlock, int leftMargin)
 {
     QTextBlockFormat format;
-    QTextCursor cursor(this->textCursor());
+    format = textCursor().blockFormat();
+    qDebug()<<"oldMargin "<<format.leftMargin()<<" new "<<leftMargin;
     format.setLeftMargin(leftMargin);
-    cursor.setPosition(textBlock.position());
-    cursor.setBlockFormat(format);
+    textCursor().setBlockFormat(format);
 }
 
 void WidgetTextEdit::initIndentation(void)
@@ -792,7 +807,6 @@ void WidgetTextEdit::initIndentation(void)
 
 void WidgetTextEdit::updateIndentation(void)
 {
-
     if(_scriptIsRunning)
     {
         _scriptEngine.evaluate();

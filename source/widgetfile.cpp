@@ -419,6 +419,10 @@ Hunspell * WidgetFile::spellChecker()
 
 QString WidgetFile::spellCheckerEncoding()
 {
+    if(!spellChecker())
+    {
+        return "";
+    }
     return spellChecker()->get_dic_encoding();
 }
 void WidgetFile::setDictionary(QString dico)

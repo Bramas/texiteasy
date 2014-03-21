@@ -84,7 +84,8 @@ SOURCES += main.cpp\
     singleapp/qtlockedfile.cpp \
     singleapp/qtlockedfile_win.cpp \
     singleapp/qtlockedfile_unix.cpp \
-    singleapp/qtlocalpeer.cpp
+    singleapp/qtlocalpeer.cpp \
+    textdocumentlayout.cpp
 
 HEADERS  += mainwindow.h \
     widgetlinenumber.h \
@@ -146,7 +147,8 @@ HEADERS  += mainwindow.h \
     singleapp/qtsinglecoreapplication.h \
     singleapp/qtsingleapplication.h \
     singleapp/qtlockedfile.h \
-    singleapp/qtlocalpeer.h
+    singleapp/qtlocalpeer.h \
+    textdocumentlayout.h
 
 FORMS    += mainwindow.ui \
     dialogwelcome.ui \
