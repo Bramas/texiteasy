@@ -92,6 +92,11 @@ void File::save(QString filename, bool recursively)
     {
         this->data = this->_widgetTextEdit->toPlainText();
     }
+    //if the file has not been opened, we set its codec to utf8
+    if(_codec.isEmpty())
+    {
+        _codec = "UTF-8";
+    }
     // Save
     QFile file(this->filename);
     if (!file.open(QIODevice::WriteOnly | QIODevice::Text))

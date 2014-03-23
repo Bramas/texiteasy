@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.0" language="en_US">
+<defaultcodec>UTF-8</defaultcodec>
 <context>
     <name>Builder</name>
     <message>
@@ -169,67 +170,72 @@
         <translation>$ auto</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.cpp" line="234"/>
+        <location filename="../dialogconfig.ui" line="208"/>
+        <source>Retour à la ligne automatique</source>
+        <translation>Enable text wrapping</translation>
+    </message>
+    <message>
+        <location filename="../dialogconfig.cpp" line="236"/>
         <source>Action</source>
         <translation>Action</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.cpp" line="236"/>
+        <location filename="../dialogconfig.cpp" line="238"/>
         <source>Raccourci</source>
         <translation>Hotkey</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="254"/>
+        <location filename="../dialogconfig.ui" line="268"/>
         <source>Chemin vers les executables latex</source>
         <translation>Path to latex binaries</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="266"/>
+        <location filename="../dialogconfig.ui" line="280"/>
         <source>Parcourir</source>
         <translation>Browse</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="275"/>
+        <location filename="../dialogconfig.ui" line="289"/>
         <source>BibTex</source>
         <translation>BibTex</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="282"/>
+        <location filename="../dialogconfig.ui" line="296"/>
         <source>bibtex %1</source>
         <translation>bibtex %1</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="289"/>
+        <location filename="../dialogconfig.ui" line="303"/>
         <source>Commande Latex par défaut</source>
         <translation>Default Latex command</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="299"/>
+        <location filename="../dialogconfig.ui" line="313"/>
         <source>Cacher les fichiers de compilation</source>
         <translation>Hide Auxilary files</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.cpp" line="229"/>
+        <location filename="../dialogconfig.cpp" line="231"/>
         <source>Nom</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.cpp" line="231"/>
+        <location filename="../dialogconfig.cpp" line="233"/>
         <source>Commande</source>
         <translation>Command</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="352"/>
+        <location filename="../dialogconfig.ui" line="366"/>
         <source> + </source>
         <translation> + </translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="362"/>
+        <location filename="../dialogconfig.ui" line="376"/>
         <source> - </source>
         <translation> - </translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="408"/>
+        <location filename="../dialogconfig.ui" line="422"/>
         <source>Annuler</source>
         <translation>Cancel</translation>
     </message>
@@ -242,7 +248,7 @@
         <translation type="obsolete">Bibtex</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="395"/>
+        <location filename="../dialogconfig.ui" line="409"/>
         <source>Valider</source>
         <translation>Submit</translation>
     </message>
@@ -251,9 +257,22 @@
         <translation type="obsolete">Cancel</translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="421"/>
+        <location filename="../dialogconfig.ui" line="435"/>
         <source>Appliquer</source>
         <translation>Apply</translation>
+    </message>
+</context>
+<context>
+    <name>DialogDownloadUpdate</name>
+    <message>
+        <location filename="../dialogdownloadupdate.ui" line="14"/>
+        <source>Dialog</source>
+        <translation>Update</translation>
+    </message>
+    <message>
+        <location filename="../dialogdownloadupdate.ui" line="26"/>
+        <source>TexitEasy</source>
+        <translation>TexitEasy</translation>
     </message>
 </context>
 <context>
@@ -468,22 +487,22 @@
 <context>
     <name>FileManager</name>
     <message>
-        <location filename="../filemanager.cpp" line="495"/>
+        <location filename="../filemanager.cpp" line="504"/>
         <source>Le fichier %1 à été modifié en dehors de %2. Voulez-vous le charger à nouveau ?</source>
         <translation>The file %1 has be modified outside %2. Do you want to reload it?</translation>
     </message>
     <message>
-        <location filename="../filemanager.cpp" line="497"/>
+        <location filename="../filemanager.cpp" line="506"/>
         <source>Un fichier à été modifié.</source>
         <translation>The document has been modified.</translation>
     </message>
     <message>
-        <location filename="../filemanager.cpp" line="504"/>
+        <location filename="../filemanager.cpp" line="513"/>
         <source>Charger à nouveau</source>
         <translation>Reload</translation>
     </message>
     <message>
-        <location filename="../filemanager.cpp" line="505"/>
+        <location filename="../filemanager.cpp" line="514"/>
         <source>Ignorer</source>
         <translation>Ignore</translation>
     </message>
@@ -954,47 +973,47 @@
 <context>
     <name>UpdateChecker</name>
     <message>
-        <location filename="../updatechecker.cpp" line="57"/>
-        <location filename="../updatechecker.cpp" line="62"/>
+        <location filename="../updatechecker.cpp" line="59"/>
+        <location filename="../updatechecker.cpp" line="64"/>
         <source>Nouvelle version</source>
         <translation>Update</translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="59"/>
+        <location filename="../updatechecker.cpp" line="61"/>
         <source>Mettre à jour</source>
         <translation>Update</translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="62"/>
+        <location filename="../updatechecker.cpp" line="64"/>
         <source>Un nouvelle version est disponnible, vous pouvez la télécharger depuis le site officiel</source>
         <translation>A new version is avaialble, you can download it from the official site</translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="58"/>
-        <location filename="../updatechecker.cpp" line="64"/>
+        <location filename="../updatechecker.cpp" line="60"/>
+        <location filename="../updatechecker.cpp" line="66"/>
         <source>Votre version: </source>
         <translation>Your version: </translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="57"/>
+        <location filename="../updatechecker.cpp" line="59"/>
         <source>Un nouvelle version est disponnible.</source>
         <translation>A new version is available.</translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="58"/>
-        <location filename="../updatechecker.cpp" line="64"/>
+        <location filename="../updatechecker.cpp" line="60"/>
+        <location filename="../updatechecker.cpp" line="66"/>
         <source>Nouvelle version:</source>
         <translation>New version: </translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="59"/>
-        <location filename="../updatechecker.cpp" line="65"/>
+        <location filename="../updatechecker.cpp" line="61"/>
+        <location filename="../updatechecker.cpp" line="67"/>
         <source>La prochaine fois</source>
         <translation>Next time</translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="59"/>
-        <location filename="../updatechecker.cpp" line="65"/>
+        <location filename="../updatechecker.cpp" line="61"/>
+        <location filename="../updatechecker.cpp" line="67"/>
         <source>Ne plus me prevenir de cette mise à jour</source>
         <translation>Do not remind me this update</translation>
     </message>
@@ -1155,7 +1174,7 @@
 <context>
     <name>WidgetTextEdit</name>
     <message>
-        <location filename="../widgettextedit.cpp" line="298"/>
+        <location filename="../widgettextedit.cpp" line="314"/>
         <source>Ajouter au dictionnaire</source>
         <translation>Add word to dictionnary</translation>
     </message>

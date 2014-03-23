@@ -727,33 +727,7 @@ void ConfigManager::checkRevision()
     case 0x000700:
     {
         qDebug()<<"texiteasy 0.7.0 => 0.8.0";
-        //remove some old files and update theme
-        {
-            QFile localtheme(themePath()+"dark.texiteasy-theme");
-            QFile localtheme2(themePath()+"light.texiteasy-theme");
-            QFile::setPermissions(themePath()+"dark.texiteasy-theme",
-                              QFile::ReadOwner |
-                              QFile::WriteOwner |
-                              QFile::ReadGroup |
-                              QFile::WriteGroup |
-                              QFile::ReadOther |
-                              QFile::WriteOther |
-                              QFile::ReadUser |
-                              QFile::WriteUser
-                              );
-            QFile::setPermissions(themePath()+"light.texiteasy-theme",
-                              QFile::ReadOwner |
-                              QFile::WriteOwner |
-                              QFile::ReadGroup |
-                              QFile::WriteGroup |
-                              QFile::ReadOther |
-                              QFile::WriteOther |
-                              QFile::ReadUser |
-                              QFile::WriteUser
-                              );
-            localtheme.remove();
-            localtheme2.remove();
-        }
+
         // install macros
         {
             recursiveCopy(":/data/macros", macrosPath(),
@@ -792,8 +766,33 @@ void ConfigManager::checkRevision()
     case 0x000902:
 
     {
-
-
+        //remove some old files and update theme
+        {
+            QFile localtheme(themePath()+"dark.texiteasy-theme");
+            QFile localtheme2(themePath()+"light.texiteasy-theme");
+            QFile::setPermissions(themePath()+"dark.texiteasy-theme",
+                              QFile::ReadOwner |
+                              QFile::WriteOwner |
+                              QFile::ReadGroup |
+                              QFile::WriteGroup |
+                              QFile::ReadOther |
+                              QFile::WriteOther |
+                              QFile::ReadUser |
+                              QFile::WriteUser
+                              );
+            QFile::setPermissions(themePath()+"light.texiteasy-theme",
+                              QFile::ReadOwner |
+                              QFile::WriteOwner |
+                              QFile::ReadGroup |
+                              QFile::WriteGroup |
+                              QFile::ReadOther |
+                              QFile::WriteOther |
+                              QFile::ReadUser |
+                              QFile::WriteUser
+                              );
+            localtheme.remove();
+            localtheme2.remove();
+        }
         QFile theme(":/themes/dark.texiteasy-theme");
         QFile theme2(":/themes/light.texiteasy-theme");
         theme.copy(themePath()+"dark.texiteasy-theme");

@@ -7,6 +7,9 @@
 #include <QTimer>
 #include <QProcess>
 #include "configmanager.h"
+#ifdef OS_WINDOWS
+    #include "dialogdownloadupdate.h"
+#endif
 UpdateChecker::UpdateChecker()
 {
     connect(this, SIGNAL(finished(QNetworkReply*)), this, SLOT(onFinished(QNetworkReply*)));
@@ -73,9 +76,13 @@ void UpdateChecker::onFinished(QNetworkReply *reply)
         else
         if(2 == rep)
         {
-            qDebug()<<ConfigManager::Instance.applicationPath()+"/texiteasy_updat.exe";
-            QProcess * p = new QProcess;
-            p->start(ConfigManager::Instance.applicationPath()+"/texiteasy_updat.exe");
+#ifdef OS_WINDOWS
+            //qDebug()<<ConfigManager::Instance.applicationPath()+"/texiteasy_updat.exe";
+            //QProcess * p = new QProcess;
+            //p->start(ConfigManager::Instance.applicationPath()+"/texiteasy_updat.exe");
+            DialogDownloadUpdate * d = new DialogDownloadUpdate(0);
+            d->show();
+#endif
         }
     }
 }

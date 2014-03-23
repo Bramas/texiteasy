@@ -17,7 +17,7 @@ VERSION = \\\"'0.10.0'\\\"
 VERSION_HEX = 0x001000
 
 
-#DEFINES += LIB_DEPLOY
+DEFINES += LIB_DEPLOY
 #DEFINES += PORTABLE_EXECUTABLE
 
 DEFINES += "CURRENT_VERSION_HEX=$${VERSION_HEX}"
@@ -85,7 +85,8 @@ SOURCES += main.cpp\
     singleapp/qtlockedfile_win.cpp \
     singleapp/qtlockedfile_unix.cpp \
     singleapp/qtlocalpeer.cpp \
-    textdocumentlayout.cpp
+    textdocumentlayout.cpp \
+    dialogdownloadupdate.cpp
 
 HEADERS  += mainwindow.h \
     widgetlinenumber.h \
@@ -148,7 +149,8 @@ HEADERS  += mainwindow.h \
     singleapp/qtsingleapplication.h \
     singleapp/qtlockedfile.h \
     singleapp/qtlocalpeer.h \
-    textdocumentlayout.h
+    textdocumentlayout.h \
+    dialogdownloadupdate.h
 
 FORMS    += mainwindow.ui \
     dialogwelcome.ui \
@@ -161,7 +163,8 @@ FORMS    += mainwindow.ui \
     widgetstatusbar.ui \
     dialogabout.ui \
     dialogaddlatexcommand.ui \
-    dialogmacros.ui
+    dialogmacros.ui \
+    dialogdownloadupdate.ui
 
 TRANSLATIONS += translations/texiteasy_ar.ts \
                 translations/texiteasy_fr.ts \
@@ -197,8 +200,8 @@ win32 {
     RC_FILE = win.rc
 
     DEFINES += OS_WINDOWS
-    LAST_VERSION_URL = \\\"'http://texiteasy.com/posts/latest_version/win'\\\"
-    TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com/posts/download_latest/win'\\\"
+    LAST_VERSION_URL = \\\"'http://texiteasy.com/downloads/latest_version/win'\\\"
+    TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com/downloads/latest/win'\\\"
 
     #LAST_VERSION_URL = \\\"'http://texiteasy.com/posts/latest_version/win_portable'\\\"
     #TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com/posts/download_latest/win_portable'\\\"
@@ -207,16 +210,16 @@ win32 {
 unix:!mac{
     LIBS += -lz -L/usr/local/lib -lpoppler-qt4
     DEFINES += OS_LINUX
-    LAST_VERSION_URL = \\\"'http://texiteasy.com/posts/latest_version/linux'\\\"
-    TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com/posts/download_latest/linux'\\\"
+    LAST_VERSION_URL = \\\"'http://texiteasy.com/downloads/latest_version/linux'\\\"
+    TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com/downloads/latest/linux'\\\"
 }
 mac{
     INCLUDEPATH += /usr/local/include
     LIBS += -L/usr/local/lib -lz -lpoppler-qt5
     ICON = texiteasy.icns
     DEFINES += OS_MAC
-    LAST_VERSION_URL = \\\"'http://texiteasy.com/posts/latest_version/mac'\\\"
-    TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com/posts/download_latest/mac'\\\"
+    LAST_VERSION_URL = \\\"'http://texiteasy.com/downloads/latest_version/mac'\\\"
+    TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com/downloads/latest/mac'\\\"
     #CONFIG += x86 x86_64
 }
 
