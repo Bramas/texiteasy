@@ -72,7 +72,7 @@ public slots:
 
     void sendFilenameChanged(WidgetFile* w, QString name) { emit filenameChanged(w,name); emit filenameChanged(name); }
 
-
+    void updateLineWrapMode();
     void splitEditor(bool split) { if(this->currentWidgetFile()) this->currentWidgetFile()->splitEditor(split); }
     void save() { this->currentWidgetFile()->save(); }
     void saveAs() { this->currentWidgetFile()->saveAs(); }

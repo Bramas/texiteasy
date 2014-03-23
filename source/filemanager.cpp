@@ -28,6 +28,7 @@ void FileManager::init()
     {
         //initWidgetPdfViewerWrapper();
     }
+    connect(&ConfigManager::Instance, SIGNAL(changed()), this, SLOT(updateLineWrapMode()));
 }
 
 void FileManager::initWidgetPdfViewerWrapper()
@@ -270,6 +271,14 @@ File * FileManager::file(int index)
 {
     return _widgetFiles.at(index)->file();
 }
+void FileManager::updateLineWrapMode()
+{
+    foreach(WidgetFile* widget, _widgetFiles)
+    {
+        widget->widgetTextEdit()->updateLineWrapMode();
+    }
+}
+
 void FileManager::undo()
 {
     if(this->currentWidgetFile())

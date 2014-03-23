@@ -72,7 +72,9 @@ WidgetTextEdit::WidgetTextEdit(WidgetFile * parent) :
     _scriptIsRunning(false)
 
 {
-    this->document()->setDocumentLayout(new TextDocumentLayout(this->document()));
+    TextDocumentLayout * layout = new TextDocumentLayout(this->document());
+    this->document()->setDocumentLayout(layout);
+    connect(layout, SIGNAL(documentSizeChanged(QSizeF)), this, SLOT(adjustScrollbar(QSizeF)));
     _widgetFile = parent;
     this->setContentsMargins(0,0,0,0);
     connect(this,SIGNAL(textChanged()),this->currentFile,SLOT(setModified()));
@@ -86,7 +88,7 @@ WidgetTextEdit::WidgetTextEdit(WidgetFile * parent) :
     this->currentFile->setModified(false);
     this->updateTabWidth();
     connect(&ConfigManager::Instance, SIGNAL(tabWidthChanged()), this, SLOT(updateTabWidth()));
-
+    updateLineWrapMode();
 }
 WidgetTextEdit::~WidgetTextEdit()
 {
@@ -96,6 +98,18 @@ WidgetTextEdit::~WidgetTextEdit()
     qDebug()<<"delete WidgetTextEdit";
 #endif
 }
+void WidgetTextEdit::updateLineWrapMode()
+{
+    setLineWrapMode(ConfigManager::Instance.isLineWrapped() ? QPlainTextEdit::WidgetWidth : QPlainTextEdit::NoWrap);
+}
+
+void WidgetTextEdit::adjustScrollbar(QSizeF documentSize)
+{
+    QScrollBar * hbar = this->horizontalScrollBar();
+    hbar->setRange(0, (int)documentSize.width() - viewport()->width());
+    hbar->setPageStep(viewport()->width());
+}
+
 void WidgetTextEdit::scrollTo(int p)
 {
     this->verticalScrollBar()->setSliderPosition(p);
@@ -464,6 +478,8 @@ void WidgetTextEdit::onCursorPositionChange()
 void WidgetTextEdit::resizeEvent(QResizeEvent *event)
 {
     WIDGET_TEXT_EDIT_PARENT_CLASS::resizeEvent(event);
+    TextDocumentLayout* layout = dynamic_cast<TextDocumentLayout*>(this->document()->documentLayout());
+    layout->setTextWidth(viewport()->width());
 }
 
 void WidgetTextEdit::insertPlainText(const QString &text)

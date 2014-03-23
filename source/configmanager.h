@@ -123,6 +123,9 @@ public:
     bool            isDollarAuto() {  QSettings settings; return settings.value("dollarAuto", true).toBool();  }
     void            setDollarAuto(bool b) {  QSettings settings; settings.setValue("dollarAuto", b);  }
 
+    bool            isLineWrapped() {  QSettings settings; return settings.value("lineWrapped", true).toBool();  }
+    void            setLineWrapped(bool b) {  QSettings settings; settings.setValue("lineWrapped", b);  }
+
     QStringList     themesList();
     const QString&  theme() { return _theme; }
     QString         themePath();

@@ -7,6 +7,23 @@
 #include <QDebug>
 
 
+class TextDocumentLayoutPrivate
+{
+public:
+    TextDocumentLayoutPrivate() {
+        width = 300;
+        maximumWidth = 300;
+        maximumWidthBlockNumber = 0;
+        blockCount = 1;
+        blockUpdate = blockDocumentSizeChanged = false;
+    }
+    int blockCount;
+    int maximumWidth;
+    int maximumWidthBlockNumber;
+    int width;
+    bool blockUpdate, blockDocumentSizeChanged;
+};
+
 TextDocumentLayout::TextDocumentLayout(QTextDocument *document) :
     QPlainTextDocumentLayout(document)
 {
@@ -18,7 +35,7 @@ QRectF TextDocumentLayout::blockBoundingRect(const QTextBlock &block) const
     if (!block.isValid()) { return QRectF(); }
     QTextLayout *tl = block.layout();
 
-    //if (!tl->lineCount())
+    if (!tl->lineCount())
         const_cast<TextDocumentLayout*>(this)->layoutBlock(block);
 
 
@@ -33,6 +50,76 @@ QRectF TextDocumentLayout::blockBoundingRect(const QTextBlock &block) const
             br.adjust(0, 0, 0, margin);
     }
     return br;
+}
+
+
+
+/*! \reimp
+ */
+void TextDocumentLayout::documentChanged(int from, int /*charsRemoved*/, int charsAdded)
+{
+    QTextDocument *doc = document();
+    int newBlockCount = doc->blockCount();
+
+    QTextBlock changeStartBlock = doc->findBlock(from);
+    QTextBlock changeEndBlock = doc->findBlock(qMax(0, from + charsAdded - 1));
+
+    if (changeStartBlock == changeEndBlock && newBlockCount == d->blockCount) {
+        QTextBlock block = changeStartBlock;
+        int blockLineCount = block.layout()->lineCount();
+        if (block.isValid() && blockLineCount) {
+            QRectF oldBr = blockBoundingRect(block);
+            layoutBlock(block);
+            QRectF newBr = blockBoundingRect(block);
+            if (newBr.height() == oldBr.height()) {
+                //if (!d->blockUpdate)
+                //    emit updateBlock(block);
+                return;
+            }
+        }
+    } else {
+        QTextBlock block = changeStartBlock;
+        do {
+            block.clearLayout();
+            if (block == changeEndBlock)
+                break;
+            block = block.next();
+        } while(block.isValid());
+    }
+
+    if (newBlockCount != d->blockCount) {
+
+        int changeEnd = changeEndBlock.blockNumber();
+        int blockDiff = newBlockCount - d->blockCount;
+        int oldChangeEnd = changeEnd - blockDiff;
+
+        if (d->maximumWidthBlockNumber > oldChangeEnd)
+            d->maximumWidthBlockNumber += blockDiff;
+
+        d->blockCount = newBlockCount;
+        if (d->blockCount == 1)
+            d->maximumWidth = blockWidth(doc->firstBlock());
+
+        if (!d->blockDocumentSizeChanged)
+            emit documentSizeChanged(documentSize());
+
+        if (blockDiff == 1 && changeEnd == newBlockCount -1 ) {
+           // if (!d->blockUpdate)
+            {
+                QTextBlock b = changeStartBlock;
+                for(;;) {
+                    emit updateBlock(b);
+                    if (b == changeEndBlock)
+                        break;
+                    b = b.next();
+                }
+            }
+            return;
+        }
+    }
+
+    //if (!d->blockUpdate)
+        emit update(QRectF(0., -doc->documentMargin(), 1000000000., 1000000000.)); // optimization potential
 }
 
 
@@ -54,7 +141,7 @@ void TextDocumentLayout::layoutBlock(const QTextBlock &block)
         extraMargin += fm.width(QChar(0x21B5));
     }
     tl->beginLayout();
-    qreal availableWidth = 400; //Private
+    qreal availableWidth = d->width;
     if (availableWidth <= 0) {
         availableWidth = qreal(INT_MAX); // similar to text edit with pageSize.width == 0
     }
@@ -81,26 +168,26 @@ void TextDocumentLayout::layoutBlock(const QTextBlock &block)
     int lineCount = doc->lineCount();
 
     bool emitDocumentSizeChanged = previousLineCount != lineCount;
-    if (blockMaximumWidth > 400) {//Private
+    if (blockMaximumWidth > d->maximumWidth) {
         // new longest line
-        //d->maximumWidth = blockMaximumWidth;
-        //d->maximumWidthBlockNumber = block.blockNumber();
+        d->maximumWidth = blockMaximumWidth;
+        d->maximumWidthBlockNumber = block.blockNumber();
         emitDocumentSizeChanged = true;
-    } else if (block.blockNumber() == 10 && blockMaximumWidth < 400) {//Private
+    } else if (block.blockNumber() == d->maximumWidthBlockNumber && blockMaximumWidth < d->maximumWidth) {
         // longest line shrinking
         QTextBlock b = doc->firstBlock();
-        //d->maximumWidth = 0;
+        d->maximumWidth = 0;
         QTextBlock maximumBlock;
         while (b.isValid()) {
             qreal blockMaximumWidth = blockWidth(b);
-            if (blockMaximumWidth > 400) {//Private
-                //d->maximumWidth = blockMaximumWidth;
+            if (blockMaximumWidth > d->maximumWidth) {
+                d->maximumWidth = blockMaximumWidth;
                 maximumBlock = b;
             }
             b = b.next();
         }
         if (maximumBlock.isValid()) {
-            //d->maximumWidthBlockNumber = maximumBlock.blockNumber();
+            d->maximumWidthBlockNumber = maximumBlock.blockNumber();
             emitDocumentSizeChanged = true;
         }
     }
@@ -119,6 +206,20 @@ qreal TextDocumentLayout::blockWidth(const QTextBlock &block)
         blockWidth = qMax(line.naturalTextWidth() + 8, blockWidth);
     }
     return blockWidth;
+}
+
+
+void TextDocumentLayout::setTextWidth(qreal newWidth)
+{
+    d->width = d->maximumWidth = newWidth;
+    //d->relayout();
+}
+/*!
+  \reimp
+ */
+QSizeF TextDocumentLayout::documentSize() const
+{
+    return QSizeF(d->maximumWidth, document()->lineCount());
 }
 
 qreal TextDocumentLayout::indentWidth(const QTextBlock &block)

@@ -115,6 +115,8 @@ private slots:
 
 public slots:
     void scrollTo(int);
+    void updateLineWrapMode();
+    void adjustScrollbar(QSizeF documentSize);
     void updateIndentation(void);
     void onCursorPositionChange(void);
     void matchCommand();
