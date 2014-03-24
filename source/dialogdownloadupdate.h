@@ -1,3 +1,5 @@
+
+
 #ifndef DIALOGDOWNLOADUPDATE_H
 #define DIALOGDOWNLOADUPDATE_H
 
@@ -61,6 +63,10 @@ private:
     QString _filename;
     QMutex _mutex;
 };
+#else // OS_WINDOWS
+class DialogDownloadUpdate {
+
+};
+#endif
 
 #endif // DIALOGDOWNLOADUPDATE_H
-#endif // OS_WINDOWS

@@ -17,7 +17,7 @@ VERSION = \\\"'0.10.0'\\\"
 VERSION_HEX = 0x001000
 
 
-DEFINES += LIB_DEPLOY
+#DEFINES += LIB_DEPLOY
 #DEFINES += PORTABLE_EXECUTABLE
 
 DEFINES += "CURRENT_VERSION_HEX=$${VERSION_HEX}"
@@ -85,8 +85,7 @@ SOURCES += main.cpp\
     singleapp/qtlockedfile_win.cpp \
     singleapp/qtlockedfile_unix.cpp \
     singleapp/qtlocalpeer.cpp \
-    textdocumentlayout.cpp \
-    dialogdownloadupdate.cpp
+    textdocumentlayout.cpp
 
 HEADERS  += mainwindow.h \
     widgetlinenumber.h \
@@ -149,8 +148,7 @@ HEADERS  += mainwindow.h \
     singleapp/qtsingleapplication.h \
     singleapp/qtlockedfile.h \
     singleapp/qtlocalpeer.h \
-    textdocumentlayout.h \
-    dialogdownloadupdate.h
+    textdocumentlayout.h
 
 FORMS    += mainwindow.ui \
     dialogwelcome.ui \
@@ -163,8 +161,7 @@ FORMS    += mainwindow.ui \
     widgetstatusbar.ui \
     dialogabout.ui \
     dialogaddlatexcommand.ui \
-    dialogmacros.ui \
-    dialogdownloadupdate.ui
+    dialogmacros.ui
 
 TRANSLATIONS += translations/texiteasy_ar.ts \
                 translations/texiteasy_fr.ts \
@@ -193,6 +190,12 @@ RESOURCES += \
     icons.qrc
 
 win32 {
+
+    SOURCES += dialogdownloadupdate.h
+    HEADERS += dialogdownloadupdate.h
+    FORMS += dialogdownloadupdate.ui
+
+
     LIBS += -LC:/Qt/prerequisites-i686/lib -lpoppler-qt5
     LIBS += -LC:/Qt/prerequisites-i686/lib -lz
 

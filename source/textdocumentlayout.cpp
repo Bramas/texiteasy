@@ -27,6 +27,7 @@ public:
 TextDocumentLayout::TextDocumentLayout(QTextDocument *document) :
     QPlainTextDocumentLayout(document)
 {
+    d = new TextDocumentLayoutPrivate();
 }
 
 
