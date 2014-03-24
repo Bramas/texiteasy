@@ -3,13 +3,14 @@
 
 #include <QPlainTextDocumentLayout>
 
+class WidgetTextEdit;
 class TextDocumentLayoutPrivate;
 
 class TextDocumentLayout : public QPlainTextDocumentLayout
 {
     Q_OBJECT
 public:
-    explicit TextDocumentLayout(QTextDocument *document);
+    explicit TextDocumentLayout(WidgetTextEdit * widgetTextEdit);
     void setTextWidth(qreal newWidth);
 
 signals:
@@ -26,6 +27,7 @@ private:
     qreal indentWidth(const QTextBlock &block);
 
     TextDocumentLayoutPrivate * d;
+    WidgetTextEdit * _widgetTextEdit;
 };
 
 #endif // TEXTDOCUMENTLAYOUT_H

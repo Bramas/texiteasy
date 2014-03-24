@@ -1,5 +1,5 @@
 #include "textdocumentlayout.h"
-
+#include "widgettextedit.h"
 
 #include <QTextBlock>
 #include <QString>
@@ -24,8 +24,9 @@ public:
     bool blockUpdate, blockDocumentSizeChanged;
 };
 
-TextDocumentLayout::TextDocumentLayout(QTextDocument *document) :
-    QPlainTextDocumentLayout(document)
+TextDocumentLayout::TextDocumentLayout(WidgetTextEdit * widgetTextEdit) :
+    QPlainTextDocumentLayout(widgetTextEdit->document()),
+    _widgetTextEdit(widgetTextEdit)
 {
     d = new TextDocumentLayoutPrivate();
 }
@@ -118,7 +119,6 @@ void TextDocumentLayout::documentChanged(int from, int /*charsRemoved*/, int cha
             return;
         }
     }
-
     //if (!d->blockUpdate)
         emit update(QRectF(0., -doc->documentMargin(), 1000000000., 1000000000.)); // optimization potential
 }
@@ -194,6 +194,8 @@ void TextDocumentLayout::layoutBlock(const QTextBlock &block)
     }
     if (emitDocumentSizeChanged)// && !d->blockDocumentSizeChanged)
         emit documentSizeChanged(documentSize());
+
+    emit updateBlock(block);
 }
 
 qreal TextDocumentLayout::blockWidth(const QTextBlock &block)
@@ -209,6 +211,55 @@ qreal TextDocumentLayout::blockWidth(const QTextBlock &block)
     return blockWidth;
 }
 
+/*
+QRectF TextDocumentLayout::blockBoundingRect(const QTextBlock &block) const {
+    int blockNumber = block.blockNumber();
+    QTextBlock currentBlock = block.document()->firstBlock();
+    int currentBlockNumber = currentBlock.blockNumber();
+    if (!block.isValid() || !currentBlock.isValid())
+        return QRectF();
+
+    QTextDocument *doc = document();
+
+    QPointF offset;
+    QRectF r = documentLayout->blockBoundingRect(currentBlock);
+    int maxVerticalOffset = r.height();
+
+    while (currentBlockNumber < blockNumber && offset.y() - maxVerticalOffset <= 2* textEdit->viewport()->height()) {
+        offset.ry() += r.height();
+        currentBlock = currentBlock.next();
+        ++currentBlockNumber;
+        if (!currentBlock.isVisible()) {
+            currentBlock = doc->findBlockByLineNumber(currentBlock.firstLineNumber());
+            currentBlockNumber = currentBlock.blockNumber();
+        }
+        r = documentLayout->blockBoundingRect(currentBlock);
+    }
+    while (currentBlockNumber > blockNumber && offset.y() + maxVerticalOffset >= -textEdit->viewport()->height()) {
+        currentBlock = currentBlock.previous();
+        --currentBlockNumber;
+        while (!currentBlock.isVisible()) {
+            currentBlock = currentBlock.previous();
+            --currentBlockNumber;
+        }
+        if (!currentBlock.isValid())
+            break;
+
+        r = documentLayout->blockBoundingRect(currentBlock);
+        offset.ry() -= r.height();
+    }
+
+    if (currentBlockNumber != blockNumber) {
+        // fallback for blocks out of reach. Give it some geometry at
+        // least, and ensure the layout is up to date.
+        r = documentLayout->blockBoundingRect(block);
+        if (currentBlockNumber > blockNumber)
+            offset.ry() -= r.height();
+    }
+    r.translate(offset);
+    return r;
+}
+*/
 
 void TextDocumentLayout::setTextWidth(qreal newWidth)
 {

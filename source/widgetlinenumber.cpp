@@ -81,7 +81,7 @@ void WidgetLineNumber::updateWidth(int lineCount)
         ++ln;
     }
     //qDebug()<<ln*width + 8;
-    this->setMinimumWidth(ln*width + 8);
+    this->setMinimumWidth(ln*width + 13);
 
 }
 
@@ -132,7 +132,7 @@ void WidgetLineNumber::paintEvent(QPaintEvent * /*event*/)
             painter.setPen(defaultPen);
             painter.setFont(defaultFont);
         }
-        painter.drawText(0,this->scrollOffset+this->widgetTextEdit->blockTop(l), right-9, fontHeight, Qt::AlignRight, QString::number(l+1));
+        painter.drawText(5,this->scrollOffset+this->widgetTextEdit->blockTop(l), right-9, fontHeight, Qt::AlignRight, QString::number(l+1));
         ++l;
     }
 

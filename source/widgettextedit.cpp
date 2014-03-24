@@ -72,7 +72,7 @@ WidgetTextEdit::WidgetTextEdit(WidgetFile * parent) :
     _scriptIsRunning(false)
 
 {
-    TextDocumentLayout * layout = new TextDocumentLayout(this->document());
+    TextDocumentLayout * layout = new TextDocumentLayout(this);
     this->document()->setDocumentLayout(layout);
     connect(layout, SIGNAL(documentSizeChanged(QSizeF)), this, SLOT(adjustScrollbar(QSizeF)));
     _widgetFile = parent;
