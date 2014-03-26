@@ -43,6 +43,7 @@ class CompletionEngine;
 class WidgetInsertCommand;
 class WidgetLineNumber;
 class MainWindow;
+class TextStruct;
 
 class QInputMethodEvent;
 struct BlockInfo
@@ -192,6 +193,7 @@ private:
     CompletionEngine * _completionEngine;
     File * currentFile;
     FileStructure * fileStructure;
+    TextStruct * _textStruct;
     QMutex _formatMutex;
     bool _indentationInited;
     QMutex _indentationMutex;

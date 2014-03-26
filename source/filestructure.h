@@ -23,8 +23,8 @@
 #define FILESTRUCTURE_H
 
 #include <QObject>
+#include <QList>
 
-template<class T> class QList;
 class WidgetTextEdit;
 
 struct FileStructureInfo
@@ -38,6 +38,43 @@ struct FileStructureInfo
 
     FileStructureInfo() : top(0), height(0) {}
 };
+
+struct StructItem
+{
+    explicit StructItem() : parent(0), begin(0), end(0) {}
+
+    typedef enum Type {NONE, SECTION, BIBLIOGRAPHY, ENVIRONMENT} Type;
+
+
+    QList<StructItem*> children;
+    StructItem* parent;
+
+    int begin;
+    int end;
+    Type type;
+    QString name;
+
+};
+
+class TextStruct : public QObject
+{
+    Q_OBJECT
+public:
+    explicit TextStruct(WidgetTextEdit * parent);
+    void debug();
+    void environmentPath(int position);
+public slots:
+    void reload();
+    void clear();
+
+private:
+    void debug(StructItem * item, int level);
+    WidgetTextEdit * _widgetTextEdit;
+    StructItem _environementRoot;
+    StructItem _sectionRoot;
+};
+
+
 
 struct BlockIndentation
 {

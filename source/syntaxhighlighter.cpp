@@ -575,28 +575,31 @@ while ( rightPos != -1 )
     }
     rightPos = text.indexOf( '}', rightPos+1 );
 }
-
-leftPos = text.indexOf( "\\begin{" );
+QRegExp beginPattern("\\\\begin\\{([^\\}]*)\\}");
+leftPos = text.indexOf( beginPattern );
 while ( leftPos != -1 )
-  {
+{
   LatexBlockInfo *info = new LatexBlockInfo;
-  info->character = 'b';
+  info->type = LatexBlockInfo::ENVIRONEMENT_BEGIN;
   info->position = leftPos;
+  info->name = beginPattern.capturedTexts().at(1);
 
   blockData->insertLat( info );
-  leftPos = text.indexOf("\\begin{", leftPos+1 );
-  }
+  leftPos = text.indexOf(beginPattern, leftPos+1 );
+}
 
-rightPos = text.indexOf("\\end{");
+QRegExp endPattern("\\\\end\\{([^\\}]*)\\}");
+rightPos = text.indexOf(endPattern);
 while ( rightPos != -1 )
-  {
+{
   LatexBlockInfo *info = new LatexBlockInfo;
-  info->character = 'e';
+  info->type = LatexBlockInfo::ENVIRONEMENT_END;
   info->position = rightPos;
+  info->name = endPattern.capturedTexts().at(1);
 
   blockData->insertLat( info );
-  rightPos = text.indexOf("\\end{", rightPos+1 );
-  }
+  rightPos = text.indexOf(endPattern, rightPos+1 );
+}
 
 
 

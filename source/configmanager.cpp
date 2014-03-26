@@ -819,6 +819,9 @@ void ConfigManager::checkRevision()
                           );
     }
     case 0x001000:
+    case 0x001001:
+
+    case 0x001100:
 
         break;
     }

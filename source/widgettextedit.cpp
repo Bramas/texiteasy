@@ -62,6 +62,7 @@ WidgetTextEdit::WidgetTextEdit(WidgetFile * parent) :
     WIDGET_TEXT_EDIT_PARENT_CLASS(parent),
     _completionEngine(new CompletionEngine(this)),
     currentFile(new File(parent, this)),
+    _textStruct(new TextStruct(this)),
     fileStructure(new FileStructure(this)),
     _indentationInited(false),
     _lineCount(0),
@@ -370,6 +371,7 @@ bool WidgetTextEdit::isCursorVisible()
 
 void WidgetTextEdit::onCursorPositionChange()
 {
+    _textStruct->environmentPath(textCursor().position());
     QList<QTextEdit::ExtraSelection> selections;
     setExtraSelections(selections);
     this->highlightCurrentLine();
@@ -823,6 +825,8 @@ void WidgetTextEdit::initIndentation(void)
 
 void WidgetTextEdit::updateIndentation(void)
 {
+    _textStruct->reload();
+    _textStruct->debug();
     if(_scriptIsRunning)
     {
         _scriptEngine.evaluate();
@@ -1076,7 +1080,7 @@ void WidgetTextEdit::matchLat()
             {
                 LatexBlockInfo *info = infos.at(i);
                 int curPos = textCursor().position() - textBlock.position();
-                if ( info->position <= curPos && info->character == 'b' )
+                if ( info->position <= curPos && info->type == LatexBlockInfo::ENVIRONEMENT_BEGIN )
                 {
                     int associatedEnv = matchLeftLat( textBlock, i+1, 0, textBlock.blockNumber());
                     if(inEnv != -1 && associatedEnv != -1)
@@ -1101,7 +1105,7 @@ void WidgetTextEdit::matchLat()
 
                     }
                 }
-                if ( info->position <= curPos && info->character == 'e' )
+                if ( info->position <= curPos && info->type == LatexBlockInfo::ENVIRONEMENT_END )
                 {
                     int associatedEnv =  matchRightLat( textBlock, i-1, 0,textBlock.blockNumber());
                     if(inEnv != -1 && associatedEnv != -1)
@@ -1139,12 +1143,12 @@ int WidgetTextEdit::matchLeftLat(	QTextBlock currentBlock, int index, int numLef
     for ( ; index<infos.size(); ++index ) {
         LatexBlockInfo *info = infos.at(index);
 
-        if ( info->character == 'b' ) {
+        if ( info->type == LatexBlockInfo::ENVIRONEMENT_BEGIN ) {
             ++numLeftLat;
             continue;
         }
 
-        if ( info->character == 'e' && numLeftLat == 0 ) {
+        if ( info->type == LatexBlockInfo::ENVIRONEMENT_END && numLeftLat == 0 ) {
             createLatSelection( bpos,currentBlock.blockNumber() );
             return info->position + currentBlock.position();
         } else
@@ -1170,12 +1174,12 @@ int WidgetTextEdit::matchRightLat(QTextBlock currentBlock, int index, int numRig
     for (int j=index; j>=0; --j ) {
         LatexBlockInfo *info = infos.at(j);
 
-        if ( info->character == 'e' ) {
+        if ( info->type == LatexBlockInfo::ENVIRONEMENT_END ) {
             ++numRightLat;
             continue;
         }
 
-        if ( info->character == 'b' && numRightLat == 0 ) {
+        if ( info->type == LatexBlockInfo::ENVIRONEMENT_BEGIN && numRightLat == 0 ) {
             createLatSelection( epos, currentBlock.blockNumber() );
             return info->position + currentBlock.position();
         } else

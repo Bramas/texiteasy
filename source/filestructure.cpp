@@ -21,8 +21,116 @@
 
 #include "filestructure.h"
 #include "widgettextedit.h"
+#include "blockdata.h"
 #include <QList>
 #include <QTextBlock>
+#include <QDebug>
+
+
+TextStruct::TextStruct(WidgetTextEdit * parent) :
+    _widgetTextEdit(parent)
+{
+
+}
+
+void TextStruct::clear()
+{
+    _environementRoot.children.clear();
+}
+
+void TextStruct::reload()
+{
+    clear();
+    QTextBlock block = _widgetTextEdit->document()->begin();
+    //QStack<StructItem*> structItemsStack;
+
+    StructItem * currentItem = &_environementRoot;
+    while(block.isValid())
+    {
+        BlockData * data = dynamic_cast<BlockData*>(block.userData());
+        if(!data)
+        {
+            block = block.next();
+            continue;
+        }
+        foreach(LatexBlockInfo* blockInfo, data->latexblocks())
+        {
+            switch(blockInfo->type)
+            {
+            case LatexBlockInfo::ENVIRONEMENT_BEGIN:
+            {
+                //qDebug()<<"ENVIRONEMENT_BEGIN : "<<blockInfo->name;
+                StructItem * item = new StructItem();
+                item->type   = StructItem::ENVIRONMENT;
+                item->parent = currentItem;
+                item->name   = blockInfo->name;
+                item->begin  = item->end  = blockInfo->position + block.position();
+                currentItem->children.append(item);
+                currentItem = item;
+            }
+                break;
+            case LatexBlockInfo::ENVIRONEMENT_END:
+                //qDebug()<<"ENVIRONEMENT_END : "<<blockInfo->name<<"  current:"<<currentItem->name;
+                if(currentItem->name.compare(blockInfo->name))
+                {
+                    qDebug()<<"Error Parsing Document Structur";
+                    return;
+                }
+                currentItem->end   = blockInfo->position + block.position();
+                currentItem = currentItem->parent;
+                qDebug()<<" change current: "<<currentItem->name;
+                break;
+            }
+        }
+        block = block.next();
+
+    }
+}
+
+void TextStruct::environmentPath(int position)
+{
+    QString path;
+    StructItem * currentItem = &_environementRoot;
+
+    while(currentItem->children.count())
+    {
+        bool isInAChild = false;
+        foreach(StructItem * child, currentItem->children)
+        {
+            if(child->begin < position && child->end > position)
+            {
+                path.append(" > ");
+                path.append(child->name);
+                currentItem = child;
+                isInAChild = true;
+                break;
+            }
+        }
+        if(!isInAChild)
+        {
+            break;
+        }
+    }
+    qDebug()<<path;
+}
+
+void TextStruct::debug()
+{
+    debug(&_environementRoot, 0);
+}
+
+void TextStruct::debug(StructItem * item, int level)
+{
+    qDebug()<<QString().fill('|',level)+" "+QString::number(item->begin)+" "+item->name;
+    foreach(StructItem * child, item->children)
+    {
+        debug(child, level + 1);
+    }
+    qDebug()<<QString().fill('|',level)+"- "+QString::number(item->end)+" /"+item->name;
+}
+
+
+
 
 FileStructure::FileStructure(WidgetTextEdit *parent) :
     blockIndentations(new BlockIndentation[0]),

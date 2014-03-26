@@ -33,8 +33,14 @@ struct ParenthesisInfo {
 };
 
 struct LatexBlockInfo {
-    QChar character;
+
+    typedef enum Type {NONE, ENVIRONEMENT_BEGIN, ENVIRONEMENT_END, BIBLIOGRAPHY_BEGIN, BIBLIOGRAPHY_END, SECTION} Type;
+
+
+    Type type;
     int position;
+    int sectionLevel;
+    QString name;
 };
 
 class BlockData;
