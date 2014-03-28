@@ -90,6 +90,7 @@ public:
         connect(this, SIGNAL(updateRequest(QRect,int)), this, SLOT(updateLineNumber(QRect,int)));
     }
     void displayWidgetInsertCommand();
+    const TextStruct * textStruct() const { return _textStruct; }
 
     int centerBlockNumber();
     void highlightSyncedLine(int line);

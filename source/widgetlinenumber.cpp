@@ -22,6 +22,8 @@
 #include "widgetlinenumber.h"
 #include "widgettextedit.h"
 #include "configmanager.h"
+#include "filestructure.h"
+#include <math.h>
 #include <QPainter>
 #include <QString>
 #include <QBrush>
@@ -31,6 +33,9 @@
 #include <QScrollBar>
 #include <QDebug>
 #include <QPalette>
+#include <QStack>
+
+const int FoldingWidth = 16;
 
 WidgetLineNumber::WidgetLineNumber(QWidget *parent) :
     QWidget(parent),
@@ -40,12 +45,14 @@ WidgetLineNumber::WidgetLineNumber(QWidget *parent) :
     _currentLine(-1)
 {
     this->scrollOffset = 0;
+    _isMouseOverFolding = 0;
 
 
     /*this->setStyleSheet(QString("WidgetLineNumber { background-color: black")+//ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats()->value("line-number").background().color())+
                         "; }");
     qDebug()<<QString("background-color: black")+//ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats()->value("line-number").background().color())+
               ";";*/
+    this->setMouseTracking(true);
 }
 
 void WidgetLineNumber::setWidgetTextEdit(WidgetTextEdit *widgetTextEdit)
@@ -54,6 +61,7 @@ void WidgetLineNumber::setWidgetTextEdit(WidgetTextEdit *widgetTextEdit)
     connect(this->widgetTextEdit,SIGNAL(updateFirstVisibleBlock(int,int)), this, SLOT(updateFirstVisibleBlock(int,int)));
     connect(this->widgetTextEdit,SIGNAL(updatedWithSameFirstVisibleBlock()), this, SLOT(update()));
     connect(this->widgetTextEdit,SIGNAL(lineCountChanged(int)), this, SLOT(updateWidth(int)));
+    connect(this->widgetTextEdit,SIGNAL(cursorPositionChanged()), this, SLOT(update()));
 }
 
 
@@ -73,7 +81,7 @@ void WidgetLineNumber::updateWidth(int lineCount)
     font.setPointSize(ConfigManager::Instance.getTextCharFormats("line-number").font().pointSize());
     QFontMetrics fm(font);
 
-    int width = ConfigManager::Instance.getTextCharFormats("line-number").font().pointSize();//fm.width("0") + 2;
+    _zeroWidth = fm.width("0");
     int ln = 1;
     while(lineCount >= 10)
     {
@@ -81,7 +89,7 @@ void WidgetLineNumber::updateWidth(int lineCount)
         ++ln;
     }
     //qDebug()<<ln*width + 8;
-    this->setMinimumWidth(ln*width + 13);
+    this->setMinimumWidth(ln*(_zeroWidth+2) + 8 + _zeroWidth + 5);
 
 }
 
@@ -92,6 +100,7 @@ void WidgetLineNumber::paintEvent(QPaintEvent * /*event*/)
     //update info about the scroll position
     this->scrollOffset = -this->widgetTextEdit->verticalScrollBar()->value();
 
+    QStack<const StructItem*> environmentPath = this->widgetTextEdit->textStruct()->environmentPath();
 
     this->firstVisibleBlock = widgetTextEdit->firstVisibleBlockNumber();
     QPainter painter(this);
@@ -107,19 +116,21 @@ void WidgetLineNumber::paintEvent(QPaintEvent * /*event*/)
     currentLineFont.setPointSize(ConfigManager::Instance.getTextCharFormats("line-number").font().pointSize());
     currentLineFont.setWeight(QFont::Bold);
 
-    int l;
-
-
     QPen defaultPen(ConfigManager::Instance.getTextCharFormats("line-number").foreground().color(),1);
     QPen currentLinePen(ConfigManager::Instance.getTextCharFormats("current-line-number").foreground().color(), 1);
     QPen blockRangePen(QColor(160,10,10),4);
     painter.setPen(defaultPen);
 
-    int right = this->width()-5;
-    int fontHeight = fm.height();
-    l = this->firstVisibleBlock = this->widgetTextEdit->firstVisibleBlockNumber();
-    this->scrollOffset = this->widgetTextEdit->contentOffsetTop();
+    int right           = this->width() - 8 - _zeroWidth - 5;
+    int fontHeight      = fm.height();
+    int l               = this->firstVisibleBlock = this->widgetTextEdit->firstVisibleBlockNumber();
+    this->scrollOffset  = this->widgetTextEdit->contentOffsetTop();
 
+    QLine foldingLine(right + 10 + (_zeroWidth+1)/2, 0, right + 10 + (_zeroWidth+1)/2, height());
+    if(environmentPath.top()->blockEndNumber < l)
+    {
+        foldingLine.setLine(-1,-1,-1,-1);
+    }
     while(l < widgetTextEdit->document()->blockCount() && this->widgetTextEdit->blockTop(l) + this->scrollOffset < height())
     {
         if(l == _currentLine)
@@ -132,12 +143,138 @@ void WidgetLineNumber::paintEvent(QPaintEvent * /*event*/)
             painter.setPen(defaultPen);
             painter.setFont(defaultFont);
         }
-        painter.drawText(5,this->scrollOffset+this->widgetTextEdit->blockTop(l), right-9, fontHeight, Qt::AlignRight, QString::number(l+1));
+        int top = this->scrollOffset+this->widgetTextEdit->blockTop(l) + 2;
+        painter.drawText(5,top, right, fontHeight, Qt::AlignRight,   QString::number(l+1));
+
+
+        // Environement ranges
+        if(l == environmentPath.top()->blockBeginNumber)
+        {
+            drawFoldingBegin(&painter, right + 10, top, _zeroWidth+1);
+            foldingLine.setP1(QPoint(foldingLine.x1(), top + 3 + _zeroWidth+1));
+        }
+        if(l == environmentPath.top()->blockEndNumber)
+        {
+
+            drawFoldingEnd(&painter, right + 10, top, _zeroWidth+1);
+            foldingLine.setP2(QPoint(foldingLine.x2(), top + 3));
+        }
+
+
         ++l;
     }
+    if(l > environmentPath.top()->blockBeginNumber)
+    {
+        /*
+        if(_isMouseOverFolding)
+        {
+            painter->setBrush(QBrush(QColor(ConfigManager::Instance.getTextCharFormats("current-line-number").foreground().color())));
+        }
+        else
+        {
+            painter->setBrush(QBrush(QColor(ConfigManager::Instance.getTextCharFormats("line-number").foreground().color())));
+        }
+        painter.drawLine(foldingLine);
+        // */
+        _foldingHover.setRect(foldingLine.x1() - ceil(_zeroWidth/2) - 1,
+                              foldingLine.y1() - _zeroWidth,
+                              2*ceil(_zeroWidth/2) + 2,
+                              foldingLine.y2() - foldingLine.y1() + 2*_zeroWidth
+                              );
+    }
+    else
+    {
+        _foldingHover.setRect(-1, -1, 0, 0);
+    }
 
-    // Block Range
+}
+void WidgetLineNumber::drawFoldingBegin(QPainter* painter, int right, int top, int width)
+{
+    if(_isMouseOverFolding)
+    {
+        painter->setBrush(QBrush(QColor(ConfigManager::Instance.getTextCharFormats("current-line-number").foreground().color())));
+    }
+    else
+    {
+        painter->setBrush(QBrush(QColor(ConfigManager::Instance.getTextCharFormats("line-number").foreground().color())));
+    }
+    painter->drawEllipse(right, top + 3 , width, width);
+    QPoint p[3];
+    p[0].setX(right + width/2);
+    p[0].setY(top + 3 + width);
 
+    p[1].setX(right + ceil(width/2.0 - sqrt(3)*width/4.0));
+    p[1].setY(top + 3 + width/4);
+    p[2].setX(right + floor(width/2.0 + sqrt(3)*width/4.0));
+    p[2].setY(p[1].y());
+    painter->setBrush(QBrush(QColor(ConfigManager::Instance.getTextCharFormats("line-number").background().color())));
+    painter->drawConvexPolygon(p, 3);
+}
+
+void WidgetLineNumber::drawFoldingEnd(QPainter* painter, int right, int top, int width)
+{
+    if(_isMouseOverFolding)
+    {
+        painter->setBrush(QBrush(QColor(ConfigManager::Instance.getTextCharFormats("current-line-number").foreground().color())));
+    }
+    else
+    {
+        painter->setBrush(QBrush(QColor(ConfigManager::Instance.getTextCharFormats("line-number").foreground().color())));
+    }
+    painter->drawEllipse(right, top + 3 , width, width);
+    QPoint p[3];
+    p[0].setX(right + width/2);
+    p[0].setY(top + 3);
+
+    p[1].setX(right + ceil(width/2.0 - sqrt(3)*width/4.0));
+    p[1].setY(top + 3 + width -  width/4);
+    p[2].setX(right + floor(width/2.0 + sqrt(3)*width/4.0));
+    p[2].setY(p[1].y());
+    painter->setBrush(QBrush(QColor(ConfigManager::Instance.getTextCharFormats("line-number").background().color())));
+    painter->drawConvexPolygon(p, 3);
+}
+
+void WidgetLineNumber::mouseMoveEvent(QMouseEvent *event)
+{
+    if(_foldingHover.contains(event->pos()))
+    {
+        qDebug()<<"contains";
+        if(!_isMouseOverFolding)
+        {
+            _isMouseOverFolding = true;
+            update();
+        }
+        else
+        {
+            _isMouseOverFolding = true;
+        }
+    }
+    else
+    {
+        if(_isMouseOverFolding)
+        {
+            _isMouseOverFolding = false;
+            update();
+        }
+        else
+        {
+            _isMouseOverFolding = false;
+        }
+
+    }
+
+}
+void WidgetLineNumber::leaveEvent(QEvent *)
+{
+    if(_isMouseOverFolding)
+    {
+        _isMouseOverFolding = false;
+        update();
+    }
+    else
+    {
+        _isMouseOverFolding = false;
+    }
 }
 
 void WidgetLineNumber::setBlockRange(int start, int end)

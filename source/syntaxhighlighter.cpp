@@ -580,9 +580,10 @@ leftPos = text.indexOf( beginPattern );
 while ( leftPos != -1 )
 {
   LatexBlockInfo *info = new LatexBlockInfo;
-  info->type = LatexBlockInfo::ENVIRONEMENT_BEGIN;
-  info->position = leftPos;
-  info->name = beginPattern.capturedTexts().at(1);
+  info->type        = LatexBlockInfo::ENVIRONEMENT_BEGIN;
+  info->position    = leftPos;
+  info->blockNumber = currentBlock().blockNumber();
+  info->name        = beginPattern.capturedTexts().at(1);
 
   blockData->insertLat( info );
   leftPos = text.indexOf(beginPattern, leftPos+1 );
@@ -593,12 +594,53 @@ rightPos = text.indexOf(endPattern);
 while ( rightPos != -1 )
 {
   LatexBlockInfo *info = new LatexBlockInfo;
-  info->type = LatexBlockInfo::ENVIRONEMENT_END;
-  info->position = rightPos;
-  info->name = endPattern.capturedTexts().at(1);
+  info->type        = LatexBlockInfo::ENVIRONEMENT_END;
+  info->position    = rightPos + endPattern.matchedLength() + 1;
+  info->blockNumber = currentBlock().blockNumber();
+  info->name        = endPattern.capturedTexts().at(1);
 
   blockData->insertLat( info );
   rightPos = text.indexOf(endPattern, rightPos+1 );
+}
+
+QRegExp sectionsPattern("\\\\((sub)*)(chapter|paragraph|section)\\{([^\\}]*)\\}");
+rightPos = text.indexOf(sectionsPattern);
+while ( rightPos != -1 )
+{
+    LatexBlockInfo *info = new LatexBlockInfo;
+    info->type          = LatexBlockInfo::SECTION;
+    info->position      = rightPos;
+    info->blockNumber   = currentBlock().blockNumber();
+    info->name          = sectionsPattern.capturedTexts().at(4);
+    QString sectionType(sectionsPattern.capturedTexts().at(3));
+    if(!sectionType.compare("section"))
+    {
+        int subLength = sectionsPattern.capturedTexts().at(1).length();
+        switch(int(subLength/3))
+        {
+        default:
+        case 0:
+            info->sectionLevel = LatexBlockInfo::LEVEL_SECTION;
+            break;
+        case 1:
+            info->sectionLevel = LatexBlockInfo::LEVEL_SUBSECTION;
+            break;
+        case 2:
+            info->sectionLevel = LatexBlockInfo::LEVEL_SUBSECTION;
+            break;
+        }
+    }
+    else if(!sectionType.compare("chapter"))
+    {
+        info->sectionLevel = LatexBlockInfo::LEVEL_CHAPTER;
+    }
+    else
+    {
+        info->sectionLevel = LatexBlockInfo::LEVEL_PARAGRAPH;
+    }
+
+  blockData->insertLat( info );
+  rightPos = text.indexOf(sectionsPattern, rightPos+1 );
 }
 
 

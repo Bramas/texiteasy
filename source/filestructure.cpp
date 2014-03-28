@@ -33,9 +33,20 @@ TextStruct::TextStruct(WidgetTextEdit * parent) :
 
 }
 
+void TextStruct::clear(StructItem * item)
+{
+    foreach(StructItem * child, item->children)
+    {
+        clear(child);
+        delete child;
+    }
+    item->children.clear();
+}
+
 void TextStruct::clear()
 {
-    _environementRoot.children.clear();
+    clear(&_environementRoot);
+    clear(&_sectionRoot);
 }
 
 void TextStruct::reload()
@@ -44,7 +55,8 @@ void TextStruct::reload()
     QTextBlock block = _widgetTextEdit->document()->begin();
     //QStack<StructItem*> structItemsStack;
 
-    StructItem * currentItem = &_environementRoot;
+    StructItem * currentEnvironmentItem = &_environementRoot;
+    StructItem * currentSectionItem = &_sectionRoot;
     while(block.isValid())
     {
         BlockData * data = dynamic_cast<BlockData*>(block.userData());
@@ -62,24 +74,50 @@ void TextStruct::reload()
                 //qDebug()<<"ENVIRONEMENT_BEGIN : "<<blockInfo->name;
                 StructItem * item = new StructItem();
                 item->type   = StructItem::ENVIRONMENT;
-                item->parent = currentItem;
+                item->parent = currentEnvironmentItem;
                 item->name   = blockInfo->name;
+                item->level  = currentEnvironmentItem->level + 1;
                 item->begin  = item->end  = blockInfo->position + block.position();
-                currentItem->children.append(item);
-                currentItem = item;
+                item->blockBeginNumber  = item->blockEndNumber  = blockInfo->blockNumber;
+                currentEnvironmentItem->children.append(item);
+                currentEnvironmentItem = item;
             }
                 break;
             case LatexBlockInfo::ENVIRONEMENT_END:
-                //qDebug()<<"ENVIRONEMENT_END : "<<blockInfo->name<<"  current:"<<currentItem->name;
-                if(currentItem->name.compare(blockInfo->name))
+                //qDebug()<<"ENVIRONEMENT_END : "<<blockInfo->name<<"  current:"<<currentEnvironmentItem->name;
+                if(currentEnvironmentItem->name.compare(blockInfo->name))
                 {
                     qDebug()<<"Error Parsing Document Structur";
                     return;
                 }
-                currentItem->end   = blockInfo->position + block.position();
-                currentItem = currentItem->parent;
-                qDebug()<<" change current: "<<currentItem->name;
+                currentEnvironmentItem->end   = blockInfo->position + block.position();
+                currentEnvironmentItem->blockEndNumber  = blockInfo->blockNumber;
+                currentEnvironmentItem = currentEnvironmentItem->parent;
+                qDebug()<<" change current: "<<currentEnvironmentItem->name;
                 break;
+            case LatexBlockInfo::SECTION:
+                //close previous sections
+                while(blockInfo->sectionLevel <= currentSectionItem->level && currentSectionItem->parent)
+                {
+                    currentSectionItem->end   = blockInfo->position + block.position();
+                    currentSectionItem->blockEndNumber  = blockInfo->blockNumber;
+                    currentSectionItem = currentSectionItem->parent;
+                }
+                //creacte new section
+                {
+                    //qDebug()<<"SECTION : "<<blockInfo->name;
+                    StructItem * item = new StructItem();
+                    item->type   = StructItem::SECTION;
+                    item->parent = currentSectionItem;
+                    item->name   = blockInfo->name;
+                    item->level  = blockInfo->sectionLevel;
+                    item->begin  = item->end  = blockInfo->position + block.position();
+                    item->blockBeginNumber  = item->blockEndNumber  = blockInfo->blockNumber;
+                    currentSectionItem->children.append(item);
+                    currentSectionItem = item;
+                }
+
+
             }
         }
         block = block.next();
@@ -87,20 +125,25 @@ void TextStruct::reload()
     }
 }
 
-void TextStruct::environmentPath(int position)
+QStack<const StructItem*> TextStruct::environmentPath() const
 {
-    QString path;
-    StructItem * currentItem = &_environementRoot;
+    return environmentPath(_widgetTextEdit->textCursor().position());
+}
+
+QStack<const StructItem*> TextStruct::environmentPath(int position) const
+{
+    QStack<const StructItem*> path;
+    const StructItem * currentItem = &_environementRoot;
+    path.append(currentItem);
 
     while(currentItem->children.count())
     {
         bool isInAChild = false;
-        foreach(StructItem * child, currentItem->children)
+        foreach(const StructItem * child, currentItem->children)
         {
             if(child->begin < position && child->end > position)
             {
-                path.append(" > ");
-                path.append(child->name);
+                path << child;
                 currentItem = child;
                 isInAChild = true;
                 break;
@@ -111,12 +154,15 @@ void TextStruct::environmentPath(int position)
             break;
         }
     }
-    qDebug()<<path;
+    return path;
 }
 
 void TextStruct::debug()
 {
+    qDebug()<<"Environement:";
     debug(&_environementRoot, 0);
+    qDebug()<<"Section:";
+    debug(&_sectionRoot, 0);
 }
 
 void TextStruct::debug(StructItem * item, int level)

@@ -32,14 +32,25 @@ struct ParenthesisInfo {
     int position;
 };
 
+/**
+ * @brief The LatexBlockInfo struct
+ */
 struct LatexBlockInfo {
 
     typedef enum Type {NONE, ENVIRONEMENT_BEGIN, ENVIRONEMENT_END, BIBLIOGRAPHY_BEGIN, BIBLIOGRAPHY_END, SECTION} Type;
+    typedef enum SectionLevel {LEVEL_ROOT           = 0,
+                               LEVEL_CHAPTER        = 1,
+                               LEVEL_SECTION        = 2,
+                               LEVEL_SUBSECTION     = 3,
+                               LEVEL_SUBSUBSECTION  = 4,
+                               LEVEL_PARAGRAPH      = 5
+                              } SectionLevel;
 
 
     Type type;
+    int sectionLevel; /**< releveant only if has type SECTION */
     int position;
-    int sectionLevel;
+    int blockNumber;
     QString name;
 };
 

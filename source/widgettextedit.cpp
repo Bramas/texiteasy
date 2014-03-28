@@ -801,6 +801,7 @@ void WidgetTextEdit::wheelEvent(QWheelEvent * event)
         {
             this->_syntaxHighlighter->rehighlight();
         }
+        _widgetLineNumber->updateWidth(this->document()->blockCount());
 
     }
     else

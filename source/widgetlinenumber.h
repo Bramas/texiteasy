@@ -38,9 +38,13 @@ public slots:
     void updateFirstVisibleBlock(int, int);
     void setBlockRange(int,int);
     void updateWidth(int lineCount);
-
-private:
+protected:
     void paintEvent(QPaintEvent * event);
+    void mouseMoveEvent(QMouseEvent * event);
+    void leaveEvent(QEvent *);
+private:
+    void drawFoldingBegin(QPainter* painter, int right, int top, int width);
+    void drawFoldingEnd(QPainter* painter, int right, int top, int width);
     
     WidgetTextEdit * widgetTextEdit;
     int scrollOffset;
@@ -49,6 +53,9 @@ private:
     int _startBlock;
     int _currentLine;
     int _endBlock;
+    int _zeroWidth;
+    bool _isMouseOverFolding;
+    QRect _foldingHover;
 };
 
 #endif // WIDGETLINENUMBER_H

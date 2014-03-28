@@ -41,7 +41,13 @@ struct FileStructureInfo
 
 struct StructItem
 {
-    explicit StructItem() : parent(0), begin(0), end(0) {}
+    explicit StructItem() :
+        parent(0),
+        begin(0),
+        end(0),
+        blockBeginNumber(0),
+        blockEndNumber(0),
+        level(0) { }
 
     typedef enum Type {NONE, SECTION, BIBLIOGRAPHY, ENVIRONMENT} Type;
 
@@ -51,6 +57,9 @@ struct StructItem
 
     int begin;
     int end;
+    int blockBeginNumber;
+    int blockEndNumber;
+    int level;
     Type type;
     QString name;
 
@@ -62,12 +71,22 @@ class TextStruct : public QObject
 public:
     explicit TextStruct(WidgetTextEdit * parent);
     void debug();
-    void environmentPath(int position);
+    /**
+     * @brief environmentPath return the stack of environement in wich the current cursor is in.
+     * @return
+     */
+    QStack<const StructItem *> environmentPath() const;
+    /**
+     * @brief environmentPath return the stack of environement in wich the given position is in.
+     * @return
+     */
+    QStack<const StructItem *> environmentPath(int position) const;
 public slots:
     void reload();
     void clear();
 
 private:
+    void clear(StructItem * item);
     void debug(StructItem * item, int level);
     WidgetTextEdit * _widgetTextEdit;
     StructItem _environementRoot;
