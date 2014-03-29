@@ -39,11 +39,12 @@ struct LatexBlockInfo {
 
     typedef enum Type {NONE, ENVIRONEMENT_BEGIN, ENVIRONEMENT_END, BIBLIOGRAPHY_BEGIN, BIBLIOGRAPHY_END, SECTION} Type;
     typedef enum SectionLevel {LEVEL_ROOT           = 0,
-                               LEVEL_CHAPTER        = 1,
-                               LEVEL_SECTION        = 2,
-                               LEVEL_SUBSECTION     = 3,
-                               LEVEL_SUBSUBSECTION  = 4,
-                               LEVEL_PARAGRAPH      = 5
+                               LEVEL_DOCUMENT       = 1,
+                               LEVEL_CHAPTER        = 2,
+                               LEVEL_SECTION        = 3,
+                               LEVEL_SUBSECTION     = 4,
+                               LEVEL_SUBSUBSECTION  = 5,
+                               LEVEL_PARAGRAPH      = 6
                               } SectionLevel;
 
 

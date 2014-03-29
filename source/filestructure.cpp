@@ -56,7 +56,19 @@ void TextStruct::reload()
     //QStack<StructItem*> structItemsStack;
 
     StructItem * currentEnvironmentItem = &_environementRoot;
-    StructItem * currentSectionItem = &_sectionRoot;
+
+    StructItem * currentSectionItem = new StructItem();
+    currentSectionItem->begin = 0;
+    currentSectionItem->blockBeginNumber = 0;
+    currentSectionItem->end = _widgetTextEdit->document()->lastBlock().position() + _widgetTextEdit->document()->lastBlock().length();
+    currentSectionItem->blockEndNumber = _widgetTextEdit->document()->blockCount();
+    currentSectionItem->name = "HEAD";
+    currentSectionItem->parent = &_sectionRoot;
+    currentSectionItem->level = 1;
+    currentSectionItem->type = StructItem::SECTION;
+    _sectionRoot.children.append(currentSectionItem);
+
+
     while(block.isValid())
     {
         BlockData * data = dynamic_cast<BlockData*>(block.userData());
@@ -71,14 +83,14 @@ void TextStruct::reload()
             {
             case LatexBlockInfo::ENVIRONEMENT_BEGIN:
             {
-                //qDebug()<<"ENVIRONEMENT_BEGIN : "<<blockInfo->name;
+                //qDebug()<<"ENVIRONEMENT_BEGIN : "<<blockInfo->name<<" "<<block.blockNumber();
                 StructItem * item = new StructItem();
                 item->type   = StructItem::ENVIRONMENT;
                 item->parent = currentEnvironmentItem;
                 item->name   = blockInfo->name;
                 item->level  = currentEnvironmentItem->level + 1;
                 item->begin  = item->end  = blockInfo->position + block.position();
-                item->blockBeginNumber  = item->blockEndNumber  = blockInfo->blockNumber;
+                item->blockBeginNumber  = item->blockEndNumber  = block.blockNumber();
                 currentEnvironmentItem->children.append(item);
                 currentEnvironmentItem = item;
             }
@@ -91,16 +103,16 @@ void TextStruct::reload()
                     return;
                 }
                 currentEnvironmentItem->end   = blockInfo->position + block.position();
-                currentEnvironmentItem->blockEndNumber  = blockInfo->blockNumber;
+                currentEnvironmentItem->blockEndNumber  = block.blockNumber();
                 currentEnvironmentItem = currentEnvironmentItem->parent;
-                qDebug()<<" change current: "<<currentEnvironmentItem->name;
+                //qDebug()<<" change current: "<<currentEnvironmentItem->name;
                 break;
             case LatexBlockInfo::SECTION:
                 //close previous sections
                 while(blockInfo->sectionLevel <= currentSectionItem->level && currentSectionItem->parent)
                 {
                     currentSectionItem->end   = blockInfo->position + block.position();
-                    currentSectionItem->blockEndNumber  = blockInfo->blockNumber;
+                    currentSectionItem->blockEndNumber  = block.blockNumber()-1;
                     currentSectionItem = currentSectionItem->parent;
                 }
                 //creacte new section
@@ -111,8 +123,10 @@ void TextStruct::reload()
                     item->parent = currentSectionItem;
                     item->name   = blockInfo->name;
                     item->level  = blockInfo->sectionLevel;
-                    item->begin  = item->end  = blockInfo->position + block.position();
-                    item->blockBeginNumber  = item->blockEndNumber  = blockInfo->blockNumber;
+                    item->begin  = blockInfo->position + block.position() - 1;
+                    item->end = _widgetTextEdit->document()->lastBlock().position() + _widgetTextEdit->document()->lastBlock().length();
+                    item->blockBeginNumber  = block.blockNumber();
+                    item->blockEndNumber  = _widgetTextEdit->document()->blockCount();
                     currentSectionItem->children.append(item);
                     currentSectionItem = item;
                 }
@@ -157,6 +171,91 @@ QStack<const StructItem*> TextStruct::environmentPath(int position) const
     return path;
 }
 
+QStringList TextStruct::sectionsList(QString fill) const
+{
+    QStringList list;
+    sectionsList(&list, &_sectionRoot, 0, fill);
+    return list;
+}
+
+
+void TextStruct::sectionsList(QStringList * list, const StructItem * item, int level, QString fill) const
+{
+    QString lineFill("");
+    for(int i = 0; i < level; ++i)
+    {
+        lineFill += fill;
+    }
+    foreach(StructItem * child, item->children)
+    {
+        list->append(lineFill + child->name);
+        sectionsList(list, child, level + 1, fill);
+    }
+}
+
+QString TextStruct::currentSection() const
+{
+    int position = _widgetTextEdit->textCursor().position();
+
+    const StructItem * currentItem = &_sectionRoot;
+    QString lastSectionFound("");
+    while(currentItem->children.count())
+    {
+        bool isInAChild = false;
+        foreach(const StructItem * child, currentItem->children)
+        {
+            if(child->begin < position && child->end > position)
+            {
+                lastSectionFound = child->name;
+                currentItem = child;
+                isInAChild = true;
+                break;
+            }
+        }
+        if(!isInAChild)
+        {
+            break;
+        }
+    }
+    return lastSectionFound;
+
+}
+
+int TextStruct::sectionNameToLine(QString sectionName) const
+{
+    int line = -1;
+
+    const StructItem * currentItem = &_sectionRoot;
+
+    QStack<QList<StructItem *>::const_iterator > iterators;
+    QStack<QList<StructItem *>::const_iterator > endIterators;
+    iterators.push(currentItem->children.constBegin());
+    endIterators.push(currentItem->children.constEnd());
+    while(iterators.size())
+    {
+        while(iterators.top() != endIterators.top())
+        {
+            if(!(*(iterators.top()))->name.compare(sectionName))
+            {
+                return (*(iterators.top()))->blockBeginNumber;
+            }
+            if((*(iterators.top()))->children.size())
+            {
+                QList<StructItem *>::const_iterator it = (*(iterators.top()))->children.constBegin();
+                        endIterators.push((*(iterators.top()))->children.constEnd());
+
+                ++(iterators.top());
+                iterators.push(it);
+                continue;
+            }
+            ++(iterators.top());
+        }
+        iterators.pop();
+        endIterators.pop();
+    }
+    return line;
+}
+
 void TextStruct::debug()
 {
     qDebug()<<"Environement:";
@@ -167,12 +266,12 @@ void TextStruct::debug()
 
 void TextStruct::debug(StructItem * item, int level)
 {
-    qDebug()<<QString().fill('|',level)+" "+QString::number(item->begin)+" "+item->name;
+    qDebug()<<QString().fill('|',level)+" "+QString::number(item->blockBeginNumber)+" "+item->name;
     foreach(StructItem * child, item->children)
     {
         debug(child, level + 1);
     }
-    qDebug()<<QString().fill('|',level)+"- "+QString::number(item->end)+" /"+item->name;
+    qDebug()<<QString().fill('|',level)+"- "+QString::number(item->blockEndNumber)+" /"+item->name;
 }
 
 

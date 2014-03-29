@@ -91,6 +91,7 @@ public:
     }
     void displayWidgetInsertCommand();
     const TextStruct * textStruct() const { return _textStruct; }
+    void goToSection(QString sectionName);
 
     int centerBlockNumber();
     void highlightSyncedLine(int line);
@@ -104,6 +105,10 @@ public:
     Qt::KeyboardModifiers modifiers;
 #endif
 
+    bool isFolded(int line)  { return _foldedLines.contains(line); }
+    void fold(int start, int end);
+    void unfold(int start);
+
 signals:
     void updateFirstVisibleBlock(int,int);
     void updatedWithSameFirstVisibleBlock();
@@ -111,6 +116,7 @@ signals:
     void lineCountChanged(int);
     void cursorPositionChanged(int, int);
 private slots:
+    void onBlockCountChanged(int newBlockCount);
     void updateLineNumber(const QRect &rect, int dy);
     void correctWord();
     void addToDictionnary();
@@ -207,7 +213,8 @@ private:
     QMenu * _macrosMenu;
     ScriptEngine _scriptEngine;
     bool _scriptIsRunning;
-
+    QMap<int,int> _foldedLines;
+    int _lastBlockCount;
 
 };
 

@@ -35,6 +35,7 @@ public:
     }
     void      setAction(QAction * action);
     QAction * action() { return _action; }
+    void removeActions();
 
     void setPixmaps(QPixmap * defaultPixmap, QPixmap * checkedPixmap, QPixmap * defaultHoverPixmap = 0, QPixmap * checkedHoverPixmap = 0)
     {
@@ -94,6 +95,7 @@ public:
     void initTheme();
 
 public slots:
+    void cursorPositionChanged(int row, int column);
     void setPosition(int,int);
     void setEncoding(QString encoding);
 
@@ -102,8 +104,10 @@ public slots:
     void setPdfViewerWidgetAction(QAction * action) { _labelPdfViewerInItsOwnWidget->setAction(action); }
     void setSplitEditorAction(QAction * action) { _labelSplitEditor->setAction(action); }
     void showTemporaryMessage(QString message) { this->showMessage(message, 4000); }
-    
+private slots:
+    void checkStructAction();
 private:
+    void updateStruct();
     Ui::WidgetStatusBar *ui;
     QToolButton * _pushButtonConsole;
     QToolButton * _pushButtonErreurs;
@@ -112,6 +116,7 @@ private:
     WidgetStatusBarButton * _labelLinkSync;
     WidgetStatusBarButton * _labelPdfViewerInItsOwnWidget;
     WidgetStatusBarButton * _labelDictionary;
+    WidgetStatusBarButton * _labelStruct;
     WidgetStatusBarButton * _labelSplitEditor;
 
     QLabel * _labelConsole;

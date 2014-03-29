@@ -3,6 +3,9 @@
 #include "configmanager.h"
 #include "filemanager.h"
 #include "minisplitter.h"
+#include "widgetfile.h"
+#include "filestructure.h"
+#include "widgettextedit.h"
 
 #include <QPushButton>
 #include <QMenu>
@@ -13,6 +16,7 @@
 #include <QLabel>
 #include <QBitmap>
 #include <QGraphicsDropShadowEffect>
+#include <QTimer>
 
 WidgetStatusBar::WidgetStatusBar(QWidget *parent) :
     QStatusBar(parent),
@@ -78,7 +82,15 @@ WidgetStatusBar::WidgetStatusBar(QWidget *parent) :
 
     this->addPermanentWidget(messageArea, 1);
 
+    //Structur
+    _labelStruct = new WidgetStatusBarButton(this);
+    _labelStruct->setText("Document");
+    _labelStruct->enableLeftClickContextMenu();
+    _labelStruct->setEnabled(false);
+    this->addPermanentWidget(_labelStruct, 0);
 
+
+    // Dictionnary
     _labelDictionary = new WidgetStatusBarButton(this);
     _labelDictionary->setText(ConfigManager::Instance.currentDictionary());
     foreach(const QString dico, ConfigManager::Instance.dictionnaries())
@@ -159,6 +171,12 @@ WidgetStatusBar::~WidgetStatusBar()
     delete ui;
 }
 
+void WidgetStatusBar::cursorPositionChanged(int row, int column)
+{
+    setPosition(row, column);
+    updateStruct();
+}
+
 void WidgetStatusBar::setPosition(int row, int column)
 {
     _positionLabel->setText("<span>"+trUtf8("Ligne %1, Colonne %2").arg(QString::number(row)).arg(QString::number(column))+"</span>");
@@ -167,6 +185,47 @@ void WidgetStatusBar::setPosition(int row, int column)
 void WidgetStatusBar::setEncoding(QString encoding)
 {
     _encodingLabel->setText(encoding);
+}
+
+void WidgetStatusBar::updateStruct()
+{
+    _labelStruct->removeActions();
+    WidgetFile * widget = FileManager::Instance.currentWidgetFile();
+
+    //Stop if there is no opened file
+    if(!widget)
+    {
+        return;
+    }
+    QStringList structure = widget->widgetTextEdit()->textStruct()->sectionsList("  ");
+    QString currentSection = widget->widgetTextEdit()->textStruct()->currentSection();
+    if(structure.isEmpty() || currentSection.isEmpty())
+    {
+        _labelStruct->setText("Document");
+    }
+    else
+    {
+        _labelStruct->setText(currentSection);
+    }
+    bool c = true;
+    foreach(const QString line, structure)
+    {
+        QAction * action = new QAction(line, _labelStruct);
+        connect(action, SIGNAL(triggered()), &FileManager::Instance, SLOT(goToSection()));
+        _labelStruct->addAction(action);
+    }
+    QTimer::singleShot(1, this, SLOT(checkStructAction())); // do it after because sometimes it does not work
+}
+void WidgetStatusBar::checkStructAction()
+{
+    foreach(QAction * action, _labelStruct->actions())
+    {
+        if(!_labelStruct->text().trimmed().compare(action->text().trimmed()))
+        {
+            action->setCheckable(true);
+            action->setChecked(true);
+        }
+    }
 }
 
 void WidgetStatusBar::updateButtons()
@@ -201,8 +260,12 @@ void WidgetStatusBar::updateButtons()
     {
         _labelConsole->setStyleSheet(QString("background-color:")+ ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color().darker(200)));
     }
-    //update dictionary label
 
+    //update struct label
+    updateStruct();
+    _labelStruct->setEnabled(true);
+
+    //update dictionary label
     _labelDictionary->setEnabled(true);
     _labelDictionary->setText(FileManager::Instance.currentWidgetFile()->dictionary());
 
@@ -216,6 +279,8 @@ void WidgetStatusBar::initTheme()
     this->setStyleSheet("QStatusBar::item { margin-left:4px; border: none;} QStatusBar {padding:0px; height:100px; background: "+
                         ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("line-number").background().color())+
                                      "}");
+
+    _labelStruct->label()->setStyleSheet(QString("font-size:12px; margin-right:5px; color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color()));
 
     _labelDictionary->label()->setStyleSheet(QString("font-size:12px; margin-right:5px; color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color()));
     //_labelDictionary->setStyleSheet(QString("color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color()));
@@ -398,4 +463,12 @@ void WidgetStatusBarButton::updateGeometry()
     this->setMinimumWidth(width);
     this->setMaximumWidth(width);
     QWidget::updateGeometry();
+}
+
+void WidgetStatusBarButton::removeActions()
+{
+    foreach(QAction * action, this->actions())
+    {
+        removeAction(action);
+    }
 }

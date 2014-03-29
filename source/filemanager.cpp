@@ -60,12 +60,12 @@ bool FileManager::newFile()
 void FileManager::changeConnexions(WidgetFile * oldFile)
 {
     // Disconnect
-    if(oldFile)
+    /*if(oldFile)
     {
         disconnect(oldFile, SIGNAL(verticalSplitterChanged()), this, SLOT(sendVerticalSplitterChanged()));
         disconnect(oldFile->widgetTextEdit(), SIGNAL(cursorPositionChanged(int,int)), this, SLOT(sendCursorPositionChanged(int,int)));
         disconnect(oldFile->widgetTextEdit()->getCurrentFile()->getBuilder(), SIGNAL(statusChanged(QString)), this, SLOT(sendMessageFromCurrentFile(QString)));
-    }
+    }*/
 
     // Connect
     if(_pdfSynchronized)
@@ -211,6 +211,20 @@ AssociatedFile FileManager::reverseAssociation(QString filename, int *index)
     }
     if(index) *index = -1;
     return AssociatedFile::NoAssociation;
+}
+
+void FileManager::goToSection()
+{
+    if(!currentWidgetFile())
+    {
+        return;
+    }
+    QAction * action = qobject_cast<QAction*>(sender());
+    if(!action)
+    {
+        return;
+    }
+    currentWidgetFile()->widgetTextEdit()->goToSection(action->text().trimmed());
 }
 
 void FileManager::setCurrent(WidgetFile *widget)

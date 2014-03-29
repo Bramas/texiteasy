@@ -42,6 +42,7 @@ protected:
     void paintEvent(QPaintEvent * event);
     void mouseMoveEvent(QMouseEvent * event);
     void leaveEvent(QEvent *);
+    void mousePressEvent(QMouseEvent *event);
 private:
     void drawFoldingBegin(QPainter* painter, int right, int top, int width);
     void drawFoldingEnd(QPainter* painter, int right, int top, int width);
@@ -54,8 +55,22 @@ private:
     int _currentLine;
     int _endBlock;
     int _zeroWidth;
+    int _foldableLineBegin;
+    int _foldableLineEnd;
+    int _unfoldableLine;
     bool _isMouseOverFolding;
+    bool _isMouseOverUnfolding;
     QRect _foldingHover;
+    QRect _unfoldHover;
+    QPoint _lastMousePos;
+
+    struct UnfoldableLine
+    {
+        int lineNumber;
+        QRect rect;
+        bool isMouseOver;
+    };
+    QList<UnfoldableLine>_unfoldableLines;
 };
 
 #endif // WIDGETLINENUMBER_H

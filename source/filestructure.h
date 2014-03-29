@@ -24,6 +24,7 @@
 
 #include <QObject>
 #include <QList>
+#include <QStringList>
 
 class WidgetTextEdit;
 
@@ -81,6 +82,11 @@ public:
      * @return
      */
     QStack<const StructItem *> environmentPath(int position) const;
+
+    QStringList sectionsList(QString fill = "") const;
+    QString currentSection() const;
+
+    int sectionNameToLine(QString sectionName) const;
 public slots:
     void reload();
     void clear();
@@ -88,6 +94,7 @@ public slots:
 private:
     void clear(StructItem * item);
     void debug(StructItem * item, int level);
+    void sectionsList(QStringList * list, const StructItem *item, int level, QString fill) const;
     WidgetTextEdit * _widgetTextEdit;
     StructItem _environementRoot;
     StructItem _sectionRoot;

@@ -45,7 +45,11 @@ WidgetLineNumber::WidgetLineNumber(QWidget *parent) :
     _currentLine(-1)
 {
     this->scrollOffset = 0;
-    _isMouseOverFolding = 0;
+    _isMouseOverUnfolding = false;
+    _isMouseOverFolding = false;
+    _foldableLineBegin = 0;
+    _foldableLineEnd = 0;
+    _unfoldableLine = 0;
 
 
     /*this->setStyleSheet(QString("WidgetLineNumber { background-color: black")+//ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats()->value("line-number").background().color())+
@@ -101,7 +105,8 @@ void WidgetLineNumber::paintEvent(QPaintEvent * /*event*/)
     this->scrollOffset = -this->widgetTextEdit->verticalScrollBar()->value();
 
     QStack<const StructItem*> environmentPath = this->widgetTextEdit->textStruct()->environmentPath();
-
+    _foldableLineBegin = environmentPath.top()->blockBeginNumber;
+    _foldableLineEnd = environmentPath.top()->blockEndNumber;
     this->firstVisibleBlock = widgetTextEdit->firstVisibleBlockNumber();
     QPainter painter(this);
 
@@ -126,6 +131,7 @@ void WidgetLineNumber::paintEvent(QPaintEvent * /*event*/)
     int l               = this->firstVisibleBlock = this->widgetTextEdit->firstVisibleBlockNumber();
     this->scrollOffset  = this->widgetTextEdit->contentOffsetTop();
 
+    _unfoldableLines.clear();
     QLine foldingLine(right + 10 + (_zeroWidth+1)/2, 0, right + 10 + (_zeroWidth+1)/2, height());
     if(environmentPath.top()->blockEndNumber < l)
     {
@@ -133,6 +139,11 @@ void WidgetLineNumber::paintEvent(QPaintEvent * /*event*/)
     }
     while(l < widgetTextEdit->document()->blockCount() && this->widgetTextEdit->blockTop(l) + this->scrollOffset < height())
     {
+        if(!widgetTextEdit->document()->findBlockByNumber(l).isVisible())
+        {
+            ++l;
+            continue;
+        }
         if(l == _currentLine)
         {
             painter.setPen(currentLinePen);
@@ -147,34 +158,62 @@ void WidgetLineNumber::paintEvent(QPaintEvent * /*event*/)
         painter.drawText(5,top, right, fontHeight, Qt::AlignRight,   QString::number(l+1));
 
 
-        // Environement ranges
-        if(l == environmentPath.top()->blockBeginNumber)
+        if(widgetTextEdit->isFolded(l))
         {
-            drawFoldingBegin(&painter, right + 10, top, _zeroWidth+1);
-            foldingLine.setP1(QPoint(foldingLine.x1(), top + 3 + _zeroWidth+1));
-        }
-        if(l == environmentPath.top()->blockEndNumber)
-        {
+            UnfoldableLine unfoldableLine;
+            unfoldableLine.lineNumber = l;
+            unfoldableLine.rect = QRect(right + 9, top + 2, _zeroWidth + 8, _zeroWidth + 8);
+            unfoldableLine.isMouseOver = unfoldableLine.rect.contains(_lastMousePos);
+            _unfoldableLines.append(unfoldableLine);
+            if(unfoldableLine.isMouseOver)
+            {
+                painter.setPen(currentLinePen);
+                painter.setBrush(QBrush(QColor(ConfigManager::Instance.getTextCharFormats("current-line-number").foreground().color())));
+            }
+            else
+            {
+                painter.setPen(defaultPen);
+                painter.setBrush(QBrush(QColor(ConfigManager::Instance.getTextCharFormats("line-number").foreground().color())));
+            }
+            painter.drawRect(QRectF(right + 10.0, top + 3.0 + _zeroWidth/2.0 - _zeroWidth/20.0, _zeroWidth, _zeroWidth/10.0));
+            painter.drawRect(QRectF(right + 10.0 + _zeroWidth/2.0 - _zeroWidth/20.0, top + 3, _zeroWidth/10.0, _zeroWidth));
 
-            drawFoldingEnd(&painter, right + 10, top, _zeroWidth+1);
-            foldingLine.setP2(QPoint(foldingLine.x2(), top + 3));
-        }
-
-
-        ++l;
-    }
-    if(l > environmentPath.top()->blockBeginNumber)
-    {
-        /*
-        if(_isMouseOverFolding)
-        {
-            painter->setBrush(QBrush(QColor(ConfigManager::Instance.getTextCharFormats("current-line-number").foreground().color())));
         }
         else
         {
+            // Environement ranges
+            if(l == environmentPath.top()->blockBeginNumber)
+            {
+                drawFoldingBegin(&painter, right + 10, top, _zeroWidth+1);
+                foldingLine.setP1(QPoint(foldingLine.x1(), top + 3 + _zeroWidth+1));
+            }
+            else
+            if(l == environmentPath.top()->blockEndNumber)
+            {
+                drawFoldingEnd(&painter, right + 10, top, _zeroWidth+1);
+                foldingLine.setP2(QPoint(foldingLine.x2(), top + 3));
+            }
+        }
+        ++l;
+    }
+    if(l > environmentPath.top()->blockBeginNumber && !widgetTextEdit->isFolded(environmentPath.top()->blockBeginNumber))
+    {
+        if(_isMouseOverFolding)
+        {
+            QColor c = QColor(ConfigManager::Instance.getTextCharFormats("current-line-number").foreground().color());
+            c.setAlpha(50);
+            painter.setBrush(QBrush(c));
+            //painter.drawLine(foldingLine);
+            painter.drawRect(foldingLine.x1() - ceil(_zeroWidth/2) - 3,
+                              foldingLine.y1() - _zeroWidth - 3,
+                              2*ceil(_zeroWidth/2) + 6,
+                              foldingLine.y2() - foldingLine.y1() + 2*_zeroWidth + 6
+                              );
+        }
+        /*else
+        {
             painter->setBrush(QBrush(QColor(ConfigManager::Instance.getTextCharFormats("line-number").foreground().color())));
         }
-        painter.drawLine(foldingLine);
         // */
         _foldingHover.setRect(foldingLine.x1() - ceil(_zeroWidth/2) - 1,
                               foldingLine.y1() - _zeroWidth,
@@ -236,9 +275,24 @@ void WidgetLineNumber::drawFoldingEnd(QPainter* painter, int right, int top, int
 
 void WidgetLineNumber::mouseMoveEvent(QMouseEvent *event)
 {
+    _lastMousePos = event->pos();
+    foreach(UnfoldableLine unfoldable, _unfoldableLines)
+    {
+        if((unfoldable.rect.contains(event->pos()) && !unfoldable.isMouseOver)
+                || (!unfoldable.rect.contains(event->pos()) && unfoldable.isMouseOver))
+        {
+            _isMouseOverFolding = false;
+            update();
+            return;
+        }
+        if(unfoldable.rect.contains(event->pos()))
+        {
+            return;
+        }
+    }
+
     if(_foldingHover.contains(event->pos()))
     {
-        qDebug()<<"contains";
         if(!_isMouseOverFolding)
         {
             _isMouseOverFolding = true;
@@ -262,10 +316,10 @@ void WidgetLineNumber::mouseMoveEvent(QMouseEvent *event)
         }
 
     }
-
 }
 void WidgetLineNumber::leaveEvent(QEvent *)
 {
+    _lastMousePos = QPoint(-1, -1);
     if(_isMouseOverFolding)
     {
         _isMouseOverFolding = false;
@@ -274,6 +328,31 @@ void WidgetLineNumber::leaveEvent(QEvent *)
     else
     {
         _isMouseOverFolding = false;
+    }
+    foreach(UnfoldableLine unfoldable, _unfoldableLines)
+    {
+        if(unfoldable.isMouseOver)
+        {
+            update();
+        }
+    }
+}
+void WidgetLineNumber::mousePressEvent(QMouseEvent * event)
+{
+    foreach(UnfoldableLine unfoldable, _unfoldableLines)
+    {
+        if(unfoldable.rect.contains(event->pos()))
+        {
+            _isMouseOverFolding = false;
+            _foldingHover.setRect(-1, -1, 0, 0);
+            widgetTextEdit->unfold(unfoldable.lineNumber);
+            return;
+        }
+    }
+    if(_foldingHover.contains(event->pos()))
+    {
+        widgetTextEdit->fold(_foldableLineBegin, _foldableLineEnd);
+        return;
     }
 }
 

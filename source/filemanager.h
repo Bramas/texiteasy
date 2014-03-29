@@ -69,6 +69,7 @@ signals:
 public slots:
     bool newFile();
     void openAssociatedFile();
+    void goToSection();
 
     void sendFilenameChanged(WidgetFile* w, QString name) { emit filenameChanged(w,name); emit filenameChanged(name); }
 

@@ -106,7 +106,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->setStatusBar(_widgetStatusBar);
 
     connect(&FileManager::Instance, SIGNAL(currentFileModified(bool)), this, SLOT(setWindowModified(bool)));
-    connect(&FileManager::Instance, SIGNAL(cursorPositionChanged(int,int)), _widgetStatusBar, SLOT(setPosition(int,int)));
+    connect(&FileManager::Instance, SIGNAL(cursorPositionChanged(int,int)), _widgetStatusBar, SLOT(cursorPositionChanged(int,int)));
     connect(&FileManager::Instance, SIGNAL(messageFromCurrentFile(QString)), _widgetStatusBar, SLOT(showTemporaryMessage(QString)));
     connect(&FileManager::Instance, SIGNAL(requestOpenFile(QString)), this, SLOT(open(QString)));
     QSettings settings;
@@ -155,7 +155,6 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->ui->actionTexDirProgram, SIGNAL(triggered()), this, SLOT(insertTexDirProgram()));
     connect(this->ui->actionTexDirRoot, SIGNAL(triggered()), this, SLOT(insertTexDirRoot()));
     connect(this->ui->actionTexDirSpellChecker, SIGNAL(triggered()), this, SLOT(insertTexDirSpellCheck()));
-
 
     connect(&FileManager::Instance, SIGNAL(filenameChanged(QString)), this, SLOT(onFilenameChanged(QString)));
 

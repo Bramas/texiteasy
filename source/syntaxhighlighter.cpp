@@ -585,6 +585,17 @@ while ( leftPos != -1 )
   info->blockNumber = currentBlock().blockNumber();
   info->name        = beginPattern.capturedTexts().at(1);
 
+  if(!info->name.compare("document"))
+  {
+      LatexBlockInfo *infoSection = new LatexBlockInfo;
+      infoSection->type        = LatexBlockInfo::SECTION;
+      infoSection->position    = info->position;
+      infoSection->blockNumber = info->blockNumber;
+      infoSection->sectionLevel = LatexBlockInfo::LEVEL_DOCUMENT;
+      infoSection->name        = "Document";
+      blockData->insertLat( infoSection );
+  }
+
   blockData->insertLat( info );
   leftPos = text.indexOf(beginPattern, leftPos+1 );
 }

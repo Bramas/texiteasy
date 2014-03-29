@@ -70,7 +70,8 @@ WidgetTextEdit::WidgetTextEdit(WidgetFile * parent) :
     updatingIndentation(false),
     _widgetLineNumber(0),
     _macrosMenu(0),
-    _scriptIsRunning(false)
+    _scriptIsRunning(false),
+    _lastBlockCount(0)
 
 {
     TextDocumentLayout * layout = new TextDocumentLayout(this);
@@ -81,6 +82,7 @@ WidgetTextEdit::WidgetTextEdit(WidgetFile * parent) :
     connect(this,SIGNAL(textChanged()),this->currentFile,SLOT(setModified()));
     connect(this,SIGNAL(textChanged()),this,SLOT(updateIndentation()));
     connect(this,SIGNAL(cursorPositionChanged()), this, SLOT(onCursorPositionChange()));
+    connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(onBlockCountChanged(int)));
     //connect(this->verticalScrollBar(),SIGNAL(valueChanged(int)),this->viewport(),SLOT(update()));
 #ifdef OS_MAC
     _wierdCircumflexCursor = false;
@@ -827,7 +829,8 @@ void WidgetTextEdit::initIndentation(void)
 void WidgetTextEdit::updateIndentation(void)
 {
     _textStruct->reload();
-    _textStruct->debug();
+    //_textStruct->debug();
+
     if(_scriptIsRunning)
     {
         _scriptEngine.evaluate();
@@ -1514,4 +1517,76 @@ void WidgetTextEdit::initTheme()
     }
 #endif
 
+}
+
+
+void WidgetTextEdit::fold(int start, int end)
+{
+    _foldedLines.insert(start, end);
+    for (int i = start + 1; i <= end; i++)
+    {
+        document()->findBlockByNumber(i).setVisible(false);
+    }
+    update();
+    resizeEvent(new QResizeEvent(QSize(0, 0), size()));
+    viewport()->update();
+    _widgetLineNumber->update();
+    ensureCursorVisible();
+}
+void WidgetTextEdit::unfold(int start)
+{
+    if (!_foldedLines.keys().contains(start)) return;
+    int end = _foldedLines.value(start);
+    _foldedLines.remove(start);
+    int i=start+1;
+    while (i<=end)
+    {
+        if (_foldedLines.keys().contains(i))
+        {
+            document()->findBlockByNumber(i).setVisible(true);
+            i=_foldedLines.value(i);
+        }
+        else document()->findBlockByNumber(i).setVisible(true);
+        i++;
+    }
+    update();
+    resizeEvent(new QResizeEvent(QSize(0, 0), size()));
+    viewport()->update();
+    _widgetLineNumber->update();
+    //ensureCursorVisible();
+}
+
+void WidgetTextEdit::goToSection(QString sectionName)
+{
+    int line = _textStruct->sectionNameToLine(sectionName);
+    if(line != -1)
+    {
+        goToLine(line + 1);
+    }
+}
+
+void WidgetTextEdit::onBlockCountChanged(int newBlockCount)
+{
+    int delta = newBlockCount - _lastBlockCount;
+    QTextBlock block = textCursor().block();
+    int currentline = block.blockNumber();
+    int i = currentline-1;
+    QList<int> start,end;
+
+    while (block.isValid())
+    {
+        if (_foldedLines.keys().contains(i))
+        {
+            start.append(i+delta);
+            end.append(_foldedLines[i]+delta);
+            _foldedLines.remove(i);
+        }
+        i++;
+        block = block.next();
+    }
+    for (int i = 0; i < start.count(); ++i)
+    {
+        _foldedLines.insert(start[i],end[i]);
+    }
+    _lastBlockCount = newBlockCount;
 }
