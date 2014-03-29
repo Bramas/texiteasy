@@ -207,7 +207,6 @@ void WidgetStatusBar::updateStruct()
     {
         _labelStruct->setText(currentSection);
     }
-    bool c = true;
     foreach(const QString line, structure)
     {
         QAction * action = new QAction(line, _labelStruct);

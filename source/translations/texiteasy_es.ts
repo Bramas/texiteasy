@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.0" language="es_ES">
-<defaultcodec>UTF-8</defaultcodec>
 <context>
     <name>Builder</name>
     <message>
@@ -448,22 +447,22 @@
 <context>
     <name>File</name>
     <message>
-        <location filename="../file.cpp" line="146"/>
+        <location filename="../file.cpp" line="151"/>
         <source>auto savefile exists</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../file.cpp" line="147"/>
+        <location filename="../file.cpp" line="152"/>
         <source>An autosave file of %1 exists (maybe caused by a wrong shutdown of %2). Do you want to load the autosave?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../file.cpp" line="148"/>
+        <location filename="../file.cpp" line="153"/>
         <source>Load the autosave</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../file.cpp" line="149"/>
+        <location filename="../file.cpp" line="154"/>
         <source>Ignore</source>
         <translation type="unfinished"></translation>
     </message>
@@ -471,22 +470,22 @@
 <context>
     <name>FileManager</name>
     <message>
-        <location filename="../filemanager.cpp" line="504"/>
+        <location filename="../filemanager.cpp" line="518"/>
         <source>Le fichier %1 à été modifié en dehors de %2. Voulez-vous le charger à nouveau ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../filemanager.cpp" line="506"/>
+        <location filename="../filemanager.cpp" line="520"/>
         <source>Un fichier à été modifié.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../filemanager.cpp" line="513"/>
+        <location filename="../filemanager.cpp" line="527"/>
         <source>Charger à nouveau</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../filemanager.cpp" line="514"/>
+        <location filename="../filemanager.cpp" line="528"/>
         <source>Ignorer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -643,6 +642,11 @@
         <translation>Ctrl+N</translation>
     </message>
     <message>
+        <location filename="../mainwindow.ui" line="376"/>
+        <source>Open Pdf</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../mainwindow.ui" line="381"/>
         <location filename="../mainwindow.ui" line="386"/>
         <source>UTF-8</source>
@@ -684,7 +688,7 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="249"/>
-        <location filename="../mainwindow.cpp" line="685"/>
+        <location filename="../mainwindow.cpp" line="684"/>
         <source>Annuler</source>
         <translation>Cancelar</translation>
     </message>
@@ -789,11 +793,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="376"/>
-        <source>Open</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../mainwindow.ui" line="416"/>
         <source>Langage</source>
         <translation type="unfinished">idioma</translation>
@@ -842,37 +841,37 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="429"/>
+        <location filename="../mainwindow.cpp" line="428"/>
         <source>&amp;Macros</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="538"/>
+        <location filename="../mainwindow.cpp" line="537"/>
         <source>Ouvrir un fichier</source>
         <translation type="unfinished">Abrir archivo</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="581"/>
+        <location filename="../mainwindow.cpp" line="580"/>
         <source>Attention</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="581"/>
+        <location filename="../mainwindow.cpp" line="580"/>
         <source>Le compilateur %1 n&apos;est pas définie, veuillez le créer dans les options.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="672"/>
+        <location filename="../mainwindow.cpp" line="671"/>
         <source>Continuer?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="763"/>
+        <location filename="../mainwindow.cpp" line="762"/>
         <source>Nom de l&apos;encodage</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="764"/>
+        <location filename="../mainwindow.cpp" line="763"/>
         <source>Nom de l&apos;encodage: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -881,22 +880,22 @@
         <translation type="obsolete">Dejar?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="673"/>
+        <location filename="../mainwindow.cpp" line="672"/>
         <source>Le fichier%1 a été modifié.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="674"/>
+        <location filename="../mainwindow.cpp" line="673"/>
         <source>Voullez-vous sauvegarder les changements?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="681"/>
+        <location filename="../mainwindow.cpp" line="680"/>
         <source>Sauvegarder</source>
         <translation>Guardar</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="683"/>
+        <location filename="../mainwindow.cpp" line="682"/>
         <source>Ne pas sauvegarder</source>
         <translation>No guardar</translation>
     </message>
@@ -917,8 +916,8 @@
         <translation type="obsolete">Latex (*.tex *.latex);;BibTex(*.bib)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="882"/>
-        <location filename="../mainwindow.cpp" line="888"/>
+        <location filename="../mainwindow.cpp" line="881"/>
+        <location filename="../mainwindow.cpp" line="887"/>
         <source>Mettre à jour TexitEasy</source>
         <translation type="unfinished">Actualizar TexitEasy</translation>
     </message>
@@ -949,47 +948,47 @@
 <context>
     <name>UpdateChecker</name>
     <message>
-        <location filename="../updatechecker.cpp" line="59"/>
-        <location filename="../updatechecker.cpp" line="64"/>
+        <location filename="../updatechecker.cpp" line="60"/>
+        <location filename="../updatechecker.cpp" line="65"/>
         <source>Nouvelle version</source>
         <translation type="unfinished">Nueva versión</translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="61"/>
+        <location filename="../updatechecker.cpp" line="62"/>
         <source>Mettre à jour</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="64"/>
+        <location filename="../updatechecker.cpp" line="65"/>
         <source>Un nouvelle version est disponnible, vous pouvez la télécharger depuis le site officiel</source>
         <translation type="unfinished">Una nueva versión es avaialble, puede descargarlo desde el sitio oficial</translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="60"/>
-        <location filename="../updatechecker.cpp" line="66"/>
+        <location filename="../updatechecker.cpp" line="61"/>
+        <location filename="../updatechecker.cpp" line="67"/>
         <source>Votre version: </source>
         <translation type="unfinished">Su versión:</translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="59"/>
+        <location filename="../updatechecker.cpp" line="60"/>
         <source>Un nouvelle version est disponnible.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="60"/>
-        <location filename="../updatechecker.cpp" line="66"/>
+        <location filename="../updatechecker.cpp" line="61"/>
+        <location filename="../updatechecker.cpp" line="67"/>
         <source>Nouvelle version:</source>
         <translation type="unfinished">Nueva versión: </translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="61"/>
-        <location filename="../updatechecker.cpp" line="67"/>
+        <location filename="../updatechecker.cpp" line="62"/>
+        <location filename="../updatechecker.cpp" line="68"/>
         <source>La prochaine fois</source>
         <translation type="unfinished">La próxima vez</translation>
     </message>
     <message>
-        <location filename="../updatechecker.cpp" line="61"/>
-        <location filename="../updatechecker.cpp" line="67"/>
+        <location filename="../updatechecker.cpp" line="62"/>
+        <location filename="../updatechecker.cpp" line="68"/>
         <source>Ne plus me prevenir de cette mise à jour</source>
         <translation type="unfinished">No me impedirá esta actualización</translation>
     </message>
@@ -1129,20 +1128,20 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgetstatusbar.cpp" line="60"/>
-        <location filename="../widgetstatusbar.cpp" line="225"/>
+        <location filename="../widgetstatusbar.cpp" line="64"/>
+        <location filename="../widgetstatusbar.cpp" line="289"/>
         <source>Console</source>
         <translation type="unfinished">Consola</translation>
     </message>
     <message>
-        <location filename="../widgetstatusbar.cpp" line="65"/>
-        <location filename="../widgetstatusbar.cpp" line="228"/>
+        <location filename="../widgetstatusbar.cpp" line="69"/>
+        <location filename="../widgetstatusbar.cpp" line="292"/>
         <source>Erreurs</source>
         <translation type="unfinished">Errores</translation>
     </message>
     <message>
-        <location filename="../widgetstatusbar.cpp" line="71"/>
-        <location filename="../widgetstatusbar.cpp" line="164"/>
+        <location filename="../widgetstatusbar.cpp" line="75"/>
+        <location filename="../widgetstatusbar.cpp" line="182"/>
         <source>Ligne %1, Colonne %2</source>
         <translation>Línea %1, Columna %2</translation>
     </message>
@@ -1150,7 +1149,7 @@
 <context>
     <name>WidgetTextEdit</name>
     <message>
-        <location filename="../widgettextedit.cpp" line="314"/>
+        <location filename="../widgettextedit.cpp" line="317"/>
         <source>Ajouter au dictionnaire</source>
         <translation type="unfinished"></translation>
     </message>

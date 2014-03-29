@@ -373,7 +373,7 @@
   </action>
   <action name="actionOpenPdf">
    <property name="text">
-    <string>Open</string>
+    <string>Open Pdf</string>
    </property>
   </action>
   <action name="actionSaveWithUTF8">
