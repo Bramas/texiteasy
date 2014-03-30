@@ -28,7 +28,20 @@
 #include <QPointer>
 
 struct ParenthesisInfo {
-    QChar character;
+
+    typedef enum Type {
+                       LEFT                 = 0,
+                       LEFT_PARENTHESIS     = 1 << 1,
+                       LEFT_BRACE           = 2 << 1,
+                       LEFT_CROCHET         = 3 << 1,
+                       RIGHT                = 1,
+                       RIGHT_PARENTHESIS    = (1 << 1) + 1,
+                       RIGHT_BRACE          = (2 << 1) + 1,
+                       RIGHT_CROCHET        = (3 << 1) + 1
+                      } Type;
+
+
+    int type;
     int position;
 };
 

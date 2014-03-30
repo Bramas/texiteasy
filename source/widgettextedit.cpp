@@ -954,20 +954,21 @@ void WidgetTextEdit::matchPar()
             ParenthesisInfo *info = infos.at(i);
             int curPos = textCursor().position() - textBlock.position();
             // Clicked on a left parenthesis?
-            if ( info->position == curPos-1 && info->character == '{' ) {
-                if ( matchLeftPar( textBlock, i+1, 0 ) )
+
+            if ( info->position == curPos-1 && !(info->type & ParenthesisInfo::RIGHT) ) {
+                if ( matchLeftPar(textBlock, info->type, i+1, 0 ) )
                     createParSelection( pos + info->position );
             }
 
             // Clicked on a right parenthesis?
-            if ( info->position == curPos-1 && info->character == '}' ) {
-                if ( matchRightPar( textBlock, i-1, 0 ) )
+            if ( info->position == curPos-1 && (info->type & ParenthesisInfo::RIGHT)) {
+                if ( matchRightPar( textBlock, info->type, i-1, 0 ) )
                     createParSelection( pos + info->position );
             }
         }
     }
 }
-bool WidgetTextEdit::matchLeftPar(	QTextBlock currentBlock, int index, int numLeftPar )
+bool WidgetTextEdit::matchLeftPar(	QTextBlock currentBlock, int type, int index, int numLeftPar )
 {
     BlockData *data = static_cast<BlockData *>( currentBlock.userData() );
     QVector<ParenthesisInfo *> infos = data->parentheses();
@@ -977,12 +978,12 @@ bool WidgetTextEdit::matchLeftPar(	QTextBlock currentBlock, int index, int numLe
     for ( ; index<infos.size(); ++index ) {
         ParenthesisInfo *info = infos.at(index);
 
-        if ( info->character == '{' ) {
+        if ( info->type == type ) {
             ++numLeftPar;
             continue;
         }
 
-        if ( info->character == '}' && numLeftPar == 0 ) {
+        if ( info->type == type + ParenthesisInfo::RIGHT && numLeftPar == 0 ) {
             createParSelection( docPos + info->position );
             return true;
         } else
@@ -992,13 +993,13 @@ bool WidgetTextEdit::matchLeftPar(	QTextBlock currentBlock, int index, int numLe
     // No match yet? Then try next block
     currentBlock = currentBlock.next();
     if ( currentBlock.isValid() )
-        return matchLeftPar( currentBlock, 0, numLeftPar );
+        return matchLeftPar( currentBlock, type, 0, numLeftPar );
 
     // No match at all
     return false;
 }
 
-bool WidgetTextEdit::matchRightPar(QTextBlock currentBlock, int index, int numRightPar)
+bool WidgetTextEdit::matchRightPar(QTextBlock currentBlock, int type, int index, int numRightPar)
 {
     BlockData *data = static_cast<BlockData *>( currentBlock.userData() );
     QVector<ParenthesisInfo *> infos = data->parentheses();
@@ -1008,12 +1009,12 @@ bool WidgetTextEdit::matchRightPar(QTextBlock currentBlock, int index, int numRi
     for (int j=index; j>=0; --j ) {
         ParenthesisInfo *info = infos.at(j);
 
-        if ( info->character == '}' ) {
+        if ( info->type == type ) {
             ++numRightPar;
             continue;
         }
 
-        if ( info->character == '{' && numRightPar == 0 ) {
+        if ( info->type == type - ParenthesisInfo::RIGHT && numRightPar == 0 ) {
             createParSelection( docPos + info->position );
             return true;
         } else
@@ -1028,7 +1029,7 @@ bool WidgetTextEdit::matchRightPar(QTextBlock currentBlock, int index, int numRi
         BlockData *data = static_cast<BlockData *>( currentBlock.userData() );
         QVector<ParenthesisInfo *> infos = data->parentheses();
 
-        return matchRightPar( currentBlock, infos.size()-1, numRightPar );
+        return matchRightPar( currentBlock, type, infos.size()-1, numRightPar );
     }
 
     // No match at all

@@ -546,20 +546,101 @@ while ( dollarPos != -1 )
 }
 
 
-int leftPos = text.indexOf( '{' );
+int leftPos;/* = text.indexOf( '{' );
 while ( leftPos != -1 )
 {
     if(   blockData->characterData[leftPos].state != Verbatim
        && blockData->characterData[leftPos].state != Command)
     {
         ParenthesisInfo *info = new ParenthesisInfo;
-        info->character = '{';
+        info->type = ParenthesisInfo::LEFT_BRACE;
         info->position = leftPos;
 
         blockData->insertPar( info );
     }
   leftPos = text.indexOf( '{', leftPos+1 );
 }
+
+leftPos = text.indexOf( '[' );
+while ( leftPos != -1 )
+{
+   if(   blockData->characterData[leftPos].state != Verbatim
+      && blockData->characterData[leftPos].state != Command)
+   {
+       ParenthesisInfo *info = new ParenthesisInfo;
+       info->type = ParenthesisInfo::LEFT_CROCHET;
+       info->position = leftPos;
+
+       blockData->insertPar( info );
+   }
+ leftPos = text.indexOf( '[', leftPos+1 );
+}
+*/
+
+QRegExp leftPattern("(\\\\left.|\\{|\\[|\\()");
+leftPos = text.indexOf( leftPattern );
+while ( leftPos != -1 )
+{
+    if(   blockData->characterData[leftPos].state != Verbatim
+      && blockData->characterData[leftPos].state != Comment)
+    {
+    ParenthesisInfo *info = new ParenthesisInfo;
+    QString left = leftPattern.capturedTexts().at(1);
+    if(!left.compare("{"))
+    {
+        info->type = ParenthesisInfo::LEFT_BRACE;
+    }
+    else if(!left.compare("["))
+    {
+        info->type = ParenthesisInfo::LEFT_CROCHET;
+    }
+    else if(!left.compare("("))
+    {
+        info->type = ParenthesisInfo::LEFT_PARENTHESIS;
+    }
+    else
+    {
+        info->type = ParenthesisInfo::LEFT;
+    }
+    info->position = leftPos;
+
+    blockData->insertPar( info );
+    }
+ leftPos = text.indexOf( leftPattern, leftPos+1 );
+}
+QRegExp rightPattern("(\\\\right.|\\}|\\]|\\))");
+int rightPos = text.indexOf( rightPattern );
+while ( rightPos != -1 )
+{
+    if(   blockData->characterData[leftPos].state != Verbatim
+      && blockData->characterData[leftPos].state != Comment)
+    {
+    ParenthesisInfo *info = new ParenthesisInfo;
+    QString right = rightPattern.capturedTexts().at(1);
+    if(!right.compare("}"))
+    {
+        info->type = ParenthesisInfo::RIGHT_BRACE;
+    }
+    else if(!right.compare("]"))
+    {
+        info->type = ParenthesisInfo::RIGHT_CROCHET;
+    }
+    else if(!right.compare(")"))
+    {
+        info->type = ParenthesisInfo::RIGHT_PARENTHESIS;
+    }
+    else
+    {
+        info->type = ParenthesisInfo::RIGHT;
+    }
+    info->position = rightPos;
+
+    blockData->insertPar( info );
+    }
+    rightPos = text.indexOf( rightPattern, rightPos+1 );
+}
+
+/*
 
 int rightPos = text.indexOf('}');
 while ( rightPos != -1 )
@@ -568,13 +649,30 @@ while ( rightPos != -1 )
        && blockData->characterData[rightPos].state != Command)
     {
         ParenthesisInfo *info = new ParenthesisInfo;
-        info->character = '}';
+        info->type = ParenthesisInfo::RIGHT_BRACE;
         info->position = rightPos;
 
         blockData->insertPar( info );
     }
     rightPos = text.indexOf( '}', rightPos+1 );
 }
+rightPos = text.indexOf(']');
+while ( rightPos != -1 )
+{
+    if(   blockData->characterData[rightPos].state != Verbatim
+       && blockData->characterData[rightPos].state != Command)
+    {
+        ParenthesisInfo *info = new ParenthesisInfo;
+        info->type = ParenthesisInfo::RIGHT_CROCHET;
+        info->position = rightPos;
+
+        blockData->insertPar( info );
+    }
+    rightPos = text.indexOf( ']', rightPos+1 );
+}
+*/
+
+
 QRegExp beginPattern("\\\\begin\\{([^\\}]*)\\}");
 leftPos = text.indexOf( beginPattern );
 while ( leftPos != -1 )
