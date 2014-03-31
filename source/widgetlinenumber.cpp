@@ -109,6 +109,7 @@ void WidgetLineNumber::paintEvent(QPaintEvent * /*event*/)
     _foldableLineEnd = environmentPath.top()->blockEndNumber;
     this->firstVisibleBlock = widgetTextEdit->firstVisibleBlockNumber();
     QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
 
     QFont defaultFont;
     defaultFont.setFamily(ConfigManager::Instance.getTextCharFormats("line-number").font().family());
