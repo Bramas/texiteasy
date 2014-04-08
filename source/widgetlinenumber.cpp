@@ -197,7 +197,7 @@ void WidgetLineNumber::paintEvent(QPaintEvent * /*event*/)
         }
         ++l;
     }
-    if(l > environmentPath.top()->blockBeginNumber && !widgetTextEdit->isFolded(environmentPath.top()->blockBeginNumber))
+    if(l > environmentPath.top()->blockBeginNumber && !widgetTextEdit->isFolded(environmentPath.top()->blockBeginNumber) && environmentPath.top()->blockBeginNumber != 0)
     {
         if(_isMouseOverFolding)
         {
