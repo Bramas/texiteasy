@@ -129,7 +129,7 @@ void FileManager::deleteMasterConnexions(WidgetFile *widget, AssociatedFile::Typ
     }
 
     // if it is a master file
-    // restore everything with the open associatedFiles
+    // restore everything with the opened associatedFiles
     foreach(File * openAssoc, widget->file()->openAssociatedFiles())
     {
         if(openAssoc->format() == File::BIBTEX)
@@ -384,7 +384,7 @@ void FileManager::close(WidgetFile *widget)
         return;
     }
     widget->addWidgetPdfViewerToSplitter();
-    deleteMasterConnexions(widget);
+    //deleteMasterConnexions(widget);
     if(_currentWidgetFileId >= id && _currentWidgetFileId != 0)
     {
         --_currentWidgetFileId;

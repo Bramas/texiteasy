@@ -553,6 +553,27 @@ void MainWindow::open(QString filename, int cursorPosition)
     //check the filename
     if(!QFileInfo(filename).exists())
     {
+        QDir dir = QFileInfo(filename).dir();
+        bool folderDoesNotExists = false;
+        QString fisrtNonExistingFolder = dir.dirName();
+        QString up("");
+        int maxDeph = 30;
+        while(!dir.exists() && --maxDeph > 0)
+        {
+            folderDoesNotExists = true;
+            fisrtNonExistingFolder = QDir(QDir::cleanPath(dir.absolutePath()+"/"+up)).dirName();
+            up += "../";
+            dir.cd(up);
+        }
+        QMessageBox msgBox(this);
+        msgBox.setWindowModality(Qt::WindowModal);
+        msgBox.setText(trUtf8("The file \"%1\" does not exists.").arg(filename));
+        msgBox.setStandardButtons(QMessageBox::Ok);
+        if(folderDoesNotExists)
+        {
+            msgBox.setInformativeText(trUtf8("Even the folder \"%1\" does not exists").arg(fisrtNonExistingFolder));
+        }
+        msgBox.exec();
         return;
     }
     this->addFilenameToLastOpened(filename);

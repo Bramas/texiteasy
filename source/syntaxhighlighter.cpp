@@ -612,8 +612,8 @@ QRegExp rightPattern("(\\\\right.|\\}|\\]|\\))");
 int rightPos = text.indexOf( rightPattern );
 while ( rightPos != -1 )
 {
-    if(   blockData->characterData[leftPos].state != Verbatim
-      && blockData->characterData[leftPos].state != Comment)
+    if(   blockData->characterData[rightPos].state != Verbatim
+      && blockData->characterData[rightPos].state != Comment)
     {
     ParenthesisInfo *info = new ParenthesisInfo;
     QString right = rightPattern.capturedTexts().at(1);
