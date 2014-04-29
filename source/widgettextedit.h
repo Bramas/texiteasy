@@ -187,7 +187,7 @@ private:
     void matchPar();
     bool matchLeftPar(QTextBlock currentBlock, int type, int index, int numLeftPar );
     bool matchRightPar(QTextBlock currentBlock, int type, int index, int numRightPar);
-    void createParSelection(int pos );
+    void createParSelection(int pos , int length = 1);
     void matchLat();
     int matchLeftLat(QTextBlock currentBlock, int index, int numLeftLat, int bpos);
     int matchRightLat(QTextBlock currentBlock, int index, int numLeftLat, int bpos);

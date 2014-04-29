@@ -61,10 +61,17 @@ QStringList initCommandsWithOptions()
          << "item";
     return list;
 }
+QStringList initMathEnvironment()
+{
+    QStringList list;
+    list << "displaymath" << "equation" ;
+    return list;
+}
 
 QStringList SyntaxHighlighter::otherBlockCommands = initOtherBlockCommands();
 QStringList SyntaxHighlighter::textBlockCommands = initTextBlockCommands();
 QStringList SyntaxHighlighter::commandsWithOptions = initCommandsWithOptions();
+QStringList SyntaxHighlighter::mathEnvironments = initMathEnvironment();
 
 SyntaxHighlighter::SyntaxHighlighter(WidgetFile *widgetFile) :
     QSyntaxHighlighter(widgetFile->widgetTextEdit()->document())
@@ -172,10 +179,12 @@ void SyntaxHighlighter::highlightBlock(const QString &text)
      setFormat(0, text.size(), formatNormal);
 
 
+QString currentEnvironment = blockData->blockStartingState.environment;
 State state = intToState(blockData->blockStartingState.state);
 State previousState = intToState(blockData->blockStartingState.previousState);
 State stateAfterOption = intToState(blockData->blockStartingState.stateAfterOption);
-
+bool beginEnvironmentName = false;
+bool endEnvironmentName = false;
 QStack<int> * parenthesisLevel = &(blockData->blockEndingState.parenthesisLevel);
 QStack<int> * crocherLevel = &(blockData->blockEndingState.crocherLevel);
 
@@ -184,6 +193,8 @@ QChar currentChar;
 QChar nextChar;
 QChar verbCharacter;
 QString commandBuffer;
+QString environmentNameBuffer;
+QString endEnvironmentNameBuffer;
 bool escapedChar;
 int overrideCurrentState;
 //qDebug()<<"previous state "<<state;
@@ -246,6 +257,30 @@ while(index < text.length())
         }
         break;
     }
+    if(currentEnvironment == "comment")
+    {
+        int end = text.indexOf(QRegExp("\\\\end\\{comment\\}"), index);
+        if(end == -1)
+        {
+            setFormat(index, text.size() - index, formatComment);
+            for(int comment_idx = index; comment_idx < text.size(); ++comment_idx)
+            {
+                blockData->characterData[comment_idx].state = Comment;
+            }
+            break;
+        }
+        else
+        {
+            setFormat(index, end, formatComment);
+            for(int comment_idx = index; comment_idx < end; ++comment_idx)
+            {
+                blockData->characterData[comment_idx].state = Comment;
+            }
+            index = end;
+            currentEnvironment = "";
+            continue;
+        }
+    }
 
     if(currentChar == '{' && !escapedChar)
     {
@@ -301,9 +336,39 @@ while(index < text.length())
             setFormat(index, 1, formatOther);
             parenthesisLevel->pop();
             state = previousState;
+            if(!environmentNameBuffer.isEmpty())
+            {
+                currentEnvironment = environmentNameBuffer;
+                environmentNameBuffer = "";
+                if(mathEnvironments.contains(currentEnvironment))
+                {
+                    state = Math;
+                }
+            }
+            if(!endEnvironmentNameBuffer.isEmpty())
+            {
+                if(mathEnvironments.contains(currentEnvironment) && endEnvironmentNameBuffer == currentEnvironment)
+                {
+                    state = Text;
+                    overrideCurrentState = Math;
+                    index -= QString("\\end{"+currentEnvironment+"}").size();
+                    currentEnvironment = "";
+                }
+                endEnvironmentNameBuffer = "";
+            }
         }
         else
         {
+            if(!environmentNameBuffer.isEmpty() || (beginEnvironmentName && currentChar != ' ' && currentChar != '{' && currentChar != '['))
+            {
+                beginEnvironmentName = false;
+                environmentNameBuffer += currentChar;
+            }
+            if(!endEnvironmentNameBuffer.isEmpty() || (endEnvironmentName && currentChar != ' ' && currentChar != '{' && currentChar != '['))
+            {
+                endEnvironmentName = false;
+                endEnvironmentNameBuffer += currentChar;
+            }
             setFormat(index, 1, formatOther);
             state = Other;
         }
@@ -416,6 +481,14 @@ while(index < text.length())
                 verbCharacter = currentChar;
                 state = Verbatim;
                 break;
+            }
+            if(!commandBuffer.compare("begin"))
+            {
+                beginEnvironmentName = true;
+            }
+            if(!commandBuffer.compare("end"))
+            {
+                endEnvironmentName = true;
             }
             if(currentChar == ']')
             {
@@ -577,7 +650,7 @@ while ( leftPos != -1 )
 }
 */
 
-QRegExp leftPattern("(\\\\left.|\\{|\\[|\\()");
+QRegExp leftPattern("(\\\\left[^a-zA-Z]|\\{|\\[|\\()");
 leftPos = text.indexOf( leftPattern );
 while ( leftPos != -1 )
 {
@@ -586,6 +659,8 @@ while ( leftPos != -1 )
     {
     ParenthesisInfo *info = new ParenthesisInfo;
     QString left = leftPattern.capturedTexts().at(1);
+    info->position = leftPos;
+    info->length = leftPattern.matchedLength();
     if(!left.compare("{"))
     {
         info->type = ParenthesisInfo::LEFT_BRACE;
@@ -601,14 +676,14 @@ while ( leftPos != -1 )
     else
     {
         info->type = ParenthesisInfo::LEFT;
+        info->length--;
     }
-    info->position = leftPos;
 
     blockData->insertPar( info );
     }
- leftPos = text.indexOf( leftPattern, leftPos+1 );
+ leftPos = text.indexOf( leftPattern, leftPos+leftPattern.matchedLength() );
 }
-QRegExp rightPattern("(\\\\right.|\\}|\\]|\\))");
+QRegExp rightPattern("(\\\\right[^a-zA-Z]|\\}|\\]|\\))");
 int rightPos = text.indexOf( rightPattern );
 while ( rightPos != -1 )
 {
@@ -617,6 +692,8 @@ while ( rightPos != -1 )
     {
     ParenthesisInfo *info = new ParenthesisInfo;
     QString right = rightPattern.capturedTexts().at(1);
+    info->length = rightPattern.matchedLength();
+    info->position = rightPos;
     if(!right.compare("}"))
     {
         info->type = ParenthesisInfo::RIGHT_BRACE;
@@ -632,12 +709,12 @@ while ( rightPos != -1 )
     else
     {
         info->type = ParenthesisInfo::RIGHT;
+        info->length--;
     }
-    info->position = rightPos;
 
     blockData->insertPar( info );
     }
-    rightPos = text.indexOf( rightPattern, rightPos+1 );
+    rightPos = text.indexOf( rightPattern, rightPos + rightPattern.matchedLength() );
 }
 
 /*
@@ -814,6 +891,7 @@ if(state == Command)
 blockData->blockEndingState.state               = state;
 blockData->blockEndingState.previousState       = previousState;
 blockData->blockEndingState.stateAfterOption    = stateAfterOption;
+blockData->blockEndingState.environment    = currentEnvironment;
 
 // Check if we need to rehighlight the next block
 QTextBlock nextBlock = this->currentBlock().next();

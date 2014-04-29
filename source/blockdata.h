@@ -43,6 +43,7 @@ struct ParenthesisInfo {
 
     int type;
     int position;
+    int length;
 };
 
 /**
@@ -80,6 +81,7 @@ public:
     int stateAfterOption;
     QStack<int> parenthesisLevel;
     QStack<int> crocherLevel;
+    QString environment;
 
 };
 
