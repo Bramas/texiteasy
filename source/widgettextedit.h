@@ -192,7 +192,7 @@ private:
     int matchLeftLat(QTextBlock currentBlock, int index, int numLeftLat, int bpos);
     int matchRightLat(QTextBlock currentBlock, int index, int numLeftLat, int bpos);
     void createLatSelection(int start, int end);
-
+    QChar nextChar(const QTextCursor cursor) const;
     QString wordOnLeft();
 
     QList<QTextCursor> _multipleEdit;

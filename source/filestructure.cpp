@@ -96,10 +96,14 @@ void TextStruct::reload()
             }
                 break;
             case LatexBlockInfo::ENVIRONEMENT_END:
+                if(currentEnvironmentItem->name.isEmpty())
+                {
+                    break;
+                }
                 //qDebug()<<"ENVIRONEMENT_END : "<<blockInfo->name<<"  current:"<<currentEnvironmentItem->name;
                 if(currentEnvironmentItem->name.compare(blockInfo->name))
                 {
-                    qDebug()<<"Error Parsing Document Structur";
+                    qDebug()<<"Warning: Parsing Document Structur. Environment "<<currentEnvironmentItem->name<<" (l."<<currentEnvironmentItem->blockBeginNumber<<") ends with "<<blockInfo->name<<" (l."<<blockInfo->blockNumber<<")";
                     return;
                 }
                 currentEnvironmentItem->end   = blockInfo->position + block.position();
@@ -133,9 +137,12 @@ void TextStruct::reload()
 
 
             }
+            if(currentEnvironmentItem->name.isEmpty())
+            {
+                break;
+            }
         }
         block = block.next();
-
     }
 }
 

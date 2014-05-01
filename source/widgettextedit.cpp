@@ -607,6 +607,12 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
             this->setTextCursor(cur);
             return;
         }
+        if(start == end && ConfigManager::Instance.isDollarAuto() && this->nextChar(cur) == '$' && bd->isAClosingDollar(start - this->textCursor().block().position() - 1))
+        {
+              cur.movePosition(QTextCursor::Right, QTextCursor::MoveAnchor);
+              this->setTextCursor(cur);
+              return;
+        }
         if(start == end && (!ConfigManager::Instance.isDollarAuto() || bd->isAClosingDollar(start - this->textCursor().block().position()) || (bd->characterData.size() && bd->characterData.last().state == SyntaxHighlighter::Math)))
         {
             cur.insertText(QString::fromUtf8("$"));
@@ -1215,6 +1221,13 @@ int WidgetTextEdit::matchRightLat(QTextBlock currentBlock, int index, int numRig
 
     // No match at all
     return -1;
+}
+
+QChar WidgetTextEdit::nextChar(const QTextCursor cursor) const
+{
+    QTextBlock block = cursor.block();
+    int position = cursor.positionInBlock();
+    return block.text().at(position);
 }
 
 void WidgetTextEdit::createLatSelection( int start, int end )

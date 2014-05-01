@@ -754,39 +754,46 @@ QRegExp beginPattern("\\\\begin\\{([^\\}]*)\\}");
 leftPos = text.indexOf( beginPattern );
 while ( leftPos != -1 )
 {
-  LatexBlockInfo *info = new LatexBlockInfo;
-  info->type        = LatexBlockInfo::ENVIRONEMENT_BEGIN;
-  info->position    = leftPos;
-  info->blockNumber = currentBlock().blockNumber();
-  info->name        = beginPattern.capturedTexts().at(1);
+    if(blockData->characterData[leftPos].state != Verbatim &&
+            blockData->characterData[leftPos].state != Comment)
+    {
+        LatexBlockInfo *info = new LatexBlockInfo;
+        info->type        = LatexBlockInfo::ENVIRONEMENT_BEGIN;
+        info->position    = leftPos;
+        info->blockNumber = currentBlock().blockNumber();
+        info->name        = beginPattern.capturedTexts().at(1);
 
-  if(!info->name.compare("document"))
-  {
-      LatexBlockInfo *infoSection = new LatexBlockInfo;
-      infoSection->type        = LatexBlockInfo::SECTION;
-      infoSection->position    = info->position;
-      infoSection->blockNumber = info->blockNumber;
-      infoSection->sectionLevel = LatexBlockInfo::LEVEL_DOCUMENT;
-      infoSection->name        = "Document";
-      blockData->insertLat( infoSection );
-  }
-
-  blockData->insertLat( info );
-  leftPos = text.indexOf(beginPattern, leftPos+1 );
+        if(!info->name.compare("document"))
+        {
+            LatexBlockInfo *infoSection = new LatexBlockInfo;
+            infoSection->type         = LatexBlockInfo::SECTION;
+            infoSection->position     = info->position;
+            infoSection->blockNumber  = info->blockNumber;
+            infoSection->sectionLevel = LatexBlockInfo::LEVEL_DOCUMENT;
+            infoSection->name         = "Document";
+            blockData->insertLat( infoSection );
+        }
+        blockData->insertLat( info );
+    }
+    leftPos = text.indexOf(beginPattern, leftPos+1 );
 }
 
 QRegExp endPattern("\\\\end\\{([^\\}]*)\\}");
 rightPos = text.indexOf(endPattern);
 while ( rightPos != -1 )
 {
-  LatexBlockInfo *info = new LatexBlockInfo;
-  info->type        = LatexBlockInfo::ENVIRONEMENT_END;
-  info->position    = rightPos + endPattern.matchedLength() + 1;
-  info->blockNumber = currentBlock().blockNumber();
-  info->name        = endPattern.capturedTexts().at(1);
+    if(blockData->characterData[rightPos].state != Verbatim &&
+            blockData->characterData[rightPos].state != Comment)
+    {
+        LatexBlockInfo *info = new LatexBlockInfo;
+        info->type        = LatexBlockInfo::ENVIRONEMENT_END;
+        info->position    = rightPos + endPattern.matchedLength() + 1;
+        info->blockNumber = currentBlock().blockNumber();
+        info->name        = endPattern.capturedTexts().at(1);
 
-  blockData->insertLat( info );
-  rightPos = text.indexOf(endPattern, rightPos+1 );
+        blockData->insertLat( info );
+    }
+    rightPos = text.indexOf(endPattern, rightPos+1 );
 }
 
 QRegExp sectionsPattern("\\\\((sub)*)(chapter|paragraph|section)\\{([^\\}]*)\\}");

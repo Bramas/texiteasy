@@ -160,6 +160,10 @@ void ConfigManager::init(QString in_applicationPath)
     }
     settings.endGroup();
     this->applyTranslation();
+
+
+
+    //Log::debug(QString("dictionnaryPath : %1").arg(this->dictionaryPath());
     return;
 
 }
