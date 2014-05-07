@@ -28,19 +28,27 @@ QScriptValue scriptStopEvaluation(QScriptContext *context, QScriptEngine *engine
 ScriptEngine::ScriptEngine() :
     QScriptEngine()
 {
-    QScriptValue scriptPrintValue = this->newFunction(scriptPrint);
-    this->globalObject().setProperty("write", scriptPrintValue);
+    //QScriptValue scriptPrintValue = this->newFunction(scriptPrint);
+    //this->globalObject().setProperty("write", scriptPrintValue);
     QScriptValue scriptDebugValue = this->newFunction(scriptDebug);
     this->globalObject().setProperty("debug", scriptDebugValue);
 }
 
 
+QString sanitize(QString text)
+{
+    text.replace(QRegExp("(\\\\|')"), "\\\\1");
+    text.replace('\n', "\\n");
+    return text;
+}
+
 QString ScriptEngine::parse(QString text, QPlainTextEdit *editor)
 {
     QTextCursor cursor = editor->textCursor();
-    cursor.removeSelectedText();
+    //cursor.removeSelectedText();
 
     QString scriptBuffer;
+    QString writeBuffer;
     QString insert;
     QChar ch, nextCh;
     int insertIndex = 0;
@@ -54,12 +62,17 @@ QString ScriptEngine::parse(QString text, QPlainTextEdit *editor)
         {
             if(ch == '<' && nextCh == '?')
             {
+                if(!writeBuffer.isEmpty())
+                {
+                    scriptBuffer += "\nwrite('"+sanitize(writeBuffer)+"');\n";
+                }
+                writeBuffer = "";
                 index+= 2;
                 state = 1;
                 continue;
             }
             ++insertIndex;
-            insert += ch;
+            writeBuffer += ch;
         }
         else
         {
@@ -67,29 +80,28 @@ QString ScriptEngine::parse(QString text, QPlainTextEdit *editor)
             {
                 index+= 2;
                 state = 0;
-                ScriptBlock sb;
-                sb.length = 0;
-                sb.script = scriptBuffer;
-                sb.position = insertIndex;
-                _scriptBlocks.append(sb);
-                scriptBuffer.clear();
                 continue;
             }
             scriptBuffer += ch;
         }
         ++index;
     }
-    insert += text.right(1);
-
-    int position = cursor.position();
-    cursor.insertText(insert);
-    for(int i = 0; i < _scriptBlocks.count(); ++i)
+    if(state == 0 && text.size())
     {
-        _scriptBlocks[i].position += position - 1;
-        _scriptBlocks[i].cursor = editor->textCursor();
-        _scriptBlocks[i].cursor.setPosition(_scriptBlocks.at(i).position);
+        writeBuffer += text.at(text.size() - 1);
+    }
+    if(!writeBuffer.isEmpty())
+    {
+        scriptBuffer += "\nwrite('"+sanitize(writeBuffer)+"');\n";
     }
 
+    _script = scriptBuffer;
+    qDebug()<<"scriptBuffer:";
+    qDebug()<<scriptBuffer;
+    this->evaluate(_script);
+
+    return "";
+/*
     int pIdx = -1;
     QStringList varNames;
     QRegExp p("\\$\\{([0-9]:){0,1}([^\\}]*)\\}");
@@ -118,7 +130,7 @@ QString ScriptEngine::parse(QString text, QPlainTextEdit *editor)
         DISP_DEBUG(qDebug()<<vb.name<<" = "<<vb.cursor.selectedText());
     }
 
-    return insert;
+    return insert;*/
 }
 
 void ScriptEngine::evaluate()
@@ -243,4 +255,5 @@ void ScriptEngine::setWidgetTextEdit(WidgetTextEdit *w)
     _widgetTextEdit = w;
     QScriptValue scriptTextEdit = this->newQObject((_widgetTextEdit));
     this->globalObject().setProperty("editor", scriptTextEdit);
+    this->evaluate("function write(text) { editor.insertPlainText(text); }");
 }

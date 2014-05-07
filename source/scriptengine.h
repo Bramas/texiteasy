@@ -52,6 +52,7 @@ private:
     QMutex _mutex;
     QMutex _cursorsMutex;
     WidgetTextEdit * _widgetTextEdit;
+    QString _script;
 
 };
 
