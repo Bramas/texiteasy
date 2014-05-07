@@ -32,6 +32,7 @@
 class QMenu;
 class QAction;
 class DialogMacros;
+class QShortcut;
 
 /**
  * @brief The MacroXmlHandler class read a macro file and store useful information (description, keys ...)
@@ -111,6 +112,7 @@ public:
     QList<Macro> orderedMacros();
     QMenu * createMacrosMenu(QMenu *root);
     QAction * createAction(Macro macro);
+    void createShortCuts(QWidget *parent);
     void init();
     void loadMacros();
     void loadMacro(QString name);
@@ -126,6 +128,7 @@ signals:
 
 public slots:
     void onMacroTriggered();
+    void onMacroTriggeredAmbiguously();
 
 private:
     explicit MacroEngine();
@@ -138,6 +141,7 @@ private:
     QMap<QString, Macro> _macros;
     QStringList _tabMacroNames;
     QList<QMenu*> _macroMenus;
+    QList<QShortcut*> _macroShortcuts;
     //QMap<QString, QAction *> _macroActions;
 
 };

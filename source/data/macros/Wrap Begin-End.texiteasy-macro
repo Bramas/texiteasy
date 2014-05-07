@@ -1,0 +1,21 @@
+<macro readOnly="1">
+    <description>Wrap Begin-End</description>
+    <trigger>
+        <keys>Ctrl+E</keys>
+        <leftWord>
+                (.*[\n ].*)
+        </leftWord>
+    </trigger>
+    <content><![CDATA[\begin{${environment}}
+    <?
+if(environment == "itemize" || environment == "enumerate")
+{
+        write("\\item ")
+}
+else if(environment == "description")
+{
+        write("\\item[ ] ")
+}
+?>${1:text}
+\end{${environment}}]]></content>
+</macro>

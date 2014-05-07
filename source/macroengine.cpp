@@ -26,6 +26,7 @@
 #include <QDir>
 #include <QFile>
 #include <QAction>
+#include <QShortcut>
 #include <QMenu>
 
 MacroEngine MacroEngine::Instance;
@@ -157,16 +158,31 @@ QAction * MacroEngine::createAction(Macro macro)
         name = name.split('/').at(1);
     }
     QAction * a = new QAction(name, this);
-    a->setShortcut(QKeySequence(macro.keys));
     if(name.contains('\\')) //empty Macro
     {
         a->setText(trUtf8("empty"));
         a->setEnabled(false);
     }
     a->setProperty("macroName", macro.name);
-
-    connect(a, SIGNAL(triggered()), this, SLOT(onMacroTriggered()));
     return a;
+}
+
+void MacroEngine::createShortCuts(QWidget * parent)
+{
+    foreach(QShortcut * shortcut, _macroShortcuts)
+    {
+        delete shortcut;
+    }
+    _macroShortcuts.clear();
+
+    foreach(const Macro& macro, orderedMacros())
+    {
+        QShortcut * shortcut = new QShortcut(QKeySequence(macro.keys), parent);
+        shortcut->setProperty("macroName", macro.name);
+        connect(shortcut, SIGNAL(activated()), this, SLOT(onMacroTriggered()));
+        connect(shortcut, SIGNAL(activatedAmbiguously()), this, SLOT(onMacroTriggeredAmbiguously()));
+        _macroShortcuts << shortcut;
+    }
 }
 
 QMenu * MacroEngine::createMacrosMenu(QMenu * root)
@@ -212,14 +228,38 @@ QMenu * MacroEngine::createMacrosMenu(QMenu * root)
 
 void MacroEngine::onMacroTriggered()
 {
-    QAction * action = qobject_cast<QAction*>(sender());
-    if(action)
+    QShortcut * shortcut = qobject_cast<QShortcut*>(sender());
+    if(shortcut)
     {
-        QString name = action->property("macroName").toString();
+        QString name = shortcut->property("macroName").toString();
         Macro macro = _macros.value(name);
         if(!macro.name.isEmpty())
         {
             FileManager::Instance.onMacroTriggered(macro);
+        }
+    }
+}
+
+void MacroEngine::onMacroTriggeredAmbiguously()
+{
+    QShortcut * ambiguousShortcut = qobject_cast<QShortcut*>(sender());
+    if(!ambiguousShortcut)
+    {
+        return;
+    }
+    foreach(QShortcut * shortcut, _macroShortcuts)
+    {
+        if(ambiguousShortcut->key().matches(shortcut->key()))
+        {
+            QString name = shortcut->property("macroName").toString();
+            Macro macro = _macros.value(name);
+            if(!macro.name.isEmpty())
+            {
+                if(FileManager::Instance.onMacroTriggered(macro))
+                {
+                    break;
+                }
+            }
         }
     }
 }

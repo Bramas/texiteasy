@@ -1,5 +1,6 @@
 #include "scriptengine.h"
 #include <QDebug>
+#include "widgettextedit.h"
 
 #define DISP_DEBUG(a)
 
@@ -10,6 +11,18 @@ QScriptValue scriptPrint(QScriptContext *context, QScriptEngine *engine)
    scriptOutput += a.toString();
    return QScriptValue();
 }
+QScriptValue scriptDebug(QScriptContext *context, QScriptEngine *engine)
+{
+   QScriptValue a = context->argument(0);
+   qDebug() << a.toString();
+   return QScriptValue();
+}
+QScriptValue scriptStopEvaluation(QScriptContext *context, QScriptEngine *engine)
+{
+   return QScriptValue();
+}
+
+
 
 
 ScriptEngine::ScriptEngine() :
@@ -17,6 +30,8 @@ ScriptEngine::ScriptEngine() :
 {
     QScriptValue scriptPrintValue = this->newFunction(scriptPrint);
     this->globalObject().setProperty("write", scriptPrintValue);
+    QScriptValue scriptDebugValue = this->newFunction(scriptDebug);
+    this->globalObject().setProperty("debug", scriptDebugValue);
 }
 
 
@@ -122,7 +137,6 @@ void ScriptEngine::evaluate()
 
     updateCursors();
 
-
     foreach(VarBlock vb, _varTextCursor)
     {
         QString v = vb.cursor.selectedText();
@@ -137,7 +151,11 @@ void ScriptEngine::evaluate()
        ScriptBlock sb = _scriptBlocks.at(i);
        scriptOutput.clear();
        this->evaluate(sb.script);
-
+       QScriptValue exc;
+       if(!(exc = this->uncaughtException()).toString().isEmpty())
+       {
+           qDebug()<<"Uncaught Exception : "<<exc.toString();
+       }
        if(!sb.insert.compare(scriptOutput))
        {
            continue;
@@ -218,4 +236,11 @@ void ScriptEngine::updateCursors()
         _varTextCursor[i] = vb;
         DISP_DEBUG(qDebug()<<vb.cursor.selectionStart()<<" "<<vb.leftCursor.position()<<","<<vb.rightCursor.position());
     }
+}
+
+void ScriptEngine::setWidgetTextEdit(WidgetTextEdit *w)
+{
+    _widgetTextEdit = w;
+    QScriptValue scriptTextEdit = this->newQObject((_widgetTextEdit));
+    this->globalObject().setProperty("editor", scriptTextEdit);
 }

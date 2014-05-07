@@ -592,6 +592,10 @@ void ConfigManager::recursiveCopy(QString from, QString to, QFile::Permissions p
             QFile(to+"/"+fileName).remove();
         }
         QFile file(from+"/"+fileName);
+        if(QFile(to+"/"+fileName).exists())
+        {
+            QFile(to+"/"+fileName).remove();
+        }
         file.copy(to+"/"+fileName);
         QFile::setPermissions(to+"/"+fileName, permission);
     }
@@ -730,23 +734,6 @@ void ConfigManager::checkRevision()
     case 0x000602:
     case 0x000603:
     case 0x000700:
-    {
-        qDebug()<<"texiteasy 0.7.0 => 0.8.0";
-
-        // install macros
-        {
-            recursiveCopy(":/data/macros", macrosPath(),
-                                                          QFile::ReadOwner |
-                                                          QFile::WriteOwner |
-                                                          QFile::ReadGroup |
-                                                          QFile::WriteGroup |
-                                                          QFile::ReadOther |
-                                                          QFile::WriteOther |
-                                                          QFile::ReadUser |
-                                                          QFile::WriteUser
-                                                          );
-        }
-    }
     case 0x000800:
     case 0x000801:
     case 0x000802:
@@ -827,6 +814,26 @@ void ConfigManager::checkRevision()
     case 0x001001:
 
     case 0x001100:
+    {
+        qDebug()<<"texiteasy => 0.11.1";
+
+        // install macros
+        {
+            recursiveCopy(":/data/macros", macrosPath(),
+                                                          QFile::ReadOwner |
+                                                          QFile::WriteOwner |
+                                                          QFile::ReadGroup |
+                                                          QFile::WriteGroup |
+                                                          QFile::ReadOther |
+                                                          QFile::WriteOther |
+                                                          QFile::ReadUser |
+                                                          QFile::WriteUser
+                                                          );
+        }
+    }
+
+    case 0x001101:
+    case 0x001102:
 
         break;
     }

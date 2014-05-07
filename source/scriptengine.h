@@ -8,6 +8,8 @@
 #include <QPlainTextEdit>
 #include <QMutex>
 
+class WidgetTextEdit;
+
 struct ScriptBlock
 {
     QTextCursor cursor;
@@ -37,6 +39,7 @@ public:
     void setCurrentVar(QString var) { _currentVar = var; _currentVarValue = ""; }
     void clear() { _scriptBlocks.clear(); _varTextCursor.clear(); }
     QMutex * cursorsMutex() { return &_cursorsMutex; }
+    void setWidgetTextEdit(WidgetTextEdit * w);
 signals:
 
 public slots:
@@ -48,6 +51,7 @@ private:
     QString _currentVar;
     QMutex _mutex;
     QMutex _cursorsMutex;
+    WidgetTextEdit * _widgetTextEdit;
 
 };
 

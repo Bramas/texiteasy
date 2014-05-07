@@ -47,7 +47,7 @@ public:
     bool handleMimeData(const QMimeData * mimeData);
     WidgetPdfViewerWrapper * widgetPdfViewerWrapper() { return _widgetPdfViewerWrapper; }
 
-    void onMacroTriggered(Macro macro);
+    bool onMacroTriggered(Macro macro);
 
     void reopenWithEncoding(QString codec);
     void setEncoding(QString codec);

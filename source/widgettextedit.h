@@ -74,6 +74,7 @@ public:
     QRectF blockGeometry(const QTextBlock &textBlock) { return this->blockBoundingGeometry(textBlock); }
     int contentOffsetTop() { return this->contentOffset().y(); }
     void indentSelectedText();
+    void desindentSelectedText();
     void initTheme();
 
     int textHeight() { return this->blockBottom(this->document()->end()); }
@@ -122,6 +123,7 @@ private slots:
     void addToDictionnary();
 
 public slots:
+    void stopScriptEvaluation() { this->_scriptIsRunning = false; }
     void scrollTo(int);
     void updateLineWrapMode();
     void adjustScrollbar(QSizeF documentSize);

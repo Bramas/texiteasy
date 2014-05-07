@@ -74,6 +74,7 @@ WidgetTextEdit::WidgetTextEdit(WidgetFile * parent) :
     _lastBlockCount(0)
 
 {
+    _scriptEngine.setWidgetTextEdit(this);
     TextDocumentLayout * layout = new TextDocumentLayout(this);
     this->document()->setDocumentLayout(layout);
     connect(layout, SIGNAL(documentSizeChanged(QSizeF)), this, SLOT(adjustScrollbar(QSizeF)));
@@ -594,6 +595,15 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
         }
         insertPlainText(ConfigManager::Instance.tabToString());
         return;
+    }
+    if(e->key() == Qt::Key_Backtab)
+    {
+        QTextCursor cursor = this->textCursor();
+        if(cursor.hasSelection())
+        {
+            desindentSelectedText();
+            return;
+        }
     }
     if(e->key() == Qt::Key_Dollar)
     {
@@ -1411,6 +1421,7 @@ bool WidgetTextEdit::triggerTabMacros()
 bool WidgetTextEdit::onMacroTriggered(Macro macro, bool soft)
 {
     QTextCursor cursor = textCursor();
+    cursor.beginEditBlock();
     QString word;
     if(cursor.hasSelection())
     {
@@ -1420,9 +1431,11 @@ bool WidgetTextEdit::onMacroTriggered(Macro macro, bool soft)
     {
         word = this->wordOnLeft();
     }
+    word = word.replace("\u2029", "\n");
+
     QRegExp pattern("^"+macro.leftWord+"$");
     bool patternExists = word.contains(pattern);
-    if(!patternExists && soft)
+    if(!patternExists)// && soft)
     {
         return false;
     }
@@ -1450,49 +1463,85 @@ bool WidgetTextEdit::onMacroTriggered(Macro macro, bool soft)
             if(!arg.isEmpty())
             {
                 cursor = document()->find(QRegExp("\\$\\{"+QString::number(idx)+":[^\\}]*\\}"));
+                //cursor.joinPreviousEditBlock();
                 while(!cursor.isNull())
                 {
                     cursor.removeSelectedText();
                     cursor.insertText(arg);
                     cursor = document()->find(QRegExp("\\$\\{"+QString::number(idx)+":[^\\}]*\\}"));
+                    //cursor.joinPreviousEditBlock();
                 }
             }
             ++idx;
         }
     }
     cursor = document()->find(QRegExp("^#[^\\n]*\n"));
+    //cursor.joinPreviousEditBlock();
     while(!cursor.isNull())
     {
         cursor.removeSelectedText();
         cursor = document()->find(QRegExp("^#[^\\n]*\n"));
+        //cursor.joinPreviousEditBlock();
     }
     cursor = document()->find(QRegExp("\n#[^\\n]*\n"));
+    //cursor.joinPreviousEditBlock();
     while(!cursor.isNull())
     {
         cursor.removeSelectedText();
         cursor.insertText("\n");
         cursor = document()->find(QRegExp("\n#[^\\n]*\n"));
+        //cursor.joinPreviousEditBlock();
     }
 
     QRegExp argumentPattern("\\$\\{([0-9]:){0,1}([^\\}]*)\\}");
     cursor = document()->find(argumentPattern);
+   // cursor.joinPreviousEditBlock();
     while(!cursor.isNull())
     {
         cursor.selectedText().indexOf(argumentPattern);
         cursor.removeSelectedText();
         cursor.insertText("%#{{{"+argumentPattern.capturedTexts().at(2)+"}}}#");
         cursor = document()->find(argumentPattern);
+        //cursor.joinPreviousEditBlock();
     }
 
     cursor = textCursor();
+    //cursor.joinPreviousEditBlock();
     cursor.setPosition(pos);
     this->setTextCursor(cursor);
+    cursor.endEditBlock();
+
     _multipleEdit.clear();
     selectNextArgument();
+    //_scriptEngine.evaluate();
     return true;
 
 }
 
+void WidgetTextEdit::desindentSelectedText()
+{
+    QTextCursor cursor = textCursor();
+    int startPos = cursor.selectionStart();
+    int endPos = cursor.selectionEnd();
+
+    cursor.setPosition(startPos);
+    cursor.beginEditBlock();
+    QTextBlock block = cursor.block();
+    while(block.isValid() && block.position() <= endPos)
+    {
+        cursor.setPosition(block.position());
+        for(int idx = 0; idx < ConfigManager::Instance.tabWidth(); ++idx)
+        {
+            if(block.text().contains(QRegExp("^[ \\t]")))
+            {
+                cursor.deleteChar();
+                --endPos;
+            }
+        }
+        block = block.next();
+    }
+    cursor.endEditBlock();
+}
 void WidgetTextEdit::indentSelectedText()
 {
     QTextCursor cursor = textCursor();
@@ -1500,6 +1549,7 @@ void WidgetTextEdit::indentSelectedText()
     int endPos = cursor.selectionEnd();
     QString tabString = ConfigManager::Instance.tabToString();
 
+    cursor.beginEditBlock();
     cursor.setPosition(startPos);
     QTextBlock block = cursor.block();
     while(block.isValid() && block.position() <= endPos)
@@ -1509,6 +1559,7 @@ void WidgetTextEdit::indentSelectedText()
         endPos += tabString.size();
         block = block.next();
     }
+    cursor.endEditBlock();
 }
 void WidgetTextEdit::initTheme()
 {

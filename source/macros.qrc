@@ -11,5 +11,6 @@
         <file>data/macros/Lists/itemize.texiteasy-macro</file>
         <file>data/macros/Lists/description.texiteasy-macro</file>
         <file>data/macros/Lists/enumerate.texiteasy-macro</file>
+        <file>data/macros/Wrap Begin-End.texiteasy-macro</file>
     </qresource>
 </RCC>
