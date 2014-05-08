@@ -227,36 +227,7 @@ QString ScriptEngine::parse(QString text, QPlainTextEdit *editor, const QVector<
     _mutex.unlock();
     _cursorsMutex.unlock();
     return "";
-/*
-    int pIdx = -1;
-    QStringList varNames;
-    QRegExp p("\\$\\{([0-9]:){0,1}([^\\}]*)\\}");
-    while(-1 != (pIdx = insert.indexOf(p, pIdx + 1)))
-    {
-        VarBlock vb;
-        vb.name = p.capturedTexts().at(2);
-        if(varNames.contains(vb.name))
-        {
-            continue;
-        }
-        varNames << vb.name;
-        vb.cursor = editor->textCursor();
-        vb.leftCursor = editor->textCursor();
-        vb.rightCursor = editor->textCursor();
-        vb.cursor.setPosition(position + pIdx);
-        vb.leftCursor.setPosition(position + pIdx - 1);
-        vb.rightCursor.setPosition(position + pIdx + p.capturedTexts().at(0).length() + 1);
-        vb.cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, p.capturedTexts().at(0).length());
-        _varTextCursor.append(vb);
-        DISP_DEBUG(qDebug()<<position + pIdx);
-    }
 
-    foreach(VarBlock vb, _varTextCursor)
-    {
-        DISP_DEBUG(qDebug()<<vb.name<<" = "<<vb.cursor.selectedText());
-    }
-
-    return insert;*/
 }
 
 void ScriptEngine::evaluate()
@@ -356,9 +327,6 @@ void ScriptEngine::evaluate()
     DISP_DEBUG(qDebug()<<"selectedText:");
     DISP_DEBUG(qDebug() << c.selectedText());
 
-    /*QTextCursor previousCursor = _widgetTextEdit->textCursor();
-    previousCursor.setPosition(previousCursorPosition);
-    _widgetTextEdit->setTextCursor(previousCursor);*/
     _cursorsMutex.unlock();
     _mutex.unlock();
     return;
@@ -418,5 +386,4 @@ void ScriptEngine::setWidgetTextEdit(WidgetTextEdit *w)
 
     QScriptValue scriptCursor = this->newQObject(new ScriptCursor(w));
     this->globalObject().setProperty("cursor", scriptCursor);
-    //this->evaluate("function write(text) { editor.insertPlainText(text); }");
 }
