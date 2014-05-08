@@ -1447,9 +1447,13 @@ bool WidgetTextEdit::onMacroTriggered(Macro macro, bool force)
          this->setTextCursor(cursor);
     }
 
+    int pos = textCursor().position();
     _scriptIsRunning = true;
     _scriptEngine.parse(content, this, pattern.capturedTexts().toVector());
 
+    cursor = textCursor();
+    cursor.setPosition(pos);
+    this->setTextCursor(cursor);
     //cursor.endEditBlock();
 
     _multipleEdit.clear();
