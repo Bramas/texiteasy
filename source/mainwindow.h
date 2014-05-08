@@ -90,7 +90,7 @@ public:
 public slots:
 
     void setWindowModified(bool b);
-    void newFile();
+    WidgetFile *newFile();
     void open();
     void open(QString filename, int cursorPosition = 0);
     void openLast(void);

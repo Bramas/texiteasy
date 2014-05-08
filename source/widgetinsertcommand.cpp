@@ -52,7 +52,7 @@ WidgetInsertCommand::WidgetInsertCommand() :
         qDebug()<<"Database "<<ConfigManager::Instance.commandDatabaseFilename()<<" not found : "<<db.lastError();
         return;
     }
-    qDebug()<<db.tables();
+    //qDebug()<<db.tables();
     /*{
         QStringList addList;
         addList<<" INSERT INTO commands (command, command_group) VALUES ('\\leftrightarrow', 'arrows');";

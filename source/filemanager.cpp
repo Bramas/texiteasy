@@ -44,10 +44,10 @@ void FileManager::initWidgetPdfViewerWrapper()
     _widgetPdfViewerWrapper->show();
 }
 
-bool FileManager::newFile()
+bool FileManager::newFile(MainWindow * mainWindow)
 {
     WidgetFile * oldFile = this->currentWidgetFile();
-    WidgetFile * newFile = new WidgetFile();
+    WidgetFile * newFile = new WidgetFile(mainWindow);
     newFile->initTheme();
     _widgetFiles.append(newFile);
     _currentWidgetFileId = _widgetFiles.count() - 1;
@@ -141,9 +141,9 @@ void FileManager::deleteMasterConnexions(WidgetFile *widget, AssociatedFile::Typ
 
 }
 
-bool FileManager::open(QString filename)
+bool FileManager::open(QString filename, MainWindow * window)
 {
-    bool newWidget = this->newFile();
+    bool newWidget = this->newFile(window);
     this->currentWidgetFile()->open(filename);
 
     // is it an associated file?

@@ -74,11 +74,11 @@ WidgetTextEdit::WidgetTextEdit(WidgetFile * parent) :
     _lastBlockCount(0)
 
 {
-    _scriptEngine.setWidgetTextEdit(this);
     TextDocumentLayout * layout = new TextDocumentLayout(this);
     this->document()->setDocumentLayout(layout);
     connect(layout, SIGNAL(documentSizeChanged(QSizeF)), this, SLOT(adjustScrollbar(QSizeF)));
     _widgetFile = parent;
+    _scriptEngine.setWidgetTextEdit(this);
     this->setContentsMargins(0,0,0,0);
     connect(this,SIGNAL(textChanged()),this->currentFile,SLOT(setModified()));
     connect(this,SIGNAL(textChanged()),this,SLOT(updateIndentation()));
@@ -471,9 +471,9 @@ void WidgetTextEdit::onCursorPositionChange()
 
 void WidgetTextEdit::resizeEvent(QResizeEvent *event)
 {
-    WIDGET_TEXT_EDIT_PARENT_CLASS::resizeEvent(event);
     TextDocumentLayout* layout = dynamic_cast<TextDocumentLayout*>(this->document()->documentLayout());
     layout->setTextWidth(viewport()->width());
+    WIDGET_TEXT_EDIT_PARENT_CLASS::resizeEvent(event);
 }
 
 void WidgetTextEdit::insertPlainText(const QString &text)
@@ -1493,7 +1493,7 @@ bool WidgetTextEdit::onMacroTriggered(Macro macro, bool force)
         cursor = document()->find(QRegExp("\n#[^\\n]*\n"));
         //cursor.joinPreviousEditBlock();
     }
-
+/*
     QRegExp argumentPattern("\\$\\{([0-9]:){0,1}([^\\}]*)\\}");
     cursor = document()->find(argumentPattern);
    // cursor.joinPreviousEditBlock();
@@ -1504,7 +1504,7 @@ bool WidgetTextEdit::onMacroTriggered(Macro macro, bool force)
         cursor.insertText("%#{{{"+argumentPattern.capturedTexts().at(2)+"}}}#");
         cursor = document()->find(argumentPattern);
         //cursor.joinPreviousEditBlock();
-    }
+    }*/
 
     cursor = textCursor();
     //cursor.joinPreviousEditBlock();

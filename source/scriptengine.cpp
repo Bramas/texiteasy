@@ -1,11 +1,15 @@
 #include "scriptengine.h"
 #include <QDebug>
 #include "widgettextedit.h"
+#include "widgetfile.h"
+#include "mainwindow.h"
 
 #define DISP_DEBUG(a)
 
 QString scriptOutput;
 QTextCursor scriptCursor;
+
+
 QScriptValue scriptPrint(QScriptContext *context, QScriptEngine *engine_in)
 {
    ScriptEngine * engine = dynamic_cast<ScriptEngine*>(engine_in);
@@ -13,9 +17,10 @@ QScriptValue scriptPrint(QScriptContext *context, QScriptEngine *engine_in)
    QString text = context->argument(0).toString();
 
    DISP_DEBUG(qDebug()<<"insert : "<<text);
-   int position = editor->textCursor().position();
 
-   editor->insertPlainText(text);
+   QTextCursor currentCursor(*engine->getScriptCursor()->cursor());
+   int position = currentCursor.position();
+   currentCursor.insertText(text);
 
    int pIdx = -1;
    QStringList varNames;
@@ -39,9 +44,9 @@ QScriptValue scriptPrint(QScriptContext *context, QScriptEngine *engine_in)
        {
            vb.number = 0;
        }
-       vb.cursor = editor->textCursor();
-       vb.leftCursor = editor->textCursor();
-       vb.rightCursor = editor->textCursor();
+       vb.cursor = currentCursor;
+       vb.leftCursor = currentCursor;
+       vb.rightCursor = currentCursor;
        vb.cursor.setPosition(position + pIdx);
        vb.leftCursor.setPosition(position + pIdx - 1);
        vb.rightCursor.setPosition(position + pIdx + p.capturedTexts().at(0).length() + 1);
@@ -56,6 +61,14 @@ QScriptValue scriptPrint(QScriptContext *context, QScriptEngine *engine_in)
 }
 
 
+QScriptValue scriptUseEditor(QScriptContext *context, QScriptEngine *engine_in)
+{
+   WidgetTextEdit* editor = dynamic_cast<WidgetTextEdit*>(context->argument(0).toQObject());
+   ScriptEngine * engine = dynamic_cast<ScriptEngine*>(engine_in);
+   engine->getScriptCursor()->setEditor(editor);
+   engine->getScriptCursor()->setTextCursor(editor->textCursor());
+   return QScriptValue();
+}
 QScriptValue scriptDebug(QScriptContext *context, QScriptEngine *engine)
 {
    QScriptValue a = context->argument(0);
@@ -77,6 +90,9 @@ ScriptEngine::ScriptEngine() :
     this->globalObject().setProperty("write", scriptPrintValue);
     QScriptValue scriptDebugValue = this->newFunction(scriptDebug);
     this->globalObject().setProperty("debug", scriptDebugValue);
+    QScriptValue scriptUseEditorValue = this->newFunction(scriptUseEditor);
+    this->globalObject().setProperty("useEditor", scriptUseEditorValue);
+
 }
 
 
@@ -96,6 +112,13 @@ void ScriptEngine::initVariables(QString text)
         this->evaluate("var "+p.capturedTexts().at(2)+" = ''");
     }
 }
+
+
+ScriptCursor * ScriptEngine::getScriptCursor()
+{
+    return dynamic_cast<ScriptCursor *>(this->globalObject().property("cursor").toQObject());
+}
+
 QString ScriptEngine::parse(QString text, QPlainTextEdit *editor, const QVector<QString> &varValuesByNumber)
 {
     if(!_mutex.tryLock())
@@ -111,6 +134,8 @@ QString ScriptEngine::parse(QString text, QPlainTextEdit *editor, const QVector<
     this->varTextCursor().clear();
     QTextCursor cursor = editor->textCursor();
     cursor.removeSelectedText();
+    getScriptCursor()->setTextCursor(cursor);
+
     _scriptPosition.leftCursor = cursor;
     _scriptPosition.rightCursor = cursor;
     _scriptPosition.leftCursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor);
@@ -188,6 +213,13 @@ QString ScriptEngine::parse(QString text, QPlainTextEdit *editor, const QVector<
         {
             vb.cursor.removeSelectedText();
             vb.cursor.insertText(_varValuesByNumber.value(vb.number));
+        }
+        else
+        {
+            QString val = vb.cursor.selectedText();
+            vb.cursor.removeSelectedText();
+            val.replace(QRegExp("\\$\\{([0-9]:){0,1}([^\\}]*)\\}"), "%#{{{\\2}}}#");
+            vb.cursor.insertText(val);
         }
     }
     DISP_DEBUG(qDebug()<<"selectedText:");
@@ -272,6 +304,8 @@ void ScriptEngine::evaluate()
     _widgetTextEdit->setTextCursor(c);
 
     _varTextCursor.clear();
+
+    getScriptCursor()->setTextCursor(widgetTextEdit()->textCursor());
     this->evaluate(_script);
     QScriptValue exc;
     if(!(exc = this->uncaughtException()).toString().isEmpty())
@@ -370,9 +404,17 @@ void ScriptEngine::updateCursors()
 
 void ScriptEngine::setWidgetTextEdit(WidgetTextEdit *w)
 {
+
+    qScriptRegisterMetaType(this, WidgetFile::toScriptValue, WidgetFile::fromScriptValue);
+    qScriptRegisterMetaType(this, WidgetTextEdit::toScriptValue, WidgetTextEdit::fromScriptValue);
+
     _widgetTextEdit = w;
     QScriptValue scriptTextEdit = this->newQObject((_widgetTextEdit));
     this->globalObject().setProperty("editor", scriptTextEdit);
+    WidgetFile * file = _widgetTextEdit->widgetFile();
+    MainWindow * win = file->window();
+    QScriptValue scriptWindow = this->newQObject(win);
+    this->globalObject().setProperty("window", scriptWindow);
 
     QScriptValue scriptCursor = this->newQObject(new ScriptCursor(w));
     this->globalObject().setProperty("cursor", scriptCursor);

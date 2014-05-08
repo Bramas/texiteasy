@@ -8,6 +8,7 @@
 #include "macroengine.h"
 #include "widgetfile.h"
 
+class MainWindow;
 class QMimeData;
 class MainWindow;
 class QMessageBox;
@@ -34,7 +35,7 @@ public:
 
     void initTheme();
 
-    bool open(QString filename);
+    bool open(QString filename, MainWindow *window);
     void close(WidgetFile *widget);
     int count() { return _widgetFiles.count(); }
     AssociatedFile reverseAssociation(QString filename, int* index = 0);
@@ -67,7 +68,7 @@ signals:
     void messageFromCurrentFile(QString);
 
 public slots:
-    bool newFile();
+    bool newFile(MainWindow *mainWindow);
     void openAssociatedFile();
     void goToSection();
 

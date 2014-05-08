@@ -38,8 +38,19 @@ class ScriptCursor: public QObject
 public:
     ScriptCursor(QPlainTextEdit *parent = 0): QObject(parent), _cursor(0) { _plainTextEdit = parent; }
 
+    void setEditor(QPlainTextEdit *parent) { _plainTextEdit = parent; }
+
     int     position()              { return cursor()->position(); }
     void setPosition(int p)         { cursor()->setPosition(p); }
+
+    QTextCursor *cursor()
+    {
+        if(!_cursor)
+        {
+            _cursor = new QTextCursor(_plainTextEdit->textCursor());
+        }
+        return _cursor;
+    }
 
 public Q_SLOTS:
     void             moveStart()    { cursor()->movePosition(QTextCursor::Start); }
@@ -62,7 +73,7 @@ public Q_SLOTS:
     void          moveNextWord()    { cursor()->movePosition(QTextCursor::NextWord); }
     void             moveRight()    { cursor()->movePosition(QTextCursor::Right); }
     void         moveWordRight()    { cursor()->movePosition(QTextCursor::WordRight); }
-    void         apply()            { return _plainTextEdit->setTextCursor(*cursor()); }
+    void                 apply()    { return _plainTextEdit->setTextCursor(*cursor()); }
 
     void update() {
         if(_cursor)
@@ -71,19 +82,19 @@ public Q_SLOTS:
         }
         cursor();
     }
+    void setTextCursor(const QTextCursor & c) {
+        if(_cursor)
+        {
+            delete _cursor;
+        }
+        _cursor = new QTextCursor(c);
+    }
 
     void insertText(const QString &text)        { cursor()->insertText(text); }
 
     QString toString() const                    { return QLatin1String("Cursor"); }
 
 protected:
-    QTextCursor *cursor() {
-        if(!_cursor)
-        {
-            _cursor = new QTextCursor(_plainTextEdit->textCursor());
-        }
-        return _cursor;
-    }
     QTextCursor * _cursor;
     QPlainTextEdit * _plainTextEdit;
 };
@@ -107,6 +118,7 @@ public:
 
     QMap<QString, QString> & varValuesByName() { return this->_varValuesByName; }
     QVector<QString> & varValuesByNumber() { return this->_varValuesByNumber; }
+    ScriptCursor *getScriptCursor();
 
 private:
     void initVariables(QString text);

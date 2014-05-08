@@ -3,6 +3,9 @@
 
 #include <QWidget>
 #include <QString>
+#include <QScriptValue>
+#include <QScriptEngine>
+#include <QDebug>
 
 class WidgetTextEdit;
 class MiniSplitter;
@@ -14,6 +17,7 @@ class WidgetPdfDocument;
 class WidgetSimpleOutput;
 class WidgetLineNumber;
 class SyntaxHighlighter;
+class MainWindow;
 class File;
 class Hunspell;
 
@@ -21,7 +25,7 @@ class WidgetFile : public QWidget
 {
     Q_OBJECT
 public:
-    explicit WidgetFile(QWidget *parent = 0);
+    explicit WidgetFile(MainWindow *parent = 0);
     ~WidgetFile();
     void initTheme();
 
@@ -33,7 +37,6 @@ public:
     void saveAs(void);
     void setMasterFile(WidgetFile * master) { _masterFile = master; }
     bool isEmpty();
-    WidgetTextEdit * widgetTextEdit() { return _widgetTextEdit; }
     WidgetPdfViewer * widgetPdfViewer() { return _widgetPdfViewer; }
     SyntaxHighlighter * syntaxHighlighter() { return _syntaxHighlighter; }
     MiniSplitter * verticalSplitter() { return _verticalSplitter; }
@@ -55,13 +58,28 @@ public:
     QString dictionary() { return _dictionary; }
     void setDictionary(QString dico);
 
-
+    void setWindow(MainWindow * window) { _window = window; }
+    MainWindow * window() { return _window; }
     void addWidgetPdfViewerToSplitter();
+
+
+    static QScriptValue toScriptValue(QScriptEngine *engine, WidgetFile * const &s)
+    {
+      QScriptValue obj = engine->newQObject(const_cast<WidgetFile *>(s));
+      return obj;
+    }
+
+    static void fromScriptValue(const QScriptValue &obj, WidgetFile *&s)
+    {
+      //s.x = obj.property("x").toInt32();
+      //s.y = obj.property("y").toInt32();
+    }
 
 signals:
     void verticalSplitterChanged();
 
 public slots:
+    WidgetTextEdit * widgetTextEdit() { return _widgetTextEdit; }
 
     void splitEditor(bool split);
     void openConsole(void);
@@ -91,8 +109,11 @@ private:
     WidgetLineNumber * _widgetLineNumber;
     Hunspell * _spellChecker;
     SyntaxHighlighter * _syntaxHighlighter;
-    
+    MainWindow * _window;
     WidgetFile * _masterFile;
 };
+
+Q_DECLARE_METATYPE(WidgetFile*)
+
 
 #endif // WIDGETFILE_H

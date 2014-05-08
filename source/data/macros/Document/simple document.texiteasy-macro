@@ -8,8 +8,13 @@
     </trigger>
     <content><![CDATA[<?
 editor.stopScriptEvaluation()
-var t = editor.plainText;
-editor.plainText = ""
+if(editor.plainText != '')
+{
+        var file = window.newFile()
+        var ed = file.widgetTextEdit()
+        useEditor(ed)
+}
+
 ?>
 \documentclass{${Type}}
 
@@ -18,13 +23,10 @@ editor.plainText = ""
 \title{${Title}}
 \author{${Author}}
 \maketitle
-<?
-  write(t)
-?>
+
 \end{document}
 <?
-
-cursor.moveStart()
+cursor.position = 17
 cursor.apply()
 ?>]]></content>
 </macro>

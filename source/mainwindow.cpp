@@ -468,14 +468,14 @@ void MainWindow::initBuildMenu()
 
 }
 
-void MainWindow::newFile()
+WidgetFile * MainWindow::newFile()
 {
-    if(FileManager::Instance.newFile())
+    if(FileManager::Instance.newFile(this))
     {
         _tabWidget->addTab(FileManager::Instance.currentWidgetFile(), "untitled");
         _tabWidget->setCurrentIndex(_tabWidget->count()-1);
     }
-    return;
+    return FileManager::Instance.currentWidgetFile();
 }
 void MainWindow::onFilenameChanged(QString filename)
 {
@@ -588,7 +588,7 @@ void MainWindow::open(QString filename, int cursorPosition)
     }
 
     //open
-    if(FileManager::Instance.open(filename))
+    if(FileManager::Instance.open(filename, this))
     {
         WidgetFile * current = FileManager::Instance.currentWidgetFile();
         QString tabName = FileManager::Instance.currentWidgetFile()->file()->fileInfo().fileName();

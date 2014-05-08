@@ -83,7 +83,7 @@ ConfigManager::ConfigManager() :
 void ConfigManager::init(QString in_applicationPath)
 {
 
-    qDebug()<<"Init ConfigManager";
+    //qDebug()<<"Init ConfigManager";
     _applicationPath = in_applicationPath;
 
 #ifdef PORTABLE_EXECUTABLE
@@ -815,8 +815,9 @@ void ConfigManager::checkRevision()
 
     case 0x001100:
     case 0x001101:
+    case 0x001102:
     {
-        qDebug()<<"texiteasy => 0.11.2";
+        qDebug()<<"texiteasy => 0.11.3";
 
         // install macros
         {
@@ -832,7 +833,7 @@ void ConfigManager::checkRevision()
                                                           );
         }
     }
-    case 0x001102:
+    case 0x001103:
 
 
         break;
