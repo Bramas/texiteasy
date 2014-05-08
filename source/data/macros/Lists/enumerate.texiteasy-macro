@@ -3,7 +3,7 @@
     <trigger>
     	<keys>Tab</keys>
     	<leftWord>
-    		en(u|um|ume|umer|umera|umerat|umerate)
+    		(en(u|um|ume|umer|umera|umerat|umerate))
     	</leftWord>
     </trigger>
     <content><![CDATA[\begin{enumerate}

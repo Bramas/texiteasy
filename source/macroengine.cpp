@@ -164,6 +164,7 @@ QAction * MacroEngine::createAction(Macro macro)
         a->setEnabled(false);
     }
     a->setProperty("macroName", macro.name);
+    connect(a, SIGNAL(triggered()), this, SLOT(forceMacroTriggered()));
     return a;
 }
 
@@ -226,9 +227,23 @@ QMenu * MacroEngine::createMacrosMenu(QMenu * root)
     return root;
 }
 
+void MacroEngine::forceMacroTriggered()
+{
+    QObject * shortcut = qobject_cast<QObject*>(sender());
+    if(shortcut)
+    {
+        QString name = shortcut->property("macroName").toString();
+        Macro macro = _macros.value(name);
+        if(!macro.name.isEmpty())
+        {
+            FileManager::Instance.onMacroTriggered(macro, true);
+        }
+    }
+}
+
 void MacroEngine::onMacroTriggered()
 {
-    QShortcut * shortcut = qobject_cast<QShortcut*>(sender());
+    QObject * shortcut = qobject_cast<QObject*>(sender());
     if(shortcut)
     {
         QString name = shortcut->property("macroName").toString();

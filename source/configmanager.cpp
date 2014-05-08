@@ -814,8 +814,9 @@ void ConfigManager::checkRevision()
     case 0x001001:
 
     case 0x001100:
+    case 0x001101:
     {
-        qDebug()<<"texiteasy => 0.11.1";
+        qDebug()<<"texiteasy => 0.11.2";
 
         // install macros
         {
@@ -831,9 +832,8 @@ void ConfigManager::checkRevision()
                                                           );
         }
     }
-
-    case 0x001101:
     case 0x001102:
+
 
         break;
     }

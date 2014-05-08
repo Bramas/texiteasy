@@ -3,17 +3,28 @@
     <trigger>
     	<keys>Ctrl+Shift+N</keys>
     	<leftWord>
-    		(.*)
+                .*
     	</leftWord>
     </trigger>
-    <content><![CDATA[\documentclass{${1:Type}}
+    <content><![CDATA[<?
+editor.stopScriptEvaluation()
+var t = editor.plainText;
+editor.plainText = ""
+?>
+\documentclass{${Type}}
 
 \begin{document}
 
 \title{${Title}}
 \author{${Author}}
 \maketitle
+<?
+  write(t)
+?>
+\end{document}
+<?
 
-        ${Text}
-\end{document}]]></content>
+cursor.moveStart()
+cursor.apply()
+?>]]></content>
 </macro>

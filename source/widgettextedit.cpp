@@ -1410,7 +1410,7 @@ bool WidgetTextEdit::triggerTabMacros()
     QList<Macro> list = MacroEngine::Instance.tabMacros();
     foreach(const Macro &macro, list)
     {
-        if(onMacroTriggered(macro, true))
+        if(onMacroTriggered(macro))
         {
             return true;
         }
@@ -1418,7 +1418,7 @@ bool WidgetTextEdit::triggerTabMacros()
     return false;
 }
 
-bool WidgetTextEdit::onMacroTriggered(Macro macro, bool soft)
+bool WidgetTextEdit::onMacroTriggered(Macro macro, bool force)
 {
     QTextCursor cursor = textCursor();
     //cursor.beginEditBlock();
@@ -1435,7 +1435,7 @@ bool WidgetTextEdit::onMacroTriggered(Macro macro, bool soft)
 
     QRegExp pattern("^"+macro.leftWord+"$");
     bool patternExists = word.contains(pattern);
-    if(!patternExists)// && soft)
+    if(!patternExists && !force)
     {
         return false;
     }

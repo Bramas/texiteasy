@@ -127,6 +127,7 @@ signals:
     void changed();
 
 public slots:
+    void forceMacroTriggered();
     void onMacroTriggered();
     void onMacroTriggeredAmbiguously();
 

@@ -7,6 +7,6 @@
     	</leftWord>
     </trigger>
     <content><![CDATA[\begin{equation}
-    ${Equation}
+    ${1:Equation}
 \end{equation}]]></content>
 </macro>

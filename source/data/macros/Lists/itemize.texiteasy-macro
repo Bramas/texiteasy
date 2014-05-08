@@ -3,7 +3,7 @@
     <trigger>
     	<keys>Tab</keys>
     	<leftWord>
-    		it(e|em|emi|emiz|emize)
+    		(it(e|em|emi|emiz|emize))
     	</leftWord>
     </trigger>
     <content><![CDATA[\begin{itemize}

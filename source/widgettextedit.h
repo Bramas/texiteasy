@@ -101,7 +101,7 @@ public:
     void setTextCursorPosition(int pos);
     WidgetFile * widgetFile() { return _widgetFile; }
     bool triggerTabMacros();
-    bool onMacroTriggered(Macro macro, bool soft = false);
+    bool onMacroTriggered(Macro macro, bool force = false);
 #ifdef OS_MAC
     Qt::KeyboardModifiers modifiers;
 #endif

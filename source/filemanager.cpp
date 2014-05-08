@@ -544,11 +544,11 @@ bool FileManager::handleMimeData(const QMimeData * mimeData)
     return _mainWindow->handleMimeData(mimeData);
 }
 
-bool FileManager::onMacroTriggered(Macro macro)
+bool FileManager::onMacroTriggered(Macro macro, bool force)
 {
     if(currentWidgetFile())
     {
-        return currentWidgetFile()->widgetTextEdit()->onMacroTriggered(macro);
+        return currentWidgetFile()->widgetTextEdit()->onMacroTriggered(macro, force);
     }
     return false;
 }
