@@ -24,6 +24,7 @@
 
 #include <QObject>
 #include <QList>
+#include <QStack>
 #include <QStringList>
 
 class WidgetTextEdit;
