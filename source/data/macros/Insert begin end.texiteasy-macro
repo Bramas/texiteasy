@@ -3,7 +3,7 @@
     <trigger>
     	<keys>Ctrl+E</keys>
     	<leftWord>
-                ([^\n ]*)
+    		([^\n ]*)
     	</leftWord>
     </trigger>
     <content><![CDATA[\begin{${1:environment}}

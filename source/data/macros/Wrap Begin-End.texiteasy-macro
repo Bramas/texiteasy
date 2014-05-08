@@ -1,10 +1,10 @@
 <macro readOnly="1">
     <description>Wrap Begin-End</description>
     <trigger>
-        <keys>Ctrl+E</keys>
-        <leftWord>
-                (.*[\n ].*)
-        </leftWord>
+    	<keys>Ctrl+E</keys>
+    	<leftWord>
+    		(.*[\n ].*)
+    	</leftWord>
     </trigger>
     <content><![CDATA[\begin{${environment}}
     <?

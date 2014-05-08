@@ -3,7 +3,7 @@
     <trigger>
     	<keys>Ctrl+Shift+N</keys>
     	<leftWord>
-                .*
+    		.*
     	</leftWord>
     </trigger>
     <content><![CDATA[<?
