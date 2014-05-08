@@ -5,12 +5,57 @@
 #define DISP_DEBUG(a)
 
 QString scriptOutput;
-QScriptValue scriptPrint(QScriptContext *context, QScriptEngine *engine)
+QTextCursor scriptCursor;
+QScriptValue scriptPrint(QScriptContext *context, QScriptEngine *engine_in)
 {
-   QScriptValue a = context->argument(0);
-   scriptOutput += a.toString();
+   ScriptEngine * engine = dynamic_cast<ScriptEngine*>(engine_in);
+   WidgetTextEdit * editor = engine->widgetTextEdit();
+   QString text = context->argument(0).toString();
+
+   DISP_DEBUG(qDebug()<<"insert : "<<text);
+   int position = editor->textCursor().position();
+
+   editor->insertPlainText(text);
+
+   int pIdx = -1;
+   QStringList varNames;
+   QRegExp p("\\$\\{([0-9]:){0,1}([^\\}]*)\\}");
+   while(-1 != (pIdx = text.indexOf(p, pIdx + 1)))
+   {
+       VarBlock vb;
+       vb.name = p.capturedTexts().at(2);
+
+       if(varNames.contains(vb.name))
+       {
+           //continue;
+       }
+
+       varNames << vb.name;
+       if(p.capturedTexts().at(1).size())
+       {
+            vb.number = p.capturedTexts().at(1).left(p.capturedTexts().at(1).size() - 1).toInt();
+       }
+       else
+       {
+           vb.number = 0;
+       }
+       vb.cursor = editor->textCursor();
+       vb.leftCursor = editor->textCursor();
+       vb.rightCursor = editor->textCursor();
+       vb.cursor.setPosition(position + pIdx);
+       vb.leftCursor.setPosition(position + pIdx - 1);
+       vb.rightCursor.setPosition(position + pIdx + p.capturedTexts().at(0).length() + 1);
+       vb.cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, p.capturedTexts().at(0).length());
+       engine->varTextCursor().append(vb);
+       DISP_DEBUG(qDebug()<<position + pIdx);
+   }
+
+
+
    return QScriptValue();
 }
+
+
 QScriptValue scriptDebug(QScriptContext *context, QScriptEngine *engine)
 {
    QScriptValue a = context->argument(0);
@@ -28,8 +73,8 @@ QScriptValue scriptStopEvaluation(QScriptContext *context, QScriptEngine *engine
 ScriptEngine::ScriptEngine() :
     QScriptEngine()
 {
-    //QScriptValue scriptPrintValue = this->newFunction(scriptPrint);
-    //this->globalObject().setProperty("write", scriptPrintValue);
+    QScriptValue scriptPrintValue = this->newFunction(scriptPrint);
+    this->globalObject().setProperty("write", scriptPrintValue);
     QScriptValue scriptDebugValue = this->newFunction(scriptDebug);
     this->globalObject().setProperty("debug", scriptDebugValue);
 }
@@ -42,10 +87,34 @@ QString sanitize(QString text)
     return text;
 }
 
-QString ScriptEngine::parse(QString text, QPlainTextEdit *editor)
+void ScriptEngine::initVariables(QString text)
 {
+    int pIdx = -1;
+    QRegExp p("\\$\\{([0-9]:){0,1}([^\\}]*)\\}");
+    while(-1 != (pIdx = text.indexOf(p, pIdx + 1)))
+    {
+        this->evaluate("var "+p.capturedTexts().at(2)+" = ''");
+    }
+}
+QString ScriptEngine::parse(QString text, QPlainTextEdit *editor, const QVector<QString> &varValuesByNumber)
+{
+    if(!_mutex.tryLock())
+    {
+        return "";
+    }
+
+    _cursorsMutex.lock();
+
+    _varValuesByName.clear();
+    _varValuesByNumber = varValuesByNumber;
+
+    this->varTextCursor().clear();
     QTextCursor cursor = editor->textCursor();
-    //cursor.removeSelectedText();
+    cursor.removeSelectedText();
+    _scriptPosition.leftCursor = cursor;
+    _scriptPosition.rightCursor = cursor;
+    _scriptPosition.leftCursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor);
+    _scriptPosition.rightCursor.movePosition(QTextCursor::Right, QTextCursor::MoveAnchor);
 
     QString scriptBuffer;
     QString writeBuffer;
@@ -86,7 +155,7 @@ QString ScriptEngine::parse(QString text, QPlainTextEdit *editor)
         }
         ++index;
     }
-    if(state == 0 && text.size())
+    if(state == 0 && text.size() && (text.size() < 2 || !(text.at(text.size() - 2) == '?' && text.at(text.size() - 1) == '>')))
     {
         writeBuffer += text.at(text.size() - 1);
     }
@@ -96,10 +165,35 @@ QString ScriptEngine::parse(QString text, QPlainTextEdit *editor)
     }
 
     _script = scriptBuffer;
-    qDebug()<<"scriptBuffer:";
-    qDebug()<<scriptBuffer;
+    DISP_DEBUG(qDebug()<<"scriptBuffer:");
+    DISP_DEBUG(qDebug()<<scriptBuffer);
+    initVariables(_script);
     this->evaluate(_script);
+    QScriptValue exc;
+    if(!(exc = this->uncaughtException()).toString().isEmpty())
+    {
+        qDebug()<<"Uncaught Exception : "<<exc.toString();
+    }
 
+    QTextCursor c = _scriptPosition.leftCursor;
+    c.movePosition(QTextCursor::Right, QTextCursor::MoveAnchor);
+    c.setPosition(_scriptPosition.rightCursor.position(), QTextCursor::KeepAnchor);
+    DISP_DEBUG(qDebug()<<"selectedText:");
+    DISP_DEBUG(qDebug() << c.selectedText());
+
+    foreach(VarBlock vb, varTextCursor())
+    {
+        DISP_DEBUG(qDebug()<<vb.number<<":"<<vb.name<<" = "<<vb.cursor.selectedText());
+        if(_varValuesByNumber.count() > vb.number && vb.number > 0 && !_varValuesByNumber.value(vb.number).isEmpty())
+        {
+            vb.cursor.removeSelectedText();
+            vb.cursor.insertText(_varValuesByNumber.value(vb.number));
+        }
+    }
+    DISP_DEBUG(qDebug()<<"selectedText:");
+    DISP_DEBUG(qDebug() << c.selectedText());
+    _mutex.unlock();
+    _cursorsMutex.unlock();
     return "";
 /*
     int pIdx = -1;
@@ -149,68 +243,92 @@ void ScriptEngine::evaluate()
 
     updateCursors();
 
-    foreach(VarBlock vb, _varTextCursor)
+    QTextCursor currentCursor = _widgetTextEdit->textCursor();
+    _varValuesByName.clear();
+    QStringList activeCursors;
+    for(int idx = 0; idx < _varTextCursor.count(); ++idx)
     {
+        VarBlock vb = _varTextCursor.at(idx);
         QString v = vb.cursor.selectedText();
         DISP_DEBUG(qDebug()<<vb.name<<" = "<<v);
-        this->evaluate("var "+vb.name+" = \""+v+"\"");
+        if(!v.isEmpty())
+        {
+            this->evaluate("var "+vb.name+" = \""+v+"\"");
+            _varValuesByName[vb.name] = v;
+        }
+        if(currentCursor.position() == vb.rightCursor.position() - 1)
+        {
+            activeCursors << vb.name;
+            DISP_DEBUG(qDebug()<<"ACTIVE : "<<vb.name);
+        }
     }
+    //int previousCursorPosition = _widgetTextEdit->textCursor().position();
+    QTextCursor c = _scriptPosition.leftCursor;
+    c.movePosition(QTextCursor::Right, QTextCursor::MoveAnchor);
+    c.setPosition(_scriptPosition.rightCursor.position()-1, QTextCursor::KeepAnchor);
+    DISP_DEBUG(qDebug()<<"removeText:");
+    DISP_DEBUG(qDebug() << c.selectedText());
+    c.removeSelectedText();
+    _widgetTextEdit->setTextCursor(c);
 
-
-
-    for(int i = 0; i < _scriptBlocks.count(); ++i)
+    _varTextCursor.clear();
+    this->evaluate(_script);
+    QScriptValue exc;
+    if(!(exc = this->uncaughtException()).toString().isEmpty())
     {
-       ScriptBlock sb = _scriptBlocks.at(i);
-       scriptOutput.clear();
-       this->evaluate(sb.script);
-       QScriptValue exc;
-       if(!(exc = this->uncaughtException()).toString().isEmpty())
-       {
-           qDebug()<<"Uncaught Exception : "<<exc.toString();
-       }
-       if(!sb.insert.compare(scriptOutput))
-       {
-           continue;
-       }
-       if(sb.length)
-       {
-           sb.cursor.setPosition(sb.cursor.selectionStart());
-           sb.cursor.movePosition(QTextCursor::Right, QTextCursor::KeepAnchor, sb.length);
-           DISP_DEBUG(qDebug()<<sb.cursor.selectedText()<<" last-insert : "<<sb.insert);
-           if(sb.cursor.selectedText().compare(sb.insert))
-           {
-               _scriptBlocks.remove(i);
-               --i;
-               continue;
-           }
-           sb.cursor.removeSelectedText();
-       }
-       else
-       {
-           sb.cursor.movePosition(QTextCursor::Right, QTextCursor::MoveAnchor);
-       }
-       sb.length = scriptOutput.size();
-       if(sb.length)
-       {
-            sb.cursor.insertText(scriptOutput);
-            sb.cursor.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor, sb.length);
-            sb.insert = sb.cursor.selectedText();
-       }
-       else
-       {
-           sb.cursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor);
-           sb.insert = "";
-       }
-       _scriptBlocks[i] = sb;
-
+        qDebug()<<"Uncaught Exception : "<<exc.toString();
     }
 
-    updateCursors();
+    c = _scriptPosition.leftCursor;
+    c.movePosition(QTextCursor::Right, QTextCursor::MoveAnchor);
+    c.setPosition(_scriptPosition.rightCursor.position(), QTextCursor::KeepAnchor);
+    DISP_DEBUG(qDebug()<<"selectedText:");
+    DISP_DEBUG(qDebug() << c.selectedText());
 
-    DISP_DEBUG(qDebug()<<"-------end");
+    _widgetTextEdit->clearTextCursors();
+    bool firstCursor = true;
+    foreach(VarBlock vb, varTextCursor())
+    {
+        DISP_DEBUG(qDebug()<<vb.number<<":"<<vb.name<<" = "<<vb.cursor.selectedText());
+        if(_varValuesByName.contains(vb.name))
+        {
+            vb.cursor.removeSelectedText();
+            QString val = _varValuesByName.value(vb.name);
+            vb.cursor.insertText(val);
+        }
+        else
+        {
+            QString val = vb.cursor.selectedText();
+            vb.cursor.removeSelectedText();
+            val.replace(QRegExp("\\$\\{([0-9]:){0,1}([^\\}]*)\\}"), "%#{{{\\2}}}#");
+            vb.cursor.insertText(val);
+        }
+        if(activeCursors.contains(vb.name))
+        {
+            QTextCursor previousCursor = vb.rightCursor;
+            previousCursor.movePosition(QTextCursor::Left, QTextCursor::MoveAnchor);
+            if(firstCursor)
+            {
+                _widgetTextEdit->setTextCursor(previousCursor);
+                firstCursor = false;
+            }
+            else
+            {
+                _widgetTextEdit->addTextCursor(previousCursor);
+            }
+        }
+    }
+    _widgetTextEdit->onCursorPositionChange();
+    DISP_DEBUG(qDebug()<<"selectedText:");
+    DISP_DEBUG(qDebug() << c.selectedText());
 
+    /*QTextCursor previousCursor = _widgetTextEdit->textCursor();
+    previousCursor.setPosition(previousCursorPosition);
+    _widgetTextEdit->setTextCursor(previousCursor);*/
     _cursorsMutex.unlock();
     _mutex.unlock();
+    return;
+
 }
 
 void ScriptEngine::updateCursors()
@@ -255,5 +373,8 @@ void ScriptEngine::setWidgetTextEdit(WidgetTextEdit *w)
     _widgetTextEdit = w;
     QScriptValue scriptTextEdit = this->newQObject((_widgetTextEdit));
     this->globalObject().setProperty("editor", scriptTextEdit);
-    this->evaluate("function write(text) { editor.insertPlainText(text); }");
+
+    QScriptValue scriptCursor = this->newQObject(new ScriptCursor(w));
+    this->globalObject().setProperty("cursor", scriptCursor);
+    //this->evaluate("function write(text) { editor.insertPlainText(text); }");
 }

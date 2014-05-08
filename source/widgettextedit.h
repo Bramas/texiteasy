@@ -137,6 +137,8 @@ public slots:
     void goToLine(int line, QString stringSelected = QString());
     void updateTabWidth();
     void insertFile(QString filename);
+    void clearTextCursors() { _multipleEdit.clear(); }
+    void addTextCursor(QTextCursor cursor);
 protected:
     void insertFromMimeData(const QMimeData * source);
     void mousePressEvent(QMouseEvent *e) {

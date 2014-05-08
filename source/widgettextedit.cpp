@@ -378,20 +378,8 @@ void WidgetTextEdit::onCursorPositionChange()
     QList<QTextEdit::ExtraSelection> selections;
     setExtraSelections(selections);
     this->highlightCurrentLine();
-/*
 
-    QTextCursor cursor(this->textCursor());
-    QTextBlockFormat blockFormat = cursor.blockFormat();
-    qDebug()<<" ancien "<<blockFormat.leftMargin();
-    blockFormat.setLeftMargin(150);
-    if(blockFormat.isValid() && !this->textCursor().isNull())
-    {
-        qDebug()<<"test";
-        cursor.setBlockFormat(blockFormat);
-        this->setTextCursor(cursor);
-    }
-*/
-
+    //*
     if(!_scriptEngine.cursorsMutex()->tryLock())
     {
         QTimer::singleShot(10, this, SLOT(onCursorPositionChange()));
@@ -470,6 +458,7 @@ void WidgetTextEdit::onCursorPositionChange()
         }
         _scriptEngine.cursorsMutex()->unlock();
     }
+    // */
     // else we do the usual match
 
     matchAll();
@@ -672,10 +661,13 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
         newLine();
         return;
     }
-    if(_scriptIsRunning && !hasArguments() && e->key() != Qt::Key_Backspace && (e->text().isEmpty() || e->text().contains(QRegExp(QString::fromUtf8("[^a-zA-Z0-9èéàëêïîùüû&()\"'\\$§,;\\.+=\\-_*\\/\\\\!?%#@° ]")))))
+    if(_scriptIsRunning)
     {
-        _scriptEngine.clear();
-        _scriptIsRunning = false;
+        if(e->key() != Qt::Key_Backspace && (e->text().isEmpty() || e->text().contains(QRegExp(QString::fromUtf8("[^a-zA-Z0-9èéàëêïîùüû&()\"'\\$§,;\\.+=\\-_*\\/\\\\!?%#@° ]")))))
+        {
+            _scriptEngine.clear();
+            _scriptIsRunning = false;
+        }
     }
     if(_multipleEdit.count() && e->modifiers() == Qt::NoModifier && !e->text().isEmpty() && !e->text().contains(QRegExp(QString::fromUtf8("[^a-zA-Z0-9èéàëêïîùüû&()\"'\\$§,;\\.+=\\-_*\\/\\\\!?%#@° ]"))))
     {
@@ -689,6 +681,10 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
         cur2.endEditBlock();
         this->setTextCursor(cur1);
         this->onCursorPositionChange();
+        if(_scriptIsRunning)
+        {
+            _scriptEngine.evaluate();
+        }
         return;
     }
     if(_multipleEdit.count() && e->modifiers() == Qt::NoModifier && (e->key() == Qt::Key_Delete || e->key() == Qt::Key_Backspace))
@@ -714,12 +710,16 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
         }
         this->setTextCursor(cur1);
         this->onCursorPositionChange();
-
+        if(_scriptIsRunning)
+        {
+            _scriptEngine.evaluate();
+        }
         return;
     }
     if(e->key() != Qt::Key_Control && e->key() != Qt::Key_Shift && e->key() != Qt::Key_Alt && e->key() != Qt::Key_AltGr && e->key() != Qt::Key_ApplicationLeft && e->key() != Qt::Key_ApplicationRight)
     {
         _multipleEdit.clear();
+        _scriptIsRunning = false;
     }
 
     if (e->key() ==  Qt::Key_Backspace && !textCursor().hasSelection())
@@ -735,6 +735,11 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
         }
     }
     WIDGET_TEXT_EDIT_PARENT_CLASS::keyPressEvent(e);
+
+    if(_scriptIsRunning)
+    {
+        _scriptEngine.evaluate();
+    }
     if(e->modifiers() == Qt::NoModifier && !e->text().isEmpty())
     {
         this->matchCommand();
@@ -846,11 +851,6 @@ void WidgetTextEdit::updateIndentation(void)
 {
     _textStruct->reload();
     //_textStruct->debug();
-
-    if(_scriptIsRunning)
-    {
-        _scriptEngine.evaluate();
-    }
 
 
     if(this->document()->blockCount() != _lineCount)
@@ -1421,7 +1421,7 @@ bool WidgetTextEdit::triggerTabMacros()
 bool WidgetTextEdit::onMacroTriggered(Macro macro, bool soft)
 {
     QTextCursor cursor = textCursor();
-    cursor.beginEditBlock();
+    //cursor.beginEditBlock();
     QString word;
     if(cursor.hasSelection())
     {
@@ -1441,17 +1441,18 @@ bool WidgetTextEdit::onMacroTriggered(Macro macro, bool soft)
     }
     QString content = macro.content;
 
-    if(patternExists && !cursor.hasSelection())
+    if(patternExists && !cursor.hasSelection() && pattern.capturedTexts().count() > 1)
     {
          cursor.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor, word.length());
          this->setTextCursor(cursor);
     }
     int pos = cursor.position();
-
-    _scriptEngine.parse(content, this);
     _scriptIsRunning = true;
+    _scriptEngine.parse(content, this, pattern.capturedTexts().toVector());
 
-    if(patternExists)
+    //cursor.endEditBlock();
+
+    if(false)//patternExists)
     {
         QStringList cap = pattern.capturedTexts();
         cap.pop_front();
@@ -1509,7 +1510,7 @@ bool WidgetTextEdit::onMacroTriggered(Macro macro, bool soft)
     //cursor.joinPreviousEditBlock();
     cursor.setPosition(pos);
     this->setTextCursor(cursor);
-    cursor.endEditBlock();
+    //cursor.endEditBlock();
 
     _multipleEdit.clear();
     selectNextArgument();
@@ -1665,4 +1666,9 @@ void WidgetTextEdit::onBlockCountChanged(int newBlockCount)
         _foldedLines.insert(start[i],end[i]);
     }
     _lastBlockCount = newBlockCount;
+}
+
+void WidgetTextEdit::addTextCursor(QTextCursor cursor)
+{
+    _multipleEdit << cursor;
 }
