@@ -220,36 +220,44 @@ while(index < text.length())
         escapedChar = false;
     }
     // if the end of line is commented, we break the loop and we keep the current state (we do not save state = Comment)
-    if(currentChar == '%' && !escapedChar)
+    if(currentChar == '\\')
     {
-        if(index+4 < text.length())
-        {
-            if(text.at(index+1) == '#' && text.at(index+2) == '{' && text.at(index+3) == '{' && text.at(index+4) == '{')
+        if(index + 7 < text.length())
+        {    //\\\\verb\\#\\{\\{([^\\}]*)\\}\\}\\#
+            if(      text.at(index+1) == 'v'
+                  && text.at(index+2) == 'e'
+                  && text.at(index+3) == 'r'
+                  && text.at(index+4) == 'b'
+                  && text.at(index+5) == '#'
+                  && text.at(index+6) == '{'
+                  && text.at(index+7) == '{')
             {
-                int tmp = index + 4;
+                int tmp = index + 7;
                 QString argument;
                 while(tmp + 1 < text.length() && QString(text.at(tmp + 1)).contains(QRegExp("[a-zA-Z0-9 ]")))
                 {
                     argument += text.at(tmp + 1);
                     ++tmp;
                 }
-                if(tmp + 4 < text.length() && text.at(tmp+1) == '}' && text.at(tmp+2) == '}' && text.at(tmp+3) == '}' && text.at(tmp+4) == '#')
+                if(tmp + 3 < text.length() && text.at(tmp+1) == '}' && text.at(tmp+2) == '}' && text.at(tmp+3) == '#')
                 {
                     // only here we know that it is an argument.
-                    setFormat(index, 5, formatArgumentDelimiter);
-                    for(int idx = index; idx < tmp + 5; ++idx)
+                    setFormat(index, 8, formatArgumentDelimiter);
+                    for(int idx = index; idx < tmp + 4; ++idx)
                     {
                         blockData->characterData[idx].state = CompletionArgument;
                     }
-                    setFormat(index + 5, argument.length(), formatArgument);
-                    setFormat(tmp + 1, 4, formatArgumentDelimiter);
-                    blockData->arguments.append(QPair<QString,QPair<int,int> >(argument,QPair<int,int>(index, tmp + 4)));
-                    index = tmp + 5;
+                    setFormat(index + 8, argument.length(), formatArgument);
+                    setFormat(tmp + 1, 3, formatArgumentDelimiter);
+                    blockData->arguments.append(QPair<QString,QPair<int,int> >(argument,QPair<int,int>(index, tmp + 3)));
+                    index = tmp + 4;
                     continue;
                 }
             }
         }
-        //else it is a regular comment
+    }
+    if(currentChar == '%' && !escapedChar)
+    {
         setFormat(index, text.size() - index, formatComment);
         for(int comment_idx = index; comment_idx < text.size(); ++comment_idx)
         {

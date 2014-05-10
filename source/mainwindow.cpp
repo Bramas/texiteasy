@@ -39,6 +39,7 @@
 #include "widgetsimpleoutput.h"
 #include "widgetproject.h"
 #include "macroengine.h"
+#include "dialogsendfeedback.h"
 
 #include <QMenu>
 #include <QAction>
@@ -155,7 +156,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->ui->actionTexDirProgram, SIGNAL(triggered()), this, SLOT(insertTexDirProgram()));
     connect(this->ui->actionTexDirRoot, SIGNAL(triggered()), this, SLOT(insertTexDirRoot()));
     connect(this->ui->actionTexDirSpellChecker, SIGNAL(triggered()), this, SLOT(insertTexDirSpellCheck()));
-
+    connect(this->ui->actionSendFeedback, SIGNAL(triggered()), this, SLOT(openSendFeedbackDialog()));
     connect(&FileManager::Instance, SIGNAL(filenameChanged(QString)), this, SLOT(onFilenameChanged(QString)));
 
     connect(&ConfigManager::Instance, SIGNAL(versionIsOutdated()), this, SLOT(addUpdateMenu()));
@@ -264,6 +265,12 @@ MainWindow::~MainWindow()
 void MainWindow::focus()
 {
     this->activateWindow();
+}
+
+void MainWindow::openSendFeedbackDialog()
+{
+    DialogSendFeedback *d = new DialogSendFeedback(this);
+    d->exec();
 }
 
 void MainWindow::closeEvent(QCloseEvent * event)

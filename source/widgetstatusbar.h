@@ -21,10 +21,10 @@ public:
         QWidget(parent),
         _action(0),
         _checked(false),
-        _checkedPixmap(0),
         _checkedHoverPixmap(0),
-        _defaultPixmap(0),
+        _checkedPixmap(0),
         _defaultHoverPixmap(0),
+        _defaultPixmap(0),
         _label(new QLabel(this))
     {
         _checkable = false;

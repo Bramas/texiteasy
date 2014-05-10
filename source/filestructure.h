@@ -84,6 +84,8 @@ public:
      */
     QStack<const StructItem *> environmentPath(int position) const;
 
+    QString currentEnvironment() const;
+
     QStringList sectionsList(QString fill = "") const;
     QString currentSection() const;
 

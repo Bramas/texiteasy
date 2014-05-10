@@ -35,7 +35,8 @@ WidgetInsertCommand * WidgetInsertCommand::_instance = 0;
 
 WidgetInsertCommand::WidgetInsertCommand() :
     QWidget(0),
-    ui(new Ui::WidgetInsertCommand)
+    ui(new Ui::WidgetInsertCommand),
+    _widgetTextEdit(0)
 {
     ui->setupUi(this);
     this->setVisible(false);
@@ -151,6 +152,7 @@ WidgetInsertCommand::WidgetInsertCommand() :
             table->horizontalHeader()->hide();
             table->verticalHeader()->hide();
             this->ui->tabWidget->addTab(table, group);
+            connect(table, SIGNAL(itemActivated(QTableWidgetItem*)), this, SLOT(onCellActivated(QTableWidgetItem*)));
             _tabslabel.append(group);
             colCount = 0;
         }
@@ -167,6 +169,7 @@ WidgetInsertCommand::WidgetInsertCommand() :
         QString iconName=":/data/commands/"+command.replace(QRegExp("[^a-zA-Z]"),"_").replace(QRegExp("([A-Z])"),"-\\1")+".png";
         newItem->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         newItem->setIcon(QIcon(iconName));
+        newItem->setData(Qt::StatusTipRole, commandName);
         newItem->setToolTip(commandName);
         //newItem->setText(commandName);
         table->setItem(table->rowCount() - 1, colCount%10, newItem);
@@ -193,6 +196,21 @@ WidgetInsertCommand::~WidgetInsertCommand()
     }
 */
     delete ui;
+}
+
+void WidgetInsertCommand::onCellActivated(QTableWidgetItem * item)
+{
+    QString command = item->data(Qt::StatusTipRole).toString();
+    if(_widgetTextEdit)
+    {
+        _widgetTextEdit->insertPlainText(command);
+        _widgetTextEdit->setFocus();
+    }
+    emit commandActivated(command);
+}
+void WidgetInsertCommand::setParent(WidgetTextEdit *parent)
+{
+    _widgetTextEdit = parent; QWidget::setParent(parent);
 }
 
 void WidgetInsertCommand::saveCommandsToPng()

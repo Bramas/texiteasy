@@ -42,6 +42,11 @@
 #include <QCoreApplication>
 #include <QRegExp>
 #include <QTextStream>
+#include <QLocale>
+#include <QDateTime>
+#include <QUuid>
+#include <QCryptographicHash>
+
 
 #ifdef OS_LINUX
 #   define POPPLER_VERSION "unknown"
@@ -50,6 +55,29 @@
 #endif
 
 #define DEBUG_THEME_PARSER(a)
+
+QString uniqueId()
+{
+    QString softId = APPLICATION_NAME;
+    softId += "_";
+    softId += CURRENT_VERSION;
+    softId += "_";
+#ifdef OS_WIN
+    softId += "WIN";
+#else
+#ifdef OS_MAC
+    softId += "MAC";
+#else
+    softId += "LIN";
+#endif
+#endif
+    softId += "_";
+    softId += QDateTime::currentDateTimeUtc().toString("yyyyMMdd_hhmm_");
+    softId += QUuid::createUuid().toString().left(19).right(18);
+    softId += "_";
+    softId += QString(QCryptographicHash::hash(softId.toLatin1(), QCryptographicHash::Sha1).toHex()).left(8);
+    return softId;
+}
 
 ConfigManager ConfigManager::Instance;
 QString ConfigManager::NoDictionnary = QObject::trUtf8("No Dictionnary");
@@ -94,6 +122,10 @@ void ConfigManager::init(QString in_applicationPath)
     checkRevision();
 
     QSettings settings;
+    if(!settings.contains("softId"))
+    {
+        settings.setValue("softId", uniqueId());
+    }
 
 #ifdef PORTABLE_EXECUTABLE
     if(!settings.contains("pdfSynchronized"))
@@ -605,6 +637,42 @@ void ConfigManager::recursiveCopy(QString from, QString to, QFile::Permissions p
         recursiveCopy(from+"/"+dir, to+"/"+dir, permission);
     }
 }
+QString ConfigManager::systemInfo()
+{
+    QString sysType = "Linux";
+    QString sysVersion = "Unknown";
+#ifdef OS_MAC
+    sysType = "Mac Os";
+    switch(QSysInfo::macVersion())
+    {
+    case QSysInfo::MV_9: sysVersion = "9"; break;
+    case QSysInfo::MV_10_0: sysVersion = "10.0"; break;
+    case QSysInfo::MV_10_1: sysVersion = "10.1"; break;
+    case QSysInfo::MV_10_2: sysVersion = "10.2"; break;
+    case QSysInfo::MV_10_3: sysVersion = "10.3"; break;
+    case QSysInfo::MV_10_4: sysVersion = "10.4"; break;
+    case QSysInfo::MV_10_5: sysVersion = "10.5"; break;
+    case QSysInfo::MV_10_6: sysVersion = "10.6"; break;
+    case QSysInfo::MV_10_7: sysVersion = "10.7"; break;
+    case QSysInfo::MV_10_8: sysVersion = "10.8"; break;
+    case QSysInfo::MV_10_9: sysVersion = "10.9"; break;
+    }
+#endif
+#ifdef OS_WIN
+    sysType = "Windows";
+    switch(QSysInfo::windowsVersion())
+    {
+    case QSysInfo::WV_NT: sysVersion = "NT"; break;
+    case QSysInfo::WV_2000: sysVersion = "2000"; break;
+    case QSysInfo::WV_XP: sysVersion = "XP"; break;
+    case QSysInfo::WV_2003: sysVersion = "2003"; break;
+    case QSysInfo::WV_VISTA: sysVersion = "Vista"; break;
+    case QSysInfo::WV_WINDOWS7: sysVersion = "7"; break;
+    case QSysInfo::WV_WINDOWS8: sysVersion = "8"; break;
+    }
+#endif
+    return sysType+" "+sysVersion;
+}
 
 void ConfigManager::checkRevision()
 {
@@ -834,10 +902,27 @@ void ConfigManager::checkRevision()
         }
     }
     case 0x001103:
+    {
+        QSettings hotKeys;
+        hotKeys.beginGroup("shortcuts");
+        hotKeys.setValue("Cancel", "");
+        hotKeys.setValue("Copy", "");
+        hotKeys.setValue("Paste", "");
+        hotKeys.setValue("Cut", "");
+        hotKeys.setValue("Redo", "");
+    }
+    case 0x001200:
 
 
         break;
     }
-    settings.setValue("version_hex",CURRENT_VERSION_HEX);
+    if(fromVersion != CURRENT_VERSION_HEX)
+    {
+        qDebug()<<"Thank you for the update, I feel better now.";
+        QStringList versions_history = settings.value("versions_history",QStringList()).toStringList();
+        versions_history.append(CURRENT_VERSION);
+        settings.setValue("versions_history",versions_history);
+        settings.setValue("version_hex",CURRENT_VERSION_HEX);
+    }
 }
 

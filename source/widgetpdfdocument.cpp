@@ -351,7 +351,16 @@ QImage * WidgetPdfDocument::page(int page)
         return _pages[page];
     }
     _loadedPages[page] = true;
-    qreal ratio = 1*72.0;
+
+    qreal ratio = 72.0;
+
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+    if(this->window())
+    {
+        ratio *= this->window()->devicePixelRatio(); // 2 if retina, 1 otherwise
+    }
+#endif
+
     return  _pages[page] = new QImage(this->_document->page(page)->renderToImage(this->_zoom*ratio,this->_zoom*ratio));
 }
 void WidgetPdfDocument::goToPage(int page, int top, int height)

@@ -127,6 +127,7 @@ public slots:
      * @brief onOtherInstanceMessage
      */
     void onOtherInstanceMessage(const QString &);
+    void openSendFeedbackDialog();
 
 private slots:
     void addUpdateMenu();

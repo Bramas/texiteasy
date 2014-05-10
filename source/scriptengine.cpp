@@ -3,6 +3,7 @@
 #include "widgettextedit.h"
 #include "widgetfile.h"
 #include "mainwindow.h"
+#include <QElapsedTimer>
 
 #define DISP_DEBUG(a)
 
@@ -18,13 +19,18 @@ QScriptValue scriptPrint(QScriptContext *context, QScriptEngine *engine_in)
 
    DISP_DEBUG(qDebug()<<"insert : "<<text);
 
+
    QTextCursor currentCursor(*engine->getScriptCursor()->cursor());
    int position = currentCursor.position();
-   currentCursor.insertText(text);
+
+   text.replace(QRegExp("\\$\\{([0-9]:){0,1}([^\\}]*)\\}"), "\\verb#{{\\1\\2}}#");
+   currentCursor.insertText(text); 
 
    int pIdx = -1;
    QStringList varNames;
-   QRegExp p("\\$\\{([0-9]:){0,1}([^\\}]*)\\}");
+   QRegExp p("\\\\verb\\#\\{\\{([0-9]:){0,1}([^\\}]*)\\}\\}\\#");
+
+
    while(-1 != (pIdx = text.indexOf(p, pIdx + 1)))
    {
        VarBlock vb;
@@ -218,7 +224,7 @@ QString ScriptEngine::parse(QString text, QPlainTextEdit *editor, const QVector<
         {
             QString val = vb.cursor.selectedText();
             vb.cursor.removeSelectedText();
-            val.replace(QRegExp("\\$\\{([0-9]:){0,1}([^\\}]*)\\}"), "%#{{{\\2}}}#");
+            val.replace(QRegExp("\\\\verb\\#\\{\\{([0-9]:){0,1}([^\\}]*)\\}\\}\\#"), "\\verb#{{\\2}}#");
             vb.cursor.insertText(val);
         }
     }
@@ -277,7 +283,9 @@ void ScriptEngine::evaluate()
     _varTextCursor.clear();
 
     getScriptCursor()->setTextCursor(widgetTextEdit()->textCursor());
+
     this->evaluate(_script);
+
     QScriptValue exc;
     if(!(exc = this->uncaughtException()).toString().isEmpty())
     {
@@ -305,7 +313,7 @@ void ScriptEngine::evaluate()
         {
             QString val = vb.cursor.selectedText();
             vb.cursor.removeSelectedText();
-            val.replace(QRegExp("\\$\\{([0-9]:){0,1}([^\\}]*)\\}"), "%#{{{\\2}}}#");
+            val.replace(QRegExp("\\\\verb\\#\\{\\{([0-9]:){0,1}([^\\}]*)\\}\\}\\#"), "\\verb#{{\\2}}#");
             vb.cursor.insertText(val);
         }
         if(activeCursors.contains(vb.name))
@@ -326,7 +334,6 @@ void ScriptEngine::evaluate()
     _widgetTextEdit->onCursorPositionChange();
     DISP_DEBUG(qDebug()<<"selectedText:");
     DISP_DEBUG(qDebug() << c.selectedText());
-
     _cursorsMutex.unlock();
     _mutex.unlock();
     return;

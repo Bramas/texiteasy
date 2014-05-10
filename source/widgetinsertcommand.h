@@ -24,6 +24,8 @@
 
 #include <QWidget>
 #include <QStringList>
+class QTableWidgetItem;
+
 
 class WidgetTextEdit;
 namespace Ui {
@@ -38,11 +40,21 @@ public:
     ~WidgetInsertCommand();
 
     static WidgetInsertCommand * instance() { if(!_instance) _instance = new WidgetInsertCommand(); return _instance; }
+
+    void setParent(WidgetTextEdit* parent);
+
+signals:
+    void commandActivated(QString);
     
+public slots:
+    void onCellActivated(QTableWidgetItem*);
+
 private:
     explicit WidgetInsertCommand();
     Ui::WidgetInsertCommand *ui;
     static WidgetInsertCommand * _instance;
+
+    WidgetTextEdit * _widgetTextEdit;
 
     QStringList _tabslabel;
 

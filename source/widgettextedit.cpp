@@ -752,14 +752,14 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
 }
 bool WidgetTextEdit::hasArguments()
 {
-    QTextCursor curStrArg = this->document()->find(QRegExp("%#\\{\\{\\{[^\\}]*\\}\\}\\}#"));
+    QTextCursor curStrArg = this->document()->find(QRegExp("\\\\verb\\#\\{\\{([^\\}]*)\\}\\}\\#"));
     return !curStrArg.isNull();
 }
 
 bool WidgetTextEdit::selectNextArgument()
 {
     //QTextCursor curIntArg = this->document()->find(QRegExp("%[0-9]"),this->textCursor().position());
-    QTextCursor curStrArg = this->document()->find(QRegExp("%#\\{\\{\\{[^\\}]*\\}\\}\\}#"),this->textCursor().position());
+    QTextCursor curStrArg = this->document()->find(QRegExp("\\\\verb\\#\\{\\{([^\\}]*)\\}\\}\\#"),this->textCursor().position());
 
   /*  if(!curIntArg.isNull() && (curStrArg.isNull() || curIntArg.selectionStart() < curStrArg.selectionStart()))
     {

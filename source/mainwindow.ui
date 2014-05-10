@@ -130,6 +130,7 @@
     </widget>
     <addaction name="actionSettings"/>
     <addaction name="menuTh_me"/>
+    <addaction name="actionSendFeedback"/>
    </widget>
    <widget class="QMenu" name="menuEdition">
     <property name="title">
@@ -248,40 +249,25 @@
    <property name="text">
     <string>Annuler</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+Z</string>
-   </property>
   </action>
   <action name="actionRedo">
    <property name="text">
     <string>Refaire</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Y</string>
    </property>
   </action>
   <action name="actionCut">
    <property name="text">
     <string>Couper</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+X</string>
-   </property>
   </action>
   <action name="actionCopy">
    <property name="text">
     <string>Copier</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+C</string>
-   </property>
   </action>
   <action name="actionPaste">
    <property name="text">
     <string>Coller</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+V</string>
    </property>
   </action>
   <action name="actionFindReplace">
@@ -419,6 +405,11 @@
   <action name="actionTexDirRoot">
    <property name="text">
     <string>Fichier Racine</string>
+   </property>
+  </action>
+  <action name="actionSendFeedback">
+   <property name="text">
+    <string>Envoyer votre avis</string>
    </property>
   </action>
  </widget>
