@@ -100,16 +100,28 @@ void TextStruct::reload()
                 {
                     break;
                 }
-                //qDebug()<<"ENVIRONEMENT_END : "<<blockInfo->name<<"  current:"<<currentEnvironmentItem->name;
-                if(currentEnvironmentItem->name.compare(blockInfo->name))
+                while(currentEnvironmentItem->name.compare(blockInfo->name) && currentEnvironmentItem->parent)
                 {
-                    //qDebug()<<"Warning: Parsing Document Structur. Environment "<<currentEnvironmentItem->name<<" (l."<<currentEnvironmentItem->blockBeginNumber<<") ends with "<<blockInfo->name<<" (l."<<blockInfo->blockNumber<<")";
-                    return;
+                    //qDebug()<<"ENVIRONEMENT_END : "<<blockInfo->name<<"  current:"<<currentEnvironmentItem->name;
+
+
+                    /*if()
+                    {
+                        //qDebug()<<"Warning: Parsing Document Structur. Environment "<<currentEnvironmentItem->name<<" (l."<<currentEnvironmentItem->blockBeginNumber<<") ends with "<<blockInfo->name<<" (l."<<blockInfo->blockNumber<<")";
+                        return;
+                    }*/
+                    currentEnvironmentItem->end   = blockInfo->position + block.position();
+                    currentEnvironmentItem->blockEndNumber  = block.blockNumber();
+                    currentEnvironmentItem = currentEnvironmentItem->parent;
+                    //qDebug()<<" change current: "<<currentEnvironmentItem->name;
                 }
+
                 currentEnvironmentItem->end   = blockInfo->position + block.position();
                 currentEnvironmentItem->blockEndNumber  = block.blockNumber();
-                currentEnvironmentItem = currentEnvironmentItem->parent;
-                //qDebug()<<" change current: "<<currentEnvironmentItem->name;
+                if(currentEnvironmentItem->parent)
+                {
+                    currentEnvironmentItem = currentEnvironmentItem->parent;
+                }
                 break;
             case LatexBlockInfo::SECTION:
                 //close previous sections
@@ -149,6 +161,11 @@ void TextStruct::reload()
 QStack<const StructItem*> TextStruct::environmentPath() const
 {
     return environmentPath(_widgetTextEdit->textCursor().position());
+}
+
+QString TextStruct::currentEnvironment() const
+{
+    return environmentPath().last()->name;
 }
 
 QStack<const StructItem*> TextStruct::environmentPath(int position) const

@@ -30,6 +30,7 @@
 #include <QScrollBar>
 #include "widgettextedit.h"
 #include "widgettooltip.h"
+#include "filestructure.h"
 
 bool completionStringLessThan(const QString &s1, const QString &s2)
 {
@@ -126,6 +127,10 @@ void CompletionEngine::proposeCommand(int left, int top, int lineHeight, QString
     this->setVisible(true);
     int idx = 0;
     int dieseIndex, tooltipIndex;
+    if(commandBegin.indexOf(QRegExp("^\\\\end")) != -1)
+    {
+        found.insert(0, "\\end{"+_widgetTextEdit->textStruct()->currentEnvironment()+"}");
+    }
     foreach(const QString &word, found)
     {
         if((dieseIndex = word.indexOf(QRegExp("[^\\\\]#"))) != -1)
@@ -249,7 +254,7 @@ QString CompletionEngine::acceptedWord()
         }
     }
 
-    word.replace(QRegExp("@([a-zA-Z0-9]+)"), "%#{{{\\1}}}#");
+    word.replace(QRegExp("@([a-zA-Z0-9]+)"), "\\verb#{{\\1}}#");
     return word;//.right(word.size() - _commandBegin.size());
 }
 

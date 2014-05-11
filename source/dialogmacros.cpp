@@ -138,6 +138,7 @@ DialogMacros::DialogMacros(QWidget *parent) :
     connect(ui->pushButtonNewMacro, SIGNAL(clicked()), this, SLOT(onNewItem()));
     connect(ui->pushButtonNewFolder, SIGNAL(clicked()), this, SLOT(onNewFolder()));
     connect(ui->pushButtonDeleteMacro, SIGNAL(clicked()), this, SLOT(deleteCurrent()));
+    connect(ui->pushButtonClose, SIGNAL(clicked()), this, SLOT(close()));
 
     loadMacro("");
 

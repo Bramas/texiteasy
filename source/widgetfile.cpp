@@ -19,9 +19,11 @@
 #include <QAction>
 #include <QDebug>
 #include <QTextCodec>
+#include "mainwindow.h"
 
-WidgetFile::WidgetFile(QWidget *parent) :
-    QWidget(parent)
+WidgetFile::WidgetFile(MainWindow *parent) :
+    QWidget(parent),
+    _window(parent)
 {
     _masterFile = 0;
     _widgetTextEdit = new WidgetTextEdit(this);
@@ -40,6 +42,7 @@ WidgetFile::WidgetFile(QWidget *parent) :
 
     _horizontalSplitter = new MiniSplitter(Qt::Horizontal);
     _verticalSplitter = new MiniSplitter(Qt::Vertical);
+
 
 
 
@@ -97,7 +100,6 @@ WidgetFile::WidgetFile(QWidget *parent) :
     _editorSplitter->addWidget(w);
 
 
-
     _horizontalSplitter->setHandleWidth(1);
     _horizontalSplitter->setBackgroundColor(ConfigManager::Instance.getTextCharFormats("line-number").foreground().color());
     _editorSplitter->setBackgroundColor(ConfigManager::Instance.getTextCharFormats("line-number").foreground().color());
@@ -134,6 +136,7 @@ WidgetFile::WidgetFile(QWidget *parent) :
     _widgetTextEdit->setTextCursor(cur);
     _widgetTextEdit->getCurrentFile()->setModified(false);
 
+
     this->splitEditor(false);
 }
 
@@ -143,6 +146,7 @@ WidgetFile::~WidgetFile()
     qDebug()<<"delete WidgetFile";
 #endif
 }
+
 
 void WidgetFile::initTheme()
 {

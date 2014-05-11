@@ -203,6 +203,9 @@ public:
 
     QString         macrosPath();
 
+    QString softId() { QSettings settings; return settings.value("softId").toString(); }
+    QString systemInfo();
+
 
     static QString Extensions;
     static QString MacroSuffix;

@@ -74,11 +74,11 @@ WidgetTextEdit::WidgetTextEdit(WidgetFile * parent) :
     _lastBlockCount(0)
 
 {
-    _scriptEngine.setWidgetTextEdit(this);
     TextDocumentLayout * layout = new TextDocumentLayout(this);
     this->document()->setDocumentLayout(layout);
     connect(layout, SIGNAL(documentSizeChanged(QSizeF)), this, SLOT(adjustScrollbar(QSizeF)));
     _widgetFile = parent;
+    _scriptEngine.setWidgetTextEdit(this);
     this->setContentsMargins(0,0,0,0);
     connect(this,SIGNAL(textChanged()),this->currentFile,SLOT(setModified()));
     connect(this,SIGNAL(textChanged()),this,SLOT(updateIndentation()));
@@ -471,9 +471,9 @@ void WidgetTextEdit::onCursorPositionChange()
 
 void WidgetTextEdit::resizeEvent(QResizeEvent *event)
 {
-    WIDGET_TEXT_EDIT_PARENT_CLASS::resizeEvent(event);
     TextDocumentLayout* layout = dynamic_cast<TextDocumentLayout*>(this->document()->documentLayout());
     layout->setTextWidth(viewport()->width());
+    WIDGET_TEXT_EDIT_PARENT_CLASS::resizeEvent(event);
 }
 
 void WidgetTextEdit::insertPlainText(const QString &text)
@@ -752,14 +752,14 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
 }
 bool WidgetTextEdit::hasArguments()
 {
-    QTextCursor curStrArg = this->document()->find(QRegExp("%#\\{\\{\\{[^\\}]*\\}\\}\\}#"));
+    QTextCursor curStrArg = this->document()->find(QRegExp("\\\\verb\\#\\{\\{([^\\}]*)\\}\\}\\#"));
     return !curStrArg.isNull();
 }
 
 bool WidgetTextEdit::selectNextArgument()
 {
     //QTextCursor curIntArg = this->document()->find(QRegExp("%[0-9]"),this->textCursor().position());
-    QTextCursor curStrArg = this->document()->find(QRegExp("%#\\{\\{\\{[^\\}]*\\}\\}\\}#"),this->textCursor().position());
+    QTextCursor curStrArg = this->document()->find(QRegExp("\\\\verb\\#\\{\\{([^\\}]*)\\}\\}\\#"),this->textCursor().position());
 
   /*  if(!curIntArg.isNull() && (curStrArg.isNull() || curIntArg.selectionStart() < curStrArg.selectionStart()))
     {
@@ -1446,68 +1446,12 @@ bool WidgetTextEdit::onMacroTriggered(Macro macro, bool force)
          cursor.movePosition(QTextCursor::Left, QTextCursor::KeepAnchor, word.length());
          this->setTextCursor(cursor);
     }
-    int pos = cursor.position();
+
+    int pos = textCursor().position();
     _scriptIsRunning = true;
     _scriptEngine.parse(content, this, pattern.capturedTexts().toVector());
 
-    //cursor.endEditBlock();
-
-    if(false)//patternExists)
-    {
-        QStringList cap = pattern.capturedTexts();
-        cap.pop_front();
-        int idx = 1;
-        while(cap.count())
-        {
-            QString arg = cap.front();
-            cap.pop_front();
-            if(!arg.isEmpty())
-            {
-                cursor = document()->find(QRegExp("\\$\\{"+QString::number(idx)+":[^\\}]*\\}"));
-                //cursor.joinPreviousEditBlock();
-                while(!cursor.isNull())
-                {
-                    cursor.removeSelectedText();
-                    cursor.insertText(arg);
-                    cursor = document()->find(QRegExp("\\$\\{"+QString::number(idx)+":[^\\}]*\\}"));
-                    //cursor.joinPreviousEditBlock();
-                }
-            }
-            ++idx;
-        }
-    }
-    cursor = document()->find(QRegExp("^#[^\\n]*\n"));
-    //cursor.joinPreviousEditBlock();
-    while(!cursor.isNull())
-    {
-        cursor.removeSelectedText();
-        cursor = document()->find(QRegExp("^#[^\\n]*\n"));
-        //cursor.joinPreviousEditBlock();
-    }
-    cursor = document()->find(QRegExp("\n#[^\\n]*\n"));
-    //cursor.joinPreviousEditBlock();
-    while(!cursor.isNull())
-    {
-        cursor.removeSelectedText();
-        cursor.insertText("\n");
-        cursor = document()->find(QRegExp("\n#[^\\n]*\n"));
-        //cursor.joinPreviousEditBlock();
-    }
-
-    QRegExp argumentPattern("\\$\\{([0-9]:){0,1}([^\\}]*)\\}");
-    cursor = document()->find(argumentPattern);
-   // cursor.joinPreviousEditBlock();
-    while(!cursor.isNull())
-    {
-        cursor.selectedText().indexOf(argumentPattern);
-        cursor.removeSelectedText();
-        cursor.insertText("%#{{{"+argumentPattern.capturedTexts().at(2)+"}}}#");
-        cursor = document()->find(argumentPattern);
-        //cursor.joinPreviousEditBlock();
-    }
-
     cursor = textCursor();
-    //cursor.joinPreviousEditBlock();
     cursor.setPosition(pos);
     this->setTextCursor(cursor);
     //cursor.endEditBlock();

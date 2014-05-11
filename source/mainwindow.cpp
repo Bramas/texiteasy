@@ -39,6 +39,7 @@
 #include "widgetsimpleoutput.h"
 #include "widgetproject.h"
 #include "macroengine.h"
+#include "dialogsendfeedback.h"
 
 #include <QMenu>
 #include <QAction>
@@ -155,7 +156,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->ui->actionTexDirProgram, SIGNAL(triggered()), this, SLOT(insertTexDirProgram()));
     connect(this->ui->actionTexDirRoot, SIGNAL(triggered()), this, SLOT(insertTexDirRoot()));
     connect(this->ui->actionTexDirSpellChecker, SIGNAL(triggered()), this, SLOT(insertTexDirSpellCheck()));
-
+    connect(this->ui->actionSendFeedback, SIGNAL(triggered()), this, SLOT(openSendFeedbackDialog()));
     connect(&FileManager::Instance, SIGNAL(filenameChanged(QString)), this, SLOT(onFilenameChanged(QString)));
 
     connect(&ConfigManager::Instance, SIGNAL(versionIsOutdated()), this, SLOT(addUpdateMenu()));
@@ -264,6 +265,12 @@ MainWindow::~MainWindow()
 void MainWindow::focus()
 {
     this->activateWindow();
+}
+
+void MainWindow::openSendFeedbackDialog()
+{
+    DialogSendFeedback *d = new DialogSendFeedback(this);
+    d->exec();
 }
 
 void MainWindow::closeEvent(QCloseEvent * event)
@@ -468,14 +475,14 @@ void MainWindow::initBuildMenu()
 
 }
 
-void MainWindow::newFile()
+WidgetFile * MainWindow::newFile()
 {
-    if(FileManager::Instance.newFile())
+    if(FileManager::Instance.newFile(this))
     {
         _tabWidget->addTab(FileManager::Instance.currentWidgetFile(), "untitled");
         _tabWidget->setCurrentIndex(_tabWidget->count()-1);
     }
-    return;
+    return FileManager::Instance.currentWidgetFile();
 }
 void MainWindow::onFilenameChanged(QString filename)
 {
@@ -588,7 +595,7 @@ void MainWindow::open(QString filename, int cursorPosition)
     }
 
     //open
-    if(FileManager::Instance.open(filename))
+    if(FileManager::Instance.open(filename, this))
     {
         WidgetFile * current = FileManager::Instance.currentWidgetFile();
         QString tabName = FileManager::Instance.currentWidgetFile()->file()->fileInfo().fileName();

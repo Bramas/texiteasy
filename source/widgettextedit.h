@@ -110,6 +110,19 @@ public:
     void fold(int start, int end);
     void unfold(int start);
 
+
+    static QScriptValue toScriptValue(QScriptEngine *engine, WidgetTextEdit* const &s)
+    {
+      QScriptValue obj = engine->newQObject(const_cast<WidgetTextEdit *>(s));
+      return obj;
+    }
+
+    static void fromScriptValue(const QScriptValue &obj, WidgetTextEdit* &s)
+    {
+      //s.x = obj.property("x").toInt32();
+      //s.y = obj.property("y").toInt32();
+    }
+
 signals:
     void updateFirstVisibleBlock(int,int);
     void updatedWithSameFirstVisibleBlock();
@@ -221,5 +234,7 @@ private:
     int _lastBlockCount;
 
 };
+
+Q_DECLARE_METATYPE(WidgetTextEdit*)
 
 #endif // WIDGETTEXTEDIT_H
