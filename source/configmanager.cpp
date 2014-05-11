@@ -912,6 +912,7 @@ void ConfigManager::checkRevision()
         hotKeys.setValue("Redo", "");
     }
     case 0x001200:
+    case 0x001201:
 
 
         break;

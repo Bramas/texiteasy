@@ -254,7 +254,7 @@ QString CompletionEngine::acceptedWord()
         }
     }
 
-    word.replace(QRegExp("@([a-zA-Z0-9]+)"), "%#{{{\\1}}}#");
+    word.replace(QRegExp("@([a-zA-Z0-9]+)"), "\\verb#{{\\1}}#");
     return word;//.right(word.size() - _commandBegin.size());
 }
 

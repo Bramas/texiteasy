@@ -13,7 +13,7 @@ TEMPLATE = app
 
 APPLICATION_NAME = \\\"'TexitEasy'\\\"
 
-VERSION = \\\"'0.12.0'\\\"
+VERSION = \\\"'0.12.1'\\\"
 VERSION_HEX = 0x001200
 
 
