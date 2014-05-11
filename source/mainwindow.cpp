@@ -40,6 +40,7 @@
 #include "widgetproject.h"
 #include "macroengine.h"
 #include "dialogsendfeedback.h"
+#include "pluginsmanager.h"
 
 #include <QMenu>
 #include <QAction>
@@ -241,6 +242,7 @@ MainWindow::MainWindow(QWidget *parent) :
     initBuildMenu();
     connect(&ConfigManager::Instance, SIGNAL(changed()), this, SLOT(initBuildMenu()));
 
+    PluginsManager::Instance.createMenu(this->ui->menuAssistants);
 
     setAcceptDrops(true);
 

@@ -32,6 +32,7 @@
 #include "configmanager.h"
 #include "filemanager.h"
 #include "macroengine.h"
+#include "pluginsmanager.h"
 #include <QSettings>
 #include <QFontDatabase>
 #include <QDebug>
@@ -94,5 +95,7 @@ int main(int argc, char *argv[])
         QString filename = QString::fromLocal8Bit(argv[1]);
         w.open(filename);
     }
+
+    PluginsManager::Instance.loadPlugins();
     return a.exec();
 }

@@ -164,9 +164,15 @@
     </property>
     <addaction name="actionOpenPdf"/>
    </widget>
+   <widget class="QMenu" name="menuAssistants">
+    <property name="title">
+     <string>Assistants</string>
+    </property>
+   </widget>
    <addaction name="menuFichier"/>
    <addaction name="menuEdition"/>
    <addaction name="menuBuild"/>
+   <addaction name="menuAssistants"/>
    <addaction name="menuOptions"/>
    <addaction name="menuView"/>
    <addaction name="menuPdf"/>

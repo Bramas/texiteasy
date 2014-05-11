@@ -15,57 +15,24 @@
  *   GNU General Public License for more details.                          *
  *                                                                         *
  *   You should have received a copy of the GNU General Public License     *
- *   along with texiteasy.  If not, see <http://www.gnu.org/licenses/>.    *                         *
+ *   along with texiteasy.  If not, see <http://www.gnu.org/licenses/>.    *
  *                                                                         *
  ***************************************************************************/
 
-#ifndef COMPLETIONENGINE_H
-#define COMPLETIONENGINE_H
-#include <QListWidget>
-#include <QStringList>
-#include <QString>
-
-class WidgetTextEdit;
-class WidgetTooltip;
 
 
-struct BibItem
+class HelperInterface
 {
-    QString key;
-    QString title;
-    QString author;
-};
-
-class CompletionEngine : public QListWidget
-{
-    Q_OBJECT
-
 public:
-    CompletionEngine(WidgetTextEdit * parent);
-    ~CompletionEngine();
-    void proposeCommand(int left, int top, int lineHeight, QString commandBegin);
-    QString acceptedWord();
+    virtual ~HelperInterface() {}
 
-    void addCustomWordFromSource();
-    void parseBibtexFile();
-public slots:
- //   void setFocus(void);
-    void cellSelected(int);
-    void setVisible(bool visible);
-
-protected:
-    void keyPressEvent(QKeyEvent *event);
-
-private:
-    void loadFile(QString filename);
-    QList<BibItem> parseBibtexSource(QString source);
-
-    QString _commandBegin;
-    QStringList _customWords;
-    WidgetTextEdit * _widgetTextEdit;
-    WidgetTooltip * _widgetTooltip;
-    QStringList _words;
-
+    virtual QString name() const = 0;
+    virtual QString show() const = 0;
 };
 
-#endif // COMPLETIONENGINE_H
+QT_BEGIN_NAMESPACE
+#define HelperInterface_iid "texiteasy.com.plugin.helpers.1"
+
+Q_DECLARE_INTERFACE(HelperInterface, HelperInterface_iid)
+
+QT_END_NAMESPACE

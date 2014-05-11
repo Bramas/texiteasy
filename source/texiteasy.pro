@@ -17,7 +17,7 @@ VERSION = \\\"'0.12.1'\\\"
 VERSION_HEX = 0x001200
 
 
-DEFINES += LIB_DEPLOY
+#DEFINES += LIB_DEPLOY
 #DEFINES += PORTABLE_EXECUTABLE
 
 DEFINES += "CURRENT_VERSION_HEX=$${VERSION_HEX}"
@@ -86,7 +86,8 @@ SOURCES += main.cpp\
     singleapp/qtlockedfile_unix.cpp \
     singleapp/qtlocalpeer.cpp \
     textdocumentlayout.cpp \
-    dialogsendfeedback.cpp
+    dialogsendfeedback.cpp \
+    pluginsmanager.cpp
 
 HEADERS  += mainwindow.h \
     widgetlinenumber.h \
@@ -150,7 +151,9 @@ HEADERS  += mainwindow.h \
     singleapp/qtlockedfile.h \
     singleapp/qtlocalpeer.h \
     textdocumentlayout.h \
-    dialogsendfeedback.h
+    dialogsendfeedback.h \
+    plugins_interfaces/helperinterface.h \
+    pluginsmanager.h
 
 FORMS    += mainwindow.ui \
     dialogwelcome.ui \
