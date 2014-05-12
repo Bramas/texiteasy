@@ -884,8 +884,19 @@ void ConfigManager::checkRevision()
     case 0x001100:
     case 0x001101:
     case 0x001102:
+    case 0x001103:
     {
-        qDebug()<<"texiteasy => 0.11.3";
+        QSettings hotKeys;
+        hotKeys.beginGroup("shortcuts");
+        hotKeys.setValue("Cancel", "");
+        hotKeys.setValue("Copy", "");
+        hotKeys.setValue("Paste", "");
+        hotKeys.setValue("Cut", "");
+        hotKeys.setValue("Redo", "");
+    }
+    case 0x001200:
+    {
+        qDebug()<<"texiteasy => 0.12.0";
 
         // install macros
         {
@@ -901,17 +912,6 @@ void ConfigManager::checkRevision()
                                                           );
         }
     }
-    case 0x001103:
-    {
-        QSettings hotKeys;
-        hotKeys.beginGroup("shortcuts");
-        hotKeys.setValue("Cancel", "");
-        hotKeys.setValue("Copy", "");
-        hotKeys.setValue("Paste", "");
-        hotKeys.setValue("Cut", "");
-        hotKeys.setValue("Redo", "");
-    }
-    case 0x001200:
     case 0x001201:
 
 
