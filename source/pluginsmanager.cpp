@@ -18,8 +18,11 @@ void PluginsManager::loadPlugins()
 {
     QDir pluginsDir(qApp->applicationDirPath());
 #if defined(Q_OS_WIN)
-    if (pluginsDir.dirName().toLower() == "debug" || pluginsDir.dirName().toLower() == "release")
+#ifndef LIB_DEPLOY
         pluginsDir.cdUp();
+        pluginsDir.cdUp();
+        pluginsDir.cd("Plugins");
+#endif
 #elif defined(Q_OS_MAC)
     if (pluginsDir.dirName() == "MacOS") {
         pluginsDir.cdUp();

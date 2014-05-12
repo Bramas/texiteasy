@@ -18,4 +18,4 @@ TEMPLATE        = lib
 CONFIG         += plugin
 QT             += widgets
 TARGET          = $$qtLibraryTarget(tabularhelper)
-DESTDIR         = plugins
+DESTDIR         = ..

@@ -7,6 +7,6 @@ TabularHelper::TabularHelper()
 
 QString TabularHelper::show() const
 {
-    QMessageBox::information(0, "lol", "looool");
+
     return "";
 }

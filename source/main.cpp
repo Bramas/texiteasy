@@ -83,6 +83,7 @@ int main(int argc, char *argv[])
 
     FileManager::Instance.init();
     MacroEngine::Instance.init();
+    PluginsManager::Instance.loadPlugins();
     MainWindow w;
     w.show();
     a.connect(&a, SIGNAL(requestOpenFile(QString)),
@@ -96,6 +97,5 @@ int main(int argc, char *argv[])
         w.open(filename);
     }
 
-    PluginsManager::Instance.loadPlugins();
     return a.exec();
 }

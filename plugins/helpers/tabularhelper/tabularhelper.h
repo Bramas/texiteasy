@@ -15,7 +15,7 @@ class TabularHelper : public QObject, public HelperInterface
 
 public:
     TabularHelper();
-    QString show() const;
+    QString exec() const;
     QString name() const { return trUtf8("Insérer un tableau"); }
 };
 
