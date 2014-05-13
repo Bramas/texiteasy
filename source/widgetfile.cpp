@@ -22,23 +22,23 @@
 #include "mainwindow.h"
 
 WidgetFile::WidgetFile(MainWindow *parent) :
-    QWidget(parent),
+    QWidget(0),
     _window(parent)
 {
     _masterFile = 0;
-    _widgetTextEdit = new WidgetTextEdit(this);
-    _syntaxHighlighter = new SyntaxHighlighter(this);
-    _widgetTextEdit->setSyntaxHighlighter(_syntaxHighlighter);
-    _widgetPdfViewer = new WidgetPdfViewer();
-    _widgetPdfViewer->widgetPdfDocument()->setWidgetTextEdit(_widgetTextEdit);
-    _widgetFindReplace = new WidgetFindReplace(_widgetTextEdit);
+    _widgetTextEdit     = new WidgetTextEdit(this);
+    _syntaxHighlighter  = new SyntaxHighlighter(this);
+    _widgetTextEdit     ->setSyntaxHighlighter(_syntaxHighlighter);
+    _widgetPdfViewer    = new WidgetPdfViewer();
+    _widgetPdfViewer    ->widgetPdfDocument()->setWidgetTextEdit(_widgetTextEdit);
+    _widgetFindReplace  = new WidgetFindReplace(_widgetTextEdit);
      this->closeFindReplaceWidget();
-    _widgetLineNumber = new WidgetLineNumber(this);
-    _widgetLineNumber->setWidgetTextEdit(_widgetTextEdit);
-    _widgetTextEdit->setWidgetLineNumber(_widgetLineNumber);
-    _widgetConsole = new WidgetConsole();
+    _widgetLineNumber   = new WidgetLineNumber(this);
+    _widgetLineNumber   ->setWidgetTextEdit(_widgetTextEdit);
+    _widgetTextEdit     ->setWidgetLineNumber(_widgetLineNumber);
+    _widgetConsole      = new WidgetConsole();
     _widgetSimpleOutput = new WidgetSimpleOutput(this);
-    _widgetSimpleOutput->setWidgetTextEdit(_widgetTextEdit);
+    _widgetSimpleOutput ->setWidgetTextEdit(_widgetTextEdit);
 
     _horizontalSplitter = new MiniSplitter(Qt::Horizontal);
     _verticalSplitter = new MiniSplitter(Qt::Vertical);
