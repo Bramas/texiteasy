@@ -19,7 +19,7 @@
  *                                                                         *
  ***************************************************************************/
 
-
+#include <QTextCursor>
 
 class HelperInterface
 {
@@ -27,7 +27,7 @@ public:
     virtual ~HelperInterface() {}
 
     virtual QString name() const = 0;
-    virtual QString show() const = 0;
+    virtual int exec(const QTextCursor &cursor) = 0;
 };
 
 QT_BEGIN_NAMESPACE

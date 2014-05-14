@@ -1,4 +1,7 @@
 #include "pluginsmanager.h"
+#include "widgetfile.h"
+#include "widgettextedit.h"
+#include "filemanager.h"
 #include "plugins_interfaces/helperinterface.h"
 
 #include <QGuiApplication>
@@ -52,7 +55,12 @@ void PluginsManager::callHelper()
     {
         return;
     }
-    _helpers.value(action->text())->show();
+    WidgetFile * currentFile = FileManager::Instance.currentWidgetFile();
+    if(!currentFile)
+    {
+        return;
+    }
+    _helpers.value(action->text())->exec(currentFile->widgetTextEdit()->textCursor());
 }
 
 void PluginsManager::createMenu(QMenu * parent)
