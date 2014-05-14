@@ -913,6 +913,7 @@ void ConfigManager::checkRevision()
         }
     }
     case 0x001201:
+    case 0x001202:
 
 
         break;
