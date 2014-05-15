@@ -5,8 +5,9 @@ TabularHelper::TabularHelper()
 {
 }
 
-QString TabularHelper::show() const
+int TabularHelper::exec(const QTextCursor &cursor_c)
 {
-
-    return "";
+    QTextCursor cursor(cursor_c);
+    cursor.insertText("Insérer un tableau");
+    return 0;
 }

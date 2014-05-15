@@ -231,6 +231,11 @@ mac{
     TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com/downloads/latest/mac'\\\"
     #CONFIG += x86 x86_64
 }
+INCLUDEPATH += /Library/Frameworks/Python.framework/Versions/2.7/include/python2.7
+INCLUDEPATH += /Users/quentinbramas/Downloads/PyQt-gpl-5.2.1/QtCore
+INCLUDEPATH += /Users/quentinbramas/Downloads/PyQt-gpl-5.2.1/qpy/QtCore
+
+LIBS += -F/Library/Frameworks -L/Library/Frameworks -framework Python
 
 DEFINES += "TEXITEASY_UPDATE_WEBSITE=$${TEXITEASY_UPDATE_WEBSITE}"
 DEFINES += "LAST_VERSION_URL=$${LAST_VERSION_URL}"

@@ -15,6 +15,7 @@ public:
     static PluginsManager Instance;
     void loadPlugins();
     void createMenu(QMenu * parent);
+    void test();
 
 public slots:
     void callHelper();

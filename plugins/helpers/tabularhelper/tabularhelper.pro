@@ -18,4 +18,10 @@ TEMPLATE        = lib
 CONFIG         += plugin
 QT             += widgets
 TARGET          = $$qtLibraryTarget(tabularhelper)
-DESTDIR         = ..
+
+mac{
+    DESTDIR         = ../..
+}
+win32{
+    DESTDIR         = ..
+}

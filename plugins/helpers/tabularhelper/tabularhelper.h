@@ -15,8 +15,8 @@ class TabularHelper : public QObject, public HelperInterface
 
 public:
     TabularHelper();
-    QString exec() const;
-    int exec(const QTextCursor &cursor) { QTextCursor() return cursor("Insérer un tableau"); }
+    QString name() const { return "Insérer un tableau"; }
+    int exec(const QTextCursor &cursor_c);
 };
 
 #endif // TABULARHELPER_H
