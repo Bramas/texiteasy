@@ -16,7 +16,8 @@ UpdateChecker::UpdateChecker()
 
     QNetworkRequest request;
     request.setUrl(QUrl(LAST_VERSION_URL));
-    request.setRawHeader("User-Agent", QString(QString("TexitEasy ")+CURRENT_VERSION).toLatin1());
+    request.setHeader(QNetworkRequest::UserAgentHeader, QString(QString("TexitEasy ")+CURRENT_VERSION));
+    request.setRawHeader("texiteasy-soft-id", ConfigManager::Instance.softId().toLatin1());
     this->get(request);
 }
 
