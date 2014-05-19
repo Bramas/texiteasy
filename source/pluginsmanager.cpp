@@ -155,11 +155,28 @@ typedef const QMetaObject*  (*GetQMetaObjectFunction)(PyTypeObject* type);
 
 void PluginsManager::test()
 {
+#ifdef OS_WINDOWS
+    qDebug() << getenv("PYTHONPATH");
+    qDebug() << getenv("PYTHONHOME");
+    qDebug() << getenv("PATH");
+
+    QString p = getenv("PATH");
+    p += ";C:\\Python27";
+    _putenv_s("PYTHONPATH","C:\\Python27\\Lib");
+    _putenv_s("PYTHONHOME","C:\\Python27\\Lib");
+    _putenv_s("PATH",p.toLatin1().data());
+    qDebug() << getenv("PYTHONPATH");
+    qDebug() << getenv("PYTHONHOME");
+    qDebug() << getenv("PATH");
+#endif
     Py_Initialize();
 
     qDebug()<<"version "<<Py_GetVersion()<<endl;
-
+#ifdef OS_WINDOWS
+    FILE *fin = fopen("D:/Projects/texiteasy/sourceRepository/plugins/test.py","r+");
+#else
     FILE *fin = fopen("/Users/quentinbramas/Projects/texiteasy/texiteasy-repository/plugins/test.py","r+");
+#endif
     PyRun_SimpleFile(fin,"foo");
 
     PyObject *mainDict = PyModule_GetDict(PyImport_Import(PyString_FromString("__main__")));

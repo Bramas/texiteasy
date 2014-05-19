@@ -204,6 +204,7 @@ win32 {
 
     LIBS += -LC:/Qt/prerequisites-i686/lib -lpoppler-qt5
     LIBS += -LC:/Qt/prerequisites-i686/lib -lz
+    LIBS += -LC:/Python27/libs -lpython27
 
     INCLUDEPATH += C:/Qt/prerequisites-i686/include
     RC_FILE = win.rc
@@ -211,6 +212,8 @@ win32 {
     DEFINES += OS_WINDOWS
     LAST_VERSION_URL = \\\"'http://texiteasy.com/downloads/latest_version/win'\\\"
     TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com/downloads/latest/win'\\\"
+
+    INCLUDEPATH += C:/Python27/include
 
     #LAST_VERSION_URL = \\\"'http://texiteasy.com/posts/latest_version/win_portable'\\\"
     #TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com/posts/download_latest/win_portable'\\\"
@@ -230,12 +233,13 @@ mac{
     LAST_VERSION_URL = \\\"'http://texiteasy.com/downloads/latest_version/mac'\\\"
     TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com/downloads/latest/mac'\\\"
     #CONFIG += x86 x86_64
-}
-INCLUDEPATH += /Library/Frameworks/Python.framework/Versions/2.7/include/python2.7
-INCLUDEPATH += /Users/quentinbramas/Downloads/PyQt-gpl-5.2.1/QtCore
-INCLUDEPATH += /Users/quentinbramas/Downloads/PyQt-gpl-5.2.1/qpy/QtCore
 
-LIBS += -F/Library/Frameworks -L/Library/Frameworks -framework Python
+    INCLUDEPATH += /Library/Frameworks/Python.framework/Versions/2.7/include/python2.7
+    INCLUDEPATH += /Users/quentinbramas/Downloads/PyQt-gpl-5.2.1/QtCore
+    INCLUDEPATH += /Users/quentinbramas/Downloads/PyQt-gpl-5.2.1/qpy/QtCore
+
+    LIBS += -F/Library/Frameworks -L/Library/Frameworks -framework Python
+}
 
 DEFINES += "TEXITEASY_UPDATE_WEBSITE=$${TEXITEASY_UPDATE_WEBSITE}"
 DEFINES += "LAST_VERSION_URL=$${LAST_VERSION_URL}"
