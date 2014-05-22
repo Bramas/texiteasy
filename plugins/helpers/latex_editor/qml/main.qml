@@ -45,6 +45,31 @@ Rectangle {
     id: page
     width: 440; height: 250
     color: "#e8e8e8"
+
+    SplitView {
+        id:spv
+        anchors.fill: parent
+
+        SearchBox {
+            width: 80
+            height: 60
+        }
+        SearchBox {
+            width: 80
+            height: 60
+        }
+        SearchBox {
+            width: 80
+            height: 60
+        }
+        Button{
+            onClicked: {
+                Qt.createQmlObject("SearchBox { width: 80; height: 60; }", spv, {});
+            }
+        }
+
+    }
+/*
     GridView {
         id: grid_view
         x: 8
@@ -111,6 +136,6 @@ Rectangle {
             parent.width = grid_view.width + 28
         }
     }
-
+*/
 
 }
