@@ -229,9 +229,9 @@ void Builder::hideAuxFiles()
      QString command = QString("attrib +h \".texiteasy\"");
     _hiddingProcess->start(command);
     _hiddingProcess->waitForFinished();
-    command = QString("attrib +h \"%1.log\"").arg(basename);
+    /*command = QString("attrib +h \"%1.log\"").arg(basename);
     _hiddingProcess->start(command);
-    _hiddingProcess->waitForFinished();
+    _hiddingProcess->waitForFinished();*/
     command = QString("attrib +h \"%1.synctex.gz\"").arg(basename);
     _hiddingProcess->start(command);
     _hiddingProcess->waitForFinished();
