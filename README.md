@@ -18,3 +18,34 @@ Features
 - Restore last session
 - Configure multiple builders
 - Configure keybinding and themes
+
+
+Build on Mac Os
+===============
+
+Build poppler
+-------------
+
+be sure that pkg-config is aware of your version of qt:
+
+	export PKG_CONFIG_PATH="$HOME/Qt/5.3/clang_64/lib/pkgconfig
+
+be sure that qt chooser is aware of your version of qt (in /etc/xdg/qtchooser/5.conf):
+
+	$HOME/Qt/5.3/clang_64/bin
+	$HOME/Qt/5.3/clang_64/lib
+
+I dont know why but qt pkgconfig gives the wrong include path, so you have to link as follow:
+
+	 ln -s $HOME/Qt/5.3/clang_64/lib/QtCore.framework/Versions/5/Headers/ $HOME/Qt/5.3/clang_64/include/QtCore
+	 ln -s $HOME/Qt/5.3/clang_64/lib/QtGui.framework/Versions/5/Headers/ $HOME/Qt/5.3/clang_64/include/QtGui
+	 ln -s $HOME/Qt/5.3/clang_64/lib/QtWidgets.framework/Versions/5/Headers/ $HOME/Qt/5.3/clang_64/include/QtWidgets
+
+
+
+Build on Windows
+================
+
+Use the mingw-builds (all dependencies are included):
+
+http://sourceforge.net/projects/mingwbuilds/files/external-binary-packages/Qt-Builds/

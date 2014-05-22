@@ -594,7 +594,7 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
             return;
         }
     }
-    if(e->key() == Qt::Key_Dollar)
+    if(e->key() == Qt::Key_Dollar && (e->modifiers() == Qt::NoModifier))
     {
         QTextCursor cur = this->textCursor();
         int start = cur.selectionStart();

@@ -298,7 +298,7 @@ void File::autoSave()
     out << this->data;
     file.close();
 #ifdef OS_WINDOWS
-    QProcess::execute(QString("attrib +h \"%1\"").arg(this->getAutoSaveFilename()));
+    //QProcess::execute(QString("attrib +h \"%1\"").arg(this->getAutoSaveFilename()));
 #endif
 }
 void File::findTexDirectives()
