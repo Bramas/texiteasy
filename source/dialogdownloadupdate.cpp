@@ -8,6 +8,7 @@
 #include <QDebug>
 #include <QTimer>
 #include <QDesktopServices>
+#include <QProcess>
 
 DialogDownloadUpdate::DialogDownloadUpdate(QWidget *parent) :
     QDialog(parent),
@@ -24,7 +25,7 @@ DialogDownloadUpdate::DialogDownloadUpdate(QWidget *parent) :
     _isUrlDownloaded = false;
     //connect(&manager, SIGNAL(finished(QNetworkReply*)),this, SLOT(downloadFinished(QNetworkReply*)));
     versionReply = manager.get(QNetworkRequest(QUrl(QString::fromUtf8(LAST_VERSION_URL))));
-    urlReply = manager.get(QNetworkRequest(QUrl(QString::fromUtf8(TEXITEASY_UPDATE_WEBSITE))));
+    urlReply = manager.get(QNetworkRequest(QUrl(QString::fromUtf8(TEXITEASY_UPDATE_FILE_URL))));
 
     QObject::connect(versionReply, SIGNAL(finished()), this, SLOT(onVersionDownloaded()));
     QObject::connect(urlReply, SIGNAL(finished()), this, SLOT(onUrlDownloaded()));
@@ -38,11 +39,20 @@ DialogDownloadUpdate::~DialogDownloadUpdate()
 
 void DialogDownloadUpdate::onDownloaded()
 {
-    qDebug()<<"[DownloadUpdate] launch : "<<filename();
-    /*QProcess * p = new QProcess();
+    qDebug()<<"[DownloadUpdate] launch : "<<QString("D:/Projects/texiteasy/Installer-i")+
+              "/texiteasy_deploy.exe "+
+              this->filename()+" looooooool.exe";
+    QProcess * p = new QProcess();
     //connect(p, SIGNAL(finished(int)), this, SLOT(onFinished(int)));
-    p->start(dl->filename());*/
-    QDesktopServices::openUrl(QUrl("file:///"+filename(), QUrl::TolerantMode));
+    p->start(QString("D:/Projects/texiteasy/Installer-i")+
+             "/texiteasy_deploy.exe "+
+             this->filename()+" looooooool.exe");
+
+
+
+    //QDesktopServices::openUrl(QUrl("file:///"+filename(), QUrl::TolerantMode));
+
+
     this->close();
 }
 
@@ -104,7 +114,7 @@ void DialogDownloadUpdate::download() {
     _mutex.unlock();
 
 #ifdef OS_WINDOWS
-    _filename = "texiteasy_"+_version+".exe";
+    _filename = "texiteasy_"+_version+".zip";
 #else
 #ifdef OS_MAC
     _filename = "texiteasy_"+_version+".dmg";

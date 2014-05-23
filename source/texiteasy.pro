@@ -208,6 +208,7 @@ win32 {
     DEFINES += OS_WINDOWS
     LAST_VERSION_URL = \\\"'http://texiteasy.com/downloads/latest_version/win'\\\"
     TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com/downloads/latest/win'\\\"
+    TEXITEASY_UPDATE_FILE_URL = \\\"'http://texiteasy.com/downloads/update_files/win'\\\"
 
     #LAST_VERSION_URL = \\\"'http://texiteasy.com/posts/latest_version/win_portable'\\\"
     #TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com/posts/download_latest/win_portable'\\\"
@@ -230,6 +231,7 @@ mac{
 }
 
 DEFINES += "TEXITEASY_UPDATE_WEBSITE=$${TEXITEASY_UPDATE_WEBSITE}"
+DEFINES += "TEXITEASY_UPDATE_FILE_URL=$${TEXITEASY_UPDATE_FILE_URL}"
 DEFINES += "LAST_VERSION_URL=$${LAST_VERSION_URL}"
 
 OTHER_FILES += \
