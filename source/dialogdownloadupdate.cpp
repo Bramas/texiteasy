@@ -12,9 +12,11 @@
 
 DialogDownloadUpdate::DialogDownloadUpdate(QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::DialogDownloadUpdate)
+    ui(new Ui::DialogDownloadUpdate),
+    _filename("")
 {
     ui->setupUi(this);
+    ui->label->setVisible(false);
 
     connect(this, SIGNAL(versionDownloaded(QString)), this->ui->label, SLOT(setText(QString)));
     connect(this, SIGNAL(downloadProgress(int)), this->ui->progressBar, SLOT(setValue(int)));
@@ -29,6 +31,8 @@ DialogDownloadUpdate::DialogDownloadUpdate(QWidget *parent) :
 
     QObject::connect(versionReply, SIGNAL(finished()), this, SLOT(onVersionDownloaded()));
     QObject::connect(urlReply, SIGNAL(finished()), this, SLOT(onUrlDownloaded()));
+    QObject::connect(this->ui->pushButtonInstallAndRestart, SIGNAL(clicked()), this, SLOT(installAndRestart()));
+    QObject::connect(this->ui->pushButtonInstallLater, SIGNAL(clicked()), this, SLOT(close()));
 
 }
 
@@ -37,23 +41,30 @@ DialogDownloadUpdate::~DialogDownloadUpdate()
     delete ui;
 }
 
+void DialogDownloadUpdate::installAndRestart()
+{
+    this->close();
+    qApp->closeAllWindows();
+    if(qApp->activeWindow())
+    {
+        return;
+    }
+    qApp->exit(CODE_INSTALL_AND_RESTART);
+}
+
 void DialogDownloadUpdate::onDownloaded()
 {
-    qDebug()<<"[DownloadUpdate] launch : "<<QString("D:/Projects/texiteasy/Installer-i")+
-              "/texiteasy_deploy.exe "+
-              this->filename()+" looooooool.exe";
+    /*
+    qDebug()<<"[DownloadUpdate] launch : "<<QString("elevate texiteasy_deploy.exe ")+this->filename();
     QProcess * p = new QProcess();
     //connect(p, SIGNAL(finished(int)), this, SLOT(onFinished(int)));
-    p->start(QString("D:/Projects/texiteasy/Installer-i")+
-             "/texiteasy_deploy.exe "+
-             this->filename()+" looooooool.exe");
+    p->start(QString("elevate texiteasy_deploy.exe ")+this->filename());
 
-
+    */
 
     //QDesktopServices::openUrl(QUrl("file:///"+filename(), QUrl::TolerantMode));
-
-
-    this->close();
+    this->ui->pushButtonInstallAndRestart->setEnabled(true);
+    this->ui->pushButtonInstallLater->setEnabled(true);
 }
 
 void DialogDownloadUpdate::onFinished(int)
@@ -114,7 +125,7 @@ void DialogDownloadUpdate::download() {
     _mutex.unlock();
 
 #ifdef OS_WINDOWS
-    _filename = "texiteasy_"+_version+".zip";
+    _filename = "updateFiles.zip";
 #else
 #ifdef OS_MAC
     _filename = "texiteasy_"+_version+".dmg";

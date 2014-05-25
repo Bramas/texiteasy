@@ -117,6 +117,7 @@ void DialogConfig::save()
     ConfigManager::Instance.setOpenLastSessionAtStartup(this->ui->checkBoxOpenLastSessionAtStartup->isChecked());
     ConfigManager::Instance.setLanguage(this->ui->comboBoxLanguages->currentText());
     ConfigManager::Instance.setDictionary(this->ui->comboBoxDictionary->currentText());
+    ConfigManager::Instance.setAutoSaveDuration(this->ui->spinBoxAutoSaveDuration->value()*1000);
 
     // Page Editor
     //
@@ -164,7 +165,7 @@ void DialogConfig::show()
     // Page General
 
     this->ui->checkBoxOpenLastSessionAtStartup->setChecked(ConfigManager::Instance.openLastSessionAtStartup());
-
+    this->ui->spinBoxAutoSaveDuration->setValue(ConfigManager::Instance.autoSaveDuration()/1000);
 
     // Page Builder:
 

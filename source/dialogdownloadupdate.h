@@ -5,6 +5,7 @@
 
 #ifdef OS_WINDOWS
 
+#include "configmanager.h"
 #include <QDialog>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
@@ -12,6 +13,8 @@
 #include <QMutex>
 #include <QSemaphore>
 #include <QStandardPaths>
+
+#define CODE_INSTALL_AND_RESTART 5000
 
 namespace Ui {
 class DialogDownloadUpdate;
@@ -26,7 +29,10 @@ public:
     ~DialogDownloadUpdate();
 
     QString filename() { return path() + "/" + _filename; }
-    QString path() { return QStandardPaths::writableLocation(QStandardPaths::TempLocation); }
+    QString path()
+    {
+        return ConfigManager::Instance.dataLocation();
+    }
 
     QString version() { return _version; }
 
@@ -40,6 +46,7 @@ signals:
     void versionDownloaded(QString);
 public slots:
     void onDownloaded();
+    void installAndRestart();
     void onFinished(int);
 
     void onError(QNetworkReply::NetworkError);
@@ -50,7 +57,6 @@ public slots:
 private slots:
     void download();
 private:
-
 
     QNetworkReply * versionReply;
     QNetworkReply * urlReply;

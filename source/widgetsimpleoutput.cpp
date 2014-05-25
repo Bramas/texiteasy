@@ -3,6 +3,8 @@
 #include "widgettextedit.h"
 #include <QHeaderView>
 #include <QDebug>
+#include <QStyle>
+
 WidgetSimpleOutput::WidgetSimpleOutput(QWidget *parent) :
     QTableWidget(0,3,parent)
 {
@@ -33,14 +35,21 @@ void WidgetSimpleOutput::onError()
     this->setRowCount(this->_builder->simpleOutput().count());
 
     QStringList headers;
-    headers << tr("Type") << tr("Ligne") << tr("Message");
+    headers << tr("") << tr("Ligne") << tr("Message");
     this->setHorizontalHeaderLabels(headers);
+    this->setColumnWidth(0, 30);
+    this->setColumnWidth(1, 65);
 
     int row = 0;
     foreach(const Builder::Output & outputItem, this->_builder->simpleOutput())
     {
-        this->setItem(row,0,new QTableWidgetItem(outputItem.type));
-        this->setItem(row,1,new QTableWidgetItem(outputItem.line));
+        QTableWidgetItem * item = new QTableWidgetItem();
+        item->setIcon(this->style()->standardIcon(QStyle::SP_MessageBoxCritical));
+        item->setTextAlignment(Qt::AlignCenter);
+        this->setItem(row,0, item);
+        item = new QTableWidgetItem(outputItem.line);
+        item->setTextAlignment(Qt::AlignCenter);
+        this->setItem(row,1,item);
         this->setItem(row,2,new QTableWidgetItem(outputItem.message));
         this->item(row,0)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         this->item(row,1)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
@@ -54,6 +63,13 @@ void WidgetSimpleOutput::onSuccess()
 }
 void WidgetSimpleOutput::onCellSelected(int row, int)
 {
+    QString err = this->item(row,2)->text();
     int line = this->item(row,1)->text().toInt();
-    _widgetTextEdit->goToLine(line,"\\testb");
+    QRegExp undefinedCommand("Undefined control sequence.* (\\\\[a-zA-Z]+)");
+    QString search("");
+    if(err.indexOf(undefinedCommand) != -1)
+    {
+        search = undefinedCommand.capturedTexts().at(1);
+    }
+    _widgetTextEdit->goToLine(line,search);
 }

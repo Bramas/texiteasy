@@ -145,6 +145,7 @@ void WidgetLineNumber::paintEvent(QPaintEvent * /*event*/)
             ++l;
             continue;
         }
+        int top = this->scrollOffset+this->widgetTextEdit->blockTop(l) + 2;
         if(l == _currentLine)
         {
             painter.setPen(currentLinePen);
@@ -155,7 +156,6 @@ void WidgetLineNumber::paintEvent(QPaintEvent * /*event*/)
             painter.setPen(defaultPen);
             painter.setFont(defaultFont);
         }
-        int top = this->scrollOffset+this->widgetTextEdit->blockTop(l) + 2;
         painter.drawText(5,top, right, fontHeight, Qt::AlignRight,   QString::number(l+1));
 
 
@@ -197,7 +197,12 @@ void WidgetLineNumber::paintEvent(QPaintEvent * /*event*/)
         }
         ++l;
     }
-    if(l > environmentPath.top()->blockBeginNumber && !widgetTextEdit->isFolded(environmentPath.top()->blockBeginNumber) && environmentPath.top()->blockBeginNumber != 0)
+    if(l > environmentPath.top()->blockBeginNumber
+            && (   l > environmentPath.top()->blockEndNumber
+                || this->firstVisibleBlock < environmentPath.top()->blockBeginNumber)
+            && !widgetTextEdit->isFolded(environmentPath.top()->blockBeginNumber)
+            && environmentPath.top()->blockBeginNumber != 0
+            && environmentPath.top()->name != "document")
     {
         if(_isMouseOverFolding)
         {

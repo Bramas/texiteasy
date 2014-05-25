@@ -24,16 +24,15 @@
 #include "viewer.h"
 #include "widgettextedit.h"
 #include "filemanager.h"
+#include "configmanager.h"
 #include <QFile>
 #include <QFileDialog>
 #include <QTextStream>
 #include <QTextCodec>
-#include <QTimer>
 #include <QDebug>
 #include <QRegExp>
 #include <QMessageBox>
 
-#define AUTO_SAVE 120000
 
 AssociatedFile AssociatedFile::NoAssociation = { AssociatedFile::NONE, QString()};
 
@@ -119,7 +118,6 @@ void File::save(QString filename, bool recursively)
     this->setModified(false);
     _lastSaved = this->fileInfo().lastModified();
     _autoSaveTimer->stop();
-    _autoSaveTimer->start(AUTO_SAVE);
 }
 
 const QString File::open(QString filename, QString codec)
@@ -240,7 +238,6 @@ const QString File::open(QString filename, QString codec)
     this->refreshLineNumber();
     this->setModified(autosaveLoad);
     _autoSaveTimer->stop();
-    _autoSaveTimer->start(AUTO_SAVE);
     _lastSaved = this->fileInfo().lastModified();
     return this->data;
 
@@ -301,6 +298,21 @@ void File::autoSave()
     //QProcess::execute(QString("attrib +h \"%1\"").arg(this->getAutoSaveFilename()));
 #endif
 }
+
+void File::setModified(bool mod)
+{
+    bool send = false;
+    if(mod != _modified) send = true;
+
+    this->_modified = mod;
+
+    if(send)
+    {
+       _autoSaveTimer->start(ConfigManager::Instance.autoSaveDuration());
+       emit modified(_modified);
+    }
+}
+
 void File::findTexDirectives()
 {
     if(this->data.isEmpty())

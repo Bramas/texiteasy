@@ -4,22 +4,17 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       -= core
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-
-TARGET = texiteasy_deploy
+TARGET = texiteasy_upgrade
 TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
-    miniz.c
+           miniz.c
 
-HEADERS  += mainwindow.h \
-    timer.h
+HEADERS  += timer.h
 
-FORMS    += mainwindow.ui
 
 LIBS += -LC:/Qt/prerequisites-i686/lib -lz
 INCLUDEPATH += C:/Qt/prerequisites-i686/include

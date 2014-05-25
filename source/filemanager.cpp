@@ -378,13 +378,13 @@ void FileManager::initTheme()
 
 void FileManager::close(WidgetFile *widget)
 {
+    widget->setVisible(false);
     int id = _widgetFiles.indexOf(widget);
     if(id == -1)
     {
         return;
     }
     widget->addWidgetPdfViewerToSplitter();
-    //deleteMasterConnexions(widget);
     if(_currentWidgetFileId >= id && _currentWidgetFileId != 0)
     {
         --_currentWidgetFileId;

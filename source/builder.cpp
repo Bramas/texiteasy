@@ -229,9 +229,6 @@ void Builder::hideAuxFiles()
      QString command = QString("attrib +h \".texiteasy\"");
     _hiddingProcess->start(command);
     _hiddingProcess->waitForFinished();
-    /*command = QString("attrib +h \"%1.log\"").arg(basename);
-    _hiddingProcess->start(command);
-    _hiddingProcess->waitForFinished();*/
     command = QString("attrib +h \"%1.synctex.gz\"").arg(basename);
     _hiddingProcess->start(command);
     _hiddingProcess->waitForFinished();
@@ -265,7 +262,6 @@ bool Builder::checkOutput()
 {
     if(_lastOutput.indexOf("Database file ") != -1)
     {
-        //_simpleOutPut << "Success";
         return true;
     }
     QStringList lines = _lastOutput.split('\n');
@@ -310,6 +306,17 @@ bool Builder::checkOutput()
             }
         }
     }
-
+    if(errorState)
+    {
+        Builder::Output outputItem;
+        outputItem.line = "-1";
+        outputItem.message = errorMessage;
+        if(errorMessage.contains("@xdblarg"))
+        {
+            outputItem.message += " A '}' is missing";
+        }
+        outputItem.type = Builder::Error;
+        _simpleOutPut.append(outputItem);
+    }
     return _simpleOutPut.isEmpty();
 }

@@ -32,6 +32,9 @@
 #include <QStringList>
 #include <QFileInfo>
 #include <QDateTime>
+#include <QTimer>
+
+#define AUTO_SAVE 40000
 
 class Viewer;
 class Builder;
@@ -197,17 +200,7 @@ public slots:
     /**
      * @brief setModified, this will send the signal modified(bool)
      */
-    void setModified(bool mod = true) {
-        bool send = false;
-        if(mod != _modified) send = true;
-
-        this->_modified = mod;
-
-        if(send)
-        {
-            emit modified(_modified);
-        }
-    }
+    void setModified(bool mod = true);
 
     /**
      * @brief change the codec to UTF-8

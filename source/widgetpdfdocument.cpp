@@ -611,6 +611,10 @@ void WidgetPdfDocument::jumpToPdfFromSourceView(int /*top*/)
         int centerBlockNumber = this->_widgetTextEdit->centerBlockNumber();
         this->jumpToPdfFromSource(centerBlockNumber);
     }
+    else
+    {
+        this->_widgetTextEdit->highlightSyncedLine();
+    }
 }
 
 void WidgetPdfDocument::jumpToPdfFromSource(int source_line)

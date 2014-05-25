@@ -88,7 +88,7 @@ public:
     ~MainWindow();
 
 public slots:
-
+    void proposeUpdateDialog();
     void setWindowModified(bool b);
     WidgetFile *newFile();
     void open();
@@ -138,6 +138,7 @@ protected:
     void dragLeaveEvent(QDragLeaveEvent *);
     void dropEvent(QDropEvent *);
     void changeEvent(QEvent *event);
+    void createLastOpenedFilesMenu();
     
 private:
     void closeCurrentWidgetFile();

@@ -206,11 +206,15 @@ public:
     QString softId() { QSettings settings; return settings.value("softId").toString(); }
     QString systemInfo();
 
+    int autoSaveDuration() { QSettings settings; return settings.value("autoSaveDuration", 40000).toInt(); }
+    void setAutoSaveDuration(int duration) { QSettings settings; return settings.setValue("autoSaveDuration", duration); }
 
     static QString Extensions;
     static QString MacroSuffix;
     static const QStringList CodecsAvailable;
     QString dataLocation();
+
+    QString updateFiles();
 
     void init(QString in_applicationPath);
 public slots:

@@ -1259,22 +1259,15 @@ void WidgetTextEdit::goToLine(int line, QString stringSelected)
     QTextCursor cursor(this->textCursor());
     cursor.setPosition(this->document()->findBlockByNumber(line - 1).position());
     this->setTextCursor(cursor);
+    this->highlightSyncedLine();
     if(!stringSelected.isEmpty())
     {
         int index;
-        qDebug()<<"search : "<<stringSelected;
         if((index = this->document()->findBlockByNumber(line - 1).text().indexOf(stringSelected)) != -1)
         {
-            qDebug()<<"found : "<<index;
-            QList<QTextEdit::ExtraSelection> extraSelections = this->extraSelections();
-            QTextEdit::ExtraSelection selection;
-            selection.format.setBackground(QColor(255,0,0));
             cursor.movePosition(QTextCursor::Right,QTextCursor::MoveAnchor,index);
             cursor.movePosition(QTextCursor::Right,QTextCursor::KeepAnchor,stringSelected.length());
-            selection.cursor = QTextCursor(cursor);
-            selection.cursor.clearSelection();
-            extraSelections.append(selection);
-            this->setExtraSelections(extraSelections);
+            setTextCursor(cursor);
         }
     }
 }
@@ -1305,6 +1298,10 @@ void WidgetTextEdit::highlightCurrentLine(void)
 }
 void WidgetTextEdit::highlightSyncedLine(int line)
 {
+    if( line == -1)
+    {
+        line = textCursor().blockNumber();
+    }
     QList<QTextEdit::ExtraSelection> extraSelections;// = this->extraSelections();
 
 

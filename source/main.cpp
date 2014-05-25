@@ -32,12 +32,36 @@
 #include "configmanager.h"
 #include "filemanager.h"
 #include "macroengine.h"
+#include "updatechecker.h"
+#include "dialogdownloadupdate.h"
 #include <QSettings>
 #include <QFontDatabase>
 #include <QDebug>
 #include <QFileInfo>
 #include <QDir>
+#include <QProcess>
 
+void upgrade()
+{
+    QString command = "";
+    switch(QSysInfo::windowsVersion())
+    {
+    case QSysInfo::WV_NT:
+    case QSysInfo::WV_2000:
+    case QSysInfo::WV_XP:
+    case QSysInfo::WV_2003:
+        command = "texiteasy_upgrade.exe "+ConfigManager::Instance.updateFiles();
+        break;
+    default:
+        command = "elevate texiteasy_upgrade.exe "+ConfigManager::Instance.updateFiles();
+        break;
+    }
+
+
+
+    qDebug()<<"[main.c] launch : "<<command;
+    QProcess::startDetached(command);
+}
 
 int main(int argc, char *argv[])
 {
@@ -66,6 +90,7 @@ int main(int argc, char *argv[])
         return 0;
     }
 
+
     QFontDatabase::addApplicationFont(":/data/fonts/consola.ttf");
     QFontDatabase::addApplicationFont(":/data/fonts/consolab.ttf");
     QFontDatabase::addApplicationFont(":/data/fonts/consolai.ttf");
@@ -79,6 +104,12 @@ int main(int argc, char *argv[])
 #else
     ConfigManager::Instance.setDevicePixelRatio(1);
 #endif
+
+    if(!ConfigManager::Instance.updateFiles().isEmpty())
+    {
+        upgrade();
+        return 0;
+    }
 
     FileManager::Instance.init();
     MacroEngine::Instance.init();
@@ -94,5 +125,14 @@ int main(int argc, char *argv[])
         QString filename = QString::fromLocal8Bit(argv[1]);
         w.open(filename);
     }
-    return a.exec();
+
+    UpdateChecker * updateChecker = new UpdateChecker(&w);
+
+    int returnCode = a.exec();
+    if(returnCode == CODE_INSTALL_AND_RESTART)
+    {
+        upgrade();
+        return 0;
+    }
+    return returnCode;
 }

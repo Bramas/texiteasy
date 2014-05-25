@@ -62,7 +62,7 @@ QString uniqueId()
     softId += "_";
     softId += CURRENT_VERSION;
     softId += "_";
-#ifdef OS_WIN
+#ifdef OS_WINDOWS
     softId += "WIN";
 #else
 #ifdef OS_MAC
@@ -546,6 +546,19 @@ QString ConfigManager::dataLocation()
 #endif
 }
 
+QString ConfigManager::updateFiles()
+{
+#ifdef OS_WINDOWS
+    QString filename(dataLocation()+"/updateFiles.zip");
+    QFile f(filename);
+    if(f.exists())
+    {
+        return filename;
+    }
+#endif
+    return "";
+}
+
 QString ConfigManager::macrosPath()
 {
        return dataLocation()+"/macros/";
@@ -658,7 +671,7 @@ QString ConfigManager::systemInfo()
     case QSysInfo::MV_10_9: sysVersion = "10.9"; break;
     }
 #endif
-#ifdef OS_WIN
+#ifdef OS_WINDOWS
     sysType = "Windows";
     switch(QSysInfo::windowsVersion())
     {
@@ -915,6 +928,8 @@ void ConfigManager::checkRevision()
     case 0x001201:
     case 0x001202:
     case 0x001203:
+    case 0x001300:
+    case 0x001301:
 
 
         break;

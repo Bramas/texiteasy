@@ -2,11 +2,10 @@
 #include <QFileOpenEvent>
 #include <QTimer>
 #include <QDebug>
-#include "updatechecker.h"
 
 Application::Application(const QString &appId, int & argc, char ** argv ) : QtSingleApplication (appId, argc, argv )
 {
-    UpdateChecker * updateChecker = new UpdateChecker();
+
 }
 
 #ifdef OS_MAC

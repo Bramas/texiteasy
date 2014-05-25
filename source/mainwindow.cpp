@@ -40,6 +40,7 @@
 #include "widgetproject.h"
 #include "macroengine.h"
 #include "dialogsendfeedback.h"
+#include "updatechecker.h"
 
 #include <QMenu>
 #include <QAction>
@@ -211,17 +212,8 @@ MainWindow::MainWindow(QWidget *parent) :
     this->ui->menuTh_me->insertSeparator(lastAction);
 
     settings.endGroup();
-    lastAction = this->ui->menuOuvrir_R_cent->actions().last();
-    QStringList lastFiles = settings.value("lastFiles").toStringList();
-    foreach(const QString& file, lastFiles)
-    {
-        QAction * action = new QAction(file, this->ui->menuOuvrir_R_cent);
-        action->setPriority(QAction::LowPriority);
-        this->ui->menuOuvrir_R_cent->insertAction(lastAction,action);
-        connect(action, SIGNAL(triggered()), this, SLOT(openLast()));
-    }
-    this->ui->menuOuvrir_R_cent->insertSeparator(lastAction);
 
+    createLastOpenedFilesMenu();
 
     {
         QList<QAction *> actionsList = this->findChildren<QAction *>();
@@ -280,10 +272,15 @@ void MainWindow::closeEvent(QCloseEvent * event)
     int tabIndex = _tabWidget->currentIndex();
     while(_tabWidget->count())
     {
+        int tabId = 0;
+        if(_tabWidget->count() > 1 && _tabWidget->currentIndex() == 0)
+        {
+            //tabId = 1;
+        }
         QString * filename = 0;
 
-        fileCursorPositions<< QString::number(_tabWidget->widget(0)->widgetTextEdit()->textCursor().position());
-        if(!this->closeTab(0, &filename))
+        fileCursorPositions<< QString::number(_tabWidget->widget(tabId)->widgetTextEdit()->textCursor().position());
+        if(!this->closeTab(tabId, &filename))
         {
             event->ignore();
             return;
@@ -495,8 +492,30 @@ void MainWindow::onFilenameChanged(QString filename)
 #endif
 }
 
+void MainWindow::createLastOpenedFilesMenu()
+{
+    this->ui->menuOuvrir_R_cent->clear();
+    this->ui->menuOuvrir_R_cent->insertAction(0,this->ui->actionDeleteLastOpenFiles);
+    QAction* lastAction = this->ui->menuOuvrir_R_cent->actions().last();
+    QStringList lastFiles = QSettings().value("lastFiles").toStringList();
+    foreach(const QString& file, lastFiles)
+    {
+        if(!QFile(file).exists())
+        {
+            continue;
+        }
+        QAction * action = new QAction(file, this->ui->menuOuvrir_R_cent);
+        action->setPriority(QAction::LowPriority);
+        this->ui->menuOuvrir_R_cent->insertAction(lastAction,action);
+        connect(action, SIGNAL(triggered()), this, SLOT(openLast()));
+    }
+    this->ui->menuOuvrir_R_cent->insertSeparator(lastAction);
+
+}
+
 void MainWindow::addFilenameToLastOpened(QString filename)
 {
+    filename.replace("\\","/");
     QSettings settings;
     QFileInfo info(filename);
     settings.setValue("lastFolder",info.path());
@@ -510,6 +529,7 @@ void MainWindow::addFilenameToLastOpened(QString filename)
         while(lastFiles.count()>10) { lastFiles.pop_back(); }
         settings.setValue("lastFiles", lastFiles);
     }
+    createLastOpenedFilesMenu();
 }
 
 void MainWindow::openLastSession()
@@ -551,6 +571,7 @@ void MainWindow::open()
 }
 void MainWindow::open(QString filename, int cursorPosition)
 {
+    filename.replace("\\", "/");
     QSettings settings;
 
     //check the filename
@@ -561,6 +582,7 @@ void MainWindow::open(QString filename, int cursorPosition)
     //check the filename
     if(!QFileInfo(filename).exists())
     {
+        /*
         QDir dir = QFileInfo(filename).dir();
         bool folderDoesNotExists = false;
         QString fisrtNonExistingFolder = dir.dirName();
@@ -581,7 +603,7 @@ void MainWindow::open(QString filename, int cursorPosition)
         {
             msgBox.setInformativeText(trUtf8("Even the folder \"%1\" does not exists").arg(fisrtNonExistingFolder));
         }
-        msgBox.exec();
+        msgBox.exec();*/
         return;
     }
     this->addFilenameToLastOpened(filename);
@@ -921,9 +943,14 @@ void MainWindow::addUpdateMenu()
      */
     this->ui->menuBar->addAction(openWebsiteAction);
 #endif
-    connect(openWebsiteAction, SIGNAL(triggered()), &ConfigManager::Instance, SLOT(openUpdateWebsite()));
+    connect(openWebsiteAction, SIGNAL(triggered()), this, SLOT(proposeUpdateDialog()));
 
 }
+void MainWindow::proposeUpdateDialog()
+{
+    UpdateChecker::proposeUpdateDialog(this);
+}
+
 void MainWindow::setWindowModified(bool b)
 {
 

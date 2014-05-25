@@ -95,7 +95,7 @@ public:
     void goToSection(QString sectionName);
 
     int centerBlockNumber();
-    void highlightSyncedLine(int line);
+    void highlightSyncedLine(int line = -1);
     void newLine();
     void deletePreviousTab();
     void setTextCursorPosition(int pos);
