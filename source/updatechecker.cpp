@@ -20,7 +20,11 @@ UpdateChecker::UpdateChecker(QWidget * parent) : _parent(parent)
 
     QNetworkRequest request;
     request.setUrl(QUrl(LAST_VERSION_URL));
+#if QT_VERSION > 0x050000
     request.setHeader(QNetworkRequest::UserAgentHeader, QString(QString("TexitEasy ")+CURRENT_VERSION));
+#else
+    request.setRawHeader("User-Agent", QString(QString("TexitEasy ")+CURRENT_VERSION).toLatin1());
+#endif
     request.setRawHeader("texiteasy-soft-id", ConfigManager::Instance.softId().toLatin1());
     this->get(request);
 }
