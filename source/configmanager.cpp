@@ -908,8 +908,13 @@ void ConfigManager::checkRevision()
         hotKeys.setValue("Redo", "");
     }
     case 0x001200:
+    case 0x001201:
+    case 0x001202:
+    case 0x001203:
+    case 0x001300:
+    case 0x001301:
     {
-        qDebug()<<"texiteasy => 0.12.0";
+        qDebug()<<"texiteasy => 0.13.2";
 
         // install macros
         {
@@ -925,11 +930,7 @@ void ConfigManager::checkRevision()
                                                           );
         }
     }
-    case 0x001201:
-    case 0x001202:
-    case 0x001203:
-    case 0x001300:
-    case 0x001301:
+    case 0x001302:
 
 
         break;
