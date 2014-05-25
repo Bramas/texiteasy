@@ -133,6 +133,11 @@ void UpdateChecker::onFinished(QNetworkReply *reply)
 #endif
     if(ConfigManager::Instance.isThisVersionHaveToBeReminded(_version))
     {
+        if(QApplication::applicationDirPath().contains("program", Qt::CaseInsensitive))
+        {
+            QMessageBox::information(0, QObject::trUtf8("Mettre à jour manuellement"), QObject::trUtf8("Après des modifications majeures, il est nécessaires de mettre à jour TexitEasy manuellement depuis le <a href='" TEXITEASY_UPDATE_WEBSITE "'>site officiel</a>."));
+        }
+        else
         proposeUpdateDialog(_parent);
     }
 }

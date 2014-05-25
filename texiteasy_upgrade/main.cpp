@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <limits.h>
+#include <string.h>
 
 typedef unsigned char uint8;
 typedef unsigned short uint16;
@@ -28,7 +29,6 @@ int WINAPI WinMain( HINSTANCE hInstance,
                     int iCmdShow )
 {
 
-
     LPWSTR *szArglist;
     int nArgs = 0;
     szArglist = CommandLineToArgvW(GetCommandLineW(), &nArgs);
@@ -40,6 +40,15 @@ int WINAPI WinMain( HINSTANCE hInstance,
     }
     ofstream log("texiteasy_upgrade.log");
     char * zipFilename = szCmdLine;
+
+    if(strstr(zipFilename, ".exe"))
+    {
+        char command[5000] = "start elevate ";
+        system(strcat(command, zipFilename));
+        return 0;
+    }
+    Sleep(700);
+
 
     FILE * zipFile;
     if(!(zipFile = fopen(zipFilename, "rb")))
@@ -83,6 +92,7 @@ int WINAPI WinMain( HINSTANCE hInstance,
         }
         size_t dataSize = 0;
         void * data = mz_zip_reader_extract_to_heap(&zip_archive, f_idx, &dataSize, MZ_ZIP_FLAG_DO_NOT_SORT_CENTRAL_DIRECTORY);
+
         FILE * file = fopen(filenameData, "wb");
         if(!file)
         {

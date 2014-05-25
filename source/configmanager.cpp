@@ -549,6 +549,12 @@ QString ConfigManager::dataLocation()
 QString ConfigManager::updateFiles()
 {
 #ifdef OS_WINDOWS
+    QFile fLog("texiteasy_upgrade.log");
+    if(fLog.exists())
+    {
+        return "";
+    }
+
     QString filename(dataLocation()+"/updateFiles.zip");
     QFile f(filename);
     if(f.exists())
@@ -931,6 +937,8 @@ void ConfigManager::checkRevision()
         }
     }
     case 0x001302:
+    case 0x001303:
+    case 0x001304:
 
 
         break;

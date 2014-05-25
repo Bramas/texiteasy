@@ -40,28 +40,39 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QProcess>
+#include <QMessageBox>
 
 void upgrade()
 {
 #ifdef OS_WINDOWS
     QString command = "";
-    switch(QSysInfo::windowsVersion())
+    QDir d = QDir(QApplication::applicationDirPath());
+    d.cdUp();
+    if(d.dirName().contains("program", Qt::CaseInsensitive))
     {
-    case QSysInfo::WV_NT:
-    case QSysInfo::WV_2000:
-    case QSysInfo::WV_XP:
-    case QSysInfo::WV_2003:
-        command = "texiteasy_upgrade.exe "+ConfigManager::Instance.updateFiles();
-        break;
-    default:
+        switch(QSysInfo::windowsVersion())
+        {
+        case QSysInfo::WV_NT:
+        case QSysInfo::WV_2000:
+        case QSysInfo::WV_XP:
+        case QSysInfo::WV_2003:
+            command = "texiteasy_upgrade.exe "+ConfigManager::Instance.updateFiles();
+            break;
+        default:
+            command = "elevate texiteasy_upgrade.exe "+ConfigManager::Instance.updateFiles();
+            break;
+        }
+    }
+    else
+    {
         command = "elevate texiteasy_upgrade.exe "+ConfigManager::Instance.updateFiles();
-        break;
     }
 
 
 
     qDebug()<<"[main.c] launch : "<<command;
-    QProcess::startDetached(command);
+    QProcess * p = new QProcess();
+    p->start(command);
 #endif
 }
 
