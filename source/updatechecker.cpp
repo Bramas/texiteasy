@@ -7,9 +7,6 @@
 #include <QApplication>
 #include <QTimer>
 #include <QProcess>
-#include <stdio.h>
-#include <iostream>
-#include <windows.h>
 #include "configmanager.h"
 #ifdef OS_WINDOWS
     #include "dialogdownloadupdate.h"
