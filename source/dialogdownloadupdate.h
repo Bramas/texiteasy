@@ -3,6 +3,8 @@
 #ifndef DIALOGDOWNLOADUPDATE_H
 #define DIALOGDOWNLOADUPDATE_H
 
+#define CODE_INSTALL_AND_RESTART 5000
+
 #ifdef OS_WINDOWS
 
 #include "configmanager.h"
@@ -14,7 +16,6 @@
 #include <QSemaphore>
 #include <QStandardPaths>
 
-#define CODE_INSTALL_AND_RESTART 5000
 
 namespace Ui {
 class DialogDownloadUpdate;

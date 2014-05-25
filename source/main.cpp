@@ -63,7 +63,6 @@ void upgrade()
     qDebug()<<"[main.c] launch : "<<command;
     QProcess::startDetached(command);
 #endif
-
 }
 
 int main(int argc, char *argv[])
