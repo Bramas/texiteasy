@@ -85,6 +85,7 @@ public:
         if(!_document) return 0;
         return _documentHeight*_zoom + WidgetPdfDocument::PageMargin * (_document->numPages() - 1);
     }
+    void updateScrollBar();
 signals:
     void translated(int);
 public slots:

@@ -267,6 +267,7 @@ void WidgetPdfDocument::initDocument()
     {
         qDebug()<<"Sync file does not exists : "<<syncFile+".synctex.gz";
     }
+    updateScrollBar();
 }
 
 void WidgetPdfDocument::initScroll()
@@ -329,9 +330,8 @@ void WidgetPdfDocument::initLinks()
 void WidgetPdfDocument::resizeEvent(QResizeEvent *)
 {
     _scroll->setGeometry(this->width()-20,0,20,this->height());
-    _scroll->setPageStep(this->height() / _zoom);
-
     this->boundPainterTranslation();
+    this->updateScrollBar();
 
 }
 void WidgetPdfDocument::onScroll(int value)
@@ -375,8 +375,6 @@ void WidgetPdfDocument::goToPage(int page, int top, int height)
     {
         cumulatedTop += _document->page(i)->pageSize().height()*_zoom+WidgetPdfDocument::PageMargin;
     }
-    //qDebug()<<(this->height());
-    //qDebug()<<(-this->_painterTranslate.y() + this->height())<<"  <  "<<(cumulatedTop + height * _zoom)<<" | "<<(-this->_painterTranslate.y())<<" > "<<cumulatedTop + top ;
     if(-this->_painterTranslate.y() + this->height() < cumulatedTop + top*_zoom + height * _zoom || -this->_painterTranslate.y() > cumulatedTop + top*_zoom )
     {
         this->_painterTranslate.setY(-cumulatedTop-top*_zoom-height*_zoom/2+this->height()/2);
@@ -408,7 +406,6 @@ void WidgetPdfDocument::refreshPages()
 void WidgetPdfDocument::checkLinksOver(const QPointF &pos)
 {
     QPointF absolutePos = pos - this->_painterTranslate;
-    //absolutePos *= _zoom;
     this->setCursor(Qt::ArrowCursor);
     foreach(const Link &link, _links)
     {
@@ -498,6 +495,12 @@ void WidgetPdfDocument::wheelEvent(QWheelEvent * event)
         update();
     }
 }
+void WidgetPdfDocument::updateScrollBar()
+{
+    this->_scroll->setRange(0,this->documentHeight() - this->height()+30);
+    this->_scroll->setPageStep(this->height() / _zoom);
+}
+
 void WidgetPdfDocument::zoom(qreal factor, QPoint target)
 {
     qreal oldZoom = _zoom;
@@ -509,9 +512,7 @@ void WidgetPdfDocument::zoom(qreal factor, QPoint target)
     this->_painterTranslate *= factor;
     this->_painterTranslate += target;
     this->boundPainterTranslation();
-
-    this->_scroll->setRange(0,this->documentHeight() - this->height()+30);
-    this->_scroll->setPageStep(this->height() / _zoom);
+    this->updateScrollBar();
     emit translated( - _painterTranslate.y());
     update();
     _requestNewResolutionTimer.stop();

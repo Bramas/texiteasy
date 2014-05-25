@@ -227,6 +227,8 @@ void WidgetTab::paintEvent(QPaintEvent * /*event*/)
         painter.translate(_closeLeftMargin, 0);
         if(widget(index)->file()->isModified())
         {
+            painter.setPen(QPen(QColor(249, 39, 114)));
+            painter.setBrush(QBrush(QColor(249, 39, 114)));
             painter.drawEllipse(_closeWidth/2 - 1, 15 + _closeWidth/2 - 1, _closeWidth, _closeWidth);
         }
         else
