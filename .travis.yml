@@ -4,9 +4,7 @@ compiler:
   - clang
 
 before_install:
-    - sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
-    - sudo apt-get update -qq
-    - sudo apt-get install -qq libqt4-dev qt4-qmake libpoppler-qt4-dev zlib1g-dev
+    - sudo apt-get install libqt4-dev qt4-qmake libpoppler-qt4-dev zlib1g-dev
 script:
     - cd source
     - qmake texiteasy.pro
