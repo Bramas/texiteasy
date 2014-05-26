@@ -45,6 +45,7 @@
 void upgrade()
 {
 #ifdef OS_WINDOWS
+    /*
     QString command = "";
     QDir d = QDir(QApplication::applicationDirPath());
     d.cdUp();
@@ -72,7 +73,7 @@ void upgrade()
 
     qDebug()<<"[main.c] launch : "<<command;
     QProcess * p = new QProcess();
-    p->start(command);
+    p->start(command);*/
 #endif
 }
 

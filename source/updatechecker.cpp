@@ -126,7 +126,7 @@ void UpdateChecker::onFinished(QNetworkReply *reply)
     QTimer::singleShot(1000,&ConfigManager::Instance, SLOT(signalVersionIsOutdated()));
 #ifdef OS_WINDOWS
 
-    if(QFile("texiteasy_upgrade.log").exists())
+    if(QFile(QApplication::applicationDirPath()+"/texiteasy_upgrade.log").exists())
     {
         QMessageBox::information(_parent,  trUtf8("Erreur pendant la mise à jour?"), trUtf8("Si une mise à jour ne s'est pas correctement déroulée, il est conseillé de telecharger la dernière version de TexitEasy directement sur le site officielle."));
     }
@@ -135,7 +135,7 @@ void UpdateChecker::onFinished(QNetworkReply *reply)
     {
         if(QApplication::applicationDirPath().contains("program", Qt::CaseInsensitive))
         {
-            QMessageBox::information(0, QObject::trUtf8("Mettre à jour manuellement"), QObject::trUtf8("Après des modifications majeures, il est nécessaires de mettre à jour TexitEasy manuellement depuis le <a href='" TEXITEASY_UPDATE_WEBSITE "'>site officiel</a>."));
+            QMessageBox::information(0, QObject::trUtf8("Mettre à jour manuellement"), QObject::trUtf8("Après des modifications majeures, il est nécessaire de mettre à jour TexitEasy manuellement depuis le <a href='" TEXITEASY_UPDATE_WEBSITE "'>site officiel</a>."));
         }
         else
         proposeUpdateDialog(_parent);

@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
         return 2;
     }
 
-    f.write(QDir::toNativeSeparators(QFileInfo(argv[0]).absolutePath() + "/TexitEasy.exe").toLatin1());
+    f.write(QDir::toNativeSeparators(QFileInfo(argv[0]).absolutePath()).toLatin1());
 
     return 0;
 }
