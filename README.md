@@ -19,6 +19,10 @@ Features
 - Configure multiple builders
 - Configure keybinding and themes
 
+Build on Linux
+==============
+
+[![Build Status](https://travis-ci.org/Bramas/texiteasy.svg?branch=master)](https://travis-ci.org/Bramas/texiteasy)
 
 Build on Mac Os
 ===============
