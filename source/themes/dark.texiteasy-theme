@@ -13,6 +13,7 @@ synced-line=" foreground(14, 16, 15)  background(68, 70, 64) "
 structure="font(bold )  foreground(249, 39, 114) "
 textedit-border=" foreground(14, 16, 15)  background(58, 60, 50) "
 other=" foreground(218, 205, 217)"
+matched="font(bold )  foreground(242, 230, 100)  background(100, 111, 242) "
 
 tab-text="foreground(153, 153, 137)"
 tab-active-text="foreground(178, 178, 160)"

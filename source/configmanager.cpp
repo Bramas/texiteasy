@@ -769,47 +769,8 @@ void ConfigManager::checkRevision()
             }
 
             qDebug()<<"texiteasy =>0.6.0";
-            {
-                QDir().mkdir(themePath());
-                QDir dir;
+    }
 
-                //remove some old files
-                {
-                    QFile localtheme(dataLocation()+dir.separator()+"dark.sim-theme");
-                    QFile localtheme2(dataLocation()+dir.separator()+"light.sim-theme");
-                    localtheme.remove();
-                    localtheme2.remove();
-                }
-
-                QFile::setPermissions(themePath()+"dark.texiteasy-theme",
-                                  QFile::ReadOwner |
-                                  QFile::WriteOwner |
-                                  QFile::ReadGroup |
-                                  QFile::WriteGroup |
-                                  QFile::ReadOther |
-                                  QFile::WriteOther |
-                                  QFile::ReadUser |
-                                  QFile::WriteUser
-                                  );
-                QFile::setPermissions(themePath()+"light.texiteasy-theme",
-                                  QFile::ReadOwner |
-                                  QFile::WriteOwner |
-                                  QFile::ReadGroup |
-                                  QFile::WriteGroup |
-                                  QFile::ReadOther |
-                                  QFile::WriteOther |
-                                  QFile::ReadUser |
-                                  QFile::WriteUser
-                                  );
-
-
-                QFile theme(":/themes/dark.texiteasy-theme");
-                QFile theme2(":/themes/light.texiteasy-theme");
-                theme.copy(themePath()+"dark.texiteasy-theme");
-                theme2.copy(themePath()+"light.texiteasy-theme");
-            }
-
-        }
     case 0x000600:
     case 0x000601:
     case 0x000602:
@@ -838,6 +799,49 @@ void ConfigManager::checkRevision()
     case 0x000901:
     case 0x000902:
 
+
+    case 0x001000:
+    case 0x001001:
+
+    case 0x001100:
+    case 0x001101:
+    case 0x001102:
+    case 0x001103:
+    {
+        QSettings hotKeys;
+        hotKeys.beginGroup("shortcuts");
+        hotKeys.setValue("Cancel", "");
+        hotKeys.setValue("Copy", "");
+        hotKeys.setValue("Paste", "");
+        hotKeys.setValue("Cut", "");
+        hotKeys.setValue("Redo", "");
+    }
+    case 0x001200:
+    case 0x001201:
+    case 0x001202:
+    case 0x001203:
+    case 0x001300:
+    case 0x001301:
+    {
+        qDebug()<<"texiteasy => 0.13.2";
+
+        // install macros
+        {
+            recursiveCopy(":/data/macros", macrosPath(),
+                                                          QFile::ReadOwner |
+                                                          QFile::WriteOwner |
+                                                          QFile::ReadGroup |
+                                                          QFile::WriteGroup |
+                                                          QFile::ReadOther |
+                                                          QFile::WriteOther |
+                                                          QFile::ReadUser |
+                                                          QFile::WriteUser
+                                                          );
+        }
+    }
+    case 0x001302:
+    case 0x001303:
+    case 0x001304:
     {
         //remove some old files and update theme
         {
@@ -891,47 +895,7 @@ void ConfigManager::checkRevision()
                           QFile::WriteUser
                           );
     }
-    case 0x001000:
-    case 0x001001:
-
-    case 0x001100:
-    case 0x001101:
-    case 0x001102:
-    case 0x001103:
-    {
-        QSettings hotKeys;
-        hotKeys.beginGroup("shortcuts");
-        hotKeys.setValue("Cancel", "");
-        hotKeys.setValue("Copy", "");
-        hotKeys.setValue("Paste", "");
-        hotKeys.setValue("Cut", "");
-        hotKeys.setValue("Redo", "");
-    }
-    case 0x001200:
-    case 0x001201:
-    case 0x001202:
-    case 0x001203:
-    case 0x001300:
-    case 0x001301:
-    {
-        qDebug()<<"texiteasy => 0.13.2";
-
-        // install macros
-        {
-            recursiveCopy(":/data/macros", macrosPath(),
-                                                          QFile::ReadOwner |
-                                                          QFile::WriteOwner |
-                                                          QFile::ReadGroup |
-                                                          QFile::WriteGroup |
-                                                          QFile::ReadOther |
-                                                          QFile::WriteOther |
-                                                          QFile::ReadUser |
-                                                          QFile::WriteUser
-                                                          );
-        }
-    }
-    case 0x001302:
-
+    case 0x001400:
 
         break;
     }
