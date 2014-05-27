@@ -1069,90 +1069,69 @@ void WidgetTextEdit::createParSelection( int pos, int length )
 }
 void WidgetTextEdit::matchLat()
 {
-    return;
-    QTextBlock textBlock = textCursor().block();
-    QString lineBegining = textBlock.text().left(textCursor().selectionEnd() - textBlock.position() + 1);
-    int envLength = textCursor().selectionEnd() - textCursor().selectionStart();
-    bool cursorIsAtTheStart = textCursor().selectionStart() == textCursor().position();
-    int indexEnv;
-    QRegExp envBeginPattern("\\\\begin\\{[^\\}]{"+QString::number(envLength)+"}\\}$");
-    QRegExp envEndPattern("\\\\end\\{[^\\}]{"+QString::number(envLength)+"}\\}$");
 
-    int inEnv = -1;
-    if((indexEnv = lineBegining.indexOf(envBeginPattern)) != -1)
-    {
-        inEnv = envBeginPattern.matchedLength() - 8;
-    }
-    if((indexEnv = lineBegining.indexOf(envEndPattern)) != -1)
-    {
-        inEnv = envEndPattern.matchedLength() - 6;
-    }
+    QTextCursor cursor = textCursor();
 
+    BlockData * data = dynamic_cast<BlockData*>(cursor.block().userData());
+    if(!data)
     {
-        BlockData *data = static_cast<BlockData *>( textBlock.userData() );
-        if( data )
+        return;
+    }
+    foreach(const LatexBlockInfo* latexBlockInfo, data->latexblocks())
+    {
+        int position = latexBlockInfo->position + cursor.block().position();
+        if(cursor.selectedText() == latexBlockInfo->name)
         {
-            QVector<LatexBlockInfo *> infos = data->latexblocks();
-            if (infos.size()==0)
+            if(position == cursor.selectionStart() - 7)
             {
-                emit setBlockRange(-1,-1);
-            }
-            for ( int i=0; i<infos.size(); ++i )
-            {
-                LatexBlockInfo *info = infos.at(i);
-                int curPos = textCursor().position() - textBlock.position();
-                if ( info->position <= curPos && info->type == LatexBlockInfo::ENVIRONEMENT_BEGIN )
+                const StructItem * item = _textStruct->environmentPath().top();
+                int endPos = item->end;
+                QTextCursor endCursor = textCursor();
+                endCursor.setPosition(endPos - 1);
+                endCursor.setPosition(endPos - 3 - item->name.length(), QTextCursor::KeepAnchor);
+                if(endCursor.selectedText() == "{"+cursor.selectedText()+"}")
                 {
-                    int associatedEnv = matchLeftLat( textBlock, i+1, 0, textBlock.blockNumber());
-                    if(inEnv != -1 && associatedEnv != -1)
-                    {
+                    endCursor.setPosition(endPos - 2);
+                    endCursor.setPosition(endPos - 2 - item->name.length(), QTextCursor::KeepAnchor);
+                    _multipleEdit << endCursor;
 
-                                QList<QTextEdit::ExtraSelection> selections = extraSelections();
-                                QTextEdit::ExtraSelection selection;
-                                QTextCharFormat format = selection.format;
-                                format.setBackground( QColor("#DDDDDD") );
-                                format.setForeground( QColor("#333333") );
-                                selection.format = format;
-                                QTextCursor cursor = textCursor();
-                                cursor.setPosition( associatedEnv + 5 + (cursorIsAtTheStart ? 0 : inEnv));
-                                cursor.movePosition( (cursorIsAtTheStart ? QTextCursor::NextCharacter : QTextCursor::PreviousCharacter), QTextCursor::KeepAnchor, inEnv );
-                                selection.cursor = cursor;
-                                if(!cursor.selectedText().compare(this->textCursor().selectedText()))
-                                {
-                                    selections.append( selection );
-                                    setExtraSelections( selections );
-                                    _multipleEdit.append(cursor);
-                                }
-
-                    }
+                    QList<QTextEdit::ExtraSelection> selections = extraSelections();
+                    QTextEdit::ExtraSelection selection;
+                    QTextCharFormat format = selection.format;
+                    format.setBackground( QColor("#DDDDDD") );
+                    format.setForeground( QColor("#333333") );
+                    selection.format = format;
+                    selection.cursor = endCursor;
+                    selections.append(selection);
+                    setExtraSelections( selections );
                 }
-                if ( info->position <= curPos && info->type == LatexBlockInfo::ENVIRONEMENT_END )
+            }
+            if(position == cursor.selectionEnd() + 2)
+            {
+                const StructItem * item = _textStruct->environmentPath().top();
+                int startPos = item->begin;
+                QTextCursor startCursor = textCursor();
+                startCursor.setPosition(startPos + 6);
+                startCursor.setPosition(startPos + 8 + item->name.length(), QTextCursor::KeepAnchor);
+                if(startCursor.selectedText() == "{"+cursor.selectedText()+"}")
                 {
-                    int associatedEnv =  matchRightLat( textBlock, i-1, 0,textBlock.blockNumber());
-                    if(inEnv != -1 && associatedEnv != -1)
-                    {
-                                QList<QTextEdit::ExtraSelection> selections = extraSelections();
-                                QTextEdit::ExtraSelection selection;
-                                QTextCharFormat format = selection.format;
-                                format.setBackground( QColor("#DDDDDD") );
-                                format.setForeground( QColor("#333333") );
-                                selection.format = format;
-                                QTextCursor cursor = textCursor();
-                                cursor.setPosition( associatedEnv + (cursorIsAtTheStart ? 0 : inEnv) + 7);
-                                cursor.movePosition( (cursorIsAtTheStart ? QTextCursor::NextCharacter : QTextCursor::PreviousCharacter), QTextCursor::KeepAnchor, inEnv );
-                                selection.cursor = cursor;
-                                if(!cursor.selectedText().compare(this->textCursor().selectedText()))
-                                {
-                                    selections.append( selection );
-                                    setExtraSelections( selections );
-                                    _multipleEdit.append(cursor);
-                                }
-                    }
+                    startCursor.setPosition(startPos + 7);
+                    startCursor.setPosition(startPos + 7 + item->name.length(), QTextCursor::KeepAnchor);
+                    _multipleEdit << startCursor;
+
+                    QList<QTextEdit::ExtraSelection> selections = extraSelections();
+                    QTextEdit::ExtraSelection selection;
+                    QTextCharFormat format = selection.format;
+                    format.setBackground( QColor("#DDDDDD") );
+                    format.setForeground( QColor("#333333") );
+                    selection.format = format;
+                    selection.cursor = startCursor;
+                    selections.append(selection);
+                    setExtraSelections( selections );
                 }
             }
         }
     }
-
 }
 
 int WidgetTextEdit::matchLeftLat(	QTextBlock currentBlock, int index, int numLeftLat, int bpos )
