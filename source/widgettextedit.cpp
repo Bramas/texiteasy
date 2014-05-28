@@ -494,6 +494,12 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
 #ifdef OS_MAC
     _wierdCircumflexCursor = false;
 #endif
+    if(e == QKeySequence::Undo || e == QKeySequence::Redo || e == QKeySequence::Copy || e == QKeySequence::Cut)
+    {
+        _multipleEdit.clear();
+        WIDGET_TEXT_EDIT_PARENT_CLASS::keyPressEvent(e);
+        return;
+    }
     if(e->key() == Qt::Key_Space && (e->modifiers() & (Qt::MetaModifier | Qt::ControlModifier)))
     {
         //this->matchCommand();
@@ -572,7 +578,7 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
             indentSelectedText();
             return;
         }
-        insertPlainText(ConfigManager::Instance.tabToString());
+        cursor.insertText(ConfigManager::Instance.tabToString());
         return;
     }
     if(e->key() == Qt::Key_Backtab)
@@ -659,7 +665,9 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
             _scriptIsRunning = false;
         }
     }
-    if(_multipleEdit.count() && e->modifiers() == Qt::NoModifier && !e->text().isEmpty() && !e->text().contains(QRegExp(QString::fromUtf8("[^a-zA-Z0-9èéàëêïîùüû&()\"'\\$§,;\\.+=\\-_*\\/\\\\!?%#@° ]"))))
+    if(_multipleEdit.count() //&& e->modifiers() == Qt::NoModifier
+            && !e->text().isEmpty() && !e->text().contains(QRegExp(QString::fromUtf8("[^a-zA-Z0-9èéàëêïîùüû&()\"'\\$§,;\\.+=\\-_*\\/\\\\!?%#@° ]")))
+            )
     {
         QTextCursor cur1 = this->textCursor();
         QTextCursor cur2 = _multipleEdit.first();
@@ -726,7 +734,7 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
     }
     WIDGET_TEXT_EDIT_PARENT_CLASS::keyPressEvent(e);
 
-    if(_scriptIsRunning)
+    if(!e->text().isEmpty() && _scriptIsRunning)
     {
         _scriptEngine.evaluate();
     }
@@ -1387,7 +1395,6 @@ bool WidgetTextEdit::triggerTabMacros()
 bool WidgetTextEdit::onMacroTriggered(Macro macro, bool force)
 {
     QTextCursor cursor = textCursor();
-    //cursor.beginEditBlock();
     QString word;
     if(cursor.hasSelection())
     {
@@ -1405,6 +1412,10 @@ bool WidgetTextEdit::onMacroTriggered(Macro macro, bool force)
     {
         return false;
     }
+
+    cursor = textCursor();
+    cursor.beginEditBlock();
+
     QString content = macro.content;
 
     if(patternExists && !cursor.hasSelection() && pattern.capturedTexts().count() > 1)
@@ -1420,7 +1431,7 @@ bool WidgetTextEdit::onMacroTriggered(Macro macro, bool force)
     cursor = textCursor();
     cursor.setPosition(pos);
     this->setTextCursor(cursor);
-    //cursor.endEditBlock();
+    cursor.endEditBlock();
 
     _multipleEdit.clear();
     selectNextArgument();
