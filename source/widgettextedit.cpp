@@ -144,13 +144,13 @@ void WidgetTextEdit::paintEvent(QPaintEvent *event)
     painter.setFont(ConfigManager::Instance.getTextCharFormats("normal").font());
 
     painter.setPen(ConfigManager::Instance.getTextCharFormats("normal").foreground().color());
-    if(_multipleEdit.count())
+    foreach(QTextCursor cursor, _multipleEdit)
     {
-        QTextLine line = _multipleEdit.first().block().layout()->lineForTextPosition(_multipleEdit.first().positionInBlock());
+        QTextLine line = cursor.block().layout()->lineForTextPosition(cursor.positionInBlock());
         if(line.isValid())
         {
-            qreal left = line.cursorToX(_multipleEdit.first().positionInBlock());;
-            qreal top = line.position().y() + line.height() + this->blockTop(_multipleEdit.first().block()) + this->contentOffsetTop();
+            qreal left = line.cursorToX(cursor.positionInBlock());;
+            qreal top = line.position().y() + line.height() + this->blockTop(cursor.block()) + this->contentOffsetTop();
             QPoint curPoint(left,top);
             QPoint diff(0,line.height());
             painter.drawLine(curPoint - diff, curPoint);
@@ -488,6 +488,24 @@ void WidgetTextEdit::insertPlainText(const QString &text)
     }
     WIDGET_TEXT_EDIT_PARENT_CLASS::insertPlainText(text);
 }
+void WidgetTextEdit::mousePressEvent(QMouseEvent *e)
+{
+    if(!hasArguments())
+    {
+        _scriptEngine.clear();
+        _scriptIsRunning = false;
+    }
+
+    if(e->modifiers() == Qt::AltModifier)
+    {
+        _multipleEdit << textCursor();
+    }
+    else
+    {
+        _multipleEdit.clear();
+    }
+    WIDGET_TEXT_EDIT_PARENT_CLASS::mousePressEvent(e);
+}
 
 void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
 {
@@ -670,13 +688,15 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
             )
     {
         QTextCursor cur1 = this->textCursor();
-        QTextCursor cur2 = _multipleEdit.first();
         cur1.beginEditBlock();
         cur1.insertText(e->text());
         cur1.endEditBlock();
-        cur2.joinPreviousEditBlock();
-        cur2.insertText(e->text());
-        cur2.endEditBlock();
+        foreach(QTextCursor cursor, _multipleEdit)
+        {
+            cursor.joinPreviousEditBlock();
+            cursor.insertText(e->text());
+            cursor.endEditBlock();
+        }
         this->setTextCursor(cur1);
         this->onCursorPositionChange();
         if(_scriptIsRunning)
@@ -688,23 +708,28 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
     if(_multipleEdit.count() && e->modifiers() == Qt::NoModifier && (e->key() == Qt::Key_Delete || e->key() == Qt::Key_Backspace))
     {
         QTextCursor cur1 = this->textCursor();
-        QTextCursor cur2 = _multipleEdit.first();
         cur1.beginEditBlock();
         if(e->key() == Qt::Key_Delete)
         {
             cur1.deleteChar();
             cur1.endEditBlock();
-            cur2.joinPreviousEditBlock();
-            cur2.deleteChar();
-            cur2.endEditBlock();
+            foreach(QTextCursor cursor, _multipleEdit)
+            {
+                cursor.joinPreviousEditBlock();
+                cursor.deleteChar();
+                cursor.endEditBlock();
+            }
         }
         else
         {
             cur1.deletePreviousChar();
             cur1.endEditBlock();
-            cur2.joinPreviousEditBlock();
-            cur2.deletePreviousChar();
-            cur2.endEditBlock();
+            foreach(QTextCursor cursor, _multipleEdit)
+            {
+                cursor.joinPreviousEditBlock();
+                cursor.deletePreviousChar();
+                cursor.endEditBlock();
+            }
         }
         this->setTextCursor(cur1);
         this->onCursorPositionChange();

@@ -151,16 +151,7 @@ public slots:
     void addTextCursor(QTextCursor cursor);
 protected:
     void insertFromMimeData(const QMimeData * source);
-    void mousePressEvent(QMouseEvent *e) {
-
-        if(!hasArguments())
-        {
-            _scriptEngine.clear();
-            _scriptIsRunning = false;
-        }
-        _multipleEdit.clear();
-        WIDGET_TEXT_EDIT_PARENT_CLASS::mousePressEvent(e);
-    }
+    void mousePressEvent(QMouseEvent *e);
 
 private:
     void initIndentation(void);
