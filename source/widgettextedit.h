@@ -152,6 +152,7 @@ public slots:
 protected:
     void insertFromMimeData(const QMimeData * source);
     void mousePressEvent(QMouseEvent *e);
+    void mouseMoveEvent(QMouseEvent *e);
 
 private:
     void initIndentation(void);
@@ -197,7 +198,7 @@ private:
     QString wordOnLeft();
 
     QList<QTextCursor> _multipleEdit;
-
+    QPoint _altSelectionFirstPoint;
     CompletionEngine * _completionEngine;
     File * currentFile;
     FileStructure * fileStructure;

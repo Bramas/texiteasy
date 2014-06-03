@@ -93,6 +93,7 @@ WidgetTextEdit::WidgetTextEdit(WidgetFile * parent) :
     this->updateTabWidth();
     connect(&ConfigManager::Instance, SIGNAL(tabWidthChanged()), this, SLOT(updateTabWidth()));
     updateLineWrapMode();
+    setMouseTracking(true);
 }
 WidgetTextEdit::~WidgetTextEdit()
 {
@@ -488,6 +489,39 @@ void WidgetTextEdit::insertPlainText(const QString &text)
     }
     WIDGET_TEXT_EDIT_PARENT_CLASS::insertPlainText(text);
 }
+void WidgetTextEdit::mouseMoveEvent(QMouseEvent *e)
+{
+    if(e->buttons() & Qt::LeftButton && e->modifiers() == Qt::AltModifier)
+    {
+        if(_altSelectionFirstPoint.x() >= 0)
+        {
+            int positionStart = this->document()->documentLayout()->hitTest(QPoint(_altSelectionFirstPoint.x(), e->pos().y()), Qt::ExactHit);
+            int positionEnd = this->document()->documentLayout()->hitTest(e->pos(), Qt::ExactHit);
+            QTextCursor cursor;
+            cursor.setPosition(positionStart);
+            cursor.setPosition(positionEnd, QTextCursor::KeepAnchor);
+            if(!_multipleEdit.contains(cursor))
+            {
+                QList<QTextEdit::ExtraSelection> selections = extraSelections();
+                QTextEdit::ExtraSelection selection;
+                QTextCharFormat format = selection.format;
+                format.setBackground( QColor("#DDDDDD") );
+                format.setForeground( QColor("#333333") );
+                selection.format = format;
+                selection.cursor = cursor;
+                selections.append(selection);
+                setExtraSelections( selections );
+                qDebug()<<"add: "<<positionStart<<"-"<<positionEnd;
+            }
+
+        }
+    }
+    else
+    {
+        WIDGET_TEXT_EDIT_PARENT_CLASS::mouseMoveEvent(e);
+    }
+}
+
 void WidgetTextEdit::mousePressEvent(QMouseEvent *e)
 {
     if(!hasArguments())
@@ -496,15 +530,22 @@ void WidgetTextEdit::mousePressEvent(QMouseEvent *e)
         _scriptIsRunning = false;
     }
 
+    WIDGET_TEXT_EDIT_PARENT_CLASS::mousePressEvent(e);
     if(e->modifiers() == Qt::AltModifier)
     {
         _multipleEdit << textCursor();
+        //QTextLine line = textCursor().block().layout()->lineForTextPosition(textCursor().positionInBlock());
+        //if(line.isValid())
+        {
+            _altSelectionFirstPoint = e->pos();
+            //qDebug()<<e->pos()<<" "<<line.cursorToX(textCursor().positionInBlock());
+        }
     }
     else
     {
+        _altSelectionFirstPoint = QPoint(-1, -1);
         _multipleEdit.clear();
     }
-    WIDGET_TEXT_EDIT_PARENT_CLASS::mousePressEvent(e);
 }
 
 void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
