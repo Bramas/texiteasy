@@ -59,7 +59,7 @@ void DialogDownloadUpdate::onDownloaded()
     qDebug()<<"[DownloadUpdate] launch : "<<QString("elevate texiteasy_deploy.exe ")+this->filename();
     QProcess * p = new QProcess();
     //connect(p, SIGNAL(finished(int)), this, SLOT(onFinished(int)));
-    p->start(QString("elevate texiteasy_deploy.exe ")+this->filename());
+    p->start(QString("elevate texiteasy_upgrade.exe ")+this->filename());
 
     */
 

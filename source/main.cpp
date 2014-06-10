@@ -45,7 +45,7 @@
 void upgrade()
 {
 #ifdef OS_WINDOWS
-    /*
+    /**/
     QString command = "";
     QDir d = QDir(QApplication::applicationDirPath());
     d.cdUp();
@@ -69,11 +69,10 @@ void upgrade()
         command = "elevate texiteasy_upgrade.exe "+ConfigManager::Instance.updateFiles();
     }
 
-
-
     qDebug()<<"[main.c] launch : "<<command;
     QProcess * p = new QProcess();
-    p->start(command);*/
+    p->start(command);
+    // */
 #endif
 }
 

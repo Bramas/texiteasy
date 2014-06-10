@@ -6,6 +6,10 @@
 #include <limits.h>
 #include <string.h>
 
+#include <QFile>
+#include <QDir>
+#include <QFileInfo>
+
 typedef unsigned char uint8;
 typedef unsigned short uint16;
 typedef unsigned int uint;
@@ -28,12 +32,17 @@ int main(int argc, char ** argv)
 
     char dest[5000] = "";
     char logFilename[5000] = "";
-    if(argc > 2)
-    {
-        strcat(dest, argv[2]);
-    }
+
+    strcat(dest, QFileInfo(argv[0]).absolutePath().toLatin1().data());
     strcat(logFilename, dest);
     strcat(logFilename, "\\texiteasy_upgrade.log");
+
+    QString oldFolder = dest;
+    oldFolder += "/old/";
+    if(argc > 2)
+    {
+        oldFolder = argv[2];
+    }
 
     if(argc < 2)
     {
@@ -72,23 +81,54 @@ int main(int argc, char ** argv)
     log <<"Start Upgrade\n";
     log << filesCount<<" files found\n";
 
+
+    /*
+     * move old files
+     */
+    bool error = false;
     for(int f_idx = 0; f_idx < filesCount; ++f_idx)
     {
         char filenameData[255];
         mz_zip_reader_get_filename(&zip_archive, f_idx, filenameData, 255);
         if(mz_zip_reader_is_file_a_directory(&zip_archive,f_idx))
         {
-            char dirDest[5000] = "";
-            strcat(dirDest, dest);
-            strcat(dirDest, "\\");
-            strcat(dirDest, filenameData);
-
-            log <<"directory ["<<f_idx<<"] : "<<dirDest<<"\n";
-            mkdir(dirDest);
             continue;
         }
+        QString before = dest;
+        before += "\\";
+        before += filenameData;
+
+        QString after = oldFolder;
+        after += filenameData;
+
+        QDir().mkpath(QFileInfo(before).absolutePath());
+        QDir().mkpath(QFileInfo(after).absolutePath());
+
+        QFile f(before);
+        if(f.exists() && !f.rename(after))
+        {
+            error = true;
+            log<<"file ["<<f_idx<<"] : "<<before.toLatin1().data()<<" : ERROR unable to move\n";
+        }
+        else
+        {
+            log<<"file ["<<f_idx<<"] : "<<before.toLatin1().data()<<" : OK\n";
+        }
     }
-    bool error = false;
+    if(error)
+    {
+
+        MessageBox(NULL, L"Texiteasy was unable to upgrade. Please Retry. (some files cannot be moved)", NULL, NULL);
+        char texEx[5000] = "start ";
+        strcat(texEx, dest);
+        strcat(texEx, "\\TexitEasy.exe");
+        system(texEx);
+        return 0;
+    }
+    /*
+     * copy new files
+     */
+    error = false;
     for(int f_idx = 0; f_idx < filesCount; ++f_idx)
     {
         char filenameData[255];
@@ -108,7 +148,7 @@ int main(int argc, char ** argv)
         if(!file)
         {
             error = true;
-            log<<"file ["<<f_idx<<"] : "<<fileDest<<" : ERROR\n";
+            log<<"file ["<<f_idx<<"] : "<<fileDest<<" : ERROR unable to copy\n";
         }
         else
         {
@@ -117,6 +157,9 @@ int main(int argc, char ** argv)
             fclose(file);
         }
     }
+
+    /* Close
+     */
     mz_zip_reader_end(&zip_archive);
 
     if(error)
