@@ -243,16 +243,18 @@ void ScriptEngine::evaluate()
         return;
     }
     _cursorsMutex.lock();
-
     DISP_DEBUG(qDebug()<<"_scriptBlocks[i].position");
     foreach(ScriptBlock sb, _scriptBlocks)
     {
         DISP_DEBUG(qDebug()<<sb.cursor.selectionStart());
     }
 
+    QTextCursor currentCursor = _widgetTextEdit->textCursor();
+    currentCursor.joinPreviousEditBlock();
     updateCursors();
 
-    QTextCursor currentCursor = _widgetTextEdit->textCursor();
+    currentCursor = _widgetTextEdit->textCursor();
+
     _varValuesByName.clear();
     QStringList activeCursors;
     for(int idx = 0; idx < _varTextCursor.count(); ++idx)
@@ -331,6 +333,8 @@ void ScriptEngine::evaluate()
             }
         }
     }
+    currentCursor = _widgetTextEdit->textCursor();
+    currentCursor.endEditBlock();
     _widgetTextEdit->onCursorPositionChange();
     DISP_DEBUG(qDebug()<<"selectedText:");
     DISP_DEBUG(qDebug() << c.selectedText());

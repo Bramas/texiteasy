@@ -465,13 +465,7 @@ void WidgetPdfDocument::mouseReleaseEvent(QMouseEvent * /*event*/)
 }
 void WidgetPdfDocument::wheelEvent(QWheelEvent * event)
 {
-#ifdef OS_MAC
-    // Hack because modifiers do not work with an external mouse
-    if( FileManager::Instance.currentWidgetFile()->widgetTextEdit()->modifiers
-#else
-    if(event->modifiers()
-#endif
-            & (Qt::ControlModifier | Qt::AltModifier | Qt::ShiftModifier))
+    if(event->modifiers() & (Qt::ControlModifier | Qt::AltModifier | Qt::ShiftModifier))
     {
         qreal factor = 0.1;//log(1 + _zoom) / 30.0;
         factor =  event->delta() > 0 ? 1 + factor : 1 - factor;

@@ -123,11 +123,12 @@ void UpdateChecker::onFinished(QNetworkReply *reply)
     qDebug()<<"New version is available : "<<_version;
     // tell the configmanager to send a signal that the version is outdated
     // send it in 1s because every thing is maybe not loaded yet.
-    QTimer::singleShot(1000,&ConfigManager::Instance, SLOT(signalVersionIsOutdated()));
+    QTimer::singleShot(1000, &ConfigManager::Instance, SLOT(signalVersionIsOutdated()));
 #ifdef OS_WINDOWS
 
     if(QFile(QApplication::applicationDirPath()+"/texiteasy_upgrade.log").exists())
     {
+        QFile(QApplication::applicationDirPath()+"/texiteasy_upgrade.log").remove();
         QMessageBox::information(_parent,  trUtf8("Erreur pendant la mise à jour?"), trUtf8("Si une mise à jour ne s'est pas correctement déroulée, il est conseillé de telecharger la dernière version de TexitEasy directement sur le site officielle."));
     }
 #endif
@@ -138,6 +139,8 @@ void UpdateChecker::onFinished(QNetworkReply *reply)
             QMessageBox::information(0, QObject::trUtf8("Mettre à jour manuellement"), QObject::trUtf8("Après des modifications majeures, il est nécessaire de mettre à jour TexitEasy manuellement depuis le <a href='" TEXITEASY_UPDATE_WEBSITE "'>site officiel</a>."));
         }
         else
-        proposeUpdateDialog(_parent);
+        {
+            proposeUpdateDialog(_parent);
+        }
     }
 }

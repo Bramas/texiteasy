@@ -102,9 +102,6 @@ public:
     WidgetFile * widgetFile() { return _widgetFile; }
     bool triggerTabMacros();
     bool onMacroTriggered(Macro macro, bool force = false);
-#ifdef OS_MAC
-    Qt::KeyboardModifiers modifiers;
-#endif
 
     bool isFolded(int line)  { return _foldedLines.contains(line); }
     void fold(int start, int end);
@@ -169,10 +166,6 @@ private:
     void initIndentation(void);
     void paintEvent(QPaintEvent *event);
     void keyPressEvent(QKeyEvent *e);
-#ifdef OS_MAC
-    // Hack -> see keypressevent for answering why
-    void keyReleaseEvent(QKeyEvent *e) { modifiers = Qt::NoModifier; WIDGET_TEXT_EDIT_PARENT_CLASS::keyReleaseEvent(e); }
-#endif
     void resizeEvent(QResizeEvent * event);
     void wheelEvent(QWheelEvent * event);
     void highlightCurrentLine(void);
