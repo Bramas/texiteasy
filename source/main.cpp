@@ -57,16 +57,16 @@ void upgrade()
         case QSysInfo::WV_2000:
         case QSysInfo::WV_XP:
         case QSysInfo::WV_2003:
-            command = "texiteasy_upgrade.exe "+ConfigManager::Instance.updateFiles();
+            command = "texiteasy_upgrade.exe \""+ConfigManager::Instance.updateFiles()+"\"";
             break;
         default:
-            command = "elevate texiteasy_upgrade.exe "+ConfigManager::Instance.updateFiles();
+            command = "elevate texiteasy_upgrade.exe \""+ConfigManager::Instance.updateFiles()+"\"";
             break;
         }
     }
     else
     {
-        command = "elevate texiteasy_upgrade.exe "+ConfigManager::Instance.updateFiles();
+        command = "elevate texiteasy_upgrade.exe \""+ConfigManager::Instance.updateFiles()+"\"";
     }
 
     qDebug()<<"[main.c] launch : "<<command;

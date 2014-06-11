@@ -9,6 +9,8 @@
 #include <QFile>
 #include <QDir>
 #include <QFileInfo>
+#include <QProcess>
+#include <QTextStream>
 
 typedef unsigned char uint8;
 typedef unsigned short uint16;
@@ -31,11 +33,11 @@ int main(int argc, char ** argv)
 {
 
     char dest[5000] = "";
-    char logFilename[5000] = "";
+    QString logFilename;
 
     strcat(dest, QFileInfo(argv[0]).absolutePath().toLatin1().data());
-    strcat(logFilename, dest);
-    strcat(logFilename, "\\texiteasy_upgrade.log");
+    logFilename = dest;
+    logFilename += "/texiteasy_upgrade.log";
 
     QString oldFolder = dest;
     oldFolder += "/old/";
@@ -46,10 +48,16 @@ int main(int argc, char ** argv)
 
     if(argc < 2)
     {
-        remove(logFilename);
+        QFile(logFilename).remove();
         return 1;
     }
-    ofstream log(logFilename);
+    QFile logFile(logFilename);
+    if(!logFile.open(QFile::WriteOnly | QFile::Text))
+    {
+        MessageBox(NULL, L"Error: Unable to open log file", NULL, NULL);
+        return 1;
+    }
+    QTextStream log(&logFile);
     char * zipFilename = argv[1];
 
     if(strstr(zipFilename, ".exe"))
@@ -172,21 +180,20 @@ int main(int argc, char ** argv)
         system(texEx);
         return 0;
     }
-    log.close();
+    logFile.close();
     /*
      * remove may not instantly work so we clean it before removing it
      */
 
-    remove(logFilename);
+    logFile.remove();
     /*
      * remove zip file and launch texiteasy
      */
-    remove(zipFilename);
-    char texEx[5000] = "start ";
-    strcat(texEx, dest);
-    strcat(texEx, "\\TexitEasy.exe");
-    system(texEx);
-    system(texEx);
+    QFile(zipFilename).remove();
+    QString texEx = dest;
+    texEx += "/TexitEasy.exe -n";
+    QProcess * p = new QProcess();
+    p->start(texEx);
     free(zipFilename);
     return 0;
 }

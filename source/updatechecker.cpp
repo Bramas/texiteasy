@@ -117,7 +117,7 @@ void UpdateChecker::onFinished(QNetworkReply *reply)
             (b0 == a0 && b1 > a1) ||
             (b0 == a0 && b1 == a1 && b2 > a2)) // The local version is a beta that is not yet release officialy
     {
-        return;
+        //return;
     }
 
     qDebug()<<"New version is available : "<<_version;
@@ -129,18 +129,11 @@ void UpdateChecker::onFinished(QNetworkReply *reply)
     if(QFile(QApplication::applicationDirPath()+"/texiteasy_upgrade.log").exists())
     {
         QFile(QApplication::applicationDirPath()+"/texiteasy_upgrade.log").remove();
-        QMessageBox::information(_parent,  trUtf8("Erreur pendant la mise à jour?"), trUtf8("Si une mise à jour ne s'est pas correctement déroulée, il est conseillé de telecharger la dernière version de TexitEasy directement sur le site officielle."));
+        QMessageBox::information(_parent,  trUtf8("Erreur pendant la mise à jour?"), trUtf8("Si une mise à jour ne s'est pas correctement déroulée, il est conseillé de telecharger la dernière version de TexitEasy directement sur le <a href='" TEXITEASY_UPDATE_WEBSITE "'>site officiel</a>."));
     }
 #endif
     if(ConfigManager::Instance.isThisVersionHaveToBeReminded(_version))
     {
-        if(QApplication::applicationDirPath().contains("program", Qt::CaseInsensitive))
-        {
-            QMessageBox::information(0, QObject::trUtf8("Mettre à jour manuellement"), QObject::trUtf8("Après des modifications majeures, il est nécessaire de mettre à jour TexitEasy manuellement depuis le <a href='" TEXITEASY_UPDATE_WEBSITE "'>site officiel</a>."));
-        }
-        else
-        {
-            proposeUpdateDialog(_parent);
-        }
+        proposeUpdateDialog(_parent);
     }
 }
