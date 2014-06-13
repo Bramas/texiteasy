@@ -117,7 +117,7 @@ void UpdateChecker::onFinished(QNetworkReply *reply)
             (b0 == a0 && b1 > a1) ||
             (b0 == a0 && b1 == a1 && b2 > a2)) // The local version is a beta that is not yet release officialy
     {
-        //return;
+        return;
     }
 
     qDebug()<<"New version is available : "<<_version;
@@ -125,12 +125,15 @@ void UpdateChecker::onFinished(QNetworkReply *reply)
     // send it in 1s because every thing is maybe not loaded yet.
     QTimer::singleShot(1000, &ConfigManager::Instance, SLOT(signalVersionIsOutdated()));
 #ifdef OS_WINDOWS
-
-    if(QFile(QApplication::applicationDirPath()+"/texiteasy_upgrade.log").exists())
+    if(QDir(ConfigManager::Instance.dataLocation()+"/old").exists())
     {
-        QFile(QApplication::applicationDirPath()+"/texiteasy_upgrade.log").remove();
-        QMessageBox::information(_parent,  trUtf8("Erreur pendant la mise à jour?"), trUtf8("Si une mise à jour ne s'est pas correctement déroulée, il est conseillé de telecharger la dernière version de TexitEasy directement sur le <a href='" TEXITEASY_UPDATE_WEBSITE "'>site officiel</a>."));
+        QDir(ConfigManager::Instance.dataLocation()+"/old").removeRecursively();
     }
+    if(QFile(ConfigManager::Instance.dataLocation()+"/texiteasy_upgrade.log").exists())
+    {
+        QFile(ConfigManager::Instance.dataLocation()+"/texiteasy_upgrade.log").remove();
+        QMessageBox::information(_parent,  trUtf8("Erreur pendant la mise à jour?"), trUtf8("Si une mise à jour ne s'est pas correctement déroulée, il est conseillé de telecharger la dernière version de TexitEasy directement sur le <a href='" TEXITEASY_UPDATE_WEBSITE "'>site officiel</a>."));
+    }else
 #endif
     if(ConfigManager::Instance.isThisVersionHaveToBeReminded(_version))
     {

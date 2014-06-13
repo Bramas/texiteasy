@@ -11,6 +11,7 @@
 #include <QFileInfo>
 #include <QProcess>
 #include <QTextStream>
+#include <QStandardPaths>
 
 typedef unsigned char uint8;
 typedef unsigned short uint16;
@@ -31,19 +32,19 @@ using namespace std;
 
 int main(int argc, char ** argv)
 {
+    QString dataLocation = QStandardPaths::writableLocation(QStandardPaths::DataLocation)+"/TexitEasy/TexitEasy";
 
-    char dest[5000] = "";
-    QString logFilename;
+    QString dest = QFileInfo(argv[0]).absolutePath();
+    QString logFilename = dataLocation+"/texiteasy_upgrade.log";
+    QString oldFolder =  dataLocation+"/old/";
 
-    strcat(dest, QFileInfo(argv[0]).absolutePath().toLatin1().data());
-    logFilename = dest;
-    logFilename += "/texiteasy_upgrade.log";
+    QString texEx = dest;
+    texEx += "/TexitEasy.exe";
 
-    QString oldFolder = dest;
-    oldFolder += "/old/";
     if(argc > 2)
     {
         oldFolder = argv[2];
+        oldFolder += "/";
     }
 
     if(argc < 2)
@@ -60,11 +61,26 @@ int main(int argc, char ** argv)
     QTextStream log(&logFile);
     char * zipFilename = argv[1];
 
+    log<<"oldLocation : "<<oldFolder<<"\n";
+
     if(strstr(zipFilename, ".exe"))
     {
-        char command[5000] = "start \"";
-        strcat(command, zipFilename);
-        system(strcat(command, "\""));
+        QString exeAfter(oldFolder+"/customUpdate.exe");
+        QString meAfter(oldFolder+"/me.exe");
+        QString TexAfter(oldFolder+"/tex.exe");
+        QDir().mkpath(oldFolder);
+        QFile(zipFilename).rename(exeAfter);
+        QFile(dest+"/texiteasy_upgrade.exe").rename(meAfter);
+        QFile(dest+"/TexitEasy.exe").rename(TexAfter);
+
+        bool ok = QProcess::startDetached(exeAfter, QStringList());
+        if(ok)
+        {
+            logFile.close();
+            logFile.remove();
+            return 0;
+        }
+        log<<"start : "<<exeAfter<<" : false\n";
         return 0;
     }
 
@@ -103,11 +119,13 @@ int main(int argc, char ** argv)
             continue;
         }
         QString before = dest;
-        before += "\\";
+        before += "/";
         before += filenameData;
 
         QString after = oldFolder;
         after += filenameData;
+
+        if(QFile(after).exists()) QFile(after).remove();
 
         QDir().mkpath(QFileInfo(before).absolutePath());
         QDir().mkpath(QFileInfo(after).absolutePath());
@@ -127,10 +145,7 @@ int main(int argc, char ** argv)
     {
 
         MessageBox(NULL, L"Texiteasy was unable to upgrade. Please Retry. (some files cannot be moved)", NULL, NULL);
-        char texEx[5000] = "start ";
-        strcat(texEx, dest);
-        strcat(texEx, "\\TexitEasy.exe");
-        system(texEx);
+        log << "start : "<<texEx<<" : "<<QProcess::startDetached(texEx, QStringList("-n"));
         return 0;
     }
     /*
@@ -148,12 +163,12 @@ int main(int argc, char ** argv)
         size_t dataSize = 0;
         void * data = mz_zip_reader_extract_to_heap(&zip_archive, f_idx, &dataSize, MZ_ZIP_FLAG_DO_NOT_SORT_CENTRAL_DIRECTORY);
 
-        char fileDest[5000] = "";
-        strcat(fileDest, dest);
-        strcat(fileDest, "\\");
-        strcat(fileDest, filenameData);
-        FILE * file = fopen(fileDest, "wb");
-        if(!file)
+        QString fileDest = dest;
+        fileDest += "/";
+        fileDest += filenameData;
+        QFile file(fileDest);
+
+        if(!file.open(QFile::WriteOnly))
         {
             error = true;
             log<<"file ["<<f_idx<<"] : "<<fileDest<<" : ERROR unable to copy\n";
@@ -161,8 +176,8 @@ int main(int argc, char ** argv)
         else
         {
             log<<"file ["<<f_idx<<"] : "<<fileDest<<" : OK\n";
-            fwrite(data, sizeof(char), dataSize, file);
-            fclose(file);
+            file.write((char*)data, dataSize);
+            file.close();
         }
     }
 
@@ -174,10 +189,7 @@ int main(int argc, char ** argv)
     {
 
         MessageBox(NULL, L"Texiteasy was unable to upgrade. Please Retry.", NULL, NULL);
-        char texEx[5000] = "start ";
-        strcat(texEx, dest);
-        strcat(texEx, "\\TexitEasy.exe");
-        system(texEx);
+        log << "start : "<<texEx<<" : "<<QProcess::startDetached(texEx, QStringList("-n"));
         return 0;
     }
     logFile.close();
@@ -190,10 +202,7 @@ int main(int argc, char ** argv)
      * remove zip file and launch texiteasy
      */
     QFile(zipFilename).remove();
-    QString texEx = dest;
-    texEx += "/TexitEasy.exe -n";
-    QProcess * p = new QProcess();
-    p->start(texEx);
+    log << "start : "<<texEx<<" : "<<QProcess::startDetached(texEx, QStringList("-n"));
     free(zipFilename);
     return 0;
 }

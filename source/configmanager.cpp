@@ -555,11 +555,22 @@ QString ConfigManager::updateFiles()
         return "";
     }
 
-    QString filename(dataLocation()+"/updateFiles.zip");
-    QFile f(filename);
-    if(f.exists())
     {
-        return filename;
+        QString filename(dataLocation()+"/updateFiles.zip");
+        QFile f(filename);
+        if(f.exists())
+        {
+            return filename;
+        }
+    }
+
+    {
+        QString filename(dataLocation()+"/updateFiles.exe");
+        QFile f(filename);
+        if(f.exists())
+        {
+            return filename;
+        }
     }
 #endif
     return "";
