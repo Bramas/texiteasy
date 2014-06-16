@@ -47,7 +47,7 @@
      <x>0</x>
      <y>0</y>
      <width>991</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFichier">
@@ -144,6 +144,7 @@
     <addaction name="actionPaste"/>
     <addaction name="separator"/>
     <addaction name="actionFindReplace"/>
+    <addaction name="actionAutoIndent"/>
    </widget>
    <widget class="QMenu" name="menuAide">
     <property name="title">
@@ -410,6 +411,11 @@
   <action name="actionSendFeedback">
    <property name="text">
     <string>Envoyer votre avis</string>
+   </property>
+  </action>
+  <action name="actionAutoIndent">
+   <property name="text">
+    <string>Indenter automatiquement</string>
    </property>
   </action>
  </widget>

@@ -149,6 +149,7 @@ public slots:
     void insertFile(QString filename);
     void clearTextCursors() { _multipleEdit.clear(); }
     void addTextCursor(QTextCursor cursor);
+    void autoIndent();
 protected:
     void insertFromMimeData(const QMimeData * source);
     void mousePressEvent(QMouseEvent *e) {

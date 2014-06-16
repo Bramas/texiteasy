@@ -1593,3 +1593,32 @@ void WidgetTextEdit::addTextCursor(QTextCursor cursor)
 {
     _multipleEdit << cursor;
 }
+
+void WidgetTextEdit::autoIndent()
+{
+    QRegExp reg("\\\\begin[ ]*\\{([^\\}]*)\\}");
+    int from = 0;
+    while(true)
+    {
+        QTextCursor cursor = document()->find(reg, from);
+        if(cursor.isNull())
+        {
+            return;
+        }
+        from = cursor.position() + 1;
+        QString startOfLine = cursor.block().text().left(cursor.selectionStart() - cursor.block().position());
+        if(!cursor.selectedText().contains(QRegExp("\\\\begin[ ]*\\{document\\}")))
+        {
+            cursor.setPosition(cursor.selectionStart());
+            if(cursor.block().text().left(cursor.positionInBlock()).contains(QRegExp("^[ \\t]*$")))
+            {
+
+            }
+            else
+            {
+                cursor.insertText("\n");
+            }
+        }
+
+    }
+}

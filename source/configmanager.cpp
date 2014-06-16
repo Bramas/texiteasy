@@ -552,7 +552,8 @@ QString ConfigManager::updateFiles()
     QFile fLog("texiteasy_upgrade.log");
     if(fLog.exists())
     {
-        return "";
+        fLog.remove();
+        //return "";
     }
 
     {
@@ -961,6 +962,9 @@ void ConfigManager::checkRevision()
         }
     }
     case 0x001500:
+    case 0x001501:
+    case 0x001502:
+    case 0x001600:
 
         break;
     }

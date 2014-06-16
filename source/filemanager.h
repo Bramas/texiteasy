@@ -93,6 +93,7 @@ public slots:
     void rehighlight();
     void toggleConsole();
     void toggleErrorTable();
+    void autoIndent();
 
     void setCurrent(WidgetFile * widget);
     void setCurrent(int index);

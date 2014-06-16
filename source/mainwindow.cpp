@@ -151,6 +151,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->ui->actionView, SIGNAL(triggered()), &FileManager::Instance,SLOT(jumpToPdfFromSource()));
     connect(this->ui->actionSplitEditor, SIGNAL(toggled(bool)), &FileManager::Instance,SLOT(splitEditor(bool)));
     connect(this->ui->actionOpenPdf, SIGNAL(triggered()), &FileManager::Instance,SLOT(openCurrentPdf()));
+    connect(this->ui->actionAutoIndent, SIGNAL(triggered()), &FileManager::Instance,SLOT(autoIndent()));
     connect(this->ui->actionSaveWithUTF8, SIGNAL(triggered()), this,SLOT(setUtf8()));
     connect(this->ui->actionSaveWithOtherEncoding, SIGNAL(triggered()), this,SLOT(setOtherEncoding()));
     connect(this->ui->actionTexDirEncoding, SIGNAL(triggered()), this, SLOT(insertTexDirEncoding()));

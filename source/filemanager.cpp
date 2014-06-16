@@ -348,6 +348,13 @@ void FileManager::toggleErrorTable()
         this->currentWidgetFile()->toggleErrorTable();
     }
 }
+void FileManager::autoIndent()
+{
+    if(this->currentWidgetFile())
+    {
+        this->currentWidgetFile()->widgetTextEdit()->autoIndent();
+    }
+}
 void FileManager::setEncoding(QString codec)
 {
     if(this->currentWidgetFile())
