@@ -549,11 +549,28 @@ QString ConfigManager::dataLocation()
 QString ConfigManager::updateFiles()
 {
 #ifdef OS_WINDOWS
-    QString filename(dataLocation()+"/updateFiles.zip");
-    QFile f(filename);
-    if(f.exists())
+    QFile fLog("texiteasy_upgrade.log");
+    if(fLog.exists())
     {
-        return filename;
+        return "";
+    }
+
+    {
+        QString filename(dataLocation()+"/updateFiles.zip");
+        QFile f(filename);
+        if(f.exists())
+        {
+            return filename;
+        }
+    }
+
+    {
+        QString filename(dataLocation()+"/updateFiles.exe");
+        QFile f(filename);
+        if(f.exists())
+        {
+            return filename;
+        }
     }
 #endif
     return "";
@@ -896,6 +913,54 @@ void ConfigManager::checkRevision()
                           );
     }
     case 0x001400:
+    {
+        QString roamingFolder =  QFileInfo(settings.fileName()).absolutePath();
+        QStringList roamingfiles;
+        roamingfiles << "TexitEasy.exe" << "LocateTexitEasy.exe" << "elevate.exe";
+        roamingfiles << "texiteasy_upgrade.exe" << "TexitEasy.exe"
+                     << "icudt51.dll"
+                     << "icuin51.dll"
+                     << "icuuc51.dll"
+                     << "libbz2-1.dll"
+                     << "libcurl-4.dll"
+                     << "libeay32.dll"
+                     << "libfreetype-6.dll"
+                     << "libgcc_s_dw2-1.dll"
+                     << "libiconv-2.dll"
+                     << "libintl-8.dll"
+                     << "libjbig-2.dll"
+                     << "libjpeg-8.dll"
+                     << "liblcms2-2.dll"
+                     << "liblzma-5.dll"
+                     << "libpcre-1.dll"
+                     << "libpcre16-0.dll"
+                     << "libpng16-16.dll"
+                     << "libpoppler-43.dll"
+                     << "libpoppler-qt5-1.dll"
+                     << "libssh2-1.dll"
+                     << "libstdc++-6.dll"
+                     << "libtiff-5.dll"
+                     << "libwinpthread-1.dll"
+                     << "Qt5Core.dll"
+                     << "Qt5Gui.dll"
+                     << "Qt5Network.dll"
+                     << "Qt5Quick.dll"
+                     << "Qt5Script.dll"
+                     << "Qt5Sql.dll"
+                     << "Qt5Widgets.dll"
+                     << "Qt5Xml.dll"
+                     << "ssleay32.dll"
+                     << "zlib1.dll";
+
+        foreach(QString rf, roamingfiles)
+        {
+            if(QFile(roamingFolder+"/"+rf).exists())
+            {
+                QFile(roamingFolder+"/"+rf).remove();
+            }
+        }
+    }
+    case 0x001500:
 
         break;
     }

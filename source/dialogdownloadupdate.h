@@ -63,6 +63,7 @@ private:
     QNetworkReply * urlReply;
     QNetworkReply * dataReply;
     QUrl _url;
+    QString _urlString;
     QString _version;
     bool _started;
     bool _isVersionDownloaded;

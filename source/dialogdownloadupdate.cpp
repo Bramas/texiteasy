@@ -31,8 +31,9 @@ DialogDownloadUpdate::DialogDownloadUpdate(QWidget *parent) :
 
     QObject::connect(versionReply, SIGNAL(finished()), this, SLOT(onVersionDownloaded()));
     QObject::connect(urlReply, SIGNAL(finished()), this, SLOT(onUrlDownloaded()));
-    QObject::connect(this->ui->pushButtonInstallAndRestart, SIGNAL(clicked()), this, SLOT(installAndRestart()));
-    QObject::connect(this->ui->pushButtonInstallLater, SIGNAL(clicked()), this, SLOT(close()));
+    ui->label_3->setVisible(false);
+    QObject::connect(this->ui->pushButtonInstallAndRestart, SIGNAL(clicked()), this, SLOT(close()));
+
 
 }
 
@@ -58,13 +59,13 @@ void DialogDownloadUpdate::onDownloaded()
     qDebug()<<"[DownloadUpdate] launch : "<<QString("elevate texiteasy_deploy.exe ")+this->filename();
     QProcess * p = new QProcess();
     //connect(p, SIGNAL(finished(int)), this, SLOT(onFinished(int)));
-    p->start(QString("elevate texiteasy_deploy.exe ")+this->filename());
+    p->start(QString("elevate texiteasy_upgrade.exe ")+this->filename());
 
     */
 
     //QDesktopServices::openUrl(QUrl("file:///"+filename(), QUrl::TolerantMode));
     this->ui->pushButtonInstallAndRestart->setEnabled(true);
-    this->ui->pushButtonInstallLater->setEnabled(true);
+    ui->label_3->setVisible(true);
 }
 
 void DialogDownloadUpdate::onFinished(int)
@@ -85,6 +86,7 @@ void DialogDownloadUpdate::onVersionDownloaded() {
 void DialogDownloadUpdate::onUrlDownloaded() {
     _mutex.lock();
     _url = urlReply->header(QNetworkRequest::LocationHeader).toUrl();
+    _urlString = urlReply->header(QNetworkRequest::LocationHeader).toString();
     qDebug()<<"[DownloadUpdate] Url : "<<_url;
     _isUrlDownloaded = true;
     _mutex.unlock();
@@ -125,7 +127,8 @@ void DialogDownloadUpdate::download() {
     _mutex.unlock();
 
 #ifdef OS_WINDOWS
-    _filename = "updateFiles.zip";
+    _filename = "updateFiles.";
+    _filename += _urlString.right(3);
 #else
 #ifdef OS_MAC
     _filename = "texiteasy_"+_version+".dmg";

@@ -123,13 +123,17 @@ void UpdateChecker::onFinished(QNetworkReply *reply)
     qDebug()<<"New version is available : "<<_version;
     // tell the configmanager to send a signal that the version is outdated
     // send it in 1s because every thing is maybe not loaded yet.
-    QTimer::singleShot(1000,&ConfigManager::Instance, SLOT(signalVersionIsOutdated()));
+    QTimer::singleShot(1000, &ConfigManager::Instance, SLOT(signalVersionIsOutdated()));
 #ifdef OS_WINDOWS
-
-    if(QFile("texiteasy_upgrade.log").exists())
+    if(QDir(ConfigManager::Instance.dataLocation()+"/old").exists())
     {
-        QMessageBox::information(_parent,  trUtf8("Erreur pendant la mise à jour?"), trUtf8("Si une mise à jour ne s'est pas correctement déroulée, il est conseillé de telecharger la dernière version de TexitEasy directement sur le site officielle."));
+        QDir(ConfigManager::Instance.dataLocation()+"/old").removeRecursively();
     }
+    if(QFile(ConfigManager::Instance.dataLocation()+"/texiteasy_upgrade.log").exists())
+    {
+        QFile(ConfigManager::Instance.dataLocation()+"/texiteasy_upgrade.log").remove();
+        QMessageBox::information(_parent,  trUtf8("Erreur pendant la mise à jour?"), trUtf8("Si une mise à jour ne s'est pas correctement déroulée, il est conseillé de telecharger la dernière version de TexitEasy directement sur le <a href='" TEXITEASY_UPDATE_WEBSITE "'>site officiel</a>."));
+    }else
 #endif
     if(ConfigManager::Instance.isThisVersionHaveToBeReminded(_version))
     {
