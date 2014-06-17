@@ -47,6 +47,7 @@ void upgrade()
 #ifdef OS_WINDOWS
     /**/
     QString command = "";
+    QStringList args();
     QDir d = QDir(QApplication::applicationDirPath());
     d.cdUp();
     if(d.dirName().contains("program", Qt::CaseInsensitive))
@@ -57,21 +58,23 @@ void upgrade()
         case QSysInfo::WV_2000:
         case QSysInfo::WV_XP:
         case QSysInfo::WV_2003:
-            command = "texiteasy_upgrade.exe \""+ConfigManager::Instance.updateFiles()+"\"";
+            command = "texiteasy_upgrade.exe;
             break;
         default:
-            command = "elevate texiteasy_upgrade.exe \""+ConfigManager::Instance.updateFiles()+"\"";
+            command = "elevate";
+            args << "texiteasy_upgrade.exe";
             break;
         }
     }
     else
     {
-        command = "elevate texiteasy_upgrade.exe \""+ConfigManager::Instance.updateFiles()+"\"";
+        command = "elevate";
+        args << "texiteasy_upgrade.exe";
     }
+    args << ConfigManager::Instance.updateFiles();
 
-    qDebug()<<"[main.c] launch : "<<command;
-    QProcess * p = new QProcess();
-    p->start(command);
+    qDebug()<<"[main.c] launch : "<<command<<" "<<args;
+    QProcess::startDetached(command, args);
     // */
 #endif
 }
