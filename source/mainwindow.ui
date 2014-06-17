@@ -144,6 +144,8 @@
     <addaction name="actionPaste"/>
     <addaction name="separator"/>
     <addaction name="actionFindReplace"/>
+    <addaction name="actionComment"/>
+    <addaction name="actionUncomment"/>
    </widget>
    <widget class="QMenu" name="menuAide">
     <property name="title">
@@ -410,6 +412,22 @@
   <action name="actionSendFeedback">
    <property name="text">
     <string>Envoyer votre avis</string>
+   </property>
+  </action>
+  <action name="actionComment">
+   <property name="text">
+    <string>Commenter</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+(</string>
+   </property>
+  </action>
+  <action name="actionUncomment">
+   <property name="text">
+    <string>Décommenter</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+)</string>
    </property>
   </action>
  </widget>

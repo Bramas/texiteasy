@@ -119,6 +119,8 @@ public:
       //s.x = obj.property("x").toInt32();
       //s.y = obj.property("y").toInt32();
     }
+    void comment();
+    void uncomment();
 
 signals:
     void updateFirstVisibleBlock(int,int);

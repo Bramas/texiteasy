@@ -1618,3 +1618,30 @@ void WidgetTextEdit::addTextCursor(QTextCursor cursor)
 {
     _multipleEdit << cursor;
 }
+
+void WidgetTextEdit::comment()
+{
+    QTextCursor cursor = textCursor();
+    cursor.setPosition(cursor.selectionStart());
+    cursor.movePosition(QTextCursor::StartOfBlock);
+    while(cursor.position() < textCursor().selectionEnd())
+    {
+        cursor.insertText("%");
+        cursor.movePosition(QTextCursor::NextBlock);
+    }
+}
+
+void WidgetTextEdit::uncomment()
+{
+    QTextCursor cursor = textCursor();
+    cursor.setPosition(cursor.selectionStart());
+    cursor.movePosition(QTextCursor::StartOfBlock);
+    while(cursor.position() < textCursor().selectionEnd())
+    {
+        cursor.movePosition(QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);
+        QString t = cursor.selectedText();
+        t.replace(QRegExp("^([ \\t]*)%"), "\\1");
+        cursor.insertText(t);
+        cursor.movePosition(QTextCursor::NextBlock);
+    }
+}

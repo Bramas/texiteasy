@@ -87,6 +87,8 @@ public slots:
     void copy();
     void cut();
     void paste();
+    void comment();
+    void uncomment();
     void setPdfSynchronized(bool pdfSynchronized);
     void setPdfViewerInItsOwnWidget(bool ownWidget);
     void jumpToPdfFromSource();

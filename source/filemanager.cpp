@@ -355,6 +355,20 @@ void FileManager::setEncoding(QString codec)
         this->currentWidgetFile()->file()->setCodec(codec);
     }
 }
+void FileManager::comment()
+{
+    if(this->currentWidgetFile())
+    {
+        this->currentWidgetFile()->widgetTextEdit()->comment();
+    }
+}
+void FileManager::uncomment()
+{
+    if(this->currentWidgetFile())
+    {
+        this->currentWidgetFile()->widgetTextEdit()->uncomment();
+    }
+}
 void FileManager::reopenWithEncoding(QString codec)
 {
     if(this->currentWidgetFile())
