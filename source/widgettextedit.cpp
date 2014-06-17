@@ -647,9 +647,8 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
         _multipleEdit.clear();
         return;
     } else
-    if(e->text() == "{")
+    if(e->text() == "{" && (nextChar(textCursor()).isNull() || !QString(nextChar(textCursor())).contains(QRegExp("[^ \\t]"))))
     {
-
         QTextCursor cur = this->textCursor();
         cur.beginEditBlock();
         int start = cur.selectionStart();
@@ -1238,7 +1237,11 @@ QChar WidgetTextEdit::nextChar(const QTextCursor cursor) const
 {
     QTextBlock block = cursor.block();
     int position = cursor.positionInBlock();
-    return block.text().at(position);
+    if(block.text().length() >= position)
+    {
+        return block.text().at(position);
+    }
+    return QChar::Null;
 }
 
 void WidgetTextEdit::createLatSelection( int start, int end )
