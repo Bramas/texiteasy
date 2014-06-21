@@ -1596,29 +1596,81 @@ void WidgetTextEdit::addTextCursor(QTextCursor cursor)
 
 void WidgetTextEdit::autoIndent()
 {
-    QRegExp reg("\\\\begin[ ]*\\{([^\\}]*)\\}");
+    QRegExp regBegin("\\\\begin[ ]*\\{([^\\}]*)\\}");
+    QRegExp regEnd("\\\\end[ ]*\\{([^\\}]*)\\}");
     int from = 0;
-    while(true)
+    int level = 0;
+    QTextBlock block = document()->firstBlock();
+    QTextCursor cursor = textCursor();
+    while(block.isValid())
     {
-        QTextCursor cursor = document()->find(reg, from);
-        if(cursor.isNull())
+        if(block.text().contains(regBegin))
         {
-            return;
-        }
-        from = cursor.position() + 1;
-        QString startOfLine = cursor.block().text().left(cursor.selectionStart() - cursor.block().position());
-        if(!cursor.selectedText().contains(QRegExp("\\\\begin[ ]*\\{document\\}")))
+            cursor.setPosition(regBegin.pos()+block.position());
+            cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, regBegin.matchedLength());
+            QString startOfLine = cursor.block().text().left(cursor.selectionStart() - cursor.block().position());
+            if(!cursor.selectedText().contains(QRegExp("\\\\begin[ ]*\\{document\\}")))
+            {
+                cursor.setPosition(cursor.selectionStart());
+                if(cursor.block().text().left(cursor.positionInBlock()).contains(QRegExp("^[ \\t]*$")))
+                {
+                    QString t = cursor.block().text();
+                    t.replace(QRegExp("^[ \\t]*(\\\\begin[ ]*\\{[^\\}]*\\})"), "\\1\n");
+                    cursor.movePosition(QTextCursor::StartOfBlock);
+                    cursor.movePosition(QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);
+                    for(int i = 0; i < level; ++i)
+                    {
+                        cursor.insertText(ConfigManager::Instance.tabToString());
+                    }
+                    cursor.insertText(t);
+                    ++level;
+                    qDebug()<<"line "<<block.blockNumber()+1<<" level "<<level;
+                }
+                else
+                {
+                    cursor.insertText("\n");
+                }
+            }
+        }else
+        if(block.text().contains(regEnd))
         {
-            cursor.setPosition(cursor.selectionStart());
-            if(cursor.block().text().left(cursor.positionInBlock()).contains(QRegExp("^[ \\t]*$")))
+            cursor.setPosition(regEnd.pos()+block.position());
+            cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, regEnd.matchedLength());
+            if(!cursor.selectedText().contains(QRegExp("\\\\end[ ]*\\{document\\}")))
             {
-
-            }
-            else
-            {
-                cursor.insertText("\n");
+                cursor.setPosition(cursor.selectionStart());
+                if(cursor.block().text().left(cursor.positionInBlock()).contains(QRegExp("^[ \\t]*$")))
+                {
+                    --level;
+                    qDebug()<<"line "<<block.blockNumber()+1<<" level "<<level;
+                    QString t = cursor.block().text();
+                    t.replace(QRegExp("^[ \\t]*(\\\\end[ ]*\\{[^\\}]*\\})"), "\\1\n");
+                    cursor.movePosition(QTextCursor::StartOfBlock);
+                    cursor.movePosition(QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);
+                    for(int i = 0; i < level; ++i)
+                    {
+                        cursor.insertText(ConfigManager::Instance.tabToString());
+                    }
+                    cursor.insertText(t);
+                }
+                else
+                {
+                    cursor.insertText("\n");
+                }
             }
         }
-
+        else
+        {
+            cursor.setPosition(block.position());
+            QString t = cursor.block().text();
+            t.replace(QRegExp("^[ \\t]*([^ \\t])"), "\\1");
+            cursor.movePosition(QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);
+            for(int i = 0; i < level; ++i)
+            {
+                cursor.insertText(ConfigManager::Instance.tabToString());
+            }
+            cursor.insertText(t);
+        }
+        block = block.next();
     }
 }
