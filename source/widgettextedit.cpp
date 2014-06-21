@@ -1625,26 +1625,64 @@ void WidgetTextEdit::addTextCursor(QTextCursor cursor)
 void WidgetTextEdit::comment()
 {
     QTextCursor cursor = textCursor();
+    cursor.beginEditBlock();
     cursor.setPosition(cursor.selectionStart());
     cursor.movePosition(QTextCursor::StartOfBlock);
-    while(cursor.position() < textCursor().selectionEnd())
+    while(cursor.position() <= textCursor().selectionEnd())
     {
-        cursor.insertText("%");
+        if(!cursor.block().text().isEmpty() && !cursor.block().text().contains(QRegExp("^[ \\t]*$")))
+        {
+            cursor.insertText("%");
+        }
         cursor.movePosition(QTextCursor::NextBlock);
+    }
+    cursor.endEditBlock();
+}
+
+void WidgetTextEdit::toggleComment()
+{
+    QTextCursor cursor = textCursor();
+    cursor.setPosition(cursor.selectionStart());
+    cursor.movePosition(QTextCursor::StartOfBlock);
+    cursor.setPosition(textCursor().selectionEnd(), QTextCursor::KeepAnchor);
+    cursor.movePosition(QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);
+
+    if(cursor.selectedText().contains(QRegExp("\u2029[ \\t]*%")) || cursor.selectedText().contains(QRegExp("^[ \\t]*%")))
+    {
+        uncomment();
+    }
+    else
+    {
+        comment();
     }
 }
 
 void WidgetTextEdit::uncomment()
 {
     QTextCursor cursor = textCursor();
-    cursor.setPosition(cursor.selectionStart());
+    cursor.beginEditBlock();
+    int start = cursor.selectionStart();
+    int end = cursor.selectionEnd();
+    cursor.setPosition(start);
     cursor.movePosition(QTextCursor::StartOfBlock);
-    while(cursor.position() < textCursor().selectionEnd())
+
+    // if the selection does not include the first % the start of the selection must be move on the left by one.
+    if(cursor.block().text().left(start - cursor.block().position()).contains(QRegExp("^([ \\t]*)%")))
+    {
+        --start;
+    }
+
+    while(cursor.position() < end)
     {
         cursor.movePosition(QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);
         QString t = cursor.selectedText();
         t.replace(QRegExp("^([ \\t]*)%"), "\\1");
+        --end;
         cursor.insertText(t);
         cursor.movePosition(QTextCursor::NextBlock);
     }
+    cursor.setPosition(start);
+    cursor.setPosition(end, QTextCursor::KeepAnchor);
+    cursor.endEditBlock();
+    setTextCursor(cursor);
 }

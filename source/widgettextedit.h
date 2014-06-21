@@ -121,6 +121,7 @@ public:
     }
     void comment();
     void uncomment();
+    void toggleComment();
 
 signals:
     void updateFirstVisibleBlock(int,int);

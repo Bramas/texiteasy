@@ -219,7 +219,10 @@ void WidgetPdfDocument::initDocument()
 
     if(!_document || _document->isLocked())
     {
-        delete _document;
+        if(_document)
+        {
+            delete _document;
+        }
         _document = 0;
         return;
     }

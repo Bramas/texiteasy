@@ -146,6 +146,7 @@
     <addaction name="actionFindReplace"/>
     <addaction name="actionComment"/>
     <addaction name="actionUncomment"/>
+    <addaction name="actionToggleComment"/>
    </widget>
    <widget class="QMenu" name="menuAide">
     <property name="title">
@@ -428,6 +429,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+)</string>
+   </property>
+  </action>
+  <action name="actionToggleComment">
+   <property name="text">
+    <string>Basculler Commentaire</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+:</string>
    </property>
   </action>
  </widget>

@@ -369,6 +369,13 @@ void FileManager::uncomment()
         this->currentWidgetFile()->widgetTextEdit()->uncomment();
     }
 }
+void FileManager::toggleComment()
+{
+    if(this->currentWidgetFile())
+    {
+        this->currentWidgetFile()->widgetTextEdit()->toggleComment();
+    }
+}
 void FileManager::reopenWithEncoding(QString codec)
 {
     if(this->currentWidgetFile())
