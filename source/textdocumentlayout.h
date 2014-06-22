@@ -12,6 +12,7 @@ class TextDocumentLayout : public QPlainTextDocumentLayout
 public:
     explicit TextDocumentLayout(WidgetTextEdit * widgetTextEdit);
     void setTextWidth(qreal newWidth);
+    int hitTest(const QPointF &, Qt::HitTestAccuracy) const;
 
 signals:
 

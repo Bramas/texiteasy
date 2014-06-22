@@ -93,6 +93,7 @@ WidgetTextEdit::WidgetTextEdit(WidgetFile * parent) :
     this->updateTabWidth();
     connect(&ConfigManager::Instance, SIGNAL(tabWidthChanged()), this, SLOT(updateTabWidth()));
     updateLineWrapMode();
+    setMouseTracking(true);
 }
 WidgetTextEdit::~WidgetTextEdit()
 {
@@ -881,6 +882,66 @@ void WidgetTextEdit::insertFile(QString filename)
     this->setTextCursor(cur);
 }
 
+void WidgetTextEdit::mouseMoveEvent(QMouseEvent *e)
+{
+    if(e->modifiers() == Qt::ControlModifier)
+    {
+        QTextCursor cursor(textCursor());
+        cursor.setPosition(dynamic_cast<TextDocumentLayout*>(document()->documentLayout())->hitTest(e->pos(), Qt::ExactHit));
+        while(QString(nextChar(cursor)).contains(QRegExp("[a-zA-Z]")))
+        {
+            cursor.movePosition(QTextCursor::NextCharacter);
+        }
+        cursor.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor);
+        while(QString(nextChar(cursor)).contains(QRegExp("[a-zA-Z]")))
+        {
+            cursor.movePosition(QTextCursor::PreviousCharacter, QTextCursor::KeepAnchor);
+        }
+        cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
+        BlockData * data = (BlockData *)cursor.block().userData();
+        if(data)
+        {
+            if(cursor.positionInBlock() < data->characterData.length()
+                    && data->characterData.at(cursor.positionInBlock()).state == SyntaxHighlighter::Command)
+            {
+                QString command = cursor.selectedText();
+                if(command == "input")
+                {
+                    QString t = cursor.block().text().right(cursor.block().text().size() - cursor.selectionEnd() + cursor.block().position());
+                    QRegExp reg("^[ \\t]*\\{([^\\}]+)\\}.*$");
+                    if(t.contains(reg))
+                    {
+                        t.replace(reg, "\\1");
+                        qDebug()<<command<<" => "<<t;
+                    }
+                }
+                else
+                if(command == "ref")
+                {
+                    QString t = cursor.block().text().right(cursor.block().text().size() - cursor.selectionEnd() + cursor.block().position());
+                    QRegExp reg("^[ \\t]*\\{([^\\}]+)\\}.*$");
+                    if(t.contains(reg))
+                    {
+                        t.replace(reg, "\\1");
+                        qDebug()<<command<<" => "<<t;
+                    }
+                }
+                else
+                {
+                    foreach(const QString & custom, _completionEngine->customWords())
+                    {
+                        if(custom == "\\"+command)
+                        {
+                            qDebug()<<"custom : "<<command;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    WIDGET_TEXT_EDIT_PARENT_CLASS::mouseMoveEvent(e);
+}
+
 void WidgetTextEdit::insertFromMimeData(const QMimeData *source)
 {
     if(source->hasUrls())
@@ -1598,24 +1659,44 @@ void WidgetTextEdit::autoIndent()
 {
     QRegExp regBegin("\\\\begin[ ]*\\{([^\\}]*)\\}");
     QRegExp regEnd("\\\\end[ ]*\\{([^\\}]*)\\}");
-    int from = 0;
+    QRegExp regNewLine("\\\\\\\\[ \\t]*[^ \\t\\\\]");
+    QRegExp regItem("[^ \\t][ \\t]*(\\\\item)");
+    QRegExp regNoindent("[^ \\t][ \\t]*(\\\\item)");
     int level = 0;
     QTextBlock block = document()->firstBlock();
     QTextCursor cursor = textCursor();
     while(block.isValid())
     {
-        if(block.text().contains(regBegin))
+        if(block.text().contains(regNewLine))
+        {
+            cursor.setPosition(regNewLine.pos()+block.position()+regNewLine.matchedLength()-1);
+            cursor.insertText("\n");
+        }
+        if(block.text().contains(regItem))
+        {
+            cursor.setPosition(regItem.pos(1)+block.position());
+            cursor.insertText("\n");
+        }
+        if(block.text().contains(regNoindent))
+        {
+            cursor.setPosition(regNoindent.pos(1)+block.position());
+            cursor.insertText("\n");
+        }
+
+
+        if(block.text().contains(regBegin) && (!block.text().contains(regEnd)
+                                               || (regEnd.pos() > regBegin.pos())))
         {
             cursor.setPosition(regBegin.pos()+block.position());
             cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor, regBegin.matchedLength());
-            QString startOfLine = cursor.block().text().left(cursor.selectionStart() - cursor.block().position());
             if(!cursor.selectedText().contains(QRegExp("\\\\begin[ ]*\\{document\\}")))
             {
                 cursor.setPosition(cursor.selectionStart());
                 if(cursor.block().text().left(cursor.positionInBlock()).contains(QRegExp("^[ \\t]*$")))
                 {
                     QString t = cursor.block().text();
-                    t.replace(QRegExp("^[ \\t]*(\\\\begin[ ]*\\{[^\\}]*\\})"), "\\1\n");
+                    t.replace(QRegExp("^[ \\t]*(\\\\begin[ ]*\\{[^\\}]*\\})$"), "\\1");
+                    t.replace(QRegExp("^(\\\\begin[ ]*\\{[^\\}]*\\})([ \\t]*[^ \\t%].*)$"), "\\1\n\\2");
                     cursor.movePosition(QTextCursor::StartOfBlock);
                     cursor.movePosition(QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);
                     for(int i = 0; i < level; ++i)
@@ -1624,7 +1705,8 @@ void WidgetTextEdit::autoIndent()
                     }
                     cursor.insertText(t);
                     ++level;
-                    qDebug()<<"line "<<block.blockNumber()+1<<" level "<<level;
+                    block = block.next();
+                    continue;
                 }
                 else
                 {
@@ -1642,9 +1724,9 @@ void WidgetTextEdit::autoIndent()
                 if(cursor.block().text().left(cursor.positionInBlock()).contains(QRegExp("^[ \\t]*$")))
                 {
                     --level;
-                    qDebug()<<"line "<<block.blockNumber()+1<<" level "<<level;
                     QString t = cursor.block().text();
-                    t.replace(QRegExp("^[ \\t]*(\\\\end[ ]*\\{[^\\}]*\\})"), "\\1\n");
+                    t.replace(QRegExp("^[ \\t]*(\\\\end[ ]*\\{[^\\}]*\\})$"), "\\1");
+                    t.replace(QRegExp("^(\\\\end[ ]*\\{[^\\}]*\\})([ \\t]*[^ \\t%].*)$"), "\\1\n\\2");
                     cursor.movePosition(QTextCursor::StartOfBlock);
                     cursor.movePosition(QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);
                     for(int i = 0; i < level; ++i)
@@ -1652,6 +1734,8 @@ void WidgetTextEdit::autoIndent()
                         cursor.insertText(ConfigManager::Instance.tabToString());
                     }
                     cursor.insertText(t);
+                    block = block.next();
+                    continue;
                 }
                 else
                 {
@@ -1659,18 +1743,17 @@ void WidgetTextEdit::autoIndent()
                 }
             }
         }
-        else
+
+        cursor.setPosition(block.position());
+        QString t = cursor.block().text();
+        t.replace(QRegExp("^[ \\t]*([^ \\t])"), "\\1");
+        cursor.movePosition(QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);
+        for(int i = 0; i < level; ++i)
         {
-            cursor.setPosition(block.position());
-            QString t = cursor.block().text();
-            t.replace(QRegExp("^[ \\t]*([^ \\t])"), "\\1");
-            cursor.movePosition(QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);
-            for(int i = 0; i < level; ++i)
-            {
-                cursor.insertText(ConfigManager::Instance.tabToString());
-            }
-            cursor.insertText(t);
+            cursor.insertText(ConfigManager::Instance.tabToString());
         }
+        cursor.insertText(t);
+
         block = block.next();
     }
 }

@@ -162,6 +162,7 @@ protected:
         _multipleEdit.clear();
         WIDGET_TEXT_EDIT_PARENT_CLASS::mousePressEvent(e);
     }
+    void mouseMoveEvent(QMouseEvent *e);
 
 private:
     void initIndentation(void);

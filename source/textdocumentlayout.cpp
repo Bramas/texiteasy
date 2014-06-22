@@ -284,3 +284,36 @@ qreal TextDocumentLayout::indentWidth(const QTextBlock &block)
     QFontMetrics fm(block.charFormat().font());
     return fm.width(exp.capturedTexts().at(0));
 }
+
+int TextDocumentLayout::hitTest(const QPointF &p, Qt::HitTestAccuracy) const
+{
+    QTextBlock block = this->document()->findBlockByNumber(_widgetTextEdit->firstVisibleBlockNumber());
+    while(block.isValid() && block.isVisible())
+    {
+        if(_widgetTextEdit->blockBottom(block) > p.y())
+        {
+            break;
+        }
+        block = block.next();
+    }
+    if(!block.isVisible() || !block.isValid())
+    {
+        return -1;
+    }
+    QTextLine line = block.layout()->lineAt(block.layout()->lineCount() - 1);
+    for(int line_idx = 1; line_idx < block.layout()->lineCount(); ++line_idx)
+    {
+        //qDebug()<<block.layout()->lineAt(line_idx).position().y()<<" "<<_widgetTextEdit->blockTop(block);
+        if(block.layout()->lineAt(line_idx).position().y() + _widgetTextEdit->blockTop(block) > p.y())
+        {
+            line = block.layout()->lineAt(line_idx-1);
+            break;
+        }
+    }
+
+    //qDebug()<<"block: "<<block.blockNumber()<<" line:"<<line.lineNumber()<<" "<<line.xToCursor(p.x());
+    return line.xToCursor(p.x()) + block.position();
+    //qDebug()<<block.blockNumber()<<" - "<<lineNumber<<"/"<<block.layout()->lineCount();
+    //qDebug()<<_widgetTextEdit->contentOffsetTop() + _widgetTextEdit->blockTop();
+    return -1;
+}

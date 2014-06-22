@@ -758,7 +758,7 @@ while ( rightPos != -1 )
 */
 
 
-QRegExp beginPattern("\\\\begin\\{([^\\}]*)\\}");
+QRegExp beginPattern("\\\\begin[ \\t]*\\{([^\\}]*)\\}");
 leftPos = text.indexOf( beginPattern );
 while ( leftPos != -1 )
 {
@@ -786,7 +786,7 @@ while ( leftPos != -1 )
     leftPos = text.indexOf(beginPattern, leftPos+1 );
 }
 
-QRegExp endPattern("\\\\end\\{([^\\}]*)\\}");
+QRegExp endPattern("\\\\end[ \\t]*\\{([^\\}]*)\\}");
 rightPos = text.indexOf(endPattern);
 while ( rightPos != -1 )
 {

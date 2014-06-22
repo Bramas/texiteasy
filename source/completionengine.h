@@ -46,6 +46,8 @@ public:
     void proposeCommand(int left, int top, int lineHeight, QString commandBegin);
     QString acceptedWord();
 
+    const QStringList& customWords() { return _customWords; }
+
     void addCustomWordFromSource();
     void parseBibtexFile();
 public slots:
