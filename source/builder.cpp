@@ -111,6 +111,8 @@ void Builder::builTex(QString command)
     if(this->process->state() != QProcess::NotRunning)
     {
         this->process->kill();
+        this->process->waitForFinished();
+        return;
     }
     process->setWorkingDirectory(this->file->getRootPath());
     if(ConfigManager::Instance.hideAuxFiles())
@@ -178,11 +180,19 @@ void Builder::bibtex()
 void Builder::onError(QProcess::ProcessError processError)
 {
     qDebug()<<process->errorString();
+    if(processError == QProcess::Crashed)
+    {
+        return;
+    }
     QMessageBox::warning(0, tr("Erreur"), tr("Erreur")+" "+QString::number(processError)+" : "+trUtf8("La compilation n'a pas pu démarrer."));
 }
 
-void Builder::onFinished(int /*exitCode*/, QProcess::ExitStatus /*exitStatus*/)
+void Builder::onFinished(int /*exitCode*/, QProcess::ExitStatus exitStatus)
 {
+    if(exitStatus == QProcess::CrashExit)
+    {
+        return;
+    }
     //qDebug()<<_lastOutput;
     this->file->refreshLineNumber();
     if(!checkOutput())
