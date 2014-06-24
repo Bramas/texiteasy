@@ -47,7 +47,7 @@ void upgrade()
 #ifdef OS_WINDOWS
     /**/
     QString command = "";
-    QStringList args();
+    QStringList args;
     QDir d = QDir(QApplication::applicationDirPath());
     d.cdUp();
     if(d.dirName().contains("program", Qt::CaseInsensitive))
@@ -58,7 +58,7 @@ void upgrade()
         case QSysInfo::WV_2000:
         case QSysInfo::WV_XP:
         case QSysInfo::WV_2003:
-            command = "texiteasy_upgrade.exe;
+            command = "texiteasy_upgrade.exe";
             break;
         default:
             command = "elevate";

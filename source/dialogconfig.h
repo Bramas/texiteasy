@@ -43,6 +43,7 @@ public:
     void addEditableActions(const QList<QAction *> & actions);
     ~DialogConfig();
 public slots:
+    void selectBinDirectory(void);
     void save(void);
     void saveAndClose(void);
     void show();

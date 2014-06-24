@@ -31,6 +31,7 @@
 #include <QDebug>
 #include <QFontDatabase>
 #include <QRegExp>
+#include <QFileDialog>
 
 DialogConfig::DialogConfig(MainWindow *parent) :
     QDialog(parent),
@@ -48,6 +49,7 @@ DialogConfig::DialogConfig(MainWindow *parent) :
     connect(this->ui->pushButton_addLatex, SIGNAL(clicked()), this, SLOT(addNewCommand()));
     connect(this->ui->tableWidgetLatexCommands, SIGNAL(itemSelectionChanged()), this, SLOT(onCurrentLatexCommandChanged()));
     connect(this->ui->pushButton_removeLatex, SIGNAL(clicked()), this, SLOT(deleteSelectedLatex()));
+    connect(this->ui->pushButton_browseLatexPath, SIGNAL(clicked()), this, SLOT(selectBinDirectory()));
 
 
     // Page General
@@ -75,6 +77,16 @@ DialogConfig::DialogConfig(MainWindow *parent) :
 DialogConfig::~DialogConfig()
 {
     delete ui;
+}
+
+void DialogConfig::selectBinDirectory(void)
+{
+    QString folder = QFileDialog::getExistingDirectory(this, trUtf8("Executables Latex"), qgetenv("PROGRAMFILES"), 0);
+    if(folder.isEmpty())
+    {
+        return;
+    }
+    this->ui->lineEdit_latexPath->setText(folder);
 }
 
 void DialogConfig::changePage(int currentRow)

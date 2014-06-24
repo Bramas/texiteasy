@@ -103,10 +103,6 @@ void Builder::builTex(QString command)
     }
 
     emit started();
-    _lastOutput = QString("");
-    _simpleOutPut.clear();
-    _commands.clear();
-    _basename = this->file->rootBasename();
 
     if(this->process->state() != QProcess::NotRunning)
     {
@@ -114,6 +110,10 @@ void Builder::builTex(QString command)
         this->process->waitForFinished();
         return;
     }
+    _lastOutput = QString("");
+    _simpleOutPut.clear();
+    _commands.clear();
+    _basename = this->file->rootBasename();
     process->setWorkingDirectory(this->file->getRootPath());
     if(ConfigManager::Instance.hideAuxFiles())
     {
@@ -165,6 +165,12 @@ void Builder::bibtex()
         return;
     }
     emit started();
+    if(this->process->state() != QProcess::NotRunning)
+    {
+        this->process->kill();
+        this->process->waitForFinished();
+        return;
+    }
     QSettings settings;
     _lastOutput = QString("");
     _simpleOutPut.clear();
