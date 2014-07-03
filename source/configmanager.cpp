@@ -961,6 +961,8 @@ void ConfigManager::checkRevision()
         }
     }
     case 0x001500:
+    case 0x001600:
+    case 0x001601:
 
         break;
     }
