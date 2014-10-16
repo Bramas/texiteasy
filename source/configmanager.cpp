@@ -723,12 +723,13 @@ void ConfigManager::checkRevision()
     {
         case 0:
         {
-                qDebug()<<"First launch of TexitEasy";
+            qDebug()<<"First launch of TexitEasy";
             if(settings.contains("lastFolder"))
             {
                 settings.setValue("lastFolder",documentLocation);
             }
             QDir().mkpath(dataLocation());
+            QDir().mkpath(themePath());
 
             QString pdflatexCommand = "pdflatex";
     #ifdef OS_WINDOWS
@@ -860,7 +861,6 @@ void ConfigManager::checkRevision()
     case 0x001303:
     case 0x001304:
     {
-        QDir().mkpath(themePath());
         //remove some old files and update theme
         {
             QFile localtheme(themePath()+"dark.texiteasy-theme");
