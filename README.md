@@ -24,6 +24,22 @@ Build on Linux
 
 [![Build Status](https://travis-ci.org/Bramas/texiteasy.svg?branch=master)](https://travis-ci.org/Bramas/texiteasy)
 
+### Ubuntu
+
+    svn checkout https://github.com/Bramas/texiteasy/trunk/source
+    sudo apt-get install libqt4-dev qt4-qmake libpoppler-qt4-dev zlib1g-dev
+    cd source
+    qmake texiteasy.pro
+    make
+
+### ArchLinux
+
+	svn checkout https://github.com/Bramas/texiteasy/trunk/source
+	pacman -S qt4 poppler-qt4 zlib
+	cd source
+	qmake texiteasy.pro
+	make
+
 Build on Mac Os
 ===============
 
