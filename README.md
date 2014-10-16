@@ -34,12 +34,24 @@ Build on Linux
 
 ### ArchLinux
 
-	sudo pacman -S make gcc qt4 poppler-qt4 zlib
+	sudo pacman -S make gcc qt4 poppler-qt4 zlib texlive-core
 	wget https://github.com/Bramas/texiteasy/archive/master.tar.gz
 	tar -zxf master.tar.gz
-	cd texiteasy/source
-	qmake texiteasy.pro
+	cd texiteasy-master/source
+	qmake-qt4 texiteasy.pro
 	make
+
+optional but usefull:
+
+    pacman -S texlive-lang texlive-science texlive-pstricks
+
+even more:
+
+    pacman -S texlive-lang texlive-science texlive-pstricks texlive-pictures texlive-latexextra
+
+everything:
+
+    pacman -S texlive-most
 
 Build on Mac Os
 ===============
