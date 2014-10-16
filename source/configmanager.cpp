@@ -860,6 +860,7 @@ void ConfigManager::checkRevision()
     case 0x001303:
     case 0x001304:
     {
+        QDir().mkpath(themePath());
         //remove some old files and update theme
         {
             QFile localtheme(themePath()+"dark.texiteasy-theme");

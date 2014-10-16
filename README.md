@@ -34,9 +34,10 @@ Build on Linux
 
 ### ArchLinux
 
-	svn checkout https://github.com/Bramas/texiteasy/trunk/source
-	pacman -S qt4 poppler-qt4 zlib
-	cd source
+	sudo pacman -S make gcc qt4 poppler-qt4 zlib
+	wget https://github.com/Bramas/texiteasy/archive/master.tar.gz
+	tar -zxf master.tar.gz
+	cd texiteasy/source
 	qmake texiteasy.pro
 	make
 
