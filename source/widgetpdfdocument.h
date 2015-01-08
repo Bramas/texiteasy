@@ -83,7 +83,7 @@ public:
     int documentHeight()
     {
         if(!_document) return 0;
-        return _documentHeight*_zoom + WidgetPdfDocument::PageMargin * (_document->numPages() - 1);
+        return (_documentHeight + WidgetPdfDocument::PageMargin * (_document->numPages() - 1))*_zoom ;
     }
     void updateScrollBar();
 signals:

@@ -183,7 +183,6 @@ const QString File::open(QString filename, QString codec)
     }
 
     data = QString();
-    qDebug()<<"reserve "<<file.size();
     data.reserve(file.size());
     QString buffer = in.readLine();
     data += buffer;
@@ -192,7 +191,6 @@ const QString File::open(QString filename, QString codec)
         data += "\n";
         data += buffer;
     }
-    qDebug()<<"get "<<data.size();
 
     this->findTexDirectives(); // find directive before look for associative files
     if(_codec.isEmpty() && codec.isEmpty() && _texDirectives.contains("encoding"))

@@ -114,7 +114,7 @@ void WidgetPdfDocument::paintEvent(QPaintEvent *)
     {
         if(cumulatedTop + _document->page(i)->pageSize().height()*_zoom < -this->_painterTranslate.y())
         {
-            cumulatedTop += _document->page(i)->pageSize().height()*_zoom+WidgetPdfDocument::PageMargin;
+            cumulatedTop += (_document->page(i)->pageSize().height()+WidgetPdfDocument::PageMargin)*_zoom;
             continue;
         }
         image = this->page(i);
@@ -183,7 +183,7 @@ void WidgetPdfDocument::paintEvent(QPaintEvent *)
         painter.drawText(pageNumberDisp.translated(4,4), pageNumString);
 
 
-        cumulatedTop += pageHeight+WidgetPdfDocument::PageMargin;
+        cumulatedTop += pageHeight+WidgetPdfDocument::PageMargin*_zoom;
         if(cumulatedTop > this->height() - this->_painterTranslate.y())
         {
             break;
@@ -321,7 +321,7 @@ void WidgetPdfDocument::initLinks()
                 }
             }
         }
-        cumulatedTop += _document->page(page_idx)->pageSize().height()*_zoom+WidgetPdfDocument::PageMargin;
+        cumulatedTop += (_document->page(page_idx)->pageSize().height()+WidgetPdfDocument::PageMargin)*_zoom;
     }
 
     /*if(linkAreaAbsolute.contains(this->cursor().pos()))
@@ -376,7 +376,7 @@ void WidgetPdfDocument::goToPage(int page, int top, int height)
     int i = 0;
     for(i = 0; i < page; ++i)
     {
-        cumulatedTop += _document->page(i)->pageSize().height()*_zoom+WidgetPdfDocument::PageMargin;
+        cumulatedTop += (_document->page(i)->pageSize().height()+WidgetPdfDocument::PageMargin)*_zoom;
     }
     if(-this->_painterTranslate.y() + this->height() < cumulatedTop + top*_zoom + height * _zoom || -this->_painterTranslate.y() > cumulatedTop + top*_zoom )
     {
@@ -574,7 +574,7 @@ void WidgetPdfDocument::jumpToEditorFromAbsolutePos(const QPoint &pos)
 
     }
     QPoint absolute(pos - this->_painterTranslate);
-    qreal pageHeightWithMargin = _document->page(0)->pageSize().height()*_zoom+WidgetPdfDocument::PageMargin;
+    qreal pageHeightWithMargin = (_document->page(0)->pageSize().height()+WidgetPdfDocument::PageMargin)*_zoom;
 
     int page = absolute.y() / pageHeightWithMargin;
     QPoint relative(absolute.x(), absolute.y() - page * pageHeightWithMargin);

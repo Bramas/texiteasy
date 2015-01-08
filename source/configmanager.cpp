@@ -723,12 +723,13 @@ void ConfigManager::checkRevision()
     {
         case 0:
         {
-                qDebug()<<"First launch of TexitEasy";
+            qDebug()<<"First launch of TexitEasy";
             if(settings.contains("lastFolder"))
             {
                 settings.setValue("lastFolder",documentLocation);
             }
             QDir().mkpath(dataLocation());
+            QDir().mkpath(themePath());
 
             QString pdflatexCommand = "pdflatex";
     #ifdef OS_WINDOWS
@@ -961,6 +962,8 @@ void ConfigManager::checkRevision()
         }
     }
     case 0x001500:
+    case 0x001600:
+    case 0x001601:
 
         break;
     }
