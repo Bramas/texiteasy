@@ -199,10 +199,10 @@ win32 {
     FORMS += dialogdownloadupdate.ui
 
 
-    LIBS += -LC:/Qt/prerequisites-i686/lib -lpoppler-qt5
-    LIBS += -LC:/Qt/prerequisites-i686/lib -lz
+    LIBS += -LC:/cygwin/lib -lpoppler-qt5
+    LIBS += -LC:/cygwin/lib -lz
 
-    INCLUDEPATH += C:/Qt/prerequisites-i686/include
+    INCLUDEPATH += C:/dev
     RC_FILE = win.rc
 
     DEFINES += OS_WINDOWS
