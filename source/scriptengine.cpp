@@ -14,7 +14,6 @@ QTextCursor scriptCursor;
 QScriptValue scriptPrint(QScriptContext *context, QScriptEngine *engine_in)
 {
    ScriptEngine * engine = dynamic_cast<ScriptEngine*>(engine_in);
-   WidgetTextEdit * editor = engine->widgetTextEdit();
    QString text = context->argument(0).toString();
 
    DISP_DEBUG(qDebug()<<"insert : "<<text);
@@ -75,13 +74,13 @@ QScriptValue scriptUseEditor(QScriptContext *context, QScriptEngine *engine_in)
    engine->getScriptCursor()->setTextCursor(editor->textCursor());
    return QScriptValue();
 }
-QScriptValue scriptDebug(QScriptContext *context, QScriptEngine *engine)
+QScriptValue scriptDebug(QScriptContext *context, QScriptEngine * /*engine*/)
 {
    QScriptValue a = context->argument(0);
    qDebug() << a.toString();
    return QScriptValue();
 }
-QScriptValue scriptStopEvaluation(QScriptContext *context, QScriptEngine *engine)
+QScriptValue scriptStopEvaluation(QScriptContext * /*context*/, QScriptEngine * /*engine*/)
 {
    return QScriptValue();
 }

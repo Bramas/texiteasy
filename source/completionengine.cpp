@@ -302,7 +302,15 @@ void CompletionEngine::keyPressEvent(QKeyEvent *event)
         _widgetTextEdit->setFocus(event);
         return;
     }
-    _widgetTextEdit->insertPlainText(event->text());
+    if(event->modifiers() == Qt::ControlModifier)
+    {
+        this->setVisible(false);
+        _widgetTextEdit->setFocus(event);
+    }
+    else
+    {
+        _widgetTextEdit->insertPlainText(event->text());
+    }
     _widgetTextEdit->matchCommand();
 }
 

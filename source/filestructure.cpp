@@ -30,7 +30,7 @@
 TextStruct::TextStruct(WidgetTextEdit * parent) :
     _widgetTextEdit(parent)
 {
-
+    _documentItem = 0;
 }
 
 void TextStruct::clear(StructItem * item)
@@ -67,7 +67,7 @@ void TextStruct::reload()
     currentSectionItem->level = 1;
     currentSectionItem->type = StructItem::SECTION;
     _sectionRoot.children.append(currentSectionItem);
-
+    _documentItem = 0;
 
     while(block.isValid())
     {
@@ -118,6 +118,10 @@ void TextStruct::reload()
 
                 currentEnvironmentItem->end   = blockInfo->position + block.position();
                 currentEnvironmentItem->blockEndNumber  = block.blockNumber();
+                if(currentEnvironmentItem->name == "document")
+                {
+                    _documentItem = currentEnvironmentItem;
+                }
                 if(currentEnvironmentItem->parent)
                 {
                     currentEnvironmentItem = currentEnvironmentItem->parent;
@@ -147,6 +151,10 @@ void TextStruct::reload()
                     currentSectionItem = item;
                 }
 
+            case LatexBlockInfo::NONE:
+            case LatexBlockInfo::BIBLIOGRAPHY_BEGIN:
+            case LatexBlockInfo::BIBLIOGRAPHY_END:
+                break;
 
             }
             if(currentEnvironmentItem->name.isEmpty())
@@ -193,6 +201,11 @@ QStack<const StructItem*> TextStruct::environmentPath(int position) const
         }
     }
     return path;
+}
+
+const StructItem* TextStruct::documentItem() const
+{
+    return _documentItem;
 }
 
 QStringList TextStruct::sectionsList(QString fill) const
