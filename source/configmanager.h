@@ -243,6 +243,7 @@ signals:
     void changed();
     void tabWidthChanged();
 private:
+    void checkLatexExecutable();
     void resetThemes();
     void replaceDefaultFont();
     ConfigManager();

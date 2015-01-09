@@ -66,6 +66,7 @@
 #include "widgetfile.h"
 #include "filemanager.h"
 #include "widgettab.h"
+#include "tools.h"
 
 #include <QList>
 
@@ -81,8 +82,12 @@ MainWindow::MainWindow(QWidget *parent) :
     _emptyWidget(new WidgetEmpty(0)),
     _menuMacrosAction(0)
 {
+
+    Tools::Log("MainWindow: setupUi");
     ui->setupUi(this);
+    Tools::Log("MainWindow: ConfigManager::Instance.setMainWindow(this)");
     ConfigManager::Instance.setMainWindow(this);
+    Tools::Log("MainWindow: FileManager::Instance.setMainWindow(this)");
     FileManager::Instance.setMainWindow(this);
     _tabWidget = new WidgetTab();
     connect(_tabWidget, SIGNAL(currentChanged(WidgetFile*)), this, SLOT(onCurrentFileChanged(WidgetFile*)));
@@ -122,6 +127,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->initTheme();
 
 
+    Tools::Log("MainWindow: connect actions");
     // Connect menubar Actions
     connect(this->ui->actionLinkSync, SIGNAL(toggled(bool)), &FileManager::Instance, SLOT(setPdfSynchronized(bool)));
     connect(this->ui->actionLinkSync, SIGNAL(toggled(bool)), &ConfigManager::Instance, SLOT(setPdfSynchronized(bool)));
@@ -166,6 +172,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&ConfigManager::Instance, SIGNAL(versionIsOutdated()), this, SLOT(addUpdateMenu()));
 
 
+    Tools::Log("MainWindow: create reopen");
     QMenu * parentMenu = this->ui->menuReopenWithEncoding;
     foreach(const QString& codec, ConfigManager::CodecsAvailable)
     {
@@ -199,6 +206,7 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
 
+    Tools::Log("MainWindow: create themes menu");
     QAction * lastAction = this->ui->menuTh_me->actions().last();
     foreach(const QString& theme, ConfigManager::Instance.themesList())
     {
@@ -216,8 +224,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     settings.endGroup();
 
+    Tools::Log("MainWindow: createLastOpenedFilesMenu()");
     createLastOpenedFilesMenu();
 
+    Tools::Log("MainWindow: init shortcuts");
     {
         QList<QAction *> actionsList = this->findChildren<QAction *>();
         QSettings settings;
@@ -230,9 +240,11 @@ MainWindow::MainWindow(QWidget *parent) :
         }
     }
 
+    Tools::Log("MainWindow: initMacrosMenu()");
     initMacrosMenu();
     connect(&MacroEngine::Instance, SIGNAL(changed()), this, SLOT(initMacrosMenu()));
 
+    Tools::Log("MainWindow: initBuildMenu()");
     initBuildMenu();
     connect(&ConfigManager::Instance, SIGNAL(changed()), this, SLOT(initBuildMenu()));
 
@@ -241,6 +253,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     if(ConfigManager::Instance.openLastSessionAtStartup())
     {
+        Tools::Log("MainWindow: openLastSession()");
         this->openLastSession();
     }
     return;
@@ -537,17 +550,21 @@ void MainWindow::addFilenameToLastOpened(QString filename)
 
 void MainWindow::openLastSession()
 {
+    Tools::Log("MainWindow::openLastSession: load files");
     QStringList files = ConfigManager::Instance.openFilesWhenClosing();
+    Tools::Log("MainWindow::openLastSession: load cursor position");
     QStringList fileCursorPositions = ConfigManager::Instance.openFileCursorPositionsWhenClosing();
     int index = 0;
     foreach(const QString & file, files)
     {
         if(index < fileCursorPositions.count())
         {
+            Tools::Log("MainWindow::openLastSession: open "+file);
             open(file, fileCursorPositions.at(index).toInt());
         }
         ++index;
     }
+    Tools::Log("MainWindow::openLastSession: create tabs");
     int tabIndex = ConfigManager::Instance.openTabIndexWhenClosing();
     if(tabIndex < _tabWidget->count())
     {
@@ -585,30 +602,9 @@ void MainWindow::open(QString filename, int cursorPosition)
     //check the filename
     if(!QFileInfo(filename).exists())
     {
-        /*
-        QDir dir = QFileInfo(filename).dir();
-        bool folderDoesNotExists = false;
-        QString fisrtNonExistingFolder = dir.dirName();
-        QString up("");
-        int maxDeph = 30;
-        while(!dir.exists() && --maxDeph > 0)
-        {
-            folderDoesNotExists = true;
-            fisrtNonExistingFolder = QDir(QDir::cleanPath(dir.absolutePath()+"/"+up)).dirName();
-            up += "../";
-            dir.cd(up);
-        }
-        QMessageBox msgBox(this);
-        msgBox.setWindowModality(Qt::WindowModal);
-        msgBox.setText(trUtf8("The file \"%1\" does not exists.").arg(filename));
-        msgBox.setStandardButtons(QMessageBox::Ok);
-        if(folderDoesNotExists)
-        {
-            msgBox.setInformativeText(trUtf8("Even the folder \"%1\" does not exists").arg(fisrtNonExistingFolder));
-        }
-        msgBox.exec();*/
         return;
     }
+    Tools::Log("MainWindow::open: addFilenameToLastOpened()");
     this->addFilenameToLastOpened(filename);
 
     //check if it is already open
@@ -620,8 +616,10 @@ void MainWindow::open(QString filename, int cursorPosition)
     }
 
     //open
+    Tools::Log("MainWindow::open: FileManager::Instance.open()");
     if(FileManager::Instance.open(filename, this))
     {
+        Tools::Log("MainWindow::open:get current widget");
         WidgetFile * current = FileManager::Instance.currentWidgetFile();
         QString tabName = FileManager::Instance.currentWidgetFile()->file()->fileInfo().fileName();
         _tabWidget->addTab(current, tabName);

@@ -13,6 +13,7 @@
 #include "filemanager.h"
 #include "builder.h"
 #include "configmanager.h"
+#include "tools.h"
 #include <QPushButton>
 #include <QGridLayout>
 #include <QFileDialog>
@@ -372,11 +373,15 @@ void WidgetFile::reload()
 
 void WidgetFile::open(QString filename)
 {
+    Tools::Log("WidgetFile::open: _widgetTextEdit->getCurrentFile()->open()");
     _widgetTextEdit->getCurrentFile()->open(filename);
+    Tools::Log("WidgetFile::open: _widgetPdfViewer->widgetPdfDocument()->setFile()");
     _widgetPdfViewer->widgetPdfDocument()->setFile(_widgetTextEdit->getCurrentFile());
+    Tools::Log("WidgetFile::open: _widgetConsole->setBuilder()");
     _widgetConsole->setBuilder(_widgetTextEdit->getCurrentFile()->getBuilder());
 
 
+    Tools::Log("WidgetFile::open: resolve tex directives");
     if(file()->texDirectives().contains("spellcheck"))
     {
         this->setDictionary(file()->texDirectives().value("spellcheck"));

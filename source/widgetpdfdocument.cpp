@@ -30,6 +30,7 @@
 #include <QtCore>
 #include "configmanager.h"
 #include "file.h"
+#include "tools.h"
 
 #ifdef OS_MAC
 #include "filemanager.h"
@@ -215,8 +216,25 @@ void WidgetPdfDocument::initDocument()
     {
         return;
     }
-    _document = Poppler::Document::load(_file->getPdfFilename());
+    QFile f(_file->getPdfFilename());
+    if (!f.open(QFile::ReadOnly)) {
+        Tools::Log("WidgetPdfDocument::initDocument: "+_file->getPdfFilename()+" not readable");
+        return;
+    }
 
+    // create document
+    try {
+        Tools::Log("WidgetPdfDocument::initDocument: Poppler::Document::load( "+_file->getPdfFilename()+" )");
+        _document = Poppler::Document::load(_file->getPdfFilename());
+    } catch (std::bad_alloc) {
+        Tools::Log("WidgetPdfDocument::initDocument: std::bad_alloc");
+        return;
+    } catch (...) {
+        Tools::Log("WidgetPdfDocument::initDocument: error");
+        return;
+    }
+
+    Tools::Log("WidgetPdfDocument::initDocument: _document "+QString(_document?"loaded":"not loaded"));
     if(!_document || _document->isLocked())
     {
         if(_document)

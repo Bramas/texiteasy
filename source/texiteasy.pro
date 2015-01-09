@@ -86,7 +86,9 @@ SOURCES += main.cpp\
     singleapp/qtlockedfile_unix.cpp \
     singleapp/qtlocalpeer.cpp \
     textdocumentlayout.cpp \
-    dialogsendfeedback.cpp
+    dialogsendfeedback.cpp \
+    dialogtexdownloadassistant.cpp \
+    tools.cpp
 
 HEADERS  += mainwindow.h \
     widgetlinenumber.h \
@@ -150,7 +152,9 @@ HEADERS  += mainwindow.h \
     singleapp/qtlockedfile.h \
     singleapp/qtlocalpeer.h \
     textdocumentlayout.h \
-    dialogsendfeedback.h
+    dialogsendfeedback.h \
+    dialogtexdownloadassistant.h \
+    tools.h
 
 FORMS    += mainwindow.ui \
     dialogwelcome.ui \
@@ -164,7 +168,8 @@ FORMS    += mainwindow.ui \
     dialogabout.ui \
     dialogaddlatexcommand.ui \
     dialogmacros.ui \
-    dialogsendfeedback.ui
+    dialogsendfeedback.ui \
+    dialogtexdownloadassistant.ui
 
 TRANSLATIONS += translations/texiteasy_ar.ts \
                 translations/texiteasy_fr.ts \
@@ -199,16 +204,17 @@ win32 {
     FORMS += dialogdownloadupdate.ui
 
 
-    LIBS += -LC:/cygwin/lib -lpoppler-qt5
-    LIBS += -LC:/cygwin/lib -lz
+    LIBS += -LC:/dev/poppler-0.24.5-win32/lib -lpoppler-qt5
+    LIBS += -LC:/dev/zlib-1.2.3b/lib -lz
 
-    INCLUDEPATH += C:/dev
+    INCLUDEPATH += C:\dev\poppler-0.24.5-win32\include
     RC_FILE = win.rc
 
     DEFINES += OS_WINDOWS
     LAST_VERSION_URL = \\\"'http://texiteasy.com/downloads/latest_version/win'\\\"
     TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com/downloads/latest/win'\\\"
     TEXITEASY_UPDATE_FILE_URL = \\\"'http://texiteasy.com/downloads/update_files/win'\\\"
+    LATEX_URL = \\\"'http://texiteasy.com/links/latex/win'\\\"
 
     #LAST_VERSION_URL = \\\"'http://texiteasy.com/posts/latest_version/win_portable'\\\"
     #TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com/posts/download_latest/win_portable'\\\"
@@ -219,6 +225,7 @@ unix:!mac{
     DEFINES += OS_LINUX
     LAST_VERSION_URL = \\\"'http://texiteasy.com/downloads/latest_version/linux'\\\"
     TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com/downloads/latest/linux'\\\"
+    LATEX_URL = \\\"'http://texiteasy.com/links/latex/linux'\\\"
 }
 mac{
     INCLUDEPATH += /usr/local/include
@@ -227,12 +234,14 @@ mac{
     DEFINES += OS_MAC
     LAST_VERSION_URL = \\\"'http://texiteasy.com/downloads/latest_version/mac'\\\"
     TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com/downloads/latest/mac'\\\"
+    LATEX_URL = \\\"'http://texiteasy.com/links/latex/mac'\\\"
     #CONFIG += x86 x86_64
 }
 
 DEFINES += "TEXITEASY_UPDATE_WEBSITE=$${TEXITEASY_UPDATE_WEBSITE}"
 DEFINES += "TEXITEASY_UPDATE_FILE_URL=$${TEXITEASY_UPDATE_FILE_URL}"
 DEFINES += "LAST_VERSION_URL=$${LAST_VERSION_URL}"
+DEFINES += "LATEX_URL=$${LATEX_URL}"
 
 OTHER_FILES += \
     hunspell/license.myspell \

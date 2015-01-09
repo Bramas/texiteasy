@@ -6,6 +6,7 @@
 #include "configmanager.h"
 #include "builder.h"
 #include "mainwindow.h"
+#include "tools.h"
 #include <QAction>
 #include <QDebug>
 #include <QMessageBox>
@@ -51,6 +52,8 @@ bool FileManager::newFile(MainWindow * mainWindow)
     newFile->initTheme();
     _widgetFiles.append(newFile);
     _currentWidgetFileId = _widgetFiles.count() - 1;
+    Q_ASSERT(_currentWidgetFileId >= 0);
+    Tools::Log("FileManager::newFile: set _currentWidgetFileId to "+QString::number(_currentWidgetFileId));
     changeConnexions(oldFile);
 
     connect(newFile->file(), SIGNAL(modified(bool)), this, SLOT(sendCurrentFileModified(bool)));
@@ -143,9 +146,12 @@ void FileManager::deleteMasterConnexions(WidgetFile *widget, AssociatedFile::Typ
 
 bool FileManager::open(QString filename, MainWindow * window)
 {
+    Tools::Log("FileManager::open: this->newFile()");
     bool newWidget = this->newFile(window);
+    Tools::Log("FileManager::open: this->currentWidgetFile()->open()");
     this->currentWidgetFile()->open(filename);
 
+    Tools::Log("FileManager::open: associate files");
     // is it an associated file?
     int masterId = 0;
     AssociatedFile assoc = this->reverseAssociation(filename, &masterId);
