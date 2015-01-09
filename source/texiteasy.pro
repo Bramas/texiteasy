@@ -13,11 +13,11 @@ TEMPLATE = app
 
 APPLICATION_NAME = \\\"'TexitEasy'\\\"
 
-VERSION = \\\"'0.16.1'\\\"
-VERSION_HEX = 0x001601
+VERSION = \\\"'0.17.0'\\\"
+VERSION_HEX = 0x001700
 
 
-DEFINES += LIB_DEPLOY
+#DEFINES += LIB_DEPLOY
 #DEFINES += PORTABLE_EXECUTABLE
 
 DEFINES += "CURRENT_VERSION_HEX=$${VERSION_HEX}"
@@ -199,10 +199,10 @@ win32 {
     FORMS += dialogdownloadupdate.ui
 
 
-    LIBS += -LC:/Qt/prerequisites-i686/lib -lpoppler-qt5
-    LIBS += -LC:/Qt/prerequisites-i686/lib -lz
+    LIBS += -LC:/cygwin/lib -lpoppler-qt5
+    LIBS += -LC:/cygwin/lib -lz
 
-    INCLUDEPATH += C:/Qt/prerequisites-i686/include
+    INCLUDEPATH += C:/dev
     RC_FILE = win.rc
 
     DEFINES += OS_WINDOWS

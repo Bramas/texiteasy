@@ -705,6 +705,62 @@ QString ConfigManager::systemInfo()
     return sysType+" "+sysVersion;
 }
 
+void ConfigManager::resetThemes()
+{
+    QDir().mkpath(themePath());
+    //remove some old files and update theme
+    {
+        QFile localtheme(themePath()+"dark.texiteasy-theme");
+        QFile localtheme2(themePath()+"light.texiteasy-theme");
+        QFile::setPermissions(themePath()+"dark.texiteasy-theme",
+                          QFile::ReadOwner |
+                          QFile::WriteOwner |
+                          QFile::ReadGroup |
+                          QFile::WriteGroup |
+                          QFile::ReadOther |
+                          QFile::WriteOther |
+                          QFile::ReadUser |
+                          QFile::WriteUser
+                          );
+        QFile::setPermissions(themePath()+"light.texiteasy-theme",
+                          QFile::ReadOwner |
+                          QFile::WriteOwner |
+                          QFile::ReadGroup |
+                          QFile::WriteGroup |
+                          QFile::ReadOther |
+                          QFile::WriteOther |
+                          QFile::ReadUser |
+                          QFile::WriteUser
+                          );
+        localtheme.remove();
+        localtheme2.remove();
+    }
+    QFile theme(":/themes/dark.texiteasy-theme");
+    QFile theme2(":/themes/light.texiteasy-theme");
+    theme.copy(themePath()+"dark.texiteasy-theme");
+    theme2.copy(themePath()+"light.texiteasy-theme");
+    QFile::setPermissions(themePath()+"dark.texiteasy-theme",
+                  QFile::ReadOwner |
+                  QFile::WriteOwner |
+                  QFile::ReadGroup |
+                  QFile::WriteGroup |
+                  QFile::ReadOther |
+                  QFile::WriteOther |
+                  QFile::ReadUser |
+                  QFile::WriteUser
+                  );
+    QFile::setPermissions(themePath()+"light.texiteasy-theme",
+                  QFile::ReadOwner |
+                  QFile::WriteOwner |
+                  QFile::ReadGroup |
+                  QFile::WriteGroup |
+                  QFile::ReadOther |
+                  QFile::WriteOther |
+                  QFile::ReadUser |
+                  QFile::WriteUser
+                  );
+}
+
 void ConfigManager::checkRevision()
 {
     QSettings settings;
@@ -730,7 +786,6 @@ void ConfigManager::checkRevision()
                 settings.setValue("lastFolder",documentLocation);
             }
             QDir().mkpath(dataLocation());
-            QDir().mkpath(themePath());
 
             QString pdflatexCommand = "pdflatex";
     #ifdef OS_WINDOWS
@@ -861,59 +916,6 @@ void ConfigManager::checkRevision()
     case 0x001302:
     case 0x001303:
     case 0x001304:
-    {
-        //remove some old files and update theme
-        {
-            QFile localtheme(themePath()+"dark.texiteasy-theme");
-            QFile localtheme2(themePath()+"light.texiteasy-theme");
-            QFile::setPermissions(themePath()+"dark.texiteasy-theme",
-                              QFile::ReadOwner |
-                              QFile::WriteOwner |
-                              QFile::ReadGroup |
-                              QFile::WriteGroup |
-                              QFile::ReadOther |
-                              QFile::WriteOther |
-                              QFile::ReadUser |
-                              QFile::WriteUser
-                              );
-            QFile::setPermissions(themePath()+"light.texiteasy-theme",
-                              QFile::ReadOwner |
-                              QFile::WriteOwner |
-                              QFile::ReadGroup |
-                              QFile::WriteGroup |
-                              QFile::ReadOther |
-                              QFile::WriteOther |
-                              QFile::ReadUser |
-                              QFile::WriteUser
-                              );
-            localtheme.remove();
-            localtheme2.remove();
-        }
-        QFile theme(":/themes/dark.texiteasy-theme");
-        QFile theme2(":/themes/light.texiteasy-theme");
-        theme.copy(themePath()+"dark.texiteasy-theme");
-        theme2.copy(themePath()+"light.texiteasy-theme");
-        QFile::setPermissions(themePath()+"dark.texiteasy-theme",
-                          QFile::ReadOwner |
-                          QFile::WriteOwner |
-                          QFile::ReadGroup |
-                          QFile::WriteGroup |
-                          QFile::ReadOther |
-                          QFile::WriteOther |
-                          QFile::ReadUser |
-                          QFile::WriteUser
-                          );
-        QFile::setPermissions(themePath()+"light.texiteasy-theme",
-                          QFile::ReadOwner |
-                          QFile::WriteOwner |
-                          QFile::ReadGroup |
-                          QFile::WriteGroup |
-                          QFile::ReadOther |
-                          QFile::WriteOther |
-                          QFile::ReadUser |
-                          QFile::WriteUser
-                          );
-    }
     case 0x001400:
     {
         QString roamingFolder =  QFileInfo(settings.fileName()).absolutePath();
@@ -967,6 +969,8 @@ void ConfigManager::checkRevision()
     case 0x001601:
     case 0x001602:
     case 0x001603:
+        resetThemes();
+    case 0x001700:
 
         break;
     }
