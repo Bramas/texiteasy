@@ -93,6 +93,15 @@ int main(int argc, char *argv[])
      dir.cd("PlugIns");  // e.g. appdir/PlugIns
      QCoreApplication::setLibraryPaths(QStringList(dir.absolutePath()));
 #endif
+#else
+#ifdef OS_MAC
+     //QDir dir(QFileInfo(argv[0]).path());  // e.g. appdir/Contents/MacOS
+     //dir.cdUp();
+     //dir.cd("PlugIns");  // e.g. appdir/Contents/PlugIns
+     QDir dir("/Users/quentinbramas/Qt/5.3/clang_64/plugins");
+     QCoreApplication::setLibraryPaths(QStringList(dir.absolutePath()));
+#endif
+
 #endif
      Application a("TexitEasy",argc, argv);
 
@@ -142,7 +151,7 @@ int main(int argc, char *argv[])
         w.open(filename);
     }
 
-    UpdateChecker * updateChecker = new UpdateChecker(&w);
+    new UpdateChecker(&w);
 
     int returnCode = a.exec();
     if(returnCode == CODE_INSTALL_AND_RESTART)

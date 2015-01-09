@@ -84,6 +84,12 @@ public:
      */
     QStack<const StructItem *> environmentPath(int position) const;
 
+    /**
+     * @brief environmentPath return the stack of environement in wich the given position is in.
+     * @return
+     */
+    const StructItem * documentItem() const;
+
     QString currentEnvironment() const;
 
     QStringList sectionsList(QString fill = "") const;
@@ -100,6 +106,7 @@ private:
     void sectionsList(QStringList * list, const StructItem *item, int level, QString fill) const;
     WidgetTextEdit * _widgetTextEdit;
     StructItem _environementRoot;
+    StructItem * _documentItem;
     StructItem _sectionRoot;
 };
 

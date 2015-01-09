@@ -508,7 +508,7 @@ QStringList ConfigManager::userDictionnary(QString dico)
 QStringList ConfigManager::themesList()
 {
     QDir dir(themePath());
-    QStringList list = dir.entryList(QDir::Files | QDir::Readable, QDir::Name).filter(QRegExp("\\.texiteasy-theme"));
+    QStringList list = dir.entryList(QDir::Files | QDir::Readable, QDir::Name).filter(QRegExp("\\.texiteasy-theme$"));
     list.replaceInStrings(QRegExp("\\.texiteasy-theme$"), "");
     return list;
 }
@@ -686,6 +686,7 @@ QString ConfigManager::systemInfo()
     case QSysInfo::MV_10_7: sysVersion = "10.7"; break;
     case QSysInfo::MV_10_8: sysVersion = "10.8"; break;
     case QSysInfo::MV_10_9: sysVersion = "10.9"; break;
+    default: break;
     }
 #endif
 #ifdef OS_WINDOWS
@@ -721,7 +722,7 @@ void ConfigManager::checkRevision()
 #endif
     switch(fromVersion)
     {
-        case 0:
+        case 0x000000:
         {
             qDebug()<<"First launch of TexitEasy";
             if(settings.contains("lastFolder"))
@@ -964,6 +965,8 @@ void ConfigManager::checkRevision()
     case 0x001500:
     case 0x001600:
     case 0x001601:
+    case 0x001602:
+    case 0x001603:
 
         break;
     }
