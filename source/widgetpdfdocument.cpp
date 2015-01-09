@@ -98,6 +98,27 @@ WidgetPdfDocument::~WidgetPdfDocument()
 #endif
 }
 
+bool WidgetPdfDocument::event(QEvent * event)
+{
+    if (event->type() == QEvent::NativeGesture)
+        return gestureEvent(dynamic_cast<QNativeGestureEvent*>(event));
+    return QWidget::event(event);
+}
+bool WidgetPdfDocument::gestureEvent(QNativeGestureEvent* event)
+{
+    switch(event->gestureType())
+    {
+    case 3: //scale
+    {
+        this->zoom(1+event->value(), _mousePosition);
+    }
+        break;
+    case 5: //rotation
+        //qDebug()<<"gestureEvent 5 "<<event->value();
+        break;
+    }
+    return true;
+}
 void WidgetPdfDocument::paintEvent(QPaintEvent *)
 {
     if(!this->_document)
@@ -528,6 +549,7 @@ void WidgetPdfDocument::zoomOut()
 
 void WidgetPdfDocument::mouseMoveEvent(QMouseEvent * event)
 {
+    _mousePosition = event->pos();
     this->checkLinksOver(event->pos());
     if(this->_mousePressed)
     {

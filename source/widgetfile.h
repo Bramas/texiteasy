@@ -71,8 +71,8 @@ public:
 
     static void fromScriptValue(const QScriptValue &obj, WidgetFile *&s)
     {
-      //s.x = obj.property("x").toInt32();
-      //s.y = obj.property("y").toInt32();
+        Q_UNUSED(obj);
+        Q_UNUSED(s);
     }
 
 signals:

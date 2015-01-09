@@ -31,6 +31,7 @@
 
 #include <QMainWindow>
 #include <QIcon>
+#include <QNativeGestureEvent>
 
 class QMimeData;
 class WidgetTextEdit;
@@ -132,6 +133,7 @@ public slots:
 private slots:
     void addUpdateMenu();
 protected:
+    bool event(QEvent *event);
     void closeEvent(QCloseEvent *);
     void dragEnterEvent(QDragEnterEvent *);
     void dragMoveEvent(QDragMoveEvent *);

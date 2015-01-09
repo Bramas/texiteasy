@@ -13,11 +13,11 @@ TEMPLATE = app
 
 APPLICATION_NAME = \\\"'TexitEasy'\\\"
 
-VERSION = \\\"'0.16.1'\\\"
-VERSION_HEX = 0x001601
+VERSION = \\\"'0.16.3'\\\"
+VERSION_HEX = 0x001603
 
 
-DEFINES += LIB_DEPLOY
+#DEFINES += LIB_DEPLOY
 #DEFINES += PORTABLE_EXECUTABLE
 
 DEFINES += "CURRENT_VERSION_HEX=$${VERSION_HEX}"
@@ -86,7 +86,8 @@ SOURCES += main.cpp\
     singleapp/qtlockedfile_unix.cpp \
     singleapp/qtlocalpeer.cpp \
     textdocumentlayout.cpp \
-    dialogsendfeedback.cpp
+    dialogsendfeedback.cpp \
+    grammarchecker.cpp
 
 HEADERS  += mainwindow.h \
     widgetlinenumber.h \
@@ -150,7 +151,8 @@ HEADERS  += mainwindow.h \
     singleapp/qtlockedfile.h \
     singleapp/qtlocalpeer.h \
     textdocumentlayout.h \
-    dialogsendfeedback.h
+    dialogsendfeedback.h \
+    grammarchecker.h
 
 FORMS    += mainwindow.ui \
     dialogwelcome.ui \

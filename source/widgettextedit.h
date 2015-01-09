@@ -116,12 +116,16 @@ public:
 
     static void fromScriptValue(const QScriptValue &obj, WidgetTextEdit* &s)
     {
+        Q_UNUSED(obj);
+        Q_UNUSED(s);
       //s.x = obj.property("x").toInt32();
       //s.y = obj.property("y").toInt32();
     }
     void comment();
     void uncomment();
     void toggleComment();
+    QString toPlainRealText();
+    void checkGrammar();
 
 signals:
     void updateFirstVisibleBlock(int,int);

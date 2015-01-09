@@ -96,6 +96,7 @@
     <addaction name="separator"/>
     <addaction name="menuTexDirectives"/>
     <addaction name="separator"/>
+    <addaction name="actionSettings"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuBuild">
@@ -117,21 +118,6 @@
     <addaction name="actionView"/>
     <addaction name="actionLinkSync"/>
    </widget>
-   <widget class="QMenu" name="menuOptions">
-    <property name="title">
-     <string>Options</string>
-    </property>
-    <widget class="QMenu" name="menuTh_me">
-     <property name="title">
-      <string>Thème</string>
-     </property>
-     <addaction name="separator"/>
-     <addaction name="actionOpenConfigFolder"/>
-    </widget>
-    <addaction name="actionSettings"/>
-    <addaction name="menuTh_me"/>
-    <addaction name="actionSendFeedback"/>
-   </widget>
    <widget class="QMenu" name="menuEdition">
     <property name="title">
      <string>Edition</string>
@@ -147,17 +133,28 @@
     <addaction name="actionComment"/>
     <addaction name="actionUncomment"/>
     <addaction name="actionToggleComment"/>
+    <addaction name="separator"/>
+    <addaction name="actionCheckGrammar"/>
    </widget>
    <widget class="QMenu" name="menuAide">
     <property name="title">
      <string>Aide</string>
     </property>
     <addaction name="actionAbout"/>
+    <addaction name="actionSendFeedback"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
      <string>View</string>
     </property>
+    <widget class="QMenu" name="menuTh_me">
+     <property name="title">
+      <string>Thème</string>
+     </property>
+     <addaction name="separator"/>
+     <addaction name="actionOpenConfigFolder"/>
+    </widget>
+    <addaction name="menuTh_me"/>
     <addaction name="actionPdfViewerInItsOwnWidget"/>
     <addaction name="actionSplitEditor"/>
    </widget>
@@ -170,7 +167,6 @@
    <addaction name="menuFichier"/>
    <addaction name="menuEdition"/>
    <addaction name="menuBuild"/>
-   <addaction name="menuOptions"/>
    <addaction name="menuView"/>
    <addaction name="menuPdf"/>
    <addaction name="menuAide"/>
@@ -437,6 +433,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+:</string>
+   </property>
+  </action>
+  <action name="actionCheckGrammar">
+   <property name="text">
+    <string>Vérifier la grammaire</string>
    </property>
   </action>
  </widget>

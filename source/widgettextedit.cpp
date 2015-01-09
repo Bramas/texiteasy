@@ -53,6 +53,7 @@
 #include "widgetlinenumber.h"
 #include "widgetfile.h"
 #include "textdocumentlayout.h"
+#include "grammarchecker.h"
 
 #define max(a,b) ((a) < (b) ? (b) : (a))
 #define min(a,b) ((a) > (b) ? (b) : (a))
@@ -62,8 +63,8 @@ WidgetTextEdit::WidgetTextEdit(WidgetFile * parent) :
     WIDGET_TEXT_EDIT_PARENT_CLASS(parent),
     _completionEngine(new CompletionEngine(this)),
     currentFile(new File(parent, this)),
-    _textStruct(new TextStruct(this)),
     fileStructure(new FileStructure(this)),
+    _textStruct(new TextStruct(this)),
     _indentationInited(false),
     _lineCount(0),
     _syntaxHighlighter(0),
@@ -475,6 +476,52 @@ void WidgetTextEdit::resizeEvent(QResizeEvent *event)
     layout->setTextWidth(viewport()->width());
     WIDGET_TEXT_EDIT_PARENT_CLASS::resizeEvent(event);
 }
+void WidgetTextEdit::checkGrammar()
+{
+    GrammarChecker * gm = new GrammarChecker();
+    QString text = this->toPlainRealText();
+    qDebug()<<text;
+    gm->check(text);
+}
+
+QString WidgetTextEdit::toPlainRealText()
+{
+    const StructItem * documentItem = this->_textStruct->documentItem();
+    if(!documentItem)
+    {
+        return "";
+    }
+    QTextBlock block = this->document()->firstBlock();
+    QString text;
+    text.reserve(this->document()->characterCount());
+    while(block.isValid() && documentItem->end > block.position())
+    {
+        if(documentItem->begin > block.position())
+        {
+            block = block.next();
+            continue;
+        }
+        BlockData *data = static_cast<BlockData *>( block.userData() );
+        if (data)
+        {
+            for(int i = 0; i < block.text().size() && i < data->characterData.size(); ++i)
+            {
+                QString c = block.text().at(i);
+                //we remove special character and command and replace it with space (to keep track of positions)
+                if(data->characterData.at(i).state == SyntaxHighlighter::Text && !c.contains(QRegExp("[\\{\\}\\[\\]\\\\]")))
+                {
+                    text += block.text().at(i);
+                }
+                else
+                {
+                    text += " ";
+                }
+            }
+        }
+        block = block.next();
+    }
+    return text;
+}
 
 void WidgetTextEdit::insertPlainText(const QString &text)
 {
@@ -647,7 +694,7 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
         _multipleEdit.clear();
         return;
     } else
-    if(e->text() == "{" && (nextChar(textCursor()).isNull() || !QString(nextChar(textCursor())).contains(QRegExp("[^ \\t]"))))
+    if(e->text() == "{" && (this->textCursor().hasSelection() || nextChar(textCursor()).isNull() || !QString(nextChar(textCursor())).contains(QRegExp("[^ \\t]"))))
     {
         QTextCursor cur = this->textCursor();
         cur.beginEditBlock();
@@ -855,7 +902,7 @@ void WidgetTextEdit::wheelEvent(QWheelEvent * event)
     }
     //update();
 }
-void WidgetTextEdit::setBlockLeftMargin(const QTextBlock &textBlock, int leftMargin)
+void WidgetTextEdit::setBlockLeftMargin(const QTextBlock &/*textBlock*/, int leftMargin)
 {
     QTextBlockFormat format;
     format = textCursor().blockFormat();
@@ -1237,7 +1284,7 @@ QChar WidgetTextEdit::nextChar(const QTextCursor cursor) const
 {
     QTextBlock block = cursor.block();
     int position = cursor.positionInBlock();
-    if(block.text().length() >= position)
+    if(block.text().length() > position)
     {
         return block.text().at(position);
     }

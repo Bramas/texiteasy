@@ -57,7 +57,7 @@ bool FileManager::newFile(MainWindow * mainWindow)
     connect(newFile->file()->getBuilder(), SIGNAL(pdfChanged()), this, SLOT(ensurePdfViewerIsVisible()));
     return true;
 }
-void FileManager::changeConnexions(WidgetFile * oldFile)
+void FileManager::changeConnexions(WidgetFile * /*oldFile*/)
 {
     // Disconnect
     /*if(oldFile)
@@ -238,21 +238,25 @@ void FileManager::setCurrent(WidgetFile *widget)
 }
 void FileManager::setCurrent(int index)
 {
-     _currentWidgetFileId = index;
-     if(index == -1)
-     {
-         return;
-     }
+    if(index >= _widgetFiles.count())
+    {
+        index = -1;
+    }
+    _currentWidgetFileId = index;
+    if(index == -1)
+    {
+        return;
+    }
 
-     if(this->currentWidgetFile()->masterFile())
-     {
-         this->currentWidgetFile()->widgetPdfViewer()->setWidgetPdfDocument(this->currentWidgetFile()->masterFile()->widgetPdfViewer()->widgetPdfDocument());
-     }
-     if(!this->currentWidgetFile()->file()->openAssociatedFiles().isEmpty())
-     {
-         this->currentWidgetFile()->widgetPdfViewer()->restorPdfDocumentParent();
-     }
-     setCurrentPdfToPdfViewer();
+    if(this->currentWidgetFile()->masterFile())
+    {
+        this->currentWidgetFile()->widgetPdfViewer()->setWidgetPdfDocument(this->currentWidgetFile()->masterFile()->widgetPdfViewer()->widgetPdfDocument());
+    }
+    if(!this->currentWidgetFile()->file()->openAssociatedFiles().isEmpty())
+    {
+        this->currentWidgetFile()->widgetPdfViewer()->restorPdfDocumentParent();
+    }
+    setCurrentPdfToPdfViewer();
 }
 void FileManager::setCurrentPdfToPdfViewer()
 {
@@ -374,6 +378,13 @@ void FileManager::toggleComment()
     if(this->currentWidgetFile())
     {
         this->currentWidgetFile()->widgetTextEdit()->toggleComment();
+    }
+}
+void FileManager::checkGrammar()
+{
+    if(this->currentWidgetFile())
+    {
+        this->currentWidgetFile()->widgetTextEdit()->checkGrammar();
     }
 }
 void FileManager::reopenWithEncoding(QString codec)

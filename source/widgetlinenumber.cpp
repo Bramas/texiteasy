@@ -35,8 +35,6 @@
 #include <QPalette>
 #include <QStack>
 
-const int FoldingWidth = 16;
-
 WidgetLineNumber::WidgetLineNumber(QWidget *parent) :
     QWidget(parent),
     widgetTextEdit(0),

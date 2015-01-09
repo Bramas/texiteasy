@@ -498,7 +498,6 @@ int Hunspell::spell(const char * word, int * info, char ** root)
   if (wordbreak) {
     char * s;
     char r;
-    int corr = 0;
     wl = strlen(cw);
     int numbreak = pAMgr ? pAMgr->get_numbreak() : 0;
     // check boundary patterns (^begin and end$)
@@ -517,7 +516,6 @@ int Hunspell::spell(const char * word, int * info, char ** root)
     }
     // other patterns
     for (int j = 0; j < numbreak; j++) {
-      int result = 0;
       int plen = strlen(wordbreak[j]);
       s=(char *) strstr(cw, wordbreak[j]);
       if (s && (s > cw) && (s < cw + wl - plen)) {
@@ -1939,6 +1937,6 @@ int Hunspell_remove(Hunhandle *pHunspell, const char * word) {
         return ((Hunspell*)pHunspell)->remove(word);
 }
 
-void Hunspell_free_list(Hunhandle *pHunspell, char *** slst, int n) {
+void Hunspell_free_list(Hunhandle * /*pHunspell*/, char *** slst, int n) {
         freelist(slst, n);
 }

@@ -5319,7 +5319,7 @@ int initialize_utf_tbl() {
       utf_tbl[j].clower = (unsigned short) j;
       utf_tbl[j].cupper = (unsigned short) j;
     }
-    for (j = 0; j < UTF_LST_LEN; j++) {
+    for (j = 0; j < (int)UTF_LST_LEN; j++) {
       utf_tbl[utf_lst[j].c].cletter = 1;
       utf_tbl[utf_lst[j].c].clower = utf_lst[j].clower;
       utf_tbl[utf_lst[j].c].cupper = utf_lst[j].cupper;
