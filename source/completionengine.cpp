@@ -304,7 +304,8 @@ void CompletionEngine::keyPressEvent(QKeyEvent *event)
     }
     if(event->modifiers() == Qt::ControlModifier)
     {
-        qDebug()<<"paste";
+        this->setVisible(false);
+        _widgetTextEdit->setFocus(event);
     }
     else
     {
