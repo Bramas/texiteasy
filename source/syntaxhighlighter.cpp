@@ -296,7 +296,6 @@ while(index < text.length())
         waitingBraceArgument = false;
         parenthesisLevel->top() += 1;
     }
-
     if(waitingBraceArgument)
     {
         if(currentChar != ' ' && currentChar != '\t' && (currentChar != '{' || escapedChar) && parenthesisLevel->top() == 0)
@@ -363,7 +362,18 @@ while(index < text.length())
         if(currentChar != ' ' && currentChar != '\t' && parenthesisLevel->top() == 0)
         {
             setFormat(index, 1, formatOther);
-            waitingBraceArgument = true;
+            if(currentChar=='{')
+            {
+                waitingBraceArgument = true;
+            }
+            else
+            {
+                state = Text;
+                if(parenthesisLevel->count() >= 2)
+                {
+                    parenthesisLevel->pop();
+                }
+            }
             if(!environmentNameBuffer.isEmpty())
             {
                 currentEnvironment = environmentNameBuffer;
@@ -373,6 +383,7 @@ while(index < text.length())
                     state = Math;
                 }
             }
+            else
             if(!endEnvironmentNameBuffer.isEmpty())
             {
                 if(mathEnvironments.contains(currentEnvironment) && endEnvironmentNameBuffer == currentEnvironment)
@@ -384,6 +395,7 @@ while(index < text.length())
                 }
                 endEnvironmentNameBuffer = "";
             }
+
         }
         else
         {

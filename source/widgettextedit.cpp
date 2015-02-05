@@ -377,8 +377,7 @@ void WidgetTextEdit::onCursorPositionChange()
 {
     _textStruct->environmentPath(textCursor().position());
     QList<QTextEdit::ExtraSelection> selections;
-    setExtraSelections(selections);
-    this->highlightCurrentLine();
+    this->highlightCurrentLine(selections);
 
     //*
     if(!_scriptEngine.cursorsMutex()->tryLock())
@@ -1323,10 +1322,13 @@ void WidgetTextEdit::goToLine(int line, QString stringSelected)
     }
 }
 
-void WidgetTextEdit::highlightCurrentLine(void)
+void WidgetTextEdit::highlightCurrentLine()
 {
-    QList<QTextEdit::ExtraSelection> extraSelections = this->extraSelections();
+    this->highlightCurrentLine(this->extraSelections());
+}
 
+void WidgetTextEdit::highlightCurrentLine(QList<QTextEdit::ExtraSelection> extraSelections)
+{
 
     QTextCursor cursor = textCursor();
     int blockNumber = cursor.blockNumber();

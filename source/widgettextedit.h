@@ -166,7 +166,8 @@ private:
     void keyPressEvent(QKeyEvent *e);
     void resizeEvent(QResizeEvent * event);
     void wheelEvent(QWheelEvent * event);
-    void highlightCurrentLine(void);
+    void highlightCurrentLine();
+    void highlightCurrentLine(QList<QTextEdit::ExtraSelection> extraSelections);
     bool selectNextArgument(void);
     bool hasArguments();
     void contextMenuEvent(QContextMenuEvent *event);
