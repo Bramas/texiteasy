@@ -34,6 +34,7 @@
 #include "macroengine.h"
 #include "updatechecker.h"
 #include "dialogdownloadupdate.h"
+#include "tools.h"
 #include <QSettings>
 #include <QFontDatabase>
 #include <QDebug>
@@ -136,9 +137,14 @@ int main(int argc, char *argv[])
         return 0;
     }
 
+    Tools::Log("FileManager init");
     FileManager::Instance.init();
+    Tools::Log("MacroEngine init");
     MacroEngine::Instance.init();
+
+    Tools::Log("Create MainWindow");
     MainWindow w;
+    Tools::Log("Show MainWindow");
     w.show();
     a.connect(&a, SIGNAL(requestOpenFile(QString)),
                     &w, SLOT(open(QString)));

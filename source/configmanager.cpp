@@ -20,6 +20,7 @@
  ***************************************************************************/
 
 #include "configmanager.h"
+#include "dialogtexdownloadassistant.h"
 #include <QFont>
 #include <QColor>
 #include <QSettings>
@@ -51,7 +52,8 @@
 #ifdef OS_LINUX
 #   define POPPLER_VERSION "unknown"
 #else
-#   include <poppler/poppler-config.h>
+//#   include <poppler-qt5/poppler-config.h>
+#define POPPLER_VERSION "unknown"
 #endif
 
 #define DEBUG_THEME_PARSER(a)
@@ -705,6 +707,122 @@ QString ConfigManager::systemInfo()
     return sysType+" "+sysVersion;
 }
 
+void ConfigManager::resetThemes()
+{
+    QDir().mkpath(themePath());
+    //remove some old files and update theme
+    {
+        QFile localtheme(themePath()+"dark.texiteasy-theme");
+        QFile localtheme2(themePath()+"light.texiteasy-theme");
+        QFile::setPermissions(themePath()+"dark.texiteasy-theme",
+                          QFile::ReadOwner |
+                          QFile::WriteOwner |
+                          QFile::ReadGroup |
+                          QFile::WriteGroup |
+                          QFile::ReadOther |
+                          QFile::WriteOther |
+                          QFile::ReadUser |
+                          QFile::WriteUser
+                          );
+        QFile::setPermissions(themePath()+"light.texiteasy-theme",
+                          QFile::ReadOwner |
+                          QFile::WriteOwner |
+                          QFile::ReadGroup |
+                          QFile::WriteGroup |
+                          QFile::ReadOther |
+                          QFile::WriteOther |
+                          QFile::ReadUser |
+                          QFile::WriteUser
+                          );
+        localtheme.remove();
+        localtheme2.remove();
+    }
+    QFile theme(":/themes/dark.texiteasy-theme");
+    QFile theme2(":/themes/light.texiteasy-theme");
+    theme.copy(themePath()+"dark.texiteasy-theme");
+    theme2.copy(themePath()+"light.texiteasy-theme");
+    QFile::setPermissions(themePath()+"dark.texiteasy-theme",
+                  QFile::ReadOwner |
+                  QFile::WriteOwner |
+                  QFile::ReadGroup |
+                  QFile::WriteGroup |
+                  QFile::ReadOther |
+                  QFile::WriteOther |
+                  QFile::ReadUser |
+                  QFile::WriteUser
+                  );
+    QFile::setPermissions(themePath()+"light.texiteasy-theme",
+                  QFile::ReadOwner |
+                  QFile::WriteOwner |
+                  QFile::ReadGroup |
+                  QFile::WriteGroup |
+                  QFile::ReadOther |
+                  QFile::WriteOther |
+                  QFile::ReadUser |
+                  QFile::WriteUser
+                  );
+}
+
+void ConfigManager::checkLatexExecutable()
+{
+    QSettings settings;
+    QString documentLocation("");
+    QString programLocation("");
+#if QT_VERSION < 0x050000
+    documentLocation = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
+    programLocation = QDesktopServices::storageLocation(QDesktopServices::ApplicationsLocation);
+#else
+    documentLocation = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+    programLocation = QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation);
+#endif
+
+    QString pdflatexCommand = "pdflatex";
+#ifdef OS_WINDOWS
+#ifdef PORTABLE_EXECUTABLE
+    QDir dir(_applicationPath);
+    dir.cdUp();
+    dir.mkdir("MikTex");
+    settings.setValue("builder/latexPath", "../MikTex/miktex/bin");
+#else
+    pdflatexCommand = "pdflatex.exe";
+    {
+        QDir dir(programLocation);
+        if(!dir.exists())
+        {
+            QStringList miktexDirs = dir.entryList(QDir::Dirs).filter(QRegExp("miktex",Qt::CaseInsensitive));
+            if(!miktexDirs.isEmpty())
+            {
+                if(dir.cd(miktexDirs.first()) && dir.cd("miktex") && dir.cd("bin"))
+                {
+                    settings.setValue("builder/latexPath",dir.path()+dir.separator());
+                }
+
+            }
+
+
+        }
+    }
+#endif
+#endif
+    if(-2 == QProcess::execute(settings.value("latexPath").toString()+pdflatexCommand+" --version"))
+    {
+        qDebug()<<"latex not found ask for a the path";
+
+#ifdef OS_WINDOWS
+#ifndef PORTABLE_EXECUTABLE
+        DialogTexDownloadAssistant latexDialogAssistant;
+        latexDialogAssistant.exec();
+#endif
+#endif
+        //qDebug()<<QFileDialog::getExistingDirectory(0, QObject::trUtf8("Choisir l'emplacement contenant l'executable latex."),programLocation);
+    }
+    else
+    {
+        settings.setValue("latexFound", true);
+        qDebug()<<"latex found";
+    }
+}
+
 void ConfigManager::checkRevision()
 {
     QSettings settings;
@@ -720,6 +838,10 @@ void ConfigManager::checkRevision()
     documentLocation = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
     programLocation = QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation);
 #endif
+    if(!settings.value("latexFound").toBool())
+    {
+        checkLatexExecutable();
+    }
     switch(fromVersion)
     {
         case 0x000000:
@@ -730,45 +852,6 @@ void ConfigManager::checkRevision()
                 settings.setValue("lastFolder",documentLocation);
             }
             QDir().mkpath(dataLocation());
-            QDir().mkpath(themePath());
-
-            QString pdflatexCommand = "pdflatex";
-    #ifdef OS_WINDOWS
-#ifdef PORTABLE_EXECUTABLE
-            QDir dir(_applicationPath);
-            dir.cdUp();
-            dir.mkdir("MikTex");
-            settings.setValue("builder/latexPath", "../MikTex/miktex/bin");
-#else
-            pdflatexCommand = "pdflatex.exe";
-            {
-                QDir dir(programLocation);
-                if(!dir.exists())
-                {
-                    QStringList miktexDirs = dir.entryList(QDir::Dirs).filter(QRegExp("miktex",Qt::CaseInsensitive));
-                    if(!miktexDirs.isEmpty())
-                    {
-                        if(dir.cd(miktexDirs.first()) && dir.cd("miktex") && dir.cd("bin"))
-                        {
-                            settings.setValue("builder/latexPath",dir.path()+dir.separator());
-                        }
-
-                    }
-
-
-                }
-            }
-#endif
-#endif
-            if(-2 == QProcess::execute(settings.value("latexPath").toString()+pdflatexCommand+" --version"))
-            {
-                qDebug()<<"latex not found ask for a the path";
-                //qDebug()<<QFileDialog::getExistingDirectory(0, QObject::trUtf8("Choisir l'emplacement contenant l'executable latex."),programLocation);
-            }
-            else
-            {
-                qDebug()<<"latex found";
-            }
 
             {
                 QDir dir;
@@ -861,59 +944,6 @@ void ConfigManager::checkRevision()
     case 0x001302:
     case 0x001303:
     case 0x001304:
-    {
-        //remove some old files and update theme
-        {
-            QFile localtheme(themePath()+"dark.texiteasy-theme");
-            QFile localtheme2(themePath()+"light.texiteasy-theme");
-            QFile::setPermissions(themePath()+"dark.texiteasy-theme",
-                              QFile::ReadOwner |
-                              QFile::WriteOwner |
-                              QFile::ReadGroup |
-                              QFile::WriteGroup |
-                              QFile::ReadOther |
-                              QFile::WriteOther |
-                              QFile::ReadUser |
-                              QFile::WriteUser
-                              );
-            QFile::setPermissions(themePath()+"light.texiteasy-theme",
-                              QFile::ReadOwner |
-                              QFile::WriteOwner |
-                              QFile::ReadGroup |
-                              QFile::WriteGroup |
-                              QFile::ReadOther |
-                              QFile::WriteOther |
-                              QFile::ReadUser |
-                              QFile::WriteUser
-                              );
-            localtheme.remove();
-            localtheme2.remove();
-        }
-        QFile theme(":/themes/dark.texiteasy-theme");
-        QFile theme2(":/themes/light.texiteasy-theme");
-        theme.copy(themePath()+"dark.texiteasy-theme");
-        theme2.copy(themePath()+"light.texiteasy-theme");
-        QFile::setPermissions(themePath()+"dark.texiteasy-theme",
-                          QFile::ReadOwner |
-                          QFile::WriteOwner |
-                          QFile::ReadGroup |
-                          QFile::WriteGroup |
-                          QFile::ReadOther |
-                          QFile::WriteOther |
-                          QFile::ReadUser |
-                          QFile::WriteUser
-                          );
-        QFile::setPermissions(themePath()+"light.texiteasy-theme",
-                          QFile::ReadOwner |
-                          QFile::WriteOwner |
-                          QFile::ReadGroup |
-                          QFile::WriteGroup |
-                          QFile::ReadOther |
-                          QFile::WriteOther |
-                          QFile::ReadUser |
-                          QFile::WriteUser
-                          );
-    }
     case 0x001400:
     {
         QString roamingFolder =  QFileInfo(settings.fileName()).absolutePath();
@@ -967,9 +997,12 @@ void ConfigManager::checkRevision()
     case 0x001601:
     case 0x001602:
     case 0x001603:
+        resetThemes();
+    case 0x001700:
 
         break;
     }
+
     if(fromVersion != CURRENT_VERSION_HEX)
     {
         qDebug()<<"Thank you for the update, I feel better now.";

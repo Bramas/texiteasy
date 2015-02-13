@@ -130,6 +130,7 @@ public:
     const QString&  theme() { return _theme; }
     QString         themePath();
 
+
     QStringList     languagesList();
     QString         language()                      { QSettings settings; return settings.value("language").toString(); }
     void            setLanguage(QString language)   { QSettings settings; settings.setValue("language", language); applyTranslation(); }
@@ -242,6 +243,8 @@ signals:
     void changed();
     void tabWidthChanged();
 private:
+    void checkLatexExecutable();
+    void resetThemes();
     void replaceDefaultFont();
     ConfigManager();
 
