@@ -85,13 +85,9 @@ MainWindow::MainWindow(QWidget *parent) :
 
     Tools::Log("MainWindow: setupUi");
     ui->setupUi(this);
-<<<<<<< HEAD
     // remove grammar checking (not ready yet)
     ui->actionCheckGrammar->setVisible(false);
-
-=======
     Tools::Log("MainWindow: ConfigManager::Instance.setMainWindow(this)");
->>>>>>> master
     ConfigManager::Instance.setMainWindow(this);
     Tools::Log("MainWindow: FileManager::Instance.setMainWindow(this)");
     FileManager::Instance.setMainWindow(this);
