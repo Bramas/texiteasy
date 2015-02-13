@@ -82,6 +82,9 @@ MainWindow::MainWindow(QWidget *parent) :
     _menuMacrosAction(0)
 {
     ui->setupUi(this);
+    // remove grammar checking (not ready yet)
+    ui->actionCheckGrammar->setVisible(false);
+
     ConfigManager::Instance.setMainWindow(this);
     FileManager::Instance.setMainWindow(this);
     _tabWidget = new WidgetTab();
@@ -582,6 +585,10 @@ void MainWindow::open()
 }
 void MainWindow::open(QString filename, int cursorPosition)
 {
+
+    this->activateWindow();
+    this->raise();
+
     filename.replace("\\", "/");
     QSettings settings;
 

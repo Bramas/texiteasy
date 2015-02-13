@@ -7,43 +7,38 @@
 #include <QDomDocument>
 #include <QDomNode>
 
-const QString LangageToolServerAddress = "https://languagetool.org:8081/?language=en-US&disabled=WHITESPACE_RULE&text=";
 
 GrammarChecker::GrammarChecker()
 {
-    connect(&_manager, SIGNAL(finished(QNetworkReply*)),
-            this, SLOT(replyFinished(QNetworkReply*)));
+    connect(&_process, SIGNAL(finished(int,QProcess::ExitStatus)),
+            this, SLOT(processFinished(int,QProcess::ExitStatus)));
 }
 
 void GrammarChecker::check(QString text)
 {
-
-    QUrl url(LangageToolServerAddress+text);
-/*
-#ifdef OS_LINUX
-    QByteArray data = url.encodedQuery() ;
-#else
-    QUrlQuery urlquery;
-    url.setQuery(urlquery);
-    QByteArray data = url.query().toUtf8();
-#endif*/
-    QNetworkRequest req(url);
-    //req.setHeader(QNetworkRequest::ContentTypeHeader, "application/x-www-form-urlencoded");
-    _manager.get(req);
+    qDebug()<<"Check Grammar:";
+    qDebug()<<text;
+    QString command = "java -jar \"/Users/quentinbramas/Projects/texiteasy/LanguageTool-2.8/languagetool-commandline.jar\" -l en-US --api -d WHITESPACE_RULE";
+    _process.start(command);
+    _process.waitForReadyRead(3000);
+    qDebug()<<"----------- READY READ:";
+    _process.write(text.toUtf8());
+    _process.write("\n\n");
+    _process.kill();
 }
 
-void GrammarChecker::replyFinished(QNetworkReply* reply)
+void GrammarChecker::processFinished(int, QProcess::ExitStatus exitStatus)
 {
-    if(reply->error())
+    QString output = _process.readAll();
+    qDebug()<<output;
+    if(exitStatus == QProcess::CrashExit && false)
     {
-        QMessageBox::information(0, trUtf8("Erreur"), trUtf8("Erreur: ")+reply->errorString());
+        QMessageBox::information(0, trUtf8("Erreur"), trUtf8("Erreur: ")+_process.errorString());
     }
     else
     {
-        //QMessageBox::information(this, trUtf8("Merci"), trUtf8("Merci pour votre message."));
-        //qDebug()<<reply->readAll();
         QDomDocument doc;
-        doc.setContent(reply->readAll());
+        doc.setContent(output);
 
         QDomElement docElem = doc.documentElement();
         QDomNode n = docElem.firstChild();

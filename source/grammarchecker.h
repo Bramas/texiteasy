@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QNetworkAccessManager>
+#include <QProcess>
 class QNetworkReply;
 
 
@@ -14,10 +15,10 @@ public:
     void check(QString text);
 
 private slots:
-    void replyFinished(QNetworkReply* reply);
+    void processFinished(int, QProcess::ExitStatus exitStatus);
 private:
 
-    QNetworkAccessManager _manager;
+    QProcess _process;
 };
 
 #endif // GRAMMARCHECKER_H
