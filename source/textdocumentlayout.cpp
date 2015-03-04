@@ -266,6 +266,7 @@ void TextDocumentLayout::setTextWidth(qreal newWidth)
     d->width = d->maximumWidth = newWidth;
     //d->relayout();
 }
+
 /*!
   \reimp
  */

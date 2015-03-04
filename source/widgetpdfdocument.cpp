@@ -117,6 +117,7 @@ bool WidgetPdfDocument::gestureEvent(QNativeGestureEvent* event)
     case 5: //rotation
         //qDebug()<<"gestureEvent 5 "<<event->value();
         break;
+    default: break;
     }
     return true;
 }

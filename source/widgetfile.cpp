@@ -456,9 +456,20 @@ void WidgetFile::setDictionary(QString dico)
     file()->setModified(modified);
     widgetTextEdit()->onCursorPositionChange();
 }
-
+bool WidgetFile::isEditorSplited()
+{
+    return _editorSplitter->sizes().first();
+}
 void WidgetFile::splitEditor(bool split)
 {
+    if(QAction * splitEditorAction = this->window()->actionByRole("splitEditor"))
+    {
+        splitEditorAction->setChecked(split);
+    }
+    else
+    {
+        qDebug()<<"action not found";
+    }
     if(!_editorSplitter->height() || !_editorSplitter->sizes().at(1))
     {
         QList<int> sizes;

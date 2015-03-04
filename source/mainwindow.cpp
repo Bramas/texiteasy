@@ -157,6 +157,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->ui->actionBibtex,SIGNAL(triggered()), &FileManager::Instance,SLOT(bibtex()));
     connect(this->ui->actionClean,SIGNAL(triggered()), &FileManager::Instance,SLOT(clean()));
     connect(this->ui->actionView, SIGNAL(triggered()), &FileManager::Instance,SLOT(jumpToPdfFromSource()));
+    this->ui->actionSplitEditor->setProperty("role", "splitEditor");
     connect(this->ui->actionSplitEditor, SIGNAL(toggled(bool)), &FileManager::Instance,SLOT(splitEditor(bool)));
     connect(this->ui->actionOpenPdf, SIGNAL(triggered()), &FileManager::Instance,SLOT(openCurrentPdf()));
     connect(this->ui->actionComment, SIGNAL(triggered()), &FileManager::Instance,SLOT(comment()));
@@ -964,6 +965,18 @@ void MainWindow::addUpdateMenu()
 void MainWindow::proposeUpdateDialog()
 {
     UpdateChecker::proposeUpdateDialog(this);
+}
+
+QAction * MainWindow::actionByRole(QString actionRole)
+{
+    foreach(QAction * action, this->findChildren<QAction*>())
+    {
+        if(action->property("role").toString() == actionRole)
+        {
+            return action;
+        }
+    }
+    return 0;
 }
 
 void MainWindow::setWindowModified(bool b)

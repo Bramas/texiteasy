@@ -22,6 +22,7 @@
 
 #include "hunspell/hunspell.hxx"
 #include "widgettextedit.h"
+#include "textaction.h"
 #include "widgetinsertcommand.h"
 #include "configmanager.h"
 #include "file.h"
@@ -342,7 +343,7 @@ void WidgetTextEdit::addToDictionnary()
     ConfigManager::Instance.addToDictionnary(this->widgetFile()->dictionary(), newword);
     QTextCodec *codec = QTextCodec::codecForName(widgetFile()->spellCheckerEncoding().toLatin1());
     this->widgetFile()->spellChecker()->add(codec->fromUnicode(newword).data());
-    _syntaxHighlighter->rehighlightBlock(textCursor().block());
+    _syntaxHighlighter->rehighlight();
 }
 
 void WidgetTextEdit::correctWord()
@@ -545,6 +546,27 @@ void WidgetTextEdit::mousePressEvent(QMouseEvent *e)
     if(e->modifiers() == Qt::AltModifier)
     {
         _multipleEdit << textCursor();
+    }
+    else
+    if(e->modifiers() == Qt::ControlModifier)
+    {
+        QTextCursor clickCursor = textCursor();
+        clickCursor.setPosition(this->hitTest(e->pos()), QTextCursor::MoveAnchor);
+        QTextBlock block = clickCursor.block();
+        BlockData *data = static_cast<BlockData *>( block.userData() );
+        if(data && data->characterData.size() > clickCursor.positionInBlock())
+        {
+            CharacterData charData = data->characterData.at(clickCursor.positionInBlock());
+            if(charData.state == SyntaxHighlighter::Command)
+            {
+                TextAction a;
+                if(a.execute(clickCursor, this->widgetFile()))
+                {
+                    return;
+                }
+            }
+        }
+
     }
     else
     {
@@ -818,6 +840,36 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
     }
 
 }
+
+int WidgetTextEdit::hitTest(const QPoint & pos) const
+{
+    QTextBlock block = this->firstVisibleBlock();
+    while(block.isValid())
+    {
+        if(block.isVisible())
+        {
+            if(pos.y() - this->contentOffsetTop() < this->blockBottom(block))
+            {
+                int lineBottom = this->blockTop(block);
+                QTextLine line = block.layout()->lineAt(0);
+                for(int line_idx = 0; line_idx < block.layout()->lineCount(); line_idx++)
+                {
+                    lineBottom += block.layout()->lineAt(line_idx).height();
+                    if(pos.y() - this->contentOffsetTop() < lineBottom)
+                    {
+                        return block.position() + block.layout()->lineAt(line_idx).xToCursor(pos.x());
+                    }
+                }
+                return -1;
+            }
+
+        }
+        block = block.next();
+    }
+    return -1;
+}
+
+
 bool WidgetTextEdit::hasArguments()
 {
     QTextCursor curStrArg = this->document()->find(QRegExp("\\\\verb\\#\\{\\{([^\\}]*)\\}\\}\\#"));

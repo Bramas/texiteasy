@@ -80,7 +80,9 @@ signals:
 
 public slots:
     WidgetTextEdit * widgetTextEdit() { return _widgetTextEdit; }
+    WidgetTextEdit * widgetTextEdit2() { return _widgetTextEdit2; }
 
+    bool isEditorSplited();
     void splitEditor(bool split);
     void openConsole(void);
     void openErrorTable(void);

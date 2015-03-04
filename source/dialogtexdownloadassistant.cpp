@@ -11,8 +11,8 @@
 
 DialogTexDownloadAssistant::DialogTexDownloadAssistant(QWidget *parent) :
     QDialog(parent),
-    _executable(0),
-    ui(new Ui::DialogTexDownloadAssistant)
+    ui(new Ui::DialogTexDownloadAssistant),
+    _executable(0)
 {
     _state = UNKNOWN;
     ui->setupUi(this);
@@ -109,7 +109,7 @@ void DialogTexDownloadAssistant::onDownloaded()
     {
         QString url = _dataReply->readAll();
         qDebug()<<"URL "<<url;
-        if(QRegExp("^(https?:\\/\\/)?([\\da-zA-Z\\.-]+)\.([a-zA-Z\\.]{2,6})([\\/\\w\\.-]*)*\\/?$").exactMatch(url))
+        if(QRegExp("^(https?:\\/\\/)?([\\da-zA-Z\\.-]+)\\.([a-zA-Z\\.]{2,6})([\\/\\w\\.-]*)*\\/?$").exactMatch(url))
         {
             _state = DOWNLOADING_EXE;
             _dataReply = _manager->get(QNetworkRequest(QUrl(url)));
