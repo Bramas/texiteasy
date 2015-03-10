@@ -90,6 +90,7 @@ public slots:
     void comment();
     void uncomment();
     void toggleComment();
+    void checkGrammar();
     void setPdfSynchronized(bool pdfSynchronized);
     void setPdfViewerInItsOwnWidget(bool ownWidget);
     void jumpToPdfFromSource();

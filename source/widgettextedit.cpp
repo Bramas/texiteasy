@@ -22,6 +22,7 @@
 
 #include "hunspell/hunspell.hxx"
 #include "widgettextedit.h"
+#include "textaction.h"
 #include "widgetinsertcommand.h"
 #include "configmanager.h"
 #include "file.h"
@@ -53,6 +54,7 @@
 #include "widgetlinenumber.h"
 #include "widgetfile.h"
 #include "textdocumentlayout.h"
+#include "grammarchecker.h"
 
 #define max(a,b) ((a) < (b) ? (b) : (a))
 #define min(a,b) ((a) > (b) ? (b) : (a))
@@ -62,8 +64,8 @@ WidgetTextEdit::WidgetTextEdit(WidgetFile * parent) :
     WIDGET_TEXT_EDIT_PARENT_CLASS(parent),
     _completionEngine(new CompletionEngine(this)),
     currentFile(new File(parent, this)),
-    _textStruct(new TextStruct(this)),
     fileStructure(new FileStructure(this)),
+    _textStruct(new TextStruct(this)),
     _indentationInited(false),
     _lineCount(0),
     _syntaxHighlighter(0),
@@ -341,7 +343,7 @@ void WidgetTextEdit::addToDictionnary()
     ConfigManager::Instance.addToDictionnary(this->widgetFile()->dictionary(), newword);
     QTextCodec *codec = QTextCodec::codecForName(widgetFile()->spellCheckerEncoding().toLatin1());
     this->widgetFile()->spellChecker()->add(codec->fromUnicode(newword).data());
-    _syntaxHighlighter->rehighlightBlock(textCursor().block());
+    _syntaxHighlighter->rehighlight();
 }
 
 void WidgetTextEdit::correctWord()
@@ -376,8 +378,7 @@ void WidgetTextEdit::onCursorPositionChange()
 {
     _textStruct->environmentPath(textCursor().position());
     QList<QTextEdit::ExtraSelection> selections;
-    setExtraSelections(selections);
-    this->highlightCurrentLine();
+    this->highlightCurrentLine(selections);
 
     //*
     if(!_scriptEngine.cursorsMutex()->tryLock())
@@ -475,6 +476,52 @@ void WidgetTextEdit::resizeEvent(QResizeEvent *event)
     layout->setTextWidth(viewport()->width());
     WIDGET_TEXT_EDIT_PARENT_CLASS::resizeEvent(event);
 }
+void WidgetTextEdit::checkGrammar()
+{
+    GrammarChecker * gm = new GrammarChecker();
+    QString text = this->toPlainRealText();
+    qDebug()<<text;
+    gm->check(text);
+}
+
+QString WidgetTextEdit::toPlainRealText()
+{
+    const StructItem * documentItem = this->_textStruct->documentItem();
+    if(!documentItem)
+    {
+        return "";
+    }
+    QTextBlock block = this->document()->firstBlock();
+    QString text;
+    text.reserve(this->document()->characterCount());
+    while(block.isValid() && documentItem->end > block.position())
+    {
+        if(documentItem->begin > block.position())
+        {
+            block = block.next();
+            continue;
+        }
+        BlockData *data = static_cast<BlockData *>( block.userData() );
+        if (data)
+        {
+            for(int i = 0; i < block.text().size() && i < data->characterData.size(); ++i)
+            {
+                QString c = block.text().at(i);
+                //we remove special character and command and replace it with space (to keep track of positions)
+                if(data->characterData.at(i).state == SyntaxHighlighter::Text && !c.contains(QRegExp("[\\{\\}\\[\\]\\\\]")))
+                {
+                    text += block.text().at(i);
+                }
+                else
+                {
+                    text += " ";
+                }
+            }
+        }
+        block = block.next();
+    }
+    return text;
+}
 
 void WidgetTextEdit::insertPlainText(const QString &text)
 {
@@ -499,6 +546,27 @@ void WidgetTextEdit::mousePressEvent(QMouseEvent *e)
     if(e->modifiers() == Qt::AltModifier)
     {
         _multipleEdit << textCursor();
+    }
+    else
+    if(e->modifiers() == Qt::ControlModifier)
+    {
+        QTextCursor clickCursor = textCursor();
+        clickCursor.setPosition(this->hitTest(e->pos()), QTextCursor::MoveAnchor);
+        QTextBlock block = clickCursor.block();
+        BlockData *data = static_cast<BlockData *>( block.userData() );
+        if(data && data->characterData.size() > clickCursor.positionInBlock())
+        {
+            CharacterData charData = data->characterData.at(clickCursor.positionInBlock());
+            if(charData.state == SyntaxHighlighter::Command)
+            {
+                TextAction a;
+                if(a.execute(clickCursor, this->widgetFile()))
+                {
+                    return;
+                }
+            }
+        }
+
     }
     else
     {
@@ -647,7 +715,7 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
         _multipleEdit.clear();
         return;
     } else
-    if(e->text() == "{" && (nextChar(textCursor()).isNull() || !QString(nextChar(textCursor())).contains(QRegExp("[^ \\t]"))))
+    if(e->text() == "{" && (this->textCursor().hasSelection() || nextChar(textCursor()).isNull() || !QString(nextChar(textCursor())).contains(QRegExp("[^ \\t]"))))
     {
         QTextCursor cur = this->textCursor();
         cur.beginEditBlock();
@@ -772,6 +840,36 @@ void WidgetTextEdit::keyPressEvent(QKeyEvent *e)
     }
 
 }
+
+int WidgetTextEdit::hitTest(const QPoint & pos) const
+{
+    QTextBlock block = this->firstVisibleBlock();
+    while(block.isValid())
+    {
+        if(block.isVisible())
+        {
+            if(pos.y() - this->contentOffsetTop() < this->blockBottom(block))
+            {
+                int lineBottom = this->blockTop(block);
+                QTextLine line = block.layout()->lineAt(0);
+                for(int line_idx = 0; line_idx < block.layout()->lineCount(); line_idx++)
+                {
+                    lineBottom += block.layout()->lineAt(line_idx).height();
+                    if(pos.y() - this->contentOffsetTop() < lineBottom)
+                    {
+                        return block.position() + block.layout()->lineAt(line_idx).xToCursor(pos.x());
+                    }
+                }
+                return -1;
+            }
+
+        }
+        block = block.next();
+    }
+    return -1;
+}
+
+
 bool WidgetTextEdit::hasArguments()
 {
     QTextCursor curStrArg = this->document()->find(QRegExp("\\\\verb\\#\\{\\{([^\\}]*)\\}\\}\\#"));
@@ -855,7 +953,7 @@ void WidgetTextEdit::wheelEvent(QWheelEvent * event)
     }
     //update();
 }
-void WidgetTextEdit::setBlockLeftMargin(const QTextBlock &textBlock, int leftMargin)
+void WidgetTextEdit::setBlockLeftMargin(const QTextBlock &/*textBlock*/, int leftMargin)
 {
     QTextBlockFormat format;
     format = textCursor().blockFormat();
@@ -1237,7 +1335,7 @@ QChar WidgetTextEdit::nextChar(const QTextCursor cursor) const
 {
     QTextBlock block = cursor.block();
     int position = cursor.positionInBlock();
-    if(block.text().length() >= position)
+    if(block.text().length() > position)
     {
         return block.text().at(position);
     }
@@ -1276,10 +1374,13 @@ void WidgetTextEdit::goToLine(int line, QString stringSelected)
     }
 }
 
-void WidgetTextEdit::highlightCurrentLine(void)
+void WidgetTextEdit::highlightCurrentLine()
 {
-    QList<QTextEdit::ExtraSelection> extraSelections = this->extraSelections();
+    this->highlightCurrentLine(this->extraSelections());
+}
 
+void WidgetTextEdit::highlightCurrentLine(QList<QTextEdit::ExtraSelection> extraSelections)
+{
 
     QTextCursor cursor = textCursor();
     int blockNumber = cursor.blockNumber();

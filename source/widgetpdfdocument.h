@@ -29,6 +29,7 @@
 #include <QList>
 #include <QRectF>
 #include <QScrollBar>
+#include <QNativeGestureEvent>
 
 #include "synctex_parser.h"
 #include <QPoint>
@@ -99,6 +100,8 @@ public slots:
     void onScroll(int value);
 
 protected:
+    bool gestureEvent(QNativeGestureEvent* event);
+    bool event(QEvent * event);
     void paintEvent(QPaintEvent *);
     void mousePressEvent(QMouseEvent *);
     void mouseMoveEvent(QMouseEvent *);
@@ -131,6 +134,7 @@ private:
     static int PageMargin;
     QImage ** _pages;
     QPainterPath path;
+    QPoint _mousePosition;
     QPoint _pressAt;
     QPoint _painterTranslate;
     QPoint _painterTranslateWhenMousePressed;

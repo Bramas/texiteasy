@@ -29,7 +29,7 @@ UpdateChecker::UpdateChecker(QWidget * parent) : _parent(parent)
     this->get(request);
 }
 
-void UpdateChecker::proposeUpdateDialog(QWidget * parent)
+void UpdateChecker::proposeUpdateDialog(QWidget * /*parent*/)
 {
 
 #ifdef OS_WINDOWS
@@ -100,7 +100,8 @@ void UpdateChecker::onFinished(QNetworkReply *reply)
     if(_version.contains("http://"))
     {
         QStringList a = _version.split(';'); // url;message
-        int rep = QMessageBox::information(_parent, trUtf8("Nouvelle version"), a.at(1).arg(a.at(0)));
+
+        QMessageBox::information(_parent, trUtf8("Nouvelle version"), a.at(1).arg(a.at(0)));
         return;
     }
     QStringList a = _version.split('.');

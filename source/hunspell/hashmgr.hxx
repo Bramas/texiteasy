@@ -16,7 +16,6 @@ class HashMgr
 {
   int               tablesize;
   struct hentry **  tableptr;
-  int               userword;
   flag              flag_mode;
   int               complexprefixes;
   int               utf8;

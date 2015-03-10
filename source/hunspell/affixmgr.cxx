@@ -1866,8 +1866,8 @@ struct hentry * AffixMgr::compound_check(const char * word, int len,
             if (wordnum < maxwordnum) {
                 rv = compound_check((st+i),strlen(st+i), wordnum+1,
                      numsyllable, maxwordnum, wnum + 1, words, 0, is_sug);
-                if (rv && numcheckcpd && (scpd == 0 && cpdpat_check(word, i, rv_first, rv) ||
-                   scpd != 0 && !cpdpat_check(word, i, rv_first, rv))) rv = NULL;
+                if (rv && numcheckcpd && ((scpd == 0 && cpdpat_check(word, i, rv_first, rv)) ||
+                   (scpd != 0 && !cpdpat_check(word, i, rv_first, rv)))) rv = NULL;
             } else {
                 rv=NULL;
             }
@@ -3234,7 +3234,7 @@ struct hentry * AffixMgr::lookup(const char * word)
 }
 
 // return the value of suffix
-const int AffixMgr::have_contclass()
+int AffixMgr::have_contclass()
 {
   return havecontclass;
 }
@@ -3462,7 +3462,7 @@ int  AffixMgr::parse_convtable(char * line, FileMgr * af, RepList ** rl, const c
            if (*piece != '\0') {
                switch(i) {
                   case 0: {
-                             if (strncmp(piece, keyword, sizeof(keyword)) != 0) {
+                             if (strncmp(piece, keyword, sizeof(const char)) != 0) {
                                  HUNSPELL_WARNING(stderr, "error: line %d: table is corrupt\n", af->getlinenum());
                                  delete *rl;
                                  *rl = NULL;

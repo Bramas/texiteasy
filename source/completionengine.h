@@ -48,6 +48,7 @@ public:
 
     void addCustomWordFromSource();
     void parseBibtexFile();
+    const QStringList customWords() const { return _customWords; }
 public slots:
  //   void setFocus(void);
     void cellSelected(int);

@@ -185,6 +185,7 @@ State previousState = intToState(blockData->blockStartingState.previousState);
 State stateAfterOption = intToState(blockData->blockStartingState.stateAfterOption);
 bool beginEnvironmentName = false;
 bool endEnvironmentName = false;
+bool waitingBraceArgument = false;
 QStack<int> * parenthesisLevel = &(blockData->blockEndingState.parenthesisLevel);
 QStack<int> * crocherLevel = &(blockData->blockEndingState.crocherLevel);
 
@@ -292,8 +293,25 @@ while(index < text.length())
 
     if(currentChar == '{' && !escapedChar)
     {
+        waitingBraceArgument = false;
         parenthesisLevel->top() += 1;
     }
+    if(waitingBraceArgument)
+    {
+        if(currentChar != ' ' && currentChar != '\t' && (currentChar != '{' || escapedChar) && parenthesisLevel->top() == 0)
+        {
+            state = previousState;
+            waitingBraceArgument = false;
+            parenthesisLevel->pop();
+            index = index - 1 < 0 ? 0 : index - 1;
+            continue;
+        }
+        else //if(currentChar != ' ' && currentChar != '\t' && parenthesisLevel->pop())
+        {
+
+        }
+    }
+    if(currentChar == '{' && !escapedChar){}
     else if(currentChar == '}' && !escapedChar)
     {
         parenthesisLevel->top() -= 1;
@@ -306,6 +324,8 @@ while(index < text.length())
     {
         crocherLevel->top() -= 1;
     }
+    //qDebug()<<currentChar<<" "<<state<<" "<<parenthesisLevel->top()<< " ("<<waitingBraceArgument<<")";
+
     switch(state)
     {
     case Comment:
@@ -342,8 +362,18 @@ while(index < text.length())
         if(currentChar != ' ' && currentChar != '\t' && parenthesisLevel->top() == 0)
         {
             setFormat(index, 1, formatOther);
-            parenthesisLevel->pop();
-            state = previousState;
+            if(currentChar=='{')
+            {
+                waitingBraceArgument = true;
+            }
+            else
+            {
+                state = Text;
+                if(parenthesisLevel->count() >= 2)
+                {
+                    parenthesisLevel->pop();
+                }
+            }
             if(!environmentNameBuffer.isEmpty())
             {
                 currentEnvironment = environmentNameBuffer;
@@ -353,6 +383,7 @@ while(index < text.length())
                     state = Math;
                 }
             }
+            else
             if(!endEnvironmentNameBuffer.isEmpty())
             {
                 if(mathEnvironments.contains(currentEnvironment) && endEnvironmentNameBuffer == currentEnvironment)
@@ -364,6 +395,7 @@ while(index < text.length())
                 }
                 endEnvironmentNameBuffer = "";
             }
+
         }
         else
         {
@@ -427,6 +459,7 @@ while(index < text.length())
                 --index;
             }
             state = stateAfterOption;
+            waitingBraceArgument = true;
         }
         else
         {
@@ -541,7 +574,8 @@ while(index < text.length())
                 {
                     crocherLevel->push(0);
                     state = Option;
-                    stateAfterOption = Text;
+                    stateAfterOption = Other;
+                    //stateAfterOption = Text;
                     --index;
                 }
                 else
@@ -556,6 +590,10 @@ while(index < text.length())
             {
                 crocherLevel->pop();
                 state = stateAfterOption;
+                if(state == Other)
+                {
+                    waitingBraceArgument = true;
+                }
                 if(state != previousState)
                 {
                     parenthesisLevel->push(0);
@@ -575,6 +613,10 @@ while(index < text.length())
             }
         }
         break;
+    }
+    if(parenthesisLevel->size() == 0)
+    {
+        parenthesisLevel->push(0);
     }
     if(parenthesisLevel->top() < 0)
     {
@@ -939,6 +981,6 @@ void SyntaxHighlighter::highlightExpression(const QString &text, const QString &
 
 bool SyntaxHighlighter::isWordSeparator(QChar c) const
 {
-    return QString(c).contains(QRegExp(QString::fromUtf8("[^a-zâãäåàæçèéêëìíîïðñòóôõøùúûüýþÿı]"),Qt::CaseInsensitive));
+    return QString(c).contains(QRegExp(QString::fromUtf8("[^a-zâãäåàæçèéêëìíîïðñòóôõøùúûüýþÿıœ]"),Qt::CaseInsensitive));
 }
 

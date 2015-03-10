@@ -31,6 +31,7 @@
 
 #include <QMainWindow>
 #include <QIcon>
+#include <QNativeGestureEvent>
 
 class QMimeData;
 class WidgetTextEdit;
@@ -85,6 +86,7 @@ public:
     bool canBeOpened(QString filename);
     bool canBeInserted(QString filename);
     bool handleMimeData(const QMimeData* mimeData);
+    QAction * actionByRole(QString actionRole);
     ~MainWindow();
 
 public slots:
@@ -132,6 +134,7 @@ public slots:
 private slots:
     void addUpdateMenu();
 protected:
+    bool event(QEvent *event);
     void closeEvent(QCloseEvent *);
     void dragEnterEvent(QDragEnterEvent *);
     void dragMoveEvent(QDragMoveEvent *);

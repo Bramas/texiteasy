@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
      //QDir dir(QFileInfo(argv[0]).path());  // e.g. appdir/Contents/MacOS
      //dir.cdUp();
      //dir.cd("PlugIns");  // e.g. appdir/Contents/PlugIns
-     QDir dir("/Users/quentinbramas/Qt/5.3/clang_64/plugins");
+     QDir dir("/Users/quentinbramas/Qt/5.4/clang_64/plugins");
      QCoreApplication::setLibraryPaths(QStringList(dir.absolutePath()));
 #endif
 

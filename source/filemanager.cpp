@@ -60,7 +60,7 @@ bool FileManager::newFile(MainWindow * mainWindow)
     connect(newFile->file()->getBuilder(), SIGNAL(pdfChanged()), this, SLOT(ensurePdfViewerIsVisible()));
     return true;
 }
-void FileManager::changeConnexions(WidgetFile * oldFile)
+void FileManager::changeConnexions(WidgetFile * /*oldFile*/)
 {
     // Disconnect
     /*if(oldFile)
@@ -97,14 +97,11 @@ void FileManager::createMasterConnexions(WidgetFile * widget, WidgetFile * maste
 {
     master->file()->addOpenAssociatedFile(widget->file());
 
-
     // update the child
     connect(master->file()->getBuilder(), SIGNAL(pdfChanged()),widget->widgetPdfViewer()->widgetPdfDocument(),SLOT(updatePdf()));
-    if(type == AssociatedFile::BIBTEX)
-    {
-        widget->setMasterFile(master);
-        widget->file()->getBuilder()->setFile(master->file());
-    }
+
+    widget->setMasterFile(master);
+    widget->file()->getBuilder()->setFile(master->file());
 
     // update the parent
     connect(widget->file()->getBuilder(), SIGNAL(pdfChanged()),master->widgetPdfViewer()->widgetPdfDocument(),SLOT(updatePdf()));
@@ -117,18 +114,6 @@ void FileManager::deleteMasterConnexions(WidgetFile *widget, AssociatedFile::Typ
     if(widget->masterFile())
     {
         widget->masterFile()->file()->removeOpenAssociatedFile(widget->file());
-
-        if(widget->file()->format() == File::BIBTEX)
-        {
-            // the widget maybe own the pdfDocument of the master file
-            // in this case we have to remove it as a child because
-            // if the widget is deleted, all children are deleted
-            if(widget->masterFile()->widgetPdfViewer()->widgetPdfDocument()->parent()
-                    == widget->widgetPdfViewer())
-            {
-                widget->masterFile()->widgetPdfViewer()->restorPdfDocumentParent();
-            }
-        }
     }
 
     // if it is a master file
@@ -163,11 +148,7 @@ bool FileManager::open(QString filename, MainWindow * window)
             this->currentWidgetFile()->file()->setRootFilename(masterFile->file()->getFilename());
             this->currentWidgetFile()->widgetPdfViewer()->widgetPdfDocument()->updatePdf();
         }
-        //else
-        //if(assoc.type == AssociatedFile::BIBTEX)
-        {
-            createMasterConnexions(this->currentWidgetFile(), masterFile, assoc.type);
-        }
+        createMasterConnexions(this->currentWidgetFile(), masterFile, assoc.type);
     }
 
     // is there already an opened associated file
@@ -181,11 +162,8 @@ bool FileManager::open(QString filename, MainWindow * window)
                 associatedWidget->file()->setRootFilename(this->currentWidgetFile()->file()->getFilename());
                 associatedWidget->widgetPdfViewer()->widgetPdfDocument()->updatePdf();
             }
-            //else
-            //if(associatedFile.type == AssociatedFile::BIBTEX)
-            {
-                createMasterConnexions(associatedWidget, this->currentWidgetFile(), associatedFile.type);
-            }
+
+            createMasterConnexions(associatedWidget, this->currentWidgetFile(), associatedFile.type);
         }
     }
 
@@ -244,21 +222,17 @@ void FileManager::setCurrent(WidgetFile *widget)
 }
 void FileManager::setCurrent(int index)
 {
-     _currentWidgetFileId = index;
-     if(index == -1)
-     {
-         return;
-     }
+    if(index >= _widgetFiles.count())
+    {
+        index = -1;
+    }
+    _currentWidgetFileId = index;
+    if(index == -1)
+    {
+        return;
+    }
 
-     if(this->currentWidgetFile()->masterFile())
-     {
-         this->currentWidgetFile()->widgetPdfViewer()->setWidgetPdfDocument(this->currentWidgetFile()->masterFile()->widgetPdfViewer()->widgetPdfDocument());
-     }
-     if(!this->currentWidgetFile()->file()->openAssociatedFiles().isEmpty())
-     {
-         this->currentWidgetFile()->widgetPdfViewer()->restorPdfDocumentParent();
-     }
-     setCurrentPdfToPdfViewer();
+    setCurrentPdfToPdfViewer();
 }
 void FileManager::setCurrentPdfToPdfViewer()
 {
@@ -382,6 +356,13 @@ void FileManager::toggleComment()
         this->currentWidgetFile()->widgetTextEdit()->toggleComment();
     }
 }
+void FileManager::checkGrammar()
+{
+    if(this->currentWidgetFile())
+    {
+        this->currentWidgetFile()->widgetTextEdit()->checkGrammar();
+    }
+}
 void FileManager::reopenWithEncoding(QString codec)
 {
     if(this->currentWidgetFile())
@@ -411,6 +392,7 @@ void FileManager::close(WidgetFile *widget)
     {
         return;
     }
+    this->deleteMasterConnexions(widget);
     widget->addWidgetPdfViewerToSplitter();
     if(_currentWidgetFileId >= id && _currentWidgetFileId != 0)
     {
@@ -449,10 +431,6 @@ void FileManager::setPdfViewerInItsOwnWidget(bool ownWidget)
         {
             initWidgetPdfViewerWrapper();
         }
-        /*foreach(WidgetFile * widgetFile, _widgetFiles)
-        {
-            widgetFile->removeWidgetPdfViewerFromSplitter();
-        }*/
         this->setCurrent(_currentWidgetFileId);
     }
     else

@@ -62,17 +62,17 @@ class WidgetTextEdit : public WIDGET_TEXT_EDIT_PARENT_CLASS
 public:
     explicit WidgetTextEdit(WidgetFile *parent);
     ~WidgetTextEdit();
-    int blockHeight(int blockCount) { return blockHeight(this->document()->findBlockByNumber(blockCount)); }
-    int blockHeight(const QTextBlock &textBlock) { return this->blockGeometry(textBlock).height(); }
-    int blockWidth(int blockCount) { return blockWidth(this->document()->findBlockByNumber(blockCount)); }
-    int blockWidth(const QTextBlock &textBlock) { return this->blockGeometry(textBlock).width(); }
-    int blockTop(int blockCount) { return blockTop(this->document()->findBlockByNumber(blockCount)); }
-    int blockTop(const QTextBlock &textBlock) { return this->blockGeometry(textBlock).top(); }
-    int blockBottom(int blockCount) { return blockBottom(this->document()->findBlockByNumber(blockCount)); }
-    int blockBottom(const QTextBlock &textBlock) { return this->blockGeometry(textBlock).bottom(); }
+    int blockHeight(int blockCount) const { return blockHeight(this->document()->findBlockByNumber(blockCount)); }
+    int blockHeight(const QTextBlock &textBlock) const { return this->blockGeometry(textBlock).height(); }
+    int blockWidth(int blockCount)  const { return blockWidth(this->document()->findBlockByNumber(blockCount)); }
+    int blockWidth(const QTextBlock &textBlock) const { return this->blockGeometry(textBlock).width(); }
+    int blockTop(int blockCount) const { return blockTop(this->document()->findBlockByNumber(blockCount)); }
+    int blockTop(const QTextBlock &textBlock) const { return this->blockGeometry(textBlock).top(); }
+    int blockBottom(int blockCount) const { return blockBottom(this->document()->findBlockByNumber(blockCount)); }
+    int blockBottom(const QTextBlock &textBlock) const { return this->blockGeometry(textBlock).bottom(); }
 
-    QRectF blockGeometry(const QTextBlock &textBlock) { return this->blockBoundingGeometry(textBlock); }
-    int contentOffsetTop() { return this->contentOffset().y(); }
+    QRectF blockGeometry(const QTextBlock &textBlock) const { return this->blockBoundingGeometry(textBlock); }
+    int contentOffsetTop() const { return this->contentOffset().y(); }
     void indentSelectedText();
     void desindentSelectedText();
     void initTheme();
@@ -116,12 +116,21 @@ public:
 
     static void fromScriptValue(const QScriptValue &obj, WidgetTextEdit* &s)
     {
+        Q_UNUSED(obj);
+        Q_UNUSED(s);
       //s.x = obj.property("x").toInt32();
       //s.y = obj.property("y").toInt32();
     }
     void comment();
     void uncomment();
     void toggleComment();
+    QString toPlainRealText();
+    void checkGrammar();
+
+    QChar nextChar(const QTextCursor cursor) const;
+
+    int hitTest(const QPoint & pos) const;
+    const CompletionEngine * completionEngine() const { return _completionEngine; }
 
 signals:
     void updateFirstVisibleBlock(int,int);
@@ -162,7 +171,8 @@ private:
     void keyPressEvent(QKeyEvent *e);
     void resizeEvent(QResizeEvent * event);
     void wheelEvent(QWheelEvent * event);
-    void highlightCurrentLine(void);
+    void highlightCurrentLine();
+    void highlightCurrentLine(QList<QTextEdit::ExtraSelection> extraSelections);
     bool selectNextArgument(void);
     bool hasArguments();
     void contextMenuEvent(QContextMenuEvent *event);
@@ -196,7 +206,6 @@ private:
     int matchLeftLat(QTextBlock currentBlock, int index, int numLeftLat, int bpos);
     int matchRightLat(QTextBlock currentBlock, int index, int numLeftLat, int bpos);
     void createLatSelection(int start, int end);
-    QChar nextChar(const QTextCursor cursor) const;
     QString wordOnLeft();
 
     QList<QTextCursor> _multipleEdit;

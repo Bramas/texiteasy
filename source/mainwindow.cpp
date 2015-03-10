@@ -85,6 +85,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     Tools::Log("MainWindow: setupUi");
     ui->setupUi(this);
+    // remove grammar checking (not ready yet)
+    ui->actionCheckGrammar->setVisible(false);
     Tools::Log("MainWindow: ConfigManager::Instance.setMainWindow(this)");
     ConfigManager::Instance.setMainWindow(this);
     Tools::Log("MainWindow: FileManager::Instance.setMainWindow(this)");
@@ -155,11 +157,13 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->ui->actionBibtex,SIGNAL(triggered()), &FileManager::Instance,SLOT(bibtex()));
     connect(this->ui->actionClean,SIGNAL(triggered()), &FileManager::Instance,SLOT(clean()));
     connect(this->ui->actionView, SIGNAL(triggered()), &FileManager::Instance,SLOT(jumpToPdfFromSource()));
+    this->ui->actionSplitEditor->setProperty("role", "splitEditor");
     connect(this->ui->actionSplitEditor, SIGNAL(toggled(bool)), &FileManager::Instance,SLOT(splitEditor(bool)));
     connect(this->ui->actionOpenPdf, SIGNAL(triggered()), &FileManager::Instance,SLOT(openCurrentPdf()));
     connect(this->ui->actionComment, SIGNAL(triggered()), &FileManager::Instance,SLOT(comment()));
     connect(this->ui->actionUncomment, SIGNAL(triggered()), &FileManager::Instance,SLOT(uncomment()));
     connect(this->ui->actionToggleComment, SIGNAL(triggered()), &FileManager::Instance,SLOT(toggleComment()));
+    connect(this->ui->actionCheckGrammar, SIGNAL(triggered()), &FileManager::Instance,SLOT(checkGrammar()));
     connect(this->ui->actionSaveWithUTF8, SIGNAL(triggered()), this,SLOT(setUtf8()));
     connect(this->ui->actionSaveWithOtherEncoding, SIGNAL(triggered()), this,SLOT(setOtherEncoding()));
     connect(this->ui->actionTexDirEncoding, SIGNAL(triggered()), this, SLOT(insertTexDirEncoding()));
@@ -396,6 +400,13 @@ void MainWindow::dropEvent(QDropEvent * event)
         event->ignore();
     }
 }
+
+bool MainWindow::event(QEvent *event)
+{
+    return QMainWindow::event(event);
+}
+
+
 void MainWindow::changeEvent(QEvent *event)
 {
 
@@ -446,7 +457,7 @@ void MainWindow::initMacrosMenu()
         this->ui->menuBar->removeAction(_menuMacrosAction);
     }
     QMenu * menu = new QMenu(tr("&Macros"));
-    _menuMacrosAction = ui->menuBar->insertMenu(ui->menuOptions->menuAction(), menu);
+    _menuMacrosAction = ui->menuBar->insertMenu(ui->menuView->menuAction(), menu);
     MacroEngine::Instance.createMacrosMenu(menu);
     MacroEngine::Instance.createShortCuts(this);
     this->addActions(menu->actions());
@@ -591,6 +602,10 @@ void MainWindow::open()
 }
 void MainWindow::open(QString filename, int cursorPosition)
 {
+
+    this->activateWindow();
+    this->raise();
+
     filename.replace("\\", "/");
     QSettings settings;
 
@@ -950,6 +965,18 @@ void MainWindow::addUpdateMenu()
 void MainWindow::proposeUpdateDialog()
 {
     UpdateChecker::proposeUpdateDialog(this);
+}
+
+QAction * MainWindow::actionByRole(QString actionRole)
+{
+    foreach(QAction * action, this->findChildren<QAction*>())
+    {
+        if(action->property("role").toString() == actionRole)
+        {
+            return action;
+        }
+    }
+    return 0;
 }
 
 void MainWindow::setWindowModified(bool b)
