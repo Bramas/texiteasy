@@ -101,10 +101,15 @@ WidgetPdfDocument::~WidgetPdfDocument()
 
 bool WidgetPdfDocument::event(QEvent * event)
 {
+
+#if QT_VERSION > QT_VERSION_CHECK(5,2,0)
     if (event->type() == QEvent::NativeGesture)
         return gestureEvent(dynamic_cast<QNativeGestureEvent*>(event));
+#endif
     return QWidget::event(event);
 }
+
+#if QT_VERSION > QT_VERSION_CHECK(5,2,0)
 bool WidgetPdfDocument::gestureEvent(QNativeGestureEvent* event)
 {
     switch(event->gestureType())
@@ -121,6 +126,7 @@ bool WidgetPdfDocument::gestureEvent(QNativeGestureEvent* event)
     }
     return true;
 }
+#endif
 void WidgetPdfDocument::paintEvent(QPaintEvent *)
 {
     if(!this->_document)

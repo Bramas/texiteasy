@@ -87,7 +87,6 @@ SOURCES += main.cpp\
     singleapp/qtlocalpeer.cpp \
     textdocumentlayout.cpp \
     dialogsendfeedback.cpp \
-    dialogtexdownloadassistant.cpp \
     tools.cpp \
     grammarchecker.cpp \
     textaction.cpp
@@ -155,7 +154,6 @@ HEADERS  += mainwindow.h \
     singleapp/qtlocalpeer.h \
     textdocumentlayout.h \
     dialogsendfeedback.h \
-    dialogtexdownloadassistant.h \
     tools.h \
     grammarchecker.h \
     textaction.h
@@ -172,8 +170,8 @@ FORMS    += mainwindow.ui \
     dialogabout.ui \
     dialogaddlatexcommand.ui \
     dialogmacros.ui \
-    dialogsendfeedback.ui \
-    dialogtexdownloadassistant.ui
+    dialogsendfeedback.ui
+
 
 TRANSLATIONS += translations/texiteasy_ar.ts \
                 translations/texiteasy_fr.ts \
@@ -203,9 +201,12 @@ RESOURCES += \
 
 win32 {
 
-    SOURCES += dialogdownloadupdate.cpp
-    HEADERS += dialogdownloadupdate.h
-    FORMS += dialogdownloadupdate.ui
+    SOURCES +=  dialogtexdownloadassistant.cpp \
+                dialogdownloadupdate.cpp
+    HEADERS +=  dialogdownloadupdate.h \
+                dialogtexdownloadassistant.h
+    FORMS +=    dialogdownloadupdate.ui \
+                dialogtexdownloadassistant.ui
 
 
     LIBS += -LC:/dev/poppler-0.24.5-win32/lib -lpoppler-qt5

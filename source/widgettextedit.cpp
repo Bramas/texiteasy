@@ -535,6 +535,39 @@ void WidgetTextEdit::insertPlainText(const QString &text)
     }
     WIDGET_TEXT_EDIT_PARENT_CLASS::insertPlainText(text);
 }
+
+void WidgetTextEdit::mouseMoveEvent(QMouseEvent *e)
+{
+    if(e->modifiers() == Qt::ControlModifier)
+    {
+        QTextCursor clickCursor = textCursor();
+        clickCursor.setPosition(this->hitTest(e->pos()), QTextCursor::MoveAnchor);
+        QTextBlock block = clickCursor.block();
+        BlockData *data = static_cast<BlockData *>( block.userData() );
+        if(data && data->characterData.size() > clickCursor.positionInBlock())
+        {
+            CharacterData charData = data->characterData.at(clickCursor.positionInBlock());
+            if(charData.state == SyntaxHighlighter::Command)
+            {
+                TextAction a;
+                QTextCursor match = a.match(clickCursor, this->widgetFile());
+                if(!match.isNull())
+                {
+                    QTextEdit::ExtraSelection sel;
+                    sel.cursor = match;
+                    sel.format.setUnderlineStyle(QTextCharFormat::SingleUnderline);
+                    sel.format.setUnderlineColor(ConfigManager::Instance.getTextCharFormats("normal").foreground().color());
+                    sel.format.setFontUnderline(true);
+                    this->setExtraSelections(QList<QTextEdit::ExtraSelection>() << sel);
+                    this->viewport()->setCursor(Qt::PointingHandCursor);
+                    return;
+                }
+            }
+        }
+
+    }
+    WIDGET_TEXT_EDIT_PARENT_CLASS::mouseMoveEvent(e);
+}
 void WidgetTextEdit::mousePressEvent(QMouseEvent *e)
 {
     if(!hasArguments())

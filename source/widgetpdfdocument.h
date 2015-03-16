@@ -29,7 +29,9 @@
 #include <QList>
 #include <QRectF>
 #include <QScrollBar>
-#include <QNativeGestureEvent>
+#if QT_VERSION > QT_VERSION_CHECK(5,2,0)
+#    include <QNativeGestureEvent>
+#endif
 
 #include "synctex_parser.h"
 #include <QPoint>
@@ -100,7 +102,9 @@ public slots:
     void onScroll(int value);
 
 protected:
+#if QT_VERSION > QT_VERSION_CHECK(5,2,0)
     bool gestureEvent(QNativeGestureEvent* event);
+#endif
     bool event(QEvent * event);
     void paintEvent(QPaintEvent *);
     void mousePressEvent(QMouseEvent *);

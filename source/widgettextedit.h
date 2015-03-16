@@ -164,6 +164,7 @@ public slots:
 protected:
     void insertFromMimeData(const QMimeData * source);
     void mousePressEvent(QMouseEvent *e);
+    void mouseMoveEvent(QMouseEvent *e);
 
 private:
     void initIndentation(void);

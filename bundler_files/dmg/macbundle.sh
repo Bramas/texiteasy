@@ -1,13 +1,13 @@
 
 #cp Info.plist ../../../build/Qt_5_1_1_clang_64bit-Release/texiteasy.app/Contents/Info.plist
 
-BUILD_PATH=../../../build/texiteasy/qt5.3.0_clang64/release
+BUILD_PATH=../../../build/release
 
 sudo sed "/VERSION_NUMBER/s//$1/" Info.plist > $BUILD_PATH/texiteasy.app/Contents/Info.plist
 
 mkdir $BUILD_PATH/texiteasy.app/Contents/PlugIns
 mkdir $BUILD_PATH/texiteasy.app/Contents/PlugIns/platforms
-cp /Users/quentinbramas/Qt/5.3/clang_64/plugins/platforms/libqcocoa.dylib $BUILD_PATH/texiteasy.app/Contents/PlugIns/platforms/libqcocoa.dylib
+cp /Users/quentinbramas/Qt/5.4/clang_64/plugins/platforms/libqcocoa.dylib $BUILD_PATH/texiteasy.app/Contents/PlugIns/platforms/libqcocoa.dylib
 
 
 mkdir $BUILD_PATH/texiteasy.app/Contents/Resources/dictionaries
@@ -29,4 +29,3 @@ hdiutil convert /tmp/texiteasy-$1.dmg -format UDZO -o ~/Documents/texiteasy-$1_m
 sudo rm -rf $BUILD_PATH/texiteasy.app
 sudo rm -rf /tmp/texiteasy
 sudo rm -f /tmp/texiteasy-$1.dmg
-
