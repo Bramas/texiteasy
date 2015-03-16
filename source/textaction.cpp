@@ -34,6 +34,7 @@ bool TextAction::execute(QTextCursor clickCursor, WidgetFile *widgetFile)
     }
     clickCursor.setPosition(left, QTextCursor::KeepAnchor);
     QString command = clickCursor.selectedText();
+    widgetFile->widgetTextEdit()->updateCompletionCustomWords();
     foreach(const QString &word, widgetFile->widgetTextEdit()->completionEngine()->customWords())
     {
         if(word == command)
@@ -67,6 +68,7 @@ QTextCursor TextAction::match(QTextCursor clickCursor, WidgetFile *widgetFile)
     }
     clickCursor.setPosition(left, QTextCursor::KeepAnchor);
     QString command = clickCursor.selectedText();
+    widgetFile->widgetTextEdit()->updateCompletionCustomWords();
     foreach(const QString &word, widgetFile->widgetTextEdit()->completionEngine()->customWords())
     {
         if(word == command)
