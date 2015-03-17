@@ -29,7 +29,7 @@ UpdateChecker::UpdateChecker(QWidget * parent) : _parent(parent)
     this->get(request);
 }
 
-void UpdateChecker::proposeUpdateDialog(QWidget * /*parent*/)
+void UpdateChecker::proposeUpdateDialog(QWidget * parent)
 {
 
 #ifdef OS_WINDOWS
