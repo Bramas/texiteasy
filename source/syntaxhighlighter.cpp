@@ -196,6 +196,7 @@ QChar verbCharacter;
 QString commandBuffer;
 QString environmentNameBuffer;
 QString endEnvironmentNameBuffer;
+bool setCharacterState;
 bool escapedChar;
 int overrideCurrentState;
 //qDebug()<<"previous state "<<state;
@@ -203,6 +204,7 @@ while(index < text.length())
 {
     currentChar = text.at(index);
     overrideCurrentState = -1;
+    setCharacterState = true;
     //qDebug()<<index<<" : "<<currentChar<<" state : "<<state<<", crocherlevel : "<<(*crocherLevel);
     if(index < text.length() - 1)
     {
@@ -457,6 +459,7 @@ while(index < text.length())
             else
             {
                 --index;
+                setCharacterState = false;
             }
             state = stateAfterOption;
             waitingBraceArgument = true;
@@ -535,6 +538,7 @@ while(index < text.length())
             {
                 crocherLevel->top() += 1;
                 --index;
+                setCharacterState = false;
                 state = previousState;
                 break;
             }
@@ -542,6 +546,7 @@ while(index < text.length())
             {
                 parenthesisLevel->top() += 1;
                 --index;
+                setCharacterState = false;
                 state = previousState;
                 break;
             }
@@ -559,6 +564,7 @@ while(index < text.length())
                 state = Option;
                 stateAfterOption = Text;
                 --index;
+                setCharacterState = false;
             }
             else
             if(otherBlockCommands.contains(commandBuffer))
@@ -567,6 +573,7 @@ while(index < text.length())
                 state = Option;
                 stateAfterOption = Other;
                 --index;
+                setCharacterState = false;
             }
             else
             {
@@ -575,8 +582,9 @@ while(index < text.length())
                     crocherLevel->push(0);
                     state = Option;
                     stateAfterOption = Other;
-                    //stateAfterOption = Text;
+                    stateAfterOption = Text;
                     --index;
+                    setCharacterState = false;
                 }
                 else
                 {
@@ -584,6 +592,7 @@ while(index < text.length())
                     state = Option;
                     stateAfterOption =  Math;
                     --index;
+                    setCharacterState = false;
                 }
             }
             if(!commandsWithOptions.contains(commandBuffer))
@@ -637,13 +646,17 @@ while(index < text.length())
         {
             break;
         }
-        if(overrideCurrentState != -1)
+        //qDebug()<<index<<" "<<currentChar<<" ste="<<setCharacterState<<" state="<<state<<" o="<<overrideCurrentState;
+        if(setCharacterState)
         {
-            blockData->characterData[index].state = overrideCurrentState;
-        }
-        else
-        {
-            blockData->characterData[index].state = state;
+            if(overrideCurrentState != -1)
+            {
+                blockData->characterData[index].state = overrideCurrentState;
+            }
+            else
+            {
+                blockData->characterData[index].state = state;
+            }
         }
         ++index;
     }

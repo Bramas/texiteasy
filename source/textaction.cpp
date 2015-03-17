@@ -19,22 +19,12 @@ TextAction::~TextAction()
 
 bool TextAction::execute(QTextCursor clickCursor, WidgetFile *widgetFile)
 {
-    int left, right;
-    left = right = clickCursor.position();
-    while(widgetFile->widgetTextEdit()->nextChar(clickCursor) != '\\')
+    QTextCursor commandCursor = this->match(clickCursor, widgetFile);
+    if(commandCursor.isNull())
     {
-        --left;
-        clickCursor.setPosition(left, QTextCursor::MoveAnchor);
+        return false;
     }
-    clickCursor.setPosition(right, QTextCursor::MoveAnchor);
-    while(QString(widgetFile->widgetTextEdit()->nextChar(clickCursor)).contains(QRegExp("[a-zA-Z0-9*]")))
-    {
-        ++right;
-        clickCursor.setPosition(right, QTextCursor::MoveAnchor);
-    }
-    clickCursor.setPosition(left, QTextCursor::KeepAnchor);
-    QString command = clickCursor.selectedText();
-    widgetFile->widgetTextEdit()->updateCompletionCustomWords();
+    QString command = commandCursor.selectedText();
     foreach(const QString &word, widgetFile->widgetTextEdit()->completionEngine()->customWords())
     {
         if(word == command)
