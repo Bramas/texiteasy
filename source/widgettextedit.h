@@ -114,6 +114,8 @@ public:
       return obj;
     }
 
+    void setBeamCursor();
+
     static void fromScriptValue(const QScriptValue &obj, WidgetTextEdit* &s)
     {
         Q_UNUSED(obj);
@@ -131,7 +133,25 @@ public:
 
     int hitTest(const QPoint & pos) const;
     const CompletionEngine * completionEngine() const { return _completionEngine; }
+    void updateCompletionCustomWords();
 
+    void addExtraSelections(const QList<QTextEdit::ExtraSelection> &selections, int kind = WidgetTextEdit::OtherSelection);
+    void removeExtraSelections(int kind = WidgetTextEdit::AllSelection);
+    void applyExtraSelection();
+    enum ExtraSelectionKind {
+        CurrentLineSelection,
+        ParenthesesMatchingSelection,
+        CodeWarningsSelection,
+        CodeSemanticsSelection,
+        UndefinedSymbolSelection,
+        UnusedSymbolSelection,
+        FakeVimSelection,
+        OtherSelection,
+        SnippetPlaceholderSelection,
+        ObjCSelection,
+        DebuggerExceptionSelection,
+        AllSelection
+    };
 signals:
     void updateFirstVisibleBlock(int,int);
     void updatedWithSameFirstVisibleBlock();
@@ -164,6 +184,7 @@ public slots:
 protected:
     void insertFromMimeData(const QMimeData * source);
     void mousePressEvent(QMouseEvent *e);
+    void mouseMoveEvent(QMouseEvent *e);
 
 private:
     void initIndentation(void);
@@ -228,6 +249,7 @@ private:
     bool _scriptIsRunning;
     QMap<int,int> _foldedLines;
     int _lastBlockCount;
+    QHash<int, QList<QTextEdit::ExtraSelection> > _extraSelections;
 
 };
 

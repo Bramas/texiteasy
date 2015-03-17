@@ -31,7 +31,6 @@
 
 #include <QMainWindow>
 #include <QIcon>
-#include <QNativeGestureEvent>
 
 class QMimeData;
 class WidgetTextEdit;

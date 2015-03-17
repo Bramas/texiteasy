@@ -20,7 +20,9 @@
  ***************************************************************************/
 
 #include "configmanager.h"
+#ifdef OS_WINDOWS
 #include "dialogtexdownloadassistant.h"
+#endif
 #include <QFont>
 #include <QColor>
 #include <QSettings>
