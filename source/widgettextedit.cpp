@@ -565,32 +565,17 @@ void WidgetTextEdit::mouseMoveEvent(QMouseEvent *e)
 {
     if(e->modifiers() == Qt::ControlModifier)
     {
-        bool linkFound = false;
         QTextCursor clickCursor = textCursor();
         clickCursor.setPosition(this->hitTest(e->pos()), QTextCursor::MoveAnchor);
-        QTextBlock block = clickCursor.block();
-        BlockData *data = static_cast<BlockData *>( block.userData() );
-        if(data && data->characterData.size() > clickCursor.positionInBlock())
+        QTextCursor match = TextActions::match(clickCursor, this->widgetFile());
+        if(!match.isNull())
         {
-            CharacterData charData = data->characterData.at(clickCursor.positionInBlock());
-            if(charData.state == SyntaxHighlighter::Command)
-            {
-                TextAction a;
-                QTextCursor match = a.match(clickCursor, this->widgetFile());
-                if(!match.isNull())
-                {
-                    QTextEdit::ExtraSelection sel;
-                    sel.cursor = match;
-                    sel.format.setUnderlineStyle(QTextCharFormat::SingleUnderline);
-                    sel.format.setUnderlineColor(ConfigManager::Instance.getTextCharFormats("normal").foreground().color());
-                    sel.format.setFontUnderline(true);
-                    this->addExtraSelections(QList<QTextEdit::ExtraSelection>() << sel, WidgetTextEdit::OtherSelection);
-                    linkFound = true;
-                }
-            }
-        }
-        if(linkFound)
-        {
+            QTextEdit::ExtraSelection sel;
+            sel.cursor = match;
+            sel.format.setUnderlineStyle(QTextCharFormat::SingleUnderline);
+            sel.format.setUnderlineColor(ConfigManager::Instance.getTextCharFormats("normal").foreground().color());
+            sel.format.setFontUnderline(true);
+            this->addExtraSelections(QList<QTextEdit::ExtraSelection>() << sel, WidgetTextEdit::OtherSelection);
             this->viewport()->setCursor(Qt::PointingHandCursor);
             return;
         }
@@ -617,21 +602,10 @@ void WidgetTextEdit::mousePressEvent(QMouseEvent *e)
     {
         QTextCursor clickCursor = textCursor();
         clickCursor.setPosition(this->hitTest(e->pos()), QTextCursor::MoveAnchor);
-        QTextBlock block = clickCursor.block();
-        BlockData *data = static_cast<BlockData *>( block.userData() );
-        if(data && data->characterData.size() > clickCursor.positionInBlock())
+        if(TextActions::execute(clickCursor, this->widgetFile()))
         {
-            CharacterData charData = data->characterData.at(clickCursor.positionInBlock());
-            if(charData.state == SyntaxHighlighter::Command)
-            {
-                TextAction a;
-                if(a.execute(clickCursor, this->widgetFile()))
-                {
-                    return;
-                }
-            }
+            return;
         }
-
     }
     else
     {
