@@ -16,6 +16,14 @@ QVector<AbstractTextAction*> TextActions::_textActions = QVector<AbstractTextAct
         << new RefLinkTextAction()
         << new CiteLinkTextAction();
 
+
+QString escapeStringForRegex(const QString &in)
+{
+    QString out = in;
+    return out.replace(QRegExp("([\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|])"), "\\\\1");
+}
+
+
 QTextCursor TextActions::match(QTextCursor clickCursor, WidgetFile *widgetFile)
 {
     Q_ASSERT_X(TextActions::_textActions.size(), "TextActions::match", "the size of TextActions::_textActions.size() must not be null");
@@ -64,8 +72,10 @@ bool CustomCommandTextAction::execute(QTextCursor clickCursor, WidgetFile *widge
         if(word == command)
         {
             QString newCommand = "\\\\newcommand\\{\\"+command+"\\}";
-            if(widgetFile->widgetTextEdit2()->find(QRegExp(newCommand), QTextDocument::FindBackward))
+            QTextCursor findResult = widgetFile->widgetTextEdit2()->document()->find(QRegExp(newCommand));
+            if(!findResult.isNull())
             {
+                widgetFile->widgetTextEdit2()->setTextCursor(findResult);
                 widgetFile->splitEditor(true);
                 widgetFile->widgetTextEdit2()->ensureCursorVisible();
                 return true;
@@ -132,9 +142,11 @@ bool RefLinkTextAction::execute(QTextCursor clickCursor, WidgetFile *widgetFile)
         return false;
     }
     QString label = commandCursor.selectedText();
-    QString labelCommand = "\\label{"+label+"}";
-    if(widgetFile->widgetTextEdit2()->find(labelCommand, QTextDocument::FindBackward))
+    QString labelCommand = "\\\\label[ ]*\\{"+escapeStringForRegex(label)+"\\}";
+    QTextCursor findResult = widgetFile->widgetTextEdit2()->document()->find(QRegExp(labelCommand));
+    if(!findResult.isNull())
     {
+        widgetFile->widgetTextEdit2()->setTextCursor(findResult);
         widgetFile->splitEditor(true);
         widgetFile->widgetTextEdit2()->ensureCursorVisible();
         return true;
@@ -250,13 +262,16 @@ bool CiteLinkTextAction::execute(QTextCursor clickCursor, WidgetFile *widgetFile
             continue;
         }
         QString text = f.readAll();
-        if(text.contains(QRegExp("\\{[ \\t]*"+key+"[ \\t\\n]*,")))
+        if(text.contains(QRegExp("\\{[ \\t]*"+escapeStringForRegex(key)+"[ \\t\\n]*,")))
         {
             widgetFile->window()->open(filename);
             WidgetFile * bibtexFileWidget = FileManager::Instance.widgetFile(filename);
-            bibtexFileWidget->widgetTextEdit()->setTextCursorPosition(0);
-            bibtexFileWidget->widgetTextEdit()->find(QRegExp("\\{[ \\t]*"+key+"[ \\t\\n]*,"));
-            bibtexFileWidget->widgetTextEdit()->ensureCursorVisible();
+            QTextCursor findResult = bibtexFileWidget->widgetTextEdit()->document()->find(QRegExp("\\{[ \\t]*"+escapeStringForRegex(key)+"[ \\t\\n]*,"));
+            if(!findResult.isNull())
+            {
+                bibtexFileWidget->widgetTextEdit()->setTextCursor(findResult);
+                bibtexFileWidget->widgetTextEdit()->ensureCursorVisible();
+            }
             return true;
 
         }
