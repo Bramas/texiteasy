@@ -51,9 +51,6 @@ File::File(WidgetFile *widgetFile, WidgetTextEdit* widgetTextEdit, QString filen
 }
 File::~File()
 {
-#ifdef DEBUG_DESTRUCTOR
-    qDebug()<<"delete File";
-#endif
     removeAutosaveFile();
     delete builder;
     delete _autoSaveTimer;
