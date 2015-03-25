@@ -20,7 +20,7 @@ QVector<AbstractTextAction*> TextActions::_textActions = QVector<AbstractTextAct
 QString escapeStringForRegex(const QString &in)
 {
     QString out = in;
-    return out.replace(QRegExp("([\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|])"), "\\\\1");
+    return out.replace(QRegExp("([\\-\\[\\]\\/\\{\\}\\(\\)\\*\\+\\?\\.\\\\\^\\$\\|])"), "\\\\1");
 }
 
 
