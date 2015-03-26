@@ -709,6 +709,7 @@ QString ConfigManager::systemInfo()
     return sysType+" "+sysVersion;
 }
 
+
 void ConfigManager::resetThemes()
 {
     QDir().mkpath(themePath());
@@ -789,14 +790,18 @@ void ConfigManager::checkLatexExecutable()
     pdflatexCommand = "pdflatex.exe";
     {
         QDir dir(programLocation);
-        if(!dir.exists())
+        if(dir.exists())
         {
             QStringList miktexDirs = dir.entryList(QDir::Dirs).filter(QRegExp("miktex",Qt::CaseInsensitive));
             if(!miktexDirs.isEmpty())
             {
-                if(dir.cd(miktexDirs.first()) && dir.cd("miktex") && dir.cd("bin"))
+                if(dir.cd(miktexDirs.first()))
                 {
-                    settings.setValue("builder/latexPath",dir.path()+dir.separator());
+                    dir.cd("miktex");
+                    if(dir.cd("bin"))
+                    {
+                        settings.setValue("builder/latexPath",dir.path());
+                    }
                 }
 
             }
@@ -804,11 +809,38 @@ void ConfigManager::checkLatexExecutable()
 
         }
     }
-#endif
-#endif
-    if(-2 == QProcess::execute(settings.value("latexPath").toString()+pdflatexCommand+" --version"))
     {
-        qDebug()<<"latex not found ask for a the path";
+        QDir dir(settings.value("builder/latexPath").toString());
+        if(dir.exists())
+        {
+            QStringList miktexDirs = dir.entryList(QDir::Dirs).filter(QRegExp("miktex",Qt::CaseInsensitive));
+            if(!miktexDirs.isEmpty())
+            {
+                if(dir.cd(miktexDirs.first()))
+                {
+                    dir.cd("miktex");
+                    if(dir.cd("bin"))
+                    {
+                        settings.setValue("builder/latexPath",dir.path());
+                    }
+                }
+
+            }
+            QStringList binDirs = dir.entryList(QDir::Dirs).filter("bin");
+            if(!binDirs.isEmpty())
+            {
+                if(dir.cd(binDirs.first()))
+                {
+                    settings.setValue("builder/latexPath",dir.path());
+                }
+            }
+        }
+    }
+#endif
+#endif
+    if(-2 == QProcess::execute(settings.value("builder/latexPath").toString()+QDir().separator()+pdflatexCommand,QStringList("--version")))
+    {
+        qDebug()<<"latex not found ask for a the path "<<settings.value("builder/latexPath").toString();
 
 #ifdef OS_WINDOWS
 #ifndef PORTABLE_EXECUTABLE
