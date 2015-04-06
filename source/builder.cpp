@@ -177,7 +177,7 @@ void Builder::bibtex()
     _basename = this->file->rootBasename();
 
     process->setWorkingDirectory(this->file->getRootPath());
-    QString command = ConfigManager::Instance.bibtexCommand(true).arg(_basename);//.arg(".texiteasy");//this->file->getPath()).arg();//this->file->getAuxPath());
+    QString command = ConfigManager::Instance.bibtexCommand().arg(_basename);//.arg(".texiteasy");//this->file->getPath()).arg();//this->file->getAuxPath());
     qDebug()<<command;
     process->start(command);
     //process->start(settings.value("latexPath").toString()+"bibtex --include-directory=\""+this->file->getPath()+"\" \""+this->file->getAuxPath()+"/"+_basename+"\"");

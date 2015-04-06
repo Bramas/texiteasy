@@ -27,7 +27,7 @@ DialogDownloadUpdate::DialogDownloadUpdate(QWidget *parent) :
     _isUrlDownloaded = false;
     //connect(&manager, SIGNAL(finished(QNetworkReply*)),this, SLOT(downloadFinished(QNetworkReply*)));
     versionReply = manager.get(QNetworkRequest(QUrl(QString::fromUtf8(LAST_VERSION_URL))));
-    urlReply = manager.get(QNetworkRequest(QUrl(QString::fromUtf8(TEXITEASY_UPDATE_FILE_URL))));
+    urlReply = manager.get(QNetworkRequest(QUrl(QString::fromUtf8(TEXITEASY_UPDATE_FILE_URL"/"CURRENT_VERSION))));
 
     QObject::connect(versionReply, SIGNAL(finished()), this, SLOT(onVersionDownloaded()));
     QObject::connect(urlReply, SIGNAL(finished()), this, SLOT(onUrlDownloaded()));

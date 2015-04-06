@@ -704,6 +704,7 @@ QString ConfigManager::systemInfo()
     case QSysInfo::WV_VISTA: sysVersion = "Vista"; break;
     case QSysInfo::WV_WINDOWS7: sysVersion = "7"; break;
     case QSysInfo::WV_WINDOWS8: sysVersion = "8"; break;
+    default: break;
     }
 #endif
     return sysType+" "+sysVersion;
