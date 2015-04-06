@@ -1033,6 +1033,8 @@ void ConfigManager::checkRevision()
     case 0x001603:
         resetThemes();
     case 0x001700:
+    case 0x001701:
+    case 0x001702:
 
         break;
     }
