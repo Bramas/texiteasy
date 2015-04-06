@@ -12,7 +12,7 @@ class AbstractTextAction;
 class TextActions
 {
 public:
-    static bool execute(QTextCursor clickCursor, WidgetFile * widgetFile);
+    static bool execute(QTextCursor clickCursor, WidgetFile * widgetFile, Qt::KeyboardModifiers modifiers);
     static QTextCursor match(QTextCursor clickCursor, WidgetFile * widgetFile);
 
 private:
@@ -23,7 +23,7 @@ class AbstractTextAction : public QObject
 {
     Q_OBJECT
 public:
-    virtual bool execute(QTextCursor clickCursor, WidgetFile * widgetFile) = 0;
+    virtual bool execute(QTextCursor clickCursor, WidgetFile * widgetFile, Qt::KeyboardModifiers modifiers) = 0;
     virtual QTextCursor match(QTextCursor clickCursor, WidgetFile * widgetFile) = 0;
 
 
@@ -36,7 +36,7 @@ class CustomCommandTextAction : public AbstractTextAction
 public:
     explicit CustomCommandTextAction();
 
-    bool execute(QTextCursor clickCursor, WidgetFile * widgetFile);
+    bool execute(QTextCursor clickCursor, WidgetFile * widgetFile, Qt::KeyboardModifiers modifiers);
     QTextCursor match(QTextCursor clickCursor, WidgetFile * widgetFile);
 
 };
@@ -48,7 +48,7 @@ class RefLinkTextAction : public AbstractTextAction
 public:
     explicit RefLinkTextAction();
 
-    bool execute(QTextCursor clickCursor, WidgetFile * widgetFile);
+    bool execute(QTextCursor clickCursor, WidgetFile * widgetFile, Qt::KeyboardModifiers modifiers);
     QTextCursor match(QTextCursor clickCursor, WidgetFile * widgetFile);
 
 };
@@ -59,7 +59,18 @@ class CiteLinkTextAction : public AbstractTextAction
 public:
     explicit CiteLinkTextAction();
 
-    bool execute(QTextCursor clickCursor, WidgetFile * widgetFile);
+    bool execute(QTextCursor clickCursor, WidgetFile * widgetFile, Qt::KeyboardModifiers modifiers);
+    QTextCursor match(QTextCursor clickCursor, WidgetFile * widgetFile);
+
+};
+
+class InputTextAction : public AbstractTextAction
+{
+    Q_OBJECT
+public:
+    explicit InputTextAction();
+
+    bool execute(QTextCursor clickCursor, WidgetFile * widgetFile, Qt::KeyboardModifiers modifiers);
     QTextCursor match(QTextCursor clickCursor, WidgetFile * widgetFile);
 
 };

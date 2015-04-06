@@ -59,6 +59,7 @@
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QDrag>
+#include <QDir>
 #include "configmanager.h"
 #include "widgetconsole.h"
 #include "widgetstatusbar.h"
@@ -914,10 +915,15 @@ void MainWindow::insertTexDirRoot()
         return;
     }
     WidgetFile * widget = FileManager::Instance.currentWidgetFile();
+    QDir baseDir;
+    if(!widget->file()->getFilename().isEmpty())
+    {
+        baseDir = QFileInfo(widget->file()->getFilename()).dir();
+    }
     QString t = "%!TEX root = ";
     if(widget->masterFile())
     {
-        t += widget->masterFile()->file()->getFilename();
+        t += baseDir.relativeFilePath(widget->masterFile()->file()->getFilename());
     }
     t += "\n";
     t += widget->widgetTextEdit()->toPlainText();

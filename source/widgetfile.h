@@ -34,7 +34,7 @@ public:
     void clean(void);
     WidgetFile * masterFile() { return _masterFile; }
     void save();
-    void saveAs(void);
+    void saveAs(QString filename = "");
     void setMasterFile(WidgetFile * master) { _masterFile = master; }
     bool isEmpty();
     WidgetPdfViewer * widgetPdfViewer() { return _widgetPdfViewer; }

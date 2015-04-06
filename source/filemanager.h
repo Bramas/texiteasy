@@ -53,6 +53,8 @@ public:
     void reopenWithEncoding(QString codec);
     void setEncoding(QString codec);
 
+    void createMasterConnexions(WidgetFile * widget, WidgetFile * master, AssociatedFile::Type type = AssociatedFile::INPUT);
+    void deleteMasterConnexions(WidgetFile * widget, AssociatedFile::Type type = AssociatedFile::INPUT);
 signals:
     void cursorPositionChanged(int,int);
     void requestOpenFile(QString);
@@ -66,6 +68,7 @@ signals:
      */
     void verticalSplitterChanged();
     void messageFromCurrentFile(QString);
+
 
 public slots:
     bool newFile(MainWindow *mainWindow);
@@ -119,8 +122,6 @@ private slots:
 
 private:
 
-    void createMasterConnexions(WidgetFile * widget, WidgetFile * master, AssociatedFile::Type type = AssociatedFile::INPUT);
-    void deleteMasterConnexions(WidgetFile * widget, AssociatedFile::Type type = AssociatedFile::INPUT);
     void changeConnexions(WidgetFile *oldFile);
 
     explicit FileManager(QObject *parent = 0);

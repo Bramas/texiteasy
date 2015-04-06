@@ -348,9 +348,12 @@ void WidgetFile::save()
     //this->statusBar()->showMessage(tr(QString::fromUtf8("Sauvegardé").toLatin1()),2000);
 }
 
-void WidgetFile::saveAs()
+void WidgetFile::saveAs(QString filename)
 {
-    QString filename = QFileDialog::getSaveFileName(this,tr("Enregistrer un fichier"), ConfigManager::Instance.lastFolder(),ConfigManager::Extensions);
+    if(filename.isEmpty())
+    {
+        filename = QFileDialog::getSaveFileName(this,tr("Enregistrer un fichier"), ConfigManager::Instance.lastFolder(),ConfigManager::Extensions);
+    }
     if(filename.isEmpty())
     {
         return;

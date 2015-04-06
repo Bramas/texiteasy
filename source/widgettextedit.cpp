@@ -563,7 +563,7 @@ void WidgetTextEdit::applyExtraSelection()
 
 void WidgetTextEdit::mouseMoveEvent(QMouseEvent *e)
 {
-    if(e->modifiers() == Qt::ControlModifier)
+    if(e->modifiers() & Qt::ControlModifier)
     {
         QTextCursor clickCursor = textCursor();
         clickCursor.setPosition(this->hitTest(e->pos()), QTextCursor::MoveAnchor);
@@ -598,11 +598,11 @@ void WidgetTextEdit::mousePressEvent(QMouseEvent *e)
         _multipleEdit << textCursor();
     }
     else
-    if(e->modifiers() == Qt::ControlModifier)
+    if(e->modifiers() & Qt::ControlModifier)
     {
         QTextCursor clickCursor = textCursor();
         clickCursor.setPosition(this->hitTest(e->pos()), QTextCursor::MoveAnchor);
-        if(TextActions::execute(clickCursor, this->widgetFile()))
+        if(TextActions::execute(clickCursor, this->widgetFile(), e->modifiers()))
         {
             return;
         }
