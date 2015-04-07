@@ -377,9 +377,10 @@ bool WidgetTextEdit::isCursorVisible()
 
 void WidgetTextEdit::onCursorPositionChange()
 {
+    this->removeExtraSelections(WidgetTextEdit::ArgumentSelection);
+    this->removeExtraSelections(WidgetTextEdit::ParenthesesMatchingSelection);
     _textStruct->environmentPath(textCursor().position());
-    QList<QTextEdit::ExtraSelection> selections;
-    this->highlightCurrentLine(selections);
+    this->highlightCurrentLine();
 
     //*
     if(!_scriptEngine.cursorsMutex()->tryLock())
@@ -537,6 +538,10 @@ void WidgetTextEdit::insertPlainText(const QString &text)
     WIDGET_TEXT_EDIT_PARENT_CLASS::insertPlainText(text);
 }
 
+QList<QTextEdit::ExtraSelection> WidgetTextEdit::extraSelections(int kind)
+{
+    return _extraSelections.value(kind);
+}
 
 void WidgetTextEdit::removeExtraSelections(int kind)
 {
@@ -558,6 +563,10 @@ void WidgetTextEdit::applyExtraSelection()
         newExtraSelections.append(s);
     }
     WIDGET_TEXT_EDIT_PARENT_CLASS::setExtraSelections(newExtraSelections);
+}
+void WidgetTextEdit::setExtraSelections(const QList<QTextEdit::ExtraSelection> &)
+{
+    qDebug()<<"dont use this function, use addExtraSelections instead";
 }
 
 
@@ -939,7 +948,7 @@ bool WidgetTextEdit::selectNextArgument()
         this->setTextCursor(curStrArg);
         if(!curStrArg2.isNull())
         {
-            QList<QTextEdit::ExtraSelection> selections = extraSelections();
+            QList<QTextEdit::ExtraSelection> selections = extraSelections(WidgetTextEdit::ArgumentSelection);
             QTextEdit::ExtraSelection selection;
             QTextCharFormat format = selection.format;
             format.setBackground( QColor("#DDDDDD") );
@@ -947,7 +956,7 @@ bool WidgetTextEdit::selectNextArgument()
             selection.format = format;
             selection.cursor = curStrArg2;
             selections.append( selection );
-            setExtraSelections( selections );
+            addExtraSelections(selections, WidgetTextEdit::ArgumentSelection);
 
             _multipleEdit.clear();
             _multipleEdit.append(curStrArg2);
@@ -1224,7 +1233,7 @@ bool WidgetTextEdit::matchRightPar(QTextBlock currentBlock, int type, int index,
 
 void WidgetTextEdit::createParSelection( int pos, int length )
 {
-    QList<QTextEdit::ExtraSelection> selections = extraSelections();
+    QList<QTextEdit::ExtraSelection> selections = extraSelections(WidgetTextEdit::ParenthesesMatchingSelection);
     QTextEdit::ExtraSelection selection;
     QTextCharFormat format = ConfigManager::Instance.getTextCharFormats("matched");
     selection.format = format;
@@ -1234,7 +1243,7 @@ void WidgetTextEdit::createParSelection( int pos, int length )
     cursor.movePosition( QTextCursor::NextCharacter, QTextCursor::KeepAnchor, length);
     selection.cursor = cursor;
     selections.append( selection );
-    setExtraSelections( selections );
+    addExtraSelections(selections, WidgetTextEdit::ParenthesesMatchingSelection);
 }
 void WidgetTextEdit::matchLat()
 {
@@ -1264,7 +1273,7 @@ void WidgetTextEdit::matchLat()
                     endCursor.setPosition(endPos - 2 - item->name.length(), QTextCursor::KeepAnchor);
                     _multipleEdit << endCursor;
 
-                    QList<QTextEdit::ExtraSelection> selections = extraSelections();
+                    QList<QTextEdit::ExtraSelection> selections = extraSelections(WidgetTextEdit::ParenthesesMatchingSelection);
                     QTextEdit::ExtraSelection selection;
                     QTextCharFormat format = selection.format;
                     format.setBackground( QColor("#DDDDDD") );
@@ -1272,7 +1281,7 @@ void WidgetTextEdit::matchLat()
                     selection.format = format;
                     selection.cursor = endCursor;
                     selections.append(selection);
-                    setExtraSelections( selections );
+                    addExtraSelections(selections, WidgetTextEdit::ParenthesesMatchingSelection);
                 }
             }
             if(position == cursor.selectionEnd() + 2)
@@ -1288,7 +1297,7 @@ void WidgetTextEdit::matchLat()
                     startCursor.setPosition(startPos + 7 + item->name.length(), QTextCursor::KeepAnchor);
                     _multipleEdit << startCursor;
 
-                    QList<QTextEdit::ExtraSelection> selections = extraSelections();
+                    QList<QTextEdit::ExtraSelection> selections = extraSelections(WidgetTextEdit::ParenthesesMatchingSelection);
                     QTextEdit::ExtraSelection selection;
                     QTextCharFormat format = selection.format;
                     format.setBackground( QColor("#DDDDDD") );
@@ -1296,7 +1305,7 @@ void WidgetTextEdit::matchLat()
                     selection.format = format;
                     selection.cursor = startCursor;
                     selections.append(selection);
-                    setExtraSelections( selections );
+                    addExtraSelections(selections, WidgetTextEdit::ParenthesesMatchingSelection);
                 }
             }
         }
@@ -1415,12 +1424,7 @@ void WidgetTextEdit::goToLine(int line, QString stringSelected)
 
 void WidgetTextEdit::highlightCurrentLine()
 {
-    this->highlightCurrentLine(this->extraSelections());
-}
-
-void WidgetTextEdit::highlightCurrentLine(QList<QTextEdit::ExtraSelection> extraSelections)
-{
-
+    QList<QTextEdit::ExtraSelection> extraSelections;
     QTextCursor cursor = textCursor();
     int blockNumber = cursor.blockNumber();
     cursor.movePosition(QTextCursor::StartOfBlock);
@@ -1437,8 +1441,7 @@ void WidgetTextEdit::highlightCurrentLine(QList<QTextEdit::ExtraSelection> extra
             break;
         }
     }
-
-    setExtraSelections(extraSelections);
+    addExtraSelections(extraSelections, WidgetTextEdit::CurrentLineSelection);
 }
 void WidgetTextEdit::highlightSyncedLine(int line)
 {
@@ -1465,7 +1468,7 @@ void WidgetTextEdit::highlightSyncedLine(int line)
         }
     }
 
-    setExtraSelections(extraSelections);
+    addExtraSelections(extraSelections, WidgetTextEdit::CurrentLineSelection);
     matchPar();
 }
 

@@ -46,6 +46,9 @@
 
 
 
+
+
+
 QImage * WidgetPdfDocument::EmptyImage = new QImage();
 int WidgetPdfDocument::PageMargin = 20;
 
@@ -66,6 +69,9 @@ WidgetPdfDocument::WidgetPdfDocument(QWidget *parent) :
     this->setContentsMargins(0,0,0,0);
     this->setMouseTracking(true);
     this->setCursor(Qt::OpenHandCursor);
+    _pdfSynchronizer = new PdfSynchronizer();
+    _pdfSynchronizer->start();
+    connect(_pdfSynchronizer, SIGNAL(rectSync(int,QRectF)), this, SLOT(onSyncReady(int,QRectF)));
     connect(&this->_timer, SIGNAL(timeout()),this, SLOT(update()));
 
     _scroll->setGeometry(this->width()-20,0,20,200);
@@ -92,8 +98,13 @@ WidgetPdfDocument::~WidgetPdfDocument()
     }
     if(scanner != NULL)
     {
+        _pdfSynchronizer->lockBeforeSync();
         synctex_scanner_free(scanner);
+        _pdfSynchronizer->unlockBeforeSync();
     }
+    _pdfSynchronizer->waitForFinish();
+    qDebug()<<"_pdfSynchronizer->deleteLater();";
+    _pdfSynchronizer->deleteLater();
 #ifdef DEBUG_DESTRUCTOR
     qDebug()<<"delete WidgetPdfDocument";
 #endif
@@ -298,7 +309,9 @@ void WidgetPdfDocument::initDocument()
     {
         if(scanner != NULL )
         {
+            _pdfSynchronizer->lockBeforeSync();
             synctex_scanner_free(scanner);
+            _pdfSynchronizer->unlockBeforeSync();
         }
         scanner = synctex_scanner_new_with_output_file(syncFile.toUtf8().data(), NULL, 1);
         if( scanner == NULL )
@@ -684,50 +697,14 @@ void WidgetPdfDocument::jumpToPdfFromSource(int source_line)
     {
         return;
     }
+    _pdfSynchronizer->sync(scanner, sourceFile, source_line);
+}
 
-    const QFileInfo sourceFileInfo(sourceFile);
-    QDir curDir(QFileInfo(this->_file->getPdfFilename()).canonicalPath());
-    synctex_node_t node = synctex_scanner_input(scanner);
-    QString name;
-    bool found = false;
-    while (node != NULL)
-    {
-        name = QString::fromUtf8(synctex_scanner_get_name(scanner, synctex_node_tag(node)));
-        const QFileInfo fi(curDir, name);
-        if (fi == sourceFileInfo)
-        {
-            found = true;
-            break;
-        }
-        node = synctex_node_sibling(node);
-    }
-    if (!found)
-    {
-        return;
-    }
-
-
-    if (synctex_display_query(scanner, name.toUtf8().data(), source_line, 0) > 0)
-    {
-        int page = -1;
-        path= QPainterPath();
-        while ((node = synctex_next_result(scanner)) != NULL)
-        {
-            if (page == -1) page = synctex_node_page(node);
-            if (synctex_node_page(node) != page) continue;
-            QRectF nodeRect(synctex_node_box_visible_h(node),
-                            synctex_node_box_visible_v(node) - synctex_node_box_visible_height(node),
-                            synctex_node_box_visible_width(node),
-                            synctex_node_box_visible_height(node) + synctex_node_box_visible_depth(node));
-            path.addRect(nodeRect);
-        }
-        if (page > 0)
-        {
-            _syncPage = page - 1;
-            _syncRect = path.boundingRect();
-            goToPage(_syncPage, _syncRect.y(), _syncRect.height());
-            _lastUpdate.start();
-            _timer.start(1);
-        }
-    }
+void WidgetPdfDocument::onSyncReady(int page, QRectF rect)
+{
+    _syncPage = page;
+    _syncRect = rect;
+    goToPage(_syncPage, _syncRect.y(), _syncRect.height());
+    _lastUpdate.start();
+    _timer.start(1);
 }

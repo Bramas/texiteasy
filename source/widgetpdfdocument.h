@@ -29,6 +29,13 @@
 #include <QList>
 #include <QRectF>
 #include <QScrollBar>
+#include <QThread>
+#include <QMutex>
+#include <QWaitCondition>
+#include <QFileInfo>
+#include <QDir>
+#include <QDebug>
+
 #if QT_VERSION > QT_VERSION_CHECK(5,2,0)
 #    include <QNativeGestureEvent>
 #endif
@@ -59,6 +66,198 @@ struct Link
     {
         //delete destination;
     }
+};
+
+
+
+
+class PdfSynchronizer : public QThread
+{
+    Q_OBJECT
+
+public:
+
+    PdfSynchronizer() : _restartRequested(false), _syncing(false), _waitBeforeSync(false) {}
+
+    bool lockBeforeSync() {
+
+        qDebug()<<"lockBeforeSync _dataMutex before";
+        _dataMutex.lock();
+        qDebug()<<"lockBeforeSync _dataMutex locked";
+        _waitBeforeSync = true;
+        if(!_syncing)
+        {
+            qDebug()<<"lockBeforeSync _dataMutex unlocked";
+            _dataMutex.unlock();
+            return true;
+        }
+        _runningWaiter.wait(&_dataMutex);
+        qDebug()<<"lockBeforeSync _dataMutex locked";
+        qDebug()<<"lockBeforeSync _dataMutex unlocked";
+        _dataMutex.unlock();
+        return true;
+
+    }
+    void unlockBeforeSync() {
+
+        qDebug()<<"unlockBeforeSync _dataMutex before";
+        _dataMutex.lock();
+        qDebug()<<"unlockBeforeSync _dataMutex locked";
+        _waitBeforeSync = false;
+        _runningWaiter.wakeAll();
+        qDebug()<<"unlockBeforeSync _dataMutex unlocked";
+        _dataMutex.unlock();
+
+    }
+
+    void sync(synctex_scanner_t scanner, QString sourceFile, int sourceLine){
+
+        qDebug()<<"sync _dataMutex before";
+        _dataMutex.lock();
+        qDebug()<<"sync _dataMutex locked";
+
+        _scanner = scanner;
+        _sourceLine = sourceLine;
+        _sourceFile = sourceFile;
+        _restartRequested = true;
+
+        _dataWaiter.wakeAll();
+        _dataMutex.unlock();
+        qDebug()<<"sync _dataMutex unlocked";
+    }
+
+    void waitForFinish()
+    {
+        qDebug()<<"waitForFinish _dataMutex before";
+        _dataMutex.lock();
+        qDebug()<<"waitForFinish _dataMutex locked";
+        _stopRequested = true;
+        qDebug()<<"Stop! syncing?"<<_syncing;
+        bool s = _syncing;
+        qDebug()<<"waitForFinish _dataMutex unlocked ";
+        _dataMutex.lock();
+        if(!s)
+        {
+            _dataWaiter.wakeAll();
+        }
+        //_dataMutex.lock();
+        qDebug()<<"waitForFinish _dataMutex locked";
+        qDebug()<<"waitForFinish _dataMutex unlocked ";
+        _finishWaiter.wait(&_dataMutex);
+        qDebug()<<"waitForFinish _dataMutex locked";
+        _dataMutex.unlock();
+        qDebug()<<"waitForFinish _dataMutex unlocked";
+        qDebug()<<"Stop waiting";
+    }
+
+private:
+
+
+    void run() Q_DECL_OVERRIDE {
+
+        begin:
+        _runningWaiter.wakeAll();
+        qDebug()<<"run _dataMutex before";
+        _dataMutex.lock();
+        qDebug()<<"run _dataMutex locked";
+        if(_waitBeforeSync)
+        {
+            qDebug()<<"run _dataMutex unlocked";
+            _runningWaiter.wait(&_dataMutex);
+            qDebug()<<"run _dataMutex locked";
+        }
+
+        _syncing = false;
+        if(!_restartRequested)
+        {
+            qDebug()<<"run _dataMutex unlocked";
+            _dataWaiter.wait(&_dataMutex);
+            qDebug()<<"run _dataMutex locked";
+            qDebug()<<"run _dataMutex unlocked";
+            //_dataMutex.unlock();
+            qDebug()<<"run _stopRequested "<<_stopRequested;
+            if(_stopRequested)
+            {
+                _finishWaiter.wakeAll();
+                _dataMutex.unlock();
+                qDebug()<<"run _finishWaiter.wakeAll(); ";
+                return;
+            }
+            //_dataMutex.lock();
+            if(_waitBeforeSync)
+            {
+                qDebug()<<"run _dataMutex unlocked";
+                _runningWaiter.wait(&_dataMutex);
+                qDebug()<<"_dataMutex locked";
+            }
+        }
+        _syncing = true;
+        int sourceLine = _sourceLine;
+        QString sourceFile = _sourceFile;
+        synctex_scanner_t scanner = _scanner;
+        _restartRequested = false;
+        _sourceLine = -1;
+
+        qDebug()<<"run _dataMutex unlocked";
+        _dataMutex.unlock();
+        qDebug()<<"run START SYNC";
+
+        if(scanner == NULL)
+        {
+            goto begin;
+        }
+
+        const QFileInfo sourceFileInfo(sourceFile);
+        QDir curDir(sourceFileInfo.canonicalPath());
+        synctex_node_t node = synctex_scanner_input(scanner);
+        QString name;
+        bool found = false;
+        while (node != NULL)
+        {
+            name = QString::fromUtf8(synctex_scanner_get_name(scanner, synctex_node_tag(node)));
+            const QFileInfo fi(curDir, name);
+            if (fi == sourceFileInfo)
+            {
+                found = true;
+                break;
+            }
+            node = synctex_node_sibling(node);
+        }
+
+
+        if (found && synctex_display_query(scanner, name.toUtf8().data(), sourceLine, 0) > 0)
+        {
+            int page = -1;
+            QPainterPath path;
+            while ((node = synctex_next_result(scanner)) != NULL)
+            {
+
+                if (page == -1) page = synctex_node_page(node);
+                if (synctex_node_page(node) != page) continue;
+                QRectF nodeRect(synctex_node_box_visible_h(node),
+                                synctex_node_box_visible_v(node) - synctex_node_box_visible_height(node),
+                                synctex_node_box_visible_width(node),
+                                synctex_node_box_visible_height(node) + synctex_node_box_visible_depth(node));
+                path.addRect(nodeRect);
+            }
+            if (page > 0)
+            {
+                emit rectSync(page - 1, path.boundingRect());
+            }
+        }
+        goto begin;
+    }
+signals:
+    void rectSync(int page, QRectF rect);
+private:
+    QMutex _dataMutex;
+    QWaitCondition _dataWaiter;
+    QWaitCondition _runningWaiter;
+    QWaitCondition _finishWaiter;
+    bool _restartRequested, _syncing, _waitBeforeSync, _stopRequested;
+    QString _sourceFile;
+    int _sourceLine;
+    synctex_scanner_t _scanner;
 };
 
 class WidgetPdfDocument : public QWidget
@@ -100,7 +299,8 @@ public slots:
     void updatePdf(void);
     void initScroll();
     void onScroll(int value);
-
+private slots:
+    void onSyncReady(int page, QRectF rect);
 protected:
 #if QT_VERSION > QT_VERSION_CHECK(5,2,0)
     bool gestureEvent(QNativeGestureEvent* event);
@@ -150,6 +350,7 @@ private:
     QTimer _requestNewResolutionTimer;
     WidgetTextEdit * _widgetTextEdit;
     qreal _zoom;
+    PdfSynchronizer * _pdfSynchronizer;
 
 
 

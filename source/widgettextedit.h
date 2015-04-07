@@ -137,7 +137,9 @@ public:
 
     void addExtraSelections(const QList<QTextEdit::ExtraSelection> &selections, int kind = WidgetTextEdit::OtherSelection);
     void removeExtraSelections(int kind = WidgetTextEdit::AllSelection);
+    QList<QTextEdit::ExtraSelection> extraSelections(int kind = WidgetTextEdit::AllSelection);
     void applyExtraSelection();
+    void setExtraSelections(const QList<QTextEdit::ExtraSelection> &);
     enum ExtraSelectionKind {
         CurrentLineSelection,
         ParenthesesMatchingSelection,
@@ -150,6 +152,7 @@ public:
         SnippetPlaceholderSelection,
         ObjCSelection,
         DebuggerExceptionSelection,
+        ArgumentSelection,
         AllSelection
     };
 signals:
@@ -193,7 +196,6 @@ private:
     void resizeEvent(QResizeEvent * event);
     void wheelEvent(QWheelEvent * event);
     void highlightCurrentLine();
-    void highlightCurrentLine(QList<QTextEdit::ExtraSelection> extraSelections);
     bool selectNextArgument(void);
     bool hasArguments();
     void contextMenuEvent(QContextMenuEvent *event);
@@ -249,7 +251,7 @@ private:
     bool _scriptIsRunning;
     QMap<int,int> _foldedLines;
     int _lastBlockCount;
-    QHash<int, QList<QTextEdit::ExtraSelection> > _extraSelections;
+    QMap<int, QList<QTextEdit::ExtraSelection> > _extraSelections;
 
 };
 
