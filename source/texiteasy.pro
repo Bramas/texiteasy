@@ -13,8 +13,8 @@ TEMPLATE = app
 
 APPLICATION_NAME = \\\"'TexitEasy'\\\"
 
-VERSION = \\\"'0.17.2'\\\"
-VERSION_HEX = 0x001702
+VERSION = \\\"'0.18.0'\\\"
+VERSION_HEX = 0x001800
 
 
 DEFINES += LIB_DEPLOY
