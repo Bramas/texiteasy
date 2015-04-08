@@ -35,6 +35,7 @@
 #include "updatechecker.h"
 #include "dialogdownloadupdate.h"
 #include "tools.h"
+#include "pdfsynchronizer.h"
 #include <QSettings>
 #include <QFontDatabase>
 #include <QDebug>
@@ -159,7 +160,15 @@ int main(int argc, char *argv[])
 
     new UpdateChecker(&w);
 
+
+
+    PdfSynchronizer::start();
+
     int returnCode = a.exec();
+
+    PdfSynchronizer::terminate();
+    PdfSynchronizer::wait();
+
     if(returnCode == CODE_INSTALL_AND_RESTART)
     {
         upgrade();

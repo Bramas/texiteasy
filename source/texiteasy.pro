@@ -89,7 +89,8 @@ SOURCES += main.cpp\
     dialogsendfeedback.cpp \
     tools.cpp \
     grammarchecker.cpp \
-    textaction.cpp
+    textaction.cpp \
+    pdfsynchronizer.cpp
 
 HEADERS  += mainwindow.h \
     widgetlinenumber.h \
@@ -156,7 +157,8 @@ HEADERS  += mainwindow.h \
     dialogsendfeedback.h \
     tools.h \
     grammarchecker.h \
-    textaction.h
+    textaction.h \
+    pdfsynchronizer.h
 
 FORMS    += mainwindow.ui \
     dialogwelcome.ui \

@@ -21,6 +21,7 @@
 
 #include "widgetpdfdocument.h"
 #include "widgettextedit.h"
+#include "pdfsynchronizer.h"
 #include <QMouseEvent>
 #include <QDebug>
 #include <QPainter>
@@ -69,9 +70,6 @@ WidgetPdfDocument::WidgetPdfDocument(QWidget *parent) :
     this->setContentsMargins(0,0,0,0);
     this->setMouseTracking(true);
     this->setCursor(Qt::OpenHandCursor);
-    _pdfSynchronizer = new PdfSynchronizer();
-    _pdfSynchronizer->start();
-    connect(_pdfSynchronizer, SIGNAL(rectSync(int,QRectF)), this, SLOT(onSyncReady(int,QRectF)));
     connect(&this->_timer, SIGNAL(timeout()),this, SLOT(update()));
 
     _scroll->setGeometry(this->width()-20,0,20,200);
@@ -98,13 +96,10 @@ WidgetPdfDocument::~WidgetPdfDocument()
     }
     if(scanner != NULL)
     {
-        _pdfSynchronizer->lockBeforeSync();
+        PdfSynchronizer::lockBeforeSync();
         synctex_scanner_free(scanner);
-        _pdfSynchronizer->unlockBeforeSync();
+        PdfSynchronizer::unlockBeforeSync();
     }
-    _pdfSynchronizer->waitForFinish();
-    qDebug()<<"_pdfSynchronizer->deleteLater();";
-    _pdfSynchronizer->deleteLater();
 #ifdef DEBUG_DESTRUCTOR
     qDebug()<<"delete WidgetPdfDocument";
 #endif
@@ -309,9 +304,9 @@ void WidgetPdfDocument::initDocument()
     {
         if(scanner != NULL )
         {
-            _pdfSynchronizer->lockBeforeSync();
+            PdfSynchronizer::lockBeforeSync();
             synctex_scanner_free(scanner);
-            _pdfSynchronizer->unlockBeforeSync();
+            PdfSynchronizer::unlockBeforeSync();
         }
         scanner = synctex_scanner_new_with_output_file(syncFile.toUtf8().data(), NULL, 1);
         if( scanner == NULL )
@@ -697,7 +692,7 @@ void WidgetPdfDocument::jumpToPdfFromSource(int source_line)
     {
         return;
     }
-    _pdfSynchronizer->sync(scanner, sourceFile, source_line);
+    PdfSynchronizer::sync(this, "onSyncReady", scanner, sourceFile, source_line);
 }
 
 void WidgetPdfDocument::onSyncReady(int page, QRectF rect)
