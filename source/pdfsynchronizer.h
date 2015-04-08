@@ -13,6 +13,8 @@
 
 #include "synctex_parser.h"
 
+#define PDF_SYNCHRONIZER_DEBUG(a)
+
 class PdfSynchronizer : public QThread
 {
     Q_OBJECT
@@ -61,21 +63,21 @@ private:
 
     void _terminate()
     {
-        qDebug()<<"waitForFinish _dataMutex before";
+        PDF_SYNCHRONIZER_DEBUG(qDebug()<<"waitForFinish _dataMutex before");
         _dataMutex.lock();
-        qDebug()<<"waitForFinish _dataMutex locked";
+        PDF_SYNCHRONIZER_DEBUG(qDebug()<<"waitForFinish _dataMutex locked");
         _stopRequested = true;
-        qDebug()<<"Stop! syncing?"<<_syncing;
+        PDF_SYNCHRONIZER_DEBUG(qDebug()<<"Stop! syncing?"<<_syncing);
         bool s = _syncing;
 
         _dataMutex.unlock();
         if(!s)
         {
-            qDebug()<<"not syncing: waitForFinish _dataMutex unlocked and _dataWaiter.wakeAll();";
+            PDF_SYNCHRONIZER_DEBUG(qDebug()<<"not syncing: waitForFinish _dataMutex unlocked and _dataWaiter.wakeAll();");
             _dataWaiter.wakeAll();
             return;
         }
-        qDebug()<<"waitForFinish _syncing so _dataMutex unlocked ";
+        PDF_SYNCHRONIZER_DEBUG(qDebug()<<"waitForFinish _syncing so _dataMutex unlocked ");
         _dataMutex.unlock();
     }
 
@@ -83,41 +85,41 @@ private:
 
     bool _lockBeforeSync() {
 
-        qDebug()<<"lockBeforeSync _dataMutex before";
+        PDF_SYNCHRONIZER_DEBUG(qDebug()<<"lockBeforeSync _dataMutex before");
         _dataMutex.lock();
-        qDebug()<<"lockBeforeSync _dataMutex locked";
+        PDF_SYNCHRONIZER_DEBUG(qDebug()<<"lockBeforeSync _dataMutex locked");
         _waitBeforeSync = true;
         if(!_syncing)
         {
-            qDebug()<<"lockBeforeSync _dataMutex unlocked";
+            PDF_SYNCHRONIZER_DEBUG(qDebug()<<"lockBeforeSync _dataMutex unlocked");
             _dataMutex.unlock();
             return true;
         }
-        qDebug()<<"lockBeforeSync _dataMutex unlocked";
+        PDF_SYNCHRONIZER_DEBUG(qDebug()<<"lockBeforeSync _dataMutex unlocked");
         _runningWaiter.wait(&_dataMutex);
-        qDebug()<<"lockBeforeSync _dataMutex locked";
-        qDebug()<<"lockBeforeSync _dataMutex unlocked";
+        PDF_SYNCHRONIZER_DEBUG(qDebug()<<"lockBeforeSync _dataMutex locked");
+        PDF_SYNCHRONIZER_DEBUG(qDebug()<<"lockBeforeSync _dataMutex unlocked");
         _dataMutex.unlock();
         return true;
 
     }
     void _unlockBeforeSync() {
 
-        qDebug()<<"unlockBeforeSync _dataMutex before";
+        PDF_SYNCHRONIZER_DEBUG(qDebug()<<"unlockBeforeSync _dataMutex before");
         _dataMutex.lock();
-        qDebug()<<"unlockBeforeSync _dataMutex locked";
+        PDF_SYNCHRONIZER_DEBUG(qDebug()<<"unlockBeforeSync _dataMutex locked");
         _waitBeforeSync = false;
         _runningWaiter.wakeAll();
-        qDebug()<<"unlockBeforeSync _dataMutex unlocked";
+        PDF_SYNCHRONIZER_DEBUG(qDebug()<<"unlockBeforeSync _dataMutex unlocked");
         _dataMutex.unlock();
 
     }
 
     void _sync(QObject * receiver, QString methodName, synctex_scanner_t scanner, QString sourceFile, int sourceLine){
 
-        qDebug()<<"sync _dataMutex before";
+        PDF_SYNCHRONIZER_DEBUG(qDebug()<<"sync _dataMutex before");
         _dataMutex.lock();
-        qDebug()<<"sync _dataMutex locked";
+        PDF_SYNCHRONIZER_DEBUG(qDebug()<<"sync _dataMutex locked");
 
         _scanner = scanner;
         _sourceLine = sourceLine;
@@ -129,7 +131,7 @@ private:
         _methodName = methodName;
 
         _dataWaiter.wakeAll();
-        qDebug()<<"sync _dataMutex unlocked";
+        PDF_SYNCHRONIZER_DEBUG(qDebug()<<"sync _dataMutex unlocked");
         _dataMutex.unlock();
     }
 
@@ -138,44 +140,44 @@ private:
 
        forever
        {
-            qDebug()<<"run _dataMutex before";
+            PDF_SYNCHRONIZER_DEBUG(qDebug()<<"run _dataMutex before");
             _dataMutex.lock();
-            qDebug()<<"run _dataMutex locked";
+            PDF_SYNCHRONIZER_DEBUG(qDebug()<<"run _dataMutex locked");
             if(_stopRequested)
             {
-                qDebug()<<"run _stopRequested";
-                qDebug()<<"run _dataMutex.unlock(); ";
+                PDF_SYNCHRONIZER_DEBUG(qDebug()<<"run _stopRequested");
+                PDF_SYNCHRONIZER_DEBUG(qDebug()<<"run _dataMutex.unlock(); ");
                 _dataMutex.unlock();
                 return;
             }
             if(_waitBeforeSync)
             {
-                qDebug()<<"_runningWaiter.wakeAll();";
+                PDF_SYNCHRONIZER_DEBUG(qDebug()<<"_runningWaiter.wakeAll();");
                 _runningWaiter.wakeAll();
-                qDebug()<<"run _dataMutex unlocked";
+                PDF_SYNCHRONIZER_DEBUG(qDebug()<<"run _dataMutex unlocked");
                 _runningWaiter.wait(&_dataMutex);
-                qDebug()<<"run _dataMutex locked";
+                PDF_SYNCHRONIZER_DEBUG(qDebug()<<"run _dataMutex locked");
             }
 
             _syncing = false;
             if(!_restartRequested)
             {
-                qDebug()<<"run _dataMutex unlocked";
+                PDF_SYNCHRONIZER_DEBUG(qDebug()<<"run _dataMutex unlocked");
                 _dataWaiter.wait(&_dataMutex);
-                qDebug()<<"run _dataMutex locked";
+                PDF_SYNCHRONIZER_DEBUG(qDebug()<<"run _dataMutex locked");
                 if(_stopRequested)
                 {
-                    qDebug()<<"run _stopRequested";
-                    qDebug()<<"run _dataMutex.unlock(); ";
+                    PDF_SYNCHRONIZER_DEBUG(qDebug()<<"run _stopRequested");
+                    PDF_SYNCHRONIZER_DEBUG(qDebug()<<"run _dataMutex.unlock(); ");
                     _dataMutex.unlock();
                     return;
                 }
                 if(_waitBeforeSync)
                 {
-                    qDebug()<<"run _waitBeforeSync";
-                    qDebug()<<"run _dataMutex unlocked";
+                    PDF_SYNCHRONIZER_DEBUG(qDebug()<<"run _waitBeforeSync");
+                    PDF_SYNCHRONIZER_DEBUG(qDebug()<<"run _dataMutex unlocked");
                     _runningWaiter.wait(&_dataMutex);
-                    qDebug()<<"_dataMutex locked";
+                    PDF_SYNCHRONIZER_DEBUG(qDebug()<<"_dataMutex locked");
                 }
             }
             _syncing = true;
@@ -189,9 +191,9 @@ private:
             _restartRequested = false;
             _sourceLine = -1;
 
-            qDebug()<<"run _dataMutex unlocked";
+            PDF_SYNCHRONIZER_DEBUG(qDebug()<<"run _dataMutex unlocked");
             _dataMutex.unlock();
-            qDebug()<<"run START SYNC";
+            PDF_SYNCHRONIZER_DEBUG(qDebug()<<"run START SYNC");
 
             if(scanner == NULL)
             {
@@ -238,7 +240,7 @@ private:
                                               Q_ARG( int, page - 1),
                                               Q_ARG( QRectF, path.boundingRect())
                                               );
-                    qDebug()<<"QMetaObject::invokeMethod    "<<methodName;
+                    PDF_SYNCHRONIZER_DEBUG(qDebug()<<"QMetaObject::invokeMethod    "<<methodName);
                     //emit rectSync(page - 1, path.boundingRect());
                 }
             }
