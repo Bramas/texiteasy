@@ -120,10 +120,8 @@ void FileManager::deleteMasterConnexions(WidgetFile *widget, AssociatedFile::Typ
     // restore everything with the opened associatedFiles
     foreach(File * openAssoc, widget->file()->openAssociatedFiles())
     {
-        if(openAssoc->format() == File::BIBTEX)
-        {
-            openAssoc->getBuilder()->setFile(openAssoc);
-        }
+
+        openAssoc->getBuilder()->setFile(openAssoc);
         openAssoc->widgetFile()->setMasterFile(0);
     }
 

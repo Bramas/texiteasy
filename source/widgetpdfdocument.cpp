@@ -692,6 +692,7 @@ void WidgetPdfDocument::jumpToPdfFromSource(int source_line)
     {
         return;
     }
+    //synchronize may take some times so we call this non-blocking function with onSyncReady callback when the rectangle and the page are found
     PdfSynchronizer::sync(this, "onSyncReady", scanner, sourceFile, source_line);
 }
 
