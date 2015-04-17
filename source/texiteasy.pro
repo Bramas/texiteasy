@@ -13,11 +13,10 @@ TEMPLATE = app
 
 APPLICATION_NAME = \\\"'TexitEasy'\\\"
 
-VERSION = \\\"'0.18.0'\\\"
-VERSION_HEX = 0x001800
+VERSION = \\\"'0.18.1'\\\"
+VERSION_HEX = 0x001801
 
 
-#DEFINES += LIB_DEPLOY
 #DEFINES += PORTABLE_EXECUTABLE
 
 DEFINES += "CURRENT_VERSION_HEX=$${VERSION_HEX}"
@@ -235,6 +234,7 @@ unix:!mac{
     LATEX_URL = \\\"'http://texiteasy.com/links/latex/linux'\\\"
 }
 mac{
+    #DEFINES += LIB_DEPLOY
     INCLUDEPATH += /usr/local/include
     LIBS += -L/usr/local/lib -lz -lpoppler-qt5
     ICON = texiteasy.icns
