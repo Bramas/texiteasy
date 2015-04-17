@@ -200,16 +200,14 @@ private:
                 continue;
             }
 
-            const QFileInfo sourceFileInfo(sourceFile);
-            QDir curDir(sourceFileInfo.canonicalPath());
+            QString filePath=QFileInfo(sourceFile).absolutePath()+"/./"+QFileInfo(sourceFile).fileName();
             synctex_node_t node = synctex_scanner_input(scanner);
             QString name;
             bool found = false;
             while (node != NULL)
             {
                 name = QString::fromUtf8(synctex_scanner_get_name(scanner, synctex_node_tag(node)));
-                const QFileInfo fi(curDir, name);
-                if (fi == sourceFileInfo)
+                if (name == filePath)
                 {
                     found = true;
                     break;
