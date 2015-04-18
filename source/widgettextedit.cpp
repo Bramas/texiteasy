@@ -82,7 +82,8 @@ WidgetTextEdit::WidgetTextEdit(WidgetFile * parent) :
     _widgetFile = parent;
     _scriptEngine.setWidgetTextEdit(this);
     this->setContentsMargins(0,0,0,0);
-    connect(this,SIGNAL(textChanged()),this->currentFile,SLOT(setModified()));
+    connect(this->document(),SIGNAL(modificationChanged(bool)),this->currentFile,SLOT(setModified(bool)));
+    connect(this->currentFile,SIGNAL(modified(bool)), this->document(),SLOT(setModified(bool)));
     connect(this,SIGNAL(textChanged()),this,SLOT(updateIndentation()));
     connect(this,SIGNAL(cursorPositionChanged()), this, SLOT(onCursorPositionChange()));
     connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(onBlockCountChanged(int)));
