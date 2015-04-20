@@ -14,6 +14,7 @@ command-in-math-mode=" foreground(110, 100, 40)"
 option=" foreground(243, 137, 0)"
 other=" foreground(163, 81, 81)"
 matched="font(bold )  foreground(242, 230, 100)  background(100, 111, 242) "
+selection=" foreground(53, 52, 41)   background(200, 200, 200) "
 
 tab-text="foreground(230, 230, 230)"
 tab-active-text="foreground(130, 125, 125)"

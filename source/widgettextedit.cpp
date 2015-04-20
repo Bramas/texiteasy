@@ -1659,14 +1659,23 @@ void WidgetTextEdit::initTheme()
 {
 
     this->setStyleSheet(QString("QPlainTextEdit { border: 0px solid ")+
-                                        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("textedit-border").foreground().color())+"; "+
-                                        QString("border-right: 1px solid ")+
-                                        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("textedit-border").foreground().color())+"; "+
-                                        QString("color: ")+
-                                        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+"; "+
-                                        QString("background-color: ")+
-                                        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color())+
-                                "; }");
+        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("textedit-border").foreground().color())+"; "+
+        QString("border-right: 1px solid ")+
+        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("textedit-border").foreground().color())+"; "+
+        QString("color: ")+
+        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+"; "+
+        QString("background-color: ")+
+        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color())+"; "+
+                        QString("selection-color: ")+
+                        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("selection").foreground().color())+"; "+
+                        QString("selection-background-color: ")+
+                        ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("selection").background().color())+
+"; }");
+
+    QPalette p = this->palette();
+    p.setBrush(QPalette::HighlightedText, QBrush(QColor(0, 0, 0, 0), Qt::NoBrush));
+    this->setPalette(p);
+
     this->setCurrentCharFormat(ConfigManager::Instance.getTextCharFormats("normal"));
     QTextCursor cur = this->textCursor();
     cur.setCharFormat(ConfigManager::Instance.getTextCharFormats("normal"));

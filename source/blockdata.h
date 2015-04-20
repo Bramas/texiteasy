@@ -73,12 +73,13 @@ class BlockData;
 class BlockState
 {
 public:
-    BlockState() { state = 0; stateAfterOption = 0; parenthesisLevel.push(0); crocherLevel.push(0); }
+    BlockState() : stateAfterArguments(0) { state = 0; stateAfterOption = 0; parenthesisLevel.push(0); crocherLevel.push(0); }
     BlockState(int state, int previousState, int stateAfterOption);
     bool equals(const BlockState & other) const;
     int state;
     int previousState;
     int stateAfterOption;
+    int stateAfterArguments;
     QStack<int> parenthesisLevel;
     QStack<int> crocherLevel;
     QString environment;

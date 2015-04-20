@@ -183,6 +183,7 @@ QString currentEnvironment = blockData->blockStartingState.environment;
 State state = intToState(blockData->blockStartingState.state);
 State previousState = intToState(blockData->blockStartingState.previousState);
 State stateAfterOption = intToState(blockData->blockStartingState.stateAfterOption);
+State stateAfterArguments = intToState(blockData->blockStartingState.stateAfterArguments);
 bool beginEnvironmentName = false;
 bool endEnvironmentName = false;
 bool waitingBraceArgument = false;
@@ -370,7 +371,7 @@ while(index < text.length())
             }
             else
             {
-                state = Text;
+                state = stateAfterArguments;
                 if(parenthesisLevel->count() >= 2)
                 {
                     parenthesisLevel->pop();
@@ -388,14 +389,18 @@ while(index < text.length())
             else
             if(!endEnvironmentNameBuffer.isEmpty())
             {
-                if(mathEnvironments.contains(currentEnvironment) && endEnvironmentNameBuffer == currentEnvironment)
+                if(mathEnvironments.contains(endEnvironmentNameBuffer))// && endEnvironmentNameBuffer == currentEnvironment)
                 {
                     state = Text;
                     overrideCurrentState = Math;
-                    index -= QString("\\end{"+currentEnvironment+"}").size();
+                    index -= QString("\\end{"+endEnvironmentNameBuffer+"}").size();
                     currentEnvironment = "";
+                    // don't clean endEnvironmentNameBuffer here so that the second time the end environement is processed, it will not enter again this condition (avoiding an ininite loop)
                 }
-                endEnvironmentNameBuffer = "";
+                else
+                {
+                    endEnvironmentNameBuffer = "";
+                }
             }
 
         }
@@ -563,6 +568,7 @@ while(index < text.length())
                 crocherLevel->push(0);
                 state = Option;
                 stateAfterOption = Text;
+                stateAfterArguments = previousState;
                 --index;
                 setCharacterState = false;
             }
@@ -571,6 +577,7 @@ while(index < text.length())
             {
                 crocherLevel->push(0);
                 state = Option;
+                stateAfterArguments = previousState;
                 stateAfterOption = Other;
                 --index;
                 setCharacterState = false;
@@ -581,7 +588,6 @@ while(index < text.length())
                 {
                     crocherLevel->push(0);
                     state = Option;
-                    stateAfterOption = Other;
                     stateAfterOption = Text;
                     --index;
                     setCharacterState = false;
@@ -961,6 +967,7 @@ if(state == Command)
 blockData->blockEndingState.state               = state;
 blockData->blockEndingState.previousState       = previousState;
 blockData->blockEndingState.stateAfterOption    = stateAfterOption;
+blockData->blockEndingState.stateAfterArguments    = stateAfterArguments;
 blockData->blockEndingState.environment    = currentEnvironment;
 
 // Check if we need to rehighlight the next block

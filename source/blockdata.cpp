@@ -121,5 +121,13 @@ bool BlockState::equals(const BlockState & other) const
             return false;
         }
     }
+    if(this->environment != other.environment)
+    {
+        return false;
+    }
+    if(this->stateAfterArguments != other.stateAfterArguments)
+    {
+        return false;
+    }
     return true;
 }
