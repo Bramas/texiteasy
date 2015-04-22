@@ -98,7 +98,7 @@ QTextCursor CustomCommandTextAction::match(QTextCursor clickCursor, WidgetFile *
 {
     QTextBlock block = clickCursor.block();
     BlockData *data = static_cast<BlockData *>( block.userData() );
-    if(!data && data->characterData.size() <= clickCursor.positionInBlock())
+    if(!data || data->characterData.size() <= clickCursor.positionInBlock())
     {
         return QTextCursor();
     }
@@ -176,7 +176,7 @@ QTextCursor RefLinkTextAction::match(QTextCursor clickCursor, WidgetFile *widget
 {
      QTextBlock block = clickCursor.block();
      BlockData *data = static_cast<BlockData *>( block.userData() );
-     if(!data && data->characterData.size() <= clickCursor.positionInBlock())
+     if(!data || data->characterData.size() <= clickCursor.positionInBlock())
      {
          return QTextCursor();
      }
@@ -302,7 +302,7 @@ QTextCursor CiteLinkTextAction::match(QTextCursor clickCursor, WidgetFile *widge
      int cursorPosition = clickCursor.position();
      QTextBlock block = clickCursor.block();
      BlockData *data = static_cast<BlockData *>( block.userData() );
-     if(!data && data->characterData.size() <= clickCursor.positionInBlock())
+     if(!data || data->characterData.size() <= clickCursor.positionInBlock())
      {
          return QTextCursor();
      }
@@ -459,7 +459,7 @@ QTextCursor InputTextAction::match(QTextCursor clickCursor, WidgetFile *widgetFi
 {
      QTextBlock block = clickCursor.block();
      BlockData *data = static_cast<BlockData *>( block.userData() );
-     if(!data && data->characterData.size() <= clickCursor.positionInBlock())
+     if(!data || data->characterData.size() <= clickCursor.positionInBlock())
      {
          return QTextCursor();
      }
