@@ -19,6 +19,7 @@
  *                                                                         *
  ***************************************************************************/
 
+#include "builder.h"
 #include "configmanager.h"
 #ifdef OS_WINDOWS
 #include "dialogtexdownloadassistant.h"
@@ -54,8 +55,7 @@
 #ifdef OS_LINUX
 #   define POPPLER_VERSION "unknown"
 #else
-//#   include <poppler-qt5/poppler-config.h>
-#define POPPLER_VERSION "unknown"
+#   include <poppler/cpp/poppler-version.h>
 #endif
 
 #define DEBUG_THEME_PARSER(a)
@@ -839,7 +839,9 @@ void ConfigManager::checkLatexExecutable()
     }
 #endif
 #endif
-    if(-2 == QProcess::execute(settings.value("builder/latexPath").toString()+QDir().separator()+pdflatexCommand,QStringList("--version")))
+    QProcess p;
+    Builder::setupPathEnvironment(&p);
+    if(-2 == p.execute(pdflatexCommand,QStringList("--version")))
     {
         qDebug()<<"latex not found ask for a the path "<<settings.value("builder/latexPath").toString();
 
@@ -1039,6 +1041,7 @@ void ConfigManager::checkRevision()
     case 0x001801:
         resetThemes();
     case 0x001802:
+    case 0x001900:
 
         break;
     }

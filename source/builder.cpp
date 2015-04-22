@@ -39,7 +39,7 @@ Builder::Builder(File * file) :
     connect(this->process,SIGNAL(error(QProcess::ProcessError)), this, SLOT(onError(QProcess::ProcessError)));
     connect(this->process,SIGNAL(readyReadStandardOutput()), this, SLOT(onStandartOutputReady()));
     connect(this->process,SIGNAL(readyReadStandardError()), this, SLOT(onStandartOutputReady()));
-    setupPathEnvironment();
+    Builder::setupPathEnvironment(this->process);
     connect(&ConfigManager::Instance, SIGNAL(changed()), this, SLOT(setupPathEnvironment()));
 }
 
@@ -57,6 +57,11 @@ void Builder::setFile(File *file)
 }
 
 bool Builder::setupPathEnvironment()
+{
+    return Builder::setupPathEnvironment(this->process);
+}
+
+bool Builder::setupPathEnvironment(QProcess * process)
 {
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
 
