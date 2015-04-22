@@ -22,6 +22,7 @@
 #include "widgetpdfdocument.h"
 #include "widgettextedit.h"
 #include "pdfsynchronizer.h"
+#include "mainwindow.h"
 #include <QMouseEvent>
 #include <QDebug>
 #include <QPainter>
@@ -651,7 +652,10 @@ void WidgetPdfDocument::jumpToEditor(int page, const QPoint& pos)
         while ((node = synctex_next_result(scanner)) != NULL)
         {
             QString filename = QString::fromUtf8(synctex_scanner_get_name(scanner, synctex_node_tag(node)));
-            this->_widgetTextEdit->goToLine(synctex_node_line(node));
+            filename = QFileInfo(filename).canonicalFilePath();
+            this->_widgetTextEdit->widgetFile()->window()->open(filename);
+            WidgetFile * w = FileManager::Instance.widgetFile(filename);
+            w->widgetTextEdit()->goToLine(synctex_node_line(node));
             break;
         }
     }
