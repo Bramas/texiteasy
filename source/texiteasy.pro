@@ -13,8 +13,8 @@ TEMPLATE = app
 
 APPLICATION_NAME = \\\"'TexitEasy'\\\"
 
-VERSION = \\\"'0.18.2'\\\"
-VERSION_HEX = 0x001802
+VERSION = \\\"'0.19.0'\\\"
+VERSION_HEX = 0x001900
 
 
 #DEFINES += PORTABLE_EXECUTABLE
@@ -210,10 +210,10 @@ win32 {
                 dialogtexdownloadassistant.ui
 
 
-    LIBS += -LC:/dev/poppler-0.24.5-win32/lib -lpoppler-qt5
-    LIBS += -LC:/dev/zlib-1.2.3b/lib -lz
+    LIBS += -LC:/dev/poppler/lib -lpoppler-qt5
+    LIBS += -LC:/dev/zlib/lib -lz
 
-    INCLUDEPATH += C:\dev\poppler-0.24.5-win32\include
+    INCLUDEPATH += "C:\dev\poppler\include"
     RC_FILE = win.rc
 
     DEFINES += OS_WINDOWS

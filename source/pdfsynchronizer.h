@@ -199,8 +199,11 @@ private:
             {
                 continue;
             }
-
+#ifdef OS_MAC
             QString filePath=QFileInfo(sourceFile).absolutePath()+"/./"+QFileInfo(sourceFile).fileName();
+#else
+            QString filePath=QFileInfo(sourceFile).canonicalFilePath().replace("/", "\\");
+#endif
             synctex_node_t node = synctex_scanner_input(scanner);
             QString name;
             bool found = false;

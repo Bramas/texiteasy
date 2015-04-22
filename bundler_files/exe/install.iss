@@ -10,7 +10,7 @@ DirExistsWarning=no
 ;DisableDirPage=yes
 UsePreviousAppDir=yes
 AppName=TexitEasy          
-AppVersion=0.15.0
+AppVersion=0.19.0
 DefaultDirName={pf}\TexitEasy
 ; Since no icons will be created in "{group}", we don't need the wizard
 ; to ask for a Start Menu folder name:
@@ -63,8 +63,9 @@ Source: "zlib1.dll"; DestDir: "{app}"
 Source: "libeay32.dll"; DestDir: "{app}" 
 Source: "ssleay32.dll"; DestDir: "{app}"  
 Source: "libiconv-2.dll"; DestDir: "{app}" 
-Source: "PlugIns/platforms/qminimal.dll"; DestDir: "{app}\PlugIns\platforms"   
-Source: "PlugIns/platforms/qwindows.dll"; DestDir: "{app}\PlugIns\platforms"                               
+Source: "PlugIns/platforms/qminimal.dll"; DestDir: "{app}\plugins\platforms"   
+Source: "PlugIns/platforms/qwindows.dll"; DestDir: "{app}\plugins\platforms"   
+Source: "PlugIns/sqldrivers/qsqlite.dll"; DestDir: "{app}\plugins\sqldrivers"                               
 Source: "data/dictionaries/*"; DestDir: "{app}\data\dictionaries"               
                                               
 [Icons]

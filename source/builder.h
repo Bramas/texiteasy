@@ -47,6 +47,7 @@ public:
     const QList<Builder::Output> & simpleOutput() const { return _simpleOutPut; }
     static QString Error;
     static QString Warning;
+    static bool setupPathEnvironment(QProcess *process);
 
 public slots:
     void builTex(QString command);

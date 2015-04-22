@@ -21,7 +21,7 @@ QVector<AbstractTextAction*> TextActions::_textActions = QVector<AbstractTextAct
 QString escapeStringForRegex(const QString &in)
 {
     QString out = in;
-    return out.replace(QRegExp("([\\-\\[\\]\\/\\{\\}\\(\\)\\*\\+\\?\\.\\\\\^\\$\\|])"), "\\\\1");
+    return out.replace(QRegExp("([\\-\\[\\]\\/\\{\\}\\(\\)\\*\\+\\?\\.\\\\\\^\\$\\|])"), "\\\\1");
 }
 
 
@@ -452,6 +452,7 @@ bool InputTextAction::execute(QTextCursor clickCursor, WidgetFile *widgetFile, Q
     FileManager::Instance.createMasterConnexions(newFile, widgetFile, AssociatedFile::INPUT);
     newFile->window()->insertTexDirRoot();
     newFile->save();
+    return true;
 }
 
 QTextCursor InputTextAction::match(QTextCursor clickCursor, WidgetFile *widgetFile)
