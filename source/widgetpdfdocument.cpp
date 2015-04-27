@@ -34,11 +34,9 @@
 #include "file.h"
 #include "tools.h"
 
-#ifdef OS_MAC
 #include "filemanager.h"
 #include "widgetfile.h"
 #include "widgettextedit.h"
-#endif
 
 #define ZOOM_UPDATE 500
 #define SYNCTEX_GZ_EXT ".synctex.gz"

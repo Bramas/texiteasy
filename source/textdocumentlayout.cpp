@@ -68,8 +68,7 @@ void TextDocumentLayout::documentChanged(int from, int /*charsRemoved*/, int cha
 
     if (changeStartBlock == changeEndBlock && newBlockCount == d->blockCount) {
         QTextBlock block = changeStartBlock;
-        int blockLineCount = block.layout()->lineCount();
-        if (block.isValid() && blockLineCount) {
+        if (block.isValid()  && block.length()) {
             QRectF oldBr = blockBoundingRect(block);
             layoutBlock(block);
             QRectF newBr = blockBoundingRect(block);
