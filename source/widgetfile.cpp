@@ -134,7 +134,8 @@ WidgetFile::WidgetFile(MainWindow *parent) :
     connect(doc,SIGNAL(modificationChanged(bool)), this->file(),SLOT(setModified(bool)));
     connect(doc,SIGNAL(modificationChanged(bool)), _widgetLineNumber, SLOT(update()));
     connect(this->file(), SIGNAL(modified(bool)), doc,SLOT(setModified(bool)));
-    connect(doclayout, SIGNAL(documentSizeChanged(QSizeF)), this, SLOT(adjustScrollbar(QSizeF)));
+    connect(doclayout, SIGNAL(documentSizeChanged(QSizeF)), widgetTextEdit(), SLOT(adjustScrollbar(QSizeF)));
+    connect(doclayout, SIGNAL(documentSizeChanged(QSizeF)), widgetTextEdit2(), SLOT(adjustScrollbar(QSizeF)));
 
 
     _widgetTextEdit->getCurrentFile()->create();

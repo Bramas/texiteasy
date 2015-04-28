@@ -160,10 +160,10 @@ void WidgetLineNumber::paintEvent(QPaintEvent * /*event*/)
             painter.save();
             painter.setRenderHint(QPainter::Antialiasing, false);
             if (widgetTextEdit->document()->findBlockByNumber(l).revision() < 0)
-                painter.setPen(QPen(QColor(0,255,0,60), 2));
+                painter.setPen(QPen(QColor(0,60,0), 2));
             else
-                painter.setPen(QPen(QColor(255,0,0,70), 2));
-            painter.drawLine(right+9, top, right+9, top + fontHeight+1);
+                painter.setPen(QPen(QColor(130,0,0), 2));
+            painter.drawLine(right+9, top, right+9, top + widgetTextEdit->document()->findBlockByNumber(l).layout()->boundingRect().height());
             painter.restore();
         }
         painter.drawText(5,top, right, widgetTextEdit->document()->findBlockByNumber(l).layout()->boundingRect().height(), Qt::AlignRight,   QString::number(l+1));
