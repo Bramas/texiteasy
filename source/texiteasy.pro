@@ -16,6 +16,8 @@ APPLICATION_NAME = \\\"'TexitEasy'\\\"
 VERSION = \\\"'0.19.1'\\\"
 VERSION_HEX = 0x001901
 
+CONFIG += c++11
+
 
 #DEFINES += PORTABLE_EXECUTABLE
 
@@ -89,7 +91,8 @@ SOURCES += main.cpp\
     tools.cpp \
     grammarchecker.cpp \
     textaction.cpp \
-    pdfsynchronizer.cpp
+    pdfsynchronizer.cpp \
+    textdocument.cpp
 
 HEADERS  += mainwindow.h \
     widgetlinenumber.h \
@@ -157,7 +160,8 @@ HEADERS  += mainwindow.h \
     tools.h \
     grammarchecker.h \
     textaction.h \
-    pdfsynchronizer.h
+    pdfsynchronizer.h \
+    textdocument.h
 
 FORMS    += mainwindow.ui \
     dialogwelcome.ui \

@@ -24,12 +24,12 @@
 
 #include <QWidget>
 class WidgetTextEdit;
-
+class WidgetFile;
 class WidgetLineNumber : public QWidget
 {
     Q_OBJECT
 public:
-    explicit WidgetLineNumber(QWidget *parent);
+    explicit WidgetLineNumber(WidgetFile *parent);
     void setWidgetTextEdit(WidgetTextEdit * widgetTextEdit);
     void setCurrentLine(int line) { _currentLine = line; }
 signals:
@@ -47,6 +47,7 @@ private:
     void drawFoldingBegin(QPainter* painter, int right, int top, int width);
     void drawFoldingEnd(QPainter* painter, int right, int top, int width);
     
+    WidgetFile * _widgetFile;
     WidgetTextEdit * widgetTextEdit;
     int scrollOffset;
     int firstVisibleBlock;

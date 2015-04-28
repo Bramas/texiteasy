@@ -24,9 +24,8 @@ public:
     bool blockUpdate, blockDocumentSizeChanged;
 };
 
-TextDocumentLayout::TextDocumentLayout(WidgetTextEdit * widgetTextEdit) :
-    QPlainTextDocumentLayout(widgetTextEdit->document()),
-    _widgetTextEdit(widgetTextEdit)
+TextDocumentLayout::TextDocumentLayout(TextDocument *textDocument) :
+    QPlainTextDocumentLayout(textDocument)
 {
     d = new TextDocumentLayoutPrivate();
 }

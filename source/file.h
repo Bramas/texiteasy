@@ -41,6 +41,7 @@ class Builder;
 class WidgetTextEdit;
 class QTimer;
 class WidgetFile;
+
 struct AssociatedFile
 {
     typedef enum Type {NONE, BIBTEX, INPUT, FIGURE} Type;

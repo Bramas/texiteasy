@@ -5,12 +5,12 @@
 
 class WidgetTextEdit;
 class TextDocumentLayoutPrivate;
-
+class TextDocument;
 class TextDocumentLayout : public QPlainTextDocumentLayout
 {
     Q_OBJECT
 public:
-    explicit TextDocumentLayout(WidgetTextEdit * widgetTextEdit);
+    explicit TextDocumentLayout(TextDocument * textDocument);
     void setTextWidth(qreal newWidth);
 
 signals:
@@ -27,7 +27,6 @@ private:
     qreal indentWidth(const QTextBlock &block);
 
     TextDocumentLayoutPrivate * d;
-    WidgetTextEdit * _widgetTextEdit;
 };
 
 #endif // TEXTDOCUMENTLAYOUT_H

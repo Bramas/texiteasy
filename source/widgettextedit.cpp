@@ -55,6 +55,7 @@
 #include "widgetfile.h"
 #include "textdocumentlayout.h"
 #include "grammarchecker.h"
+#include "textdocument.h"
 
 #define max(a,b) ((a) < (b) ? (b) : (a))
 #define min(a,b) ((a) > (b) ? (b) : (a))
@@ -76,14 +77,9 @@ WidgetTextEdit::WidgetTextEdit(WidgetFile * parent) :
     _lastBlockCount(0)
 
 {
-    TextDocumentLayout * layout = new TextDocumentLayout(this);
-    this->document()->setDocumentLayout(layout);
-    connect(layout, SIGNAL(documentSizeChanged(QSizeF)), this, SLOT(adjustScrollbar(QSizeF)));
     _widgetFile = parent;
     _scriptEngine.setWidgetTextEdit(this);
     this->setContentsMargins(0,0,0,0);
-    connect(this->document(),SIGNAL(modificationChanged(bool)),this->currentFile,SLOT(setModified(bool)));
-    connect(this->currentFile,SIGNAL(modified(bool)), this->document(),SLOT(setModified(bool)));
     connect(this,SIGNAL(textChanged()),this,SLOT(updateIndentation()));
     connect(this,SIGNAL(cursorPositionChanged()), this, SLOT(onCursorPositionChange()));
     connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(onBlockCountChanged(int)));

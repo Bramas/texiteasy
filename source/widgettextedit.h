@@ -31,7 +31,7 @@
 #include "macroengine.h"
 #include <QInputMethodEvent>
 #include "scriptengine.h"
-
+#include "textdocument.h"
 #include <QDebug>
 
 
@@ -62,6 +62,9 @@ class WidgetTextEdit : public WIDGET_TEXT_EDIT_PARENT_CLASS
 public:
     explicit WidgetTextEdit(WidgetFile *parent);
     ~WidgetTextEdit();
+
+    TextDocument * document() const { return static_cast<TextDocument*>(QPlainTextEdit::document()); }
+
     int blockHeight(int blockCount) const { return blockHeight(this->document()->findBlockByNumber(blockCount)); }
     int blockHeight(const QTextBlock &textBlock) const { return this->blockGeometry(textBlock).height(); }
     int blockWidth(int blockCount)  const { return blockWidth(this->document()->findBlockByNumber(blockCount)); }

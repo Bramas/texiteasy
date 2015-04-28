@@ -23,6 +23,7 @@
 #include "widgettextedit.h"
 #include "configmanager.h"
 #include "filestructure.h"
+#include "widgetfile.h"
 #include <math.h>
 #include <QPainter>
 #include <QString>
@@ -35,8 +36,9 @@
 #include <QPalette>
 #include <QStack>
 
-WidgetLineNumber::WidgetLineNumber(QWidget *parent) :
+WidgetLineNumber::WidgetLineNumber(WidgetFile *parent) :
     QWidget(parent),
+    _widgetFile(parent),
     widgetTextEdit(0),
     firstVisibleBlock(0),
     firstVisibleBlockTop(0),
@@ -91,7 +93,7 @@ void WidgetLineNumber::updateWidth(int lineCount)
         ++ln;
     }
     //qDebug()<<ln*width + 8;
-    this->setMinimumWidth(ln*(_zeroWidth+2) + 8 + _zeroWidth + 5);
+    this->setMinimumWidth(ln*(_zeroWidth+2) + 8 + 4 + _zeroWidth + 5);
 
 }
 
@@ -108,7 +110,6 @@ void WidgetLineNumber::paintEvent(QPaintEvent * /*event*/)
     this->firstVisibleBlock = widgetTextEdit->firstVisibleBlockNumber();
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
-
     QFont defaultFont;
     defaultFont.setFamily(ConfigManager::Instance.getTextCharFormats("line-number").font().family());
     defaultFont.setPointSize(ConfigManager::Instance.getTextCharFormats("line-number").font().pointSize());
@@ -125,7 +126,7 @@ void WidgetLineNumber::paintEvent(QPaintEvent * /*event*/)
     QPen blockRangePen(QColor(160,10,10),4);
     painter.setPen(defaultPen);
 
-    int right           = this->width() - 8 - _zeroWidth - 5;
+    int right           = this->width() - 8 - _zeroWidth - 5 - 4;
     int fontHeight      = fm.height();
     int l               = this->firstVisibleBlock = this->widgetTextEdit->firstVisibleBlockNumber();
     this->scrollOffset  = this->widgetTextEdit->contentOffsetTop();
@@ -154,14 +155,25 @@ void WidgetLineNumber::paintEvent(QPaintEvent * /*event*/)
             painter.setPen(defaultPen);
             painter.setFont(defaultFont);
         }
-        painter.drawText(5,top, right, fontHeight, Qt::AlignRight,   QString::number(l+1));
+        if (widgetTextEdit->document()->findBlockByNumber(l).revision() != widgetTextEdit->document()->lastSaveRevision())
+        {
+            painter.save();
+            painter.setRenderHint(QPainter::Antialiasing, false);
+            if (widgetTextEdit->document()->findBlockByNumber(l).revision() < 0)
+                painter.setPen(QPen(QColor(0,255,0,60), 2));
+            else
+                painter.setPen(QPen(QColor(255,0,0,70), 2));
+            painter.drawLine(right+9, top, right+9, top + fontHeight+1);
+            painter.restore();
+        }
+        painter.drawText(5,top, right, widgetTextEdit->document()->findBlockByNumber(l).layout()->boundingRect().height(), Qt::AlignRight,   QString::number(l+1));
 
 
         if(widgetTextEdit->isFolded(l))
         {
             UnfoldableLine unfoldableLine;
             unfoldableLine.lineNumber = l;
-            unfoldableLine.rect = QRect(right + 9, top + 2, _zeroWidth + 8, _zeroWidth + 8);
+            unfoldableLine.rect = QRect(right + 13, top + 2, _zeroWidth + 8, _zeroWidth + 8);
             unfoldableLine.isMouseOver = unfoldableLine.rect.contains(_lastMousePos);
             _unfoldableLines.append(unfoldableLine);
             if(unfoldableLine.isMouseOver)
@@ -174,8 +186,8 @@ void WidgetLineNumber::paintEvent(QPaintEvent * /*event*/)
                 painter.setPen(defaultPen);
                 painter.setBrush(QBrush(QColor(ConfigManager::Instance.getTextCharFormats("line-number").foreground().color())));
             }
-            painter.drawRect(QRectF(right + 10.0, top + 3.0 + _zeroWidth/2.0 - _zeroWidth/20.0, _zeroWidth, _zeroWidth/10.0));
-            painter.drawRect(QRectF(right + 10.0 + _zeroWidth/2.0 - _zeroWidth/20.0, top + 3, _zeroWidth/10.0, _zeroWidth));
+            painter.drawRect(QRectF(right + 14.0, top + 3.0 + _zeroWidth/2.0 - _zeroWidth/20.0, _zeroWidth, _zeroWidth/10.0));
+            painter.drawRect(QRectF(right + 14.0 + _zeroWidth/2.0 - _zeroWidth/20.0, top + 3, _zeroWidth/10.0, _zeroWidth));
 
         }
         else
@@ -183,13 +195,13 @@ void WidgetLineNumber::paintEvent(QPaintEvent * /*event*/)
             // Environement ranges
             if(l == environmentPath.top()->blockBeginNumber)
             {
-                drawFoldingBegin(&painter, right + 10, top, _zeroWidth+1);
+                drawFoldingBegin(&painter, right + 14, top, _zeroWidth+1);
                 foldingLine.setP1(QPoint(foldingLine.x1(), top + 3 + _zeroWidth+1));
             }
             else
             if(l == environmentPath.top()->blockEndNumber)
             {
-                drawFoldingEnd(&painter, right + 10, top, _zeroWidth+1);
+                drawFoldingEnd(&painter, right + 14, top, _zeroWidth+1);
                 foldingLine.setP2(QPoint(foldingLine.x2(), top + 3));
             }
         }
@@ -208,7 +220,7 @@ void WidgetLineNumber::paintEvent(QPaintEvent * /*event*/)
             c.setAlpha(50);
             painter.setBrush(QBrush(c));
             //painter.drawLine(foldingLine);
-            painter.drawRect(foldingLine.x1() - ceil(_zeroWidth/2) - 3,
+            painter.drawRect(foldingLine.x1() - ceil(_zeroWidth/2) + 1,
                               foldingLine.y1() - _zeroWidth - 3,
                               2*ceil(_zeroWidth/2) + 6,
                               foldingLine.y2() - foldingLine.y1() + 2*_zeroWidth + 6
@@ -219,7 +231,7 @@ void WidgetLineNumber::paintEvent(QPaintEvent * /*event*/)
             painter->setBrush(QBrush(QColor(ConfigManager::Instance.getTextCharFormats("line-number").foreground().color())));
         }
         // */
-        _foldingHover.setRect(foldingLine.x1() - ceil(_zeroWidth/2) - 1,
+        _foldingHover.setRect(foldingLine.x1() - ceil(_zeroWidth/2) + 1,
                               foldingLine.y1() - _zeroWidth,
                               2*ceil(_zeroWidth/2) + 2,
                               foldingLine.y2() - foldingLine.y1() + 2*_zeroWidth

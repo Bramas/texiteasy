@@ -195,6 +195,16 @@ void ConfigManager::init(QString in_applicationPath)
         textCharFormats->insert("normal",charFormat);
     }
     settings.endGroup();
+
+    settings.beginGroup("svn");
+    if(!settings.contains("diff"))
+    {
+        settings.setValue("diff", "svn diff %1 --diff-cmd=diff  -x \"--strip-trailing-cr\"");
+    }
+    settings.endGroup();
+
+
+
     this->applyTranslation();
 
 

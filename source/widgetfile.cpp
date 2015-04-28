@@ -9,6 +9,8 @@
 #include "widgetpdfviewer.h"
 #include "widgetlinenumber.h"
 #include "syntaxhighlighter.h"
+#include "textdocument.h"
+#include "textdocumentlayout.h"
 #include "file.h"
 #include "filemanager.h"
 #include "builder.h"
@@ -27,7 +29,11 @@ WidgetFile::WidgetFile(MainWindow *parent) :
     _window(parent)
 {
     _masterFile = 0;
+    TextDocument * doc = new TextDocument();
+    TextDocumentLayout * doclayout = new TextDocumentLayout(doc);
+    doc->setDocumentLayout(doclayout);
     _widgetTextEdit     = new WidgetTextEdit(this);
+    _widgetTextEdit->setDocument(doc);
     _syntaxHighlighter  = new SyntaxHighlighter(this);
     _widgetTextEdit     ->setSyntaxHighlighter(_syntaxHighlighter);
     _widgetPdfViewer    = new WidgetPdfViewer();
@@ -68,12 +74,16 @@ WidgetFile::WidgetFile(MainWindow *parent) :
     _horizontalSplitter->setSizes(sizes);
 
 
+
     _widgetTextEdit2 = new WidgetTextEdit(this);
+    _widgetTextEdit2->setDocument(doc);
     WidgetLineNumber * eLineNumber = new WidgetLineNumber(this);
     _widgetTextEdit2->setSyntaxHighlighter(_syntaxHighlighter);
-    _widgetTextEdit2->setDocument(_widgetTextEdit->document());
+    //_widgetTextEdit2->setDocument(_widgetTextEdit->document());
     eLineNumber->setWidgetTextEdit(_widgetTextEdit2);
    _widgetTextEdit2->setWidgetLineNumber(eLineNumber);
+
+
 
     _editorSplitter = new MiniSplitter(Qt::Vertical);
     _editorSplitter->setHandleWidth(4);
@@ -119,6 +129,12 @@ WidgetFile::WidgetFile(MainWindow *parent) :
     connect(_widgetTextEdit->getCurrentFile()->getBuilder(), SIGNAL(error()),this,SLOT(openErrorTable()));
     connect(_widgetTextEdit->getCurrentFile()->getBuilder(), SIGNAL(success()),this,SLOT(closeErrorTable()));
     connect(_widgetConsole, SIGNAL(requestLine(int)), _widgetTextEdit, SLOT(goToLine(int)));
+
+
+    connect(doc,SIGNAL(modificationChanged(bool)), this->file(),SLOT(setModified(bool)));
+    connect(doc,SIGNAL(modificationChanged(bool)), _widgetLineNumber, SLOT(update()));
+    connect(this->file(), SIGNAL(modified(bool)), doc,SLOT(setModified(bool)));
+    connect(doclayout, SIGNAL(documentSizeChanged(QSizeF)), this, SLOT(adjustScrollbar(QSizeF)));
 
 
     _widgetTextEdit->getCurrentFile()->create();
@@ -383,6 +399,8 @@ void WidgetFile::open(QString filename)
     Tools::Log("WidgetFile::open: _widgetConsole->setBuilder()");
     _widgetConsole->setBuilder(_widgetTextEdit->getCurrentFile()->getBuilder());
 
+
+    _widgetTextEdit->document()->resetRevisions();
 
     Tools::Log("WidgetFile::open: resolve tex directives");
     if(file()->texDirectives().contains("spellcheck"))

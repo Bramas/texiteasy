@@ -253,7 +253,6 @@ MainWindow::MainWindow(QWidget *parent) :
     initBuildMenu();
     connect(&ConfigManager::Instance, SIGNAL(changed()), this, SLOT(initBuildMenu()));
 
-
     setAcceptDrops(true);
 
     if(ConfigManager::Instance.openLastSessionAtStartup())
@@ -261,7 +260,6 @@ MainWindow::MainWindow(QWidget *parent) :
         Tools::Log("MainWindow: openLastSession()");
         this->openLastSession();
     }
-    return;
 }
 
 MainWindow::~MainWindow()
