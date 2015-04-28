@@ -161,8 +161,6 @@ int main(int argc, char *argv[])
 
     new UpdateChecker(&w);
 
-
-
     PdfSynchronizer::start();
 
     int returnCode = a.exec();

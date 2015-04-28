@@ -12,6 +12,8 @@ public:
 
     void resetRevisions();
     int lastSaveRevision() { return _lastSaveRevision; }
+public slots:
+    void setUncommittedLines(QList<int> lines);
 private slots:
     void onModificationChanged(bool modified);
 private:

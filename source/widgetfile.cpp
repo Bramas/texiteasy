@@ -16,6 +16,8 @@
 #include "builder.h"
 #include "configmanager.h"
 #include "tools.h"
+#include "svnhelper.h"
+
 #include <QPushButton>
 #include <QGridLayout>
 #include <QFileDialog>
@@ -402,6 +404,7 @@ void WidgetFile::open(QString filename)
 
 
     _widgetTextEdit->document()->resetRevisions();
+    connect(new SvnHelper(filename), SIGNAL(uncommittedLines(QList<int>)), widgetTextEdit()->document(), SLOT(setUncommittedLines(QList<int>)));
 
     Tools::Log("WidgetFile::open: resolve tex directives");
     if(file()->texDirectives().contains("spellcheck"))

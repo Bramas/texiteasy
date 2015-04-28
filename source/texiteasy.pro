@@ -93,7 +93,8 @@ SOURCES += main.cpp\
     grammarchecker.cpp \
     textaction.cpp \
     pdfsynchronizer.cpp \
-    textdocument.cpp
+    textdocument.cpp \
+    svnhelper.cpp
 
 HEADERS  += mainwindow.h \
     widgetlinenumber.h \
@@ -162,7 +163,8 @@ HEADERS  += mainwindow.h \
     grammarchecker.h \
     textaction.h \
     pdfsynchronizer.h \
-    textdocument.h
+    textdocument.h \
+    svnhelper.h
 
 FORMS    += mainwindow.ui \
     dialogwelcome.ui \

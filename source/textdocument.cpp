@@ -14,6 +14,18 @@ void TextDocument::onModificationChanged(bool modified) {
         this->updateRevisions();
     }
 }
+
+void TextDocument::setUncommittedLines(QList<int> lines)
+{
+    foreach(int l, lines)
+    {
+        if(findBlockByNumber(l - 1).revision() == lastSaveRevision())
+        {
+            findBlockByNumber(l - 1).setRevision(-_lastSaveRevision - 1);
+        }
+    }
+}
+
 void TextDocument::resetRevisions()
 {
     _lastSaveRevision = revision();
