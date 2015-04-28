@@ -5,14 +5,15 @@
 TextDocument::TextDocument(QObject *parent) : QTextDocument(parent),
     _lastSaveRevision(0)
 {
-    connect(this, &TextDocument::modificationChanged, [this](bool modified) {
-        if(!modified)
-        {
-            this->updateRevisions();
-        }
-    });
+    connect(this, SIGNAL(modificationChanged(bool)), this, SLOT(onModificationChanged(bool)));
 }
 
+void TextDocument::onModificationChanged(bool modified) {
+    if(!modified)
+    {
+        this->updateRevisions();
+    }
+}
 void TextDocument::resetRevisions()
 {
     _lastSaveRevision = revision();
