@@ -84,7 +84,6 @@ void upgrade()
 int main(int argc, char *argv[])
 {
     qputenv("QT_LOGGING_RULES", "qt.network.ssl.warning=false");
-
 #ifdef OS_WINDOWS
      QDir dir(QFileInfo(argv[0]).path());  // e.g. appdir
      dir.cd("PlugIns");  // e.g. appdir/PlugIns

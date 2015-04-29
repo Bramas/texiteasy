@@ -8,14 +8,37 @@ SvnHelper::SvnHelper(QString filename)
     //QString filename = "D:\\Documents\\TixeuilTeam\\articles\\quentin\\async_pattern_formation\\async_pattern_formation.tex";
     QStringList args;
     args << "diff";
+    args << "-x" << "--ignore-eol-style";
     args << filename;
-    args << "-r";
-    args << "BASE";
+    args << "-r" << "BASE";
     args <<"--non-interactive";
+
+    //add svn to path
+    QString extraPath;
+    QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
+#ifdef OS_WINDOWS
+    extraPath = "G:\\Programs\\Subversion\\bin";
+    if (!extraPath.isEmpty())
+    {
+        env.insert("PATH", env.value("PATH") + ";"+extraPath);
+        _process.setProcessEnvironment(env);
+    }
+#endif
+#ifdef OS_LINUX
+    if (!extraPath.isEmpty())
+    {
+        env.insert("PATH", env.value("PATH") + ":"+extraPath);
+        _process.setProcessEnvironment(env);
+    }
+#endif
+    //Very Important, everything is in there because process->setEnvironement is for child process
+    qputenv("PATH", env.value("PATH").toLatin1());
+
+
 
     qDebug()<<"execute "<<args;
     connect(&_process, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(parseUnified(int,QProcess::ExitStatus)));
-    _process.start("G:\\Programs\\Subversion\\bin\\svn.exe", args);
+    _process.start("svn.exe", args);
 
 }
 
