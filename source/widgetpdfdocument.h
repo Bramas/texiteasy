@@ -60,7 +60,7 @@ class WidgetTextEdit;
 struct Link
 {
     QRectF rectangle;
-    Poppler::LinkDestination * destination;
+    Poppler::LinkGoto * destination;
 
     ~Link()
     {
@@ -98,6 +98,10 @@ public:
         return (_documentHeight + WidgetPdfDocument::PageMargin * (_document->numPages() - 1))*_zoom ;
     }
     void updateScrollBar();
+    qreal zoom() { return _zoom; }
+    QPoint pdfOffset() { return this->_painterTranslate; }
+    void setZoom(qreal zoom) { _zoom = zoom; }
+    void setPdfOffset(QPoint p) { this->_painterTranslate = p; }
 signals:
     void translated(int);
 public slots:

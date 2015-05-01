@@ -80,6 +80,10 @@ WidgetPdfDocument::WidgetPdfDocument(QWidget *parent) :
 }
 WidgetPdfDocument::~WidgetPdfDocument()
 {
+    foreach(Link link, _links)
+    {
+        delete link.destination;
+    }
     if(_pages)
     {
         this->refreshPages();
@@ -346,6 +350,11 @@ void WidgetPdfDocument::initScroll()
 
 void WidgetPdfDocument::initLinks()
 {
+    foreach(Link link, _links)
+    {
+        delete link.destination;
+    }
+
     _links.clear();
 
     QRectF linkArea;
@@ -356,9 +365,10 @@ void WidgetPdfDocument::initLinks()
     int cumulatedTop = 0;
     for(int page_idx = 0; page_idx < _document->numPages(); ++page_idx)
     {
-        if(_document->page(page_idx)->links().count())
+        QList<Poppler::Link*> links = _document->page(page_idx)->links();
+        if(links.count())
         {
-            foreach(const Poppler::Link * popLink, _document->page(page_idx)->links())
+            foreach(Poppler::Link * popLink, links)
             {
                 if(popLink->linkType() == Poppler::Link::Goto)
                 {
@@ -369,7 +379,7 @@ void WidgetPdfDocument::initLinks()
                     top = _document->page(page_idx)->pageSize().height()*linkArea.top()*_zoom+cumulatedTop;
                     left = _document->page(page_idx)->pageSize().width()*linkArea.left()*_zoom;
                     link.rectangle = QRectF(left,top,width,height);
-                    link.destination = new Poppler::LinkDestination(dynamic_cast<const Poppler::LinkGoto*>(popLink)->destination());
+                    link.destination = static_cast< Poppler::LinkGoto*>(popLink);
                     _links.append(link);
                 }
             }
@@ -455,7 +465,6 @@ void WidgetPdfDocument::refreshPages()
             _loadedPages[idx] = false;
         }
     }
-    this->initLinks();
     update();
 
 }
@@ -479,11 +488,11 @@ bool WidgetPdfDocument::checkLinksPress(const QPointF &pos)
     {
         if(link.rectangle.contains(absolutePos))
         {
-            int pageNumber = link.destination->pageNumber() - 1;
-            int top = link.destination->top()*_document->page(pageNumber)->pageSize().height();
-            int left = link.destination->left()*_document->page(pageNumber)->pageSize().width();
-            int bottom = link.destination->bottom()*_document->page(pageNumber)->pageSize().height();
-            int right = link.destination->right()*_document->page(pageNumber)->pageSize().width();
+            int pageNumber = link.destination->destination().pageNumber() - 1;
+            int top = link.destination->destination().top()*_document->page(pageNumber)->pageSize().height();
+            int left = link.destination->destination().left()*_document->page(pageNumber)->pageSize().width();
+            int bottom = link.destination->destination().bottom()*_document->page(pageNumber)->pageSize().height();
+            int right = link.destination->destination().right()*_document->page(pageNumber)->pageSize().width();
             this->goToPage(pageNumber, top);
 
             _syncPage = pageNumber;
