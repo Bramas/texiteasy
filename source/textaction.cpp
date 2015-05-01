@@ -199,6 +199,7 @@ QTextCursor RefLinkTextAction::match(QTextCursor clickCursor, WidgetFile *widget
         ++left;
         clickCursor.setPosition(left+block.position());
     }
+    if(left >= data->characterData.size()) return QTextCursor();
     right = left;
 
     if(data->characterData.at(left).state != SyntaxHighlighter::Other)
@@ -211,6 +212,7 @@ QTextCursor RefLinkTextAction::match(QTextCursor clickCursor, WidgetFile *widget
     {
         --left;
     }
+    if(left < 0) return QTextCursor();
     if(data->characterData.at(left).state != SyntaxHighlighter::Other)
     {
         ++left;
@@ -219,6 +221,7 @@ QTextCursor RefLinkTextAction::match(QTextCursor clickCursor, WidgetFile *widget
     {
         ++right;
     }
+    if(right >= data->characterData.size()) return QTextCursor();
     if(data->characterData.at(right).state != SyntaxHighlighter::Other)
     {
         --right;
@@ -325,6 +328,7 @@ QTextCursor CiteLinkTextAction::match(QTextCursor clickCursor, WidgetFile *widge
         ++left;
         clickCursor.setPosition(left+block.position());
     }
+    if(left >= data->characterData.size()) return QTextCursor();
     right = left;
 
     if(data->characterData.at(left).state != SyntaxHighlighter::Other)
@@ -337,6 +341,7 @@ QTextCursor CiteLinkTextAction::match(QTextCursor clickCursor, WidgetFile *widge
     {
         --left;
     }
+    if(left < 0) return QTextCursor();
     if(data->characterData.at(left).state != SyntaxHighlighter::Other)
     {
         ++left;
@@ -345,6 +350,7 @@ QTextCursor CiteLinkTextAction::match(QTextCursor clickCursor, WidgetFile *widge
     {
         ++right;
     }
+    if(right >= data->characterData.size()) return QTextCursor();
     if(data->characterData.at(right).state != SyntaxHighlighter::Other)
     {
         --right;
@@ -482,6 +488,7 @@ QTextCursor InputTextAction::match(QTextCursor clickCursor, WidgetFile *widgetFi
         ++left;
         clickCursor.setPosition(left+block.position());
     }
+    if(left >= data->characterData.size()) return QTextCursor();
     right = left;
 
     if(data->characterData.at(left).state != SyntaxHighlighter::Other)
@@ -494,6 +501,7 @@ QTextCursor InputTextAction::match(QTextCursor clickCursor, WidgetFile *widgetFi
     {
         --left;
     }
+    if(left < 0) return QTextCursor();
     if(data->characterData.at(left).state != SyntaxHighlighter::Other)
     {
         ++left;
@@ -502,6 +510,7 @@ QTextCursor InputTextAction::match(QTextCursor clickCursor, WidgetFile *widgetFi
     {
         ++right;
     }
+    if(right >= data->characterData.size()) return QTextCursor();
     if(data->characterData.at(right).state != SyntaxHighlighter::Other)
     {
         --right;
