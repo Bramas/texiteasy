@@ -93,7 +93,7 @@ public slots:
     void setWindowModified(bool b);
     WidgetFile *newFile();
     void open();
-    void open(QString filename, int cursorPosition = 0);
+    void open(QString filename, int cursorPosition = 0, QPoint pdfPosition = QPoint(0,0), qreal pdfZoom = 1);
     void openLast(void);
     void openLastSession(void);
     void clearLastOpened(void);

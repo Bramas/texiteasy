@@ -288,6 +288,8 @@ void MainWindow::closeEvent(QCloseEvent * event)
 {
     QStringList files;
     QStringList fileCursorPositions;
+    QList<QVariant> pdfPosition;
+    QList<QVariant> pdfZoom;
     int tabIndex = _tabWidget->currentIndex();
     while(_tabWidget->count())
     {
@@ -299,6 +301,8 @@ void MainWindow::closeEvent(QCloseEvent * event)
         QString * filename = 0;
 
         fileCursorPositions<< QString::number(_tabWidget->widget(tabId)->widgetTextEdit()->textCursor().position());
+        pdfPosition << _tabWidget->widget(tabId)->widgetPdfViewer()->widgetPdfDocument()->pdfOffset();
+        pdfZoom << _tabWidget->widget(tabId)->widgetPdfViewer()->widgetPdfDocument()->zoom();
         if(!this->closeTab(tabId, &filename))
         {
             event->ignore();
@@ -315,6 +319,7 @@ void MainWindow::closeEvent(QCloseEvent * event)
         }
     }
     ConfigManager::Instance.setOpenFilesWhenClosing(files, fileCursorPositions, tabIndex);
+    ConfigManager::Instance.setOpenFilesWhenClosingPdfPosition(pdfPosition, pdfZoom);
 
     if(FileManager::Instance.widgetPdfViewerWrapper())
     {
@@ -564,13 +569,25 @@ void MainWindow::openLastSession()
     QStringList files = ConfigManager::Instance.openFilesWhenClosing();
     Tools::Log("MainWindow::openLastSession: load cursor position");
     QStringList fileCursorPositions = ConfigManager::Instance.openFileCursorPositionsWhenClosing();
+    QList<QVariant> pdfZoom = ConfigManager::Instance.openFilesWhenClosingPdfZoom();
+    QList<QVariant> pdfPosition = ConfigManager::Instance.openFilesWhenClosingPdfPosition();
     int index = 0;
     foreach(const QString & file, files)
     {
         if(index < fileCursorPositions.count())
         {
             Tools::Log("MainWindow::openLastSession: open "+file);
-            open(file, fileCursorPositions.at(index).toInt());
+            QPoint p;
+            if(index < pdfPosition.count())
+            {
+                p = pdfPosition.at(index).toPoint();
+            }
+            qreal z = 1;
+            if(index < pdfZoom.count())
+            {
+                z = pdfZoom.at(index).toReal();
+            }
+            open(file, fileCursorPositions.at(index).toInt(), p, z);
         }
         ++index;
     }
@@ -599,7 +616,7 @@ void MainWindow::open()
     }
     open(filename);
 }
-void MainWindow::open(QString filename, int cursorPosition)
+void MainWindow::open(QString filename, int cursorPosition, QPoint pdfPosition, qreal pdfZoom)
 {
 
     this->activateWindow();
@@ -648,6 +665,8 @@ void MainWindow::open(QString filename, int cursorPosition)
         }
 
         current->widgetTextEdit()->setTextCursorPosition(cursorPosition);
+        current->widgetPdfViewer()->widgetPdfDocument()->setZoom(pdfZoom);
+        current->widgetPdfViewer()->widgetPdfDocument()->setPdfOffset(pdfPosition);
         QTimer::singleShot(1,current->widgetTextEdit(), SLOT(setFocus()));
 
     }

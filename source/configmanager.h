@@ -101,6 +101,25 @@ public:
         settings.setValue("openFilesWhenClosing", files);
         settings.setValue("openFileCursorPositionsWhenClosing", fileCursorPositions);
     }
+    void            setOpenFilesWhenClosingPdfPosition(const QList<QVariant> & pdfPosition, const QList<QVariant> & pdfZoom)
+    {
+        QSettings settings;
+        settings.setValue("openFilesWhenClosingPdfPosition", pdfPosition);
+        settings.setValue("openFilesWhenClosingPdfZoom", pdfZoom);
+    }
+    QList<QVariant>            openFilesWhenClosingPdfPosition()
+    {
+        QSettings settings;
+        return settings.value("openFilesWhenClosingPdfPosition").toList();
+    }
+
+    QList<QVariant>            openFilesWhenClosingPdfZoom()
+    {
+        QSettings settings;
+        return settings.value("openFilesWhenClosingPdfZoom").toList();
+    }
+
+
     int     openTabIndexWhenClosing()
     {
         QSettings settings;
