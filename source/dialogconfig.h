@@ -44,6 +44,7 @@ public:
     ~DialogConfig();
 public slots:
     void selectBinDirectory(void);
+    void selectSvnDirectory(void);
     void save(void);
     void saveAndClose(void);
     void show();

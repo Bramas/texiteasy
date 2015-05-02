@@ -201,6 +201,7 @@ public:
     QString bibtexCommand(bool fullPath = false) { QSettings settings; return (fullPath ? settings.value("builder/latexPath").toString()+"/" : QString(""))+settings.value("builder/bibtex").toString(); }
     QString pdflatexCommand(bool fullPath = false) { QSettings settings; return (fullPath ? settings.value("builder/latexPath").toString() : QString(""))+settings.value("builder/pdflatex").toString(); }
     QString latexPath() { QSettings settings; return settings.value("builder/latexPath").toString(); }
+    QString svnPath() { QSettings settings; return settings.value("svn/path", "").toString(); }
     QString applicationPath() { return _applicationPath; }
 
     QString commandDatabaseFilename() { QSettings settings; return settings.value("commandDatabaseFilename").toString(); }
@@ -208,6 +209,9 @@ public:
     void setBibtexCommand(QString command) { QSettings settings; settings.setValue("builder/bibtex", command); }
     void setPdflatexCommand(QString command) { QSettings settings; settings.setValue("builder/pdflatex", command); }
     void setLatexPath(QString path) { QSettings settings; settings.setValue("builder/latexPath", path); }
+    void setSvnPath(QString path) { QSettings settings; settings.setValue("svn/path", path); }
+    void setSvnEnable(bool enable) { QSettings settings; settings.setValue("svn/enable", enable); }
+    bool isSvnEnable() { QSettings settings; return settings.value("svn/enable", true).toBool(); }
 
     bool isPdfSynchronized() { QSettings settings; return settings.value("pdfSynchronized", true).toBool(); }
 

@@ -50,7 +50,9 @@ DialogConfig::DialogConfig(MainWindow *parent) :
     connect(this->ui->tableWidgetLatexCommands, SIGNAL(itemSelectionChanged()), this, SLOT(onCurrentLatexCommandChanged()));
     connect(this->ui->pushButton_removeLatex, SIGNAL(clicked()), this, SLOT(deleteSelectedLatex()));
     connect(this->ui->pushButton_browseLatexPath, SIGNAL(clicked()), this, SLOT(selectBinDirectory()));
+    connect(this->ui->pushButton_svnPath, SIGNAL(clicked()), this, SLOT(selectSvnDirectory()));
 
+    this->ui->listWidget->setCurrentRow(0);
 
     // Page General
     QString currentLanguage = ConfigManager::Instance.language();
@@ -79,6 +81,15 @@ DialogConfig::~DialogConfig()
     delete ui;
 }
 
+void DialogConfig::selectSvnDirectory(void)
+{
+    QString folder = QFileDialog::getExistingDirectory(this, trUtf8("Executables Svn"), qgetenv("PROGRAMFILES"), 0);
+    if(folder.isEmpty())
+    {
+        return;
+    }
+    this->ui->lineEdit_svnPath->setText(folder);
+}
 void DialogConfig::selectBinDirectory(void)
 {
     QString folder = QFileDialog::getExistingDirectory(this, trUtf8("Executables Latex"), qgetenv("PROGRAMFILES"), 0);
@@ -105,6 +116,12 @@ void DialogConfig::saveAndClose()
 }
 void DialogConfig::save()
 {
+
+    // Page Svn
+
+    ConfigManager::Instance.setSvnEnable(this->ui->checkBox_enableSvn->isChecked());
+    ConfigManager::Instance.setSvnPath(this->ui->lineEdit_svnPath->text());
+
 
     // Page Builder:
 
@@ -173,6 +190,11 @@ void DialogConfig::show()
     ui->tableWidget_keyBinding->setRowCount(0);
     this->addEditableActions(_mainWindows->findChildren<QAction *>());
     this->addEditableActions(_mainWindows->actions());
+
+    // Page Svn
+
+    this->ui->checkBox_enableSvn->setChecked(ConfigManager::Instance.isSvnEnable());
+    this->ui->lineEdit_svnPath->setText(ConfigManager::Instance.svnPath());
 
     // Page General
 

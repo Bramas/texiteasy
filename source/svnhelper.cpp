@@ -1,11 +1,11 @@
 #include "svnhelper.h"
+#include "configmanager.h"
 #include <QProcess>
 #include <QDebug>
 
 
 SvnHelper::SvnHelper(QString filename)
 {
-    //QString filename = "D:\\Documents\\TixeuilTeam\\articles\\quentin\\async_pattern_formation\\async_pattern_formation.tex";
     QStringList args;
     args << "diff";
     args << "-x" << "--ignore-eol-style";
@@ -14,10 +14,9 @@ SvnHelper::SvnHelper(QString filename)
     args <<"--non-interactive";
 
     //add svn to path
-    QString extraPath;
+    QString extraPath = ConfigManager::Instance.svnPath();
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
 #ifdef OS_WINDOWS
-    extraPath = "G:\\Programs\\Subversion\\bin";
     if (!extraPath.isEmpty())
     {
         env.insert("PATH", env.value("PATH") + ";"+extraPath);
@@ -51,6 +50,7 @@ void SvnHelper::parseUnified(int exitCode, QProcess::ExitStatus exitStatus)
 {
     if(exitCode == QProcess::CrashExit)
     {
+        qDebug()<<"svn error: "<<_process.errorString();
         this->deleteLater();
         return;
     }
@@ -80,7 +80,6 @@ void SvnHelper::parseUnified(int exitCode, QProcess::ExitStatus exitStatus)
         int length1 = positionRegex.cap(2).toInt();
         int line2 = positionRegex.cap(3).toInt();
         int length2 = positionRegex.cap(4).toInt();
-        qDebug()<<line1<<" "<<length1<<line2<<" "<<length2;
         while(length2 > 0 || length1 > 0)
         {
             c = _process.read(1);
@@ -110,7 +109,6 @@ void SvnHelper::parseUnified(int exitCode, QProcess::ExitStatus exitStatus)
         }
     }
     emit uncommittedLines(_uncommitLines);
-    qDebug()<<_uncommitLines;
     this->deleteLater();
 }
 
