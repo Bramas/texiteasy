@@ -155,7 +155,7 @@ void WidgetLineNumber::paintEvent(QPaintEvent * /*event*/)
             painter.setPen(defaultPen);
             painter.setFont(defaultFont);
         }
-        if (widgetTextEdit->document()->findBlockByNumber(l).revision() != widgetTextEdit->document()->lastSaveRevision())
+        if (ConfigManager::Instance.isBlockChangeMarkerEnable() && widgetTextEdit->document()->findBlockByNumber(l).revision() != widgetTextEdit->document()->lastSaveRevision())
         {
             painter.save();
             painter.setRenderHint(QPainter::Antialiasing, false);

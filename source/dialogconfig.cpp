@@ -162,7 +162,7 @@ void DialogConfig::save()
     }
     ConfigManager::Instance.setUsingSpaceIndentation(this->ui->checkBoxIndentationUsingSpace->isChecked());
     ConfigManager::Instance.setTabWidth(this->ui->spinBoxTabWidth->value());
-
+    ConfigManager::Instance.setBlockChangeMarkerEnable(this->ui->checkBoxBlockChangeMarker->isChecked());
 
     // Page Shortcut
 
@@ -237,6 +237,7 @@ void DialogConfig::show()
     this->ui->checkBoxLineWrapped->setChecked(ConfigManager::Instance.isLineWrapped());
     this->ui->checkBoxDollarAuto->setChecked(ConfigManager::Instance.isDollarAuto());
     this->ui->checkBox_replaceDefaultFont->setChecked(ConfigManager::Instance.isDefaultFontReplaced());
+    this->ui->checkBoxBlockChangeMarker->setChecked(ConfigManager::Instance.isBlockChangeMarkerEnable());
     this->ui->comboBox_fontFamilly->clear();
     QFontDatabase database;
     QString currentFamily = ConfigManager::Instance.getTextCharFormats("normal").font().family();

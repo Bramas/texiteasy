@@ -212,6 +212,8 @@ public:
     void setSvnPath(QString path) { QSettings settings; settings.setValue("svn/path", path); }
     void setSvnEnable(bool enable) { QSettings settings; settings.setValue("svn/enable", enable); }
     bool isSvnEnable() { QSettings settings; return settings.value("svn/enable", true).toBool(); }
+    void setBlockChangeMarkerEnable(bool enable) { QSettings settings; return settings.setValue("blockChangeMarkerEnable", enable); }
+    bool isBlockChangeMarkerEnable() { QSettings settings; return settings.value("blockChangeMarkerEnable", true).toBool(); }
 
     bool isPdfSynchronized() { QSettings settings; return settings.value("pdfSynchronized", true).toBool(); }
 
