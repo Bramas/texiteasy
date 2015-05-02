@@ -58,7 +58,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>4</number>
    </property>
    <widget class="QWidget" name="pageGeneral">
     <widget class="QWidget" name="formLayoutWidget_2">
@@ -437,7 +437,7 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>511</width>
+       <width>541</width>
        <height>391</height>
       </rect>
      </property>
@@ -453,16 +453,16 @@
        <widget class="QWidget" name="widget" native="true">
         <property name="minimumSize">
          <size>
-          <width>0</width>
+          <width>300</width>
           <height>22</height>
          </size>
         </property>
         <widget class="QLineEdit" name="lineEdit_svnPath">
          <property name="geometry">
           <rect>
-           <x>10</x>
+           <x>0</x>
            <y>0</y>
-           <width>241</width>
+           <width>211</width>
            <height>21</height>
           </rect>
          </property>
@@ -470,8 +470,8 @@
         <widget class="QPushButton" name="pushButton_svnPath">
          <property name="geometry">
           <rect>
-           <x>264</x>
-           <y>0</y>
+           <x>210</x>
+           <y>-3</y>
            <width>91</width>
            <height>23</height>
           </rect>
