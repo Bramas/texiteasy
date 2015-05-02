@@ -67,13 +67,13 @@ void TextDocumentLayout::documentChanged(int from, int /*charsRemoved*/, int cha
 
     if (changeStartBlock == changeEndBlock && newBlockCount == d->blockCount) {
         QTextBlock block = changeStartBlock;
-        if (block.isValid()  && block.length()) {
+        if (block.isValid()  && block.layout()->lineCount()) {
             QRectF oldBr = blockBoundingRect(block);
             layoutBlock(block);
             QRectF newBr = blockBoundingRect(block);
             if (newBr.height() == oldBr.height()) {
-                //if (!d->blockUpdate)
-                //    emit updateBlock(block);
+                if (!d->blockUpdate)
+                    emit updateBlock(block);
                 return;
             }
         }
@@ -104,7 +104,7 @@ void TextDocumentLayout::documentChanged(int from, int /*charsRemoved*/, int cha
             emit documentSizeChanged(documentSize());
 
         if (blockDiff == 1 && changeEnd == newBlockCount -1 ) {
-           // if (!d->blockUpdate)
+            if (!d->blockUpdate)
             {
                 QTextBlock b = changeStartBlock;
                 for(;;) {
@@ -117,7 +117,7 @@ void TextDocumentLayout::documentChanged(int from, int /*charsRemoved*/, int cha
             return;
         }
     }
-    //if (!d->blockUpdate)
+    if (!d->blockUpdate)
         emit update(QRectF(0., -doc->documentMargin(), 1000000000., 1000000000.)); // optimization potential
 }
 
