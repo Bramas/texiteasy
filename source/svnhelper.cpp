@@ -37,7 +37,11 @@ SvnHelper::SvnHelper(QString filename)
 
     qDebug()<<"execute "<<args;
     connect(&_process, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(parseUnified(int,QProcess::ExitStatus)));
+#ifdef OS_WINDOWS
     _process.start("svn.exe", args);
+#else
+    _process.start("svn", args);
+#endif
 
 }
 
@@ -54,7 +58,6 @@ void SvnHelper::parseUnified(int exitCode, QProcess::ExitStatus exitStatus)
         this->deleteLater();
         return;
     }
-    _process.waitForFinished();
     _process.readLine();// "Index: ...
     _process.readLine();// "====== ...
     _process.readLine();// "--- ...
