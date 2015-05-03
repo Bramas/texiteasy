@@ -94,7 +94,8 @@ SOURCES += main.cpp\
     textaction.cpp \
     pdfsynchronizer.cpp \
     textdocument.cpp \
-    svnhelper.cpp
+    svnhelper.cpp \
+    latexoutputfilter.cpp
 
 HEADERS  += mainwindow.h \
     widgetlinenumber.h \
@@ -164,7 +165,8 @@ HEADERS  += mainwindow.h \
     textaction.h \
     pdfsynchronizer.h \
     textdocument.h \
-    svnhelper.h
+    svnhelper.h \
+    latexoutputfilter.h
 
 FORMS    += mainwindow.ui \
     dialogwelcome.ui \

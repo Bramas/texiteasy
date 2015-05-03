@@ -45,6 +45,7 @@ public:
     void setFile(File * file);
 
     const QList<Builder::Output> & simpleOutput() const { return _simpleOutPut; }
+    const QString & output() const { return _lastOutput; }
     static QString Error;
     static QString Warning;
     static bool setupPathEnvironment(QProcess *process);
