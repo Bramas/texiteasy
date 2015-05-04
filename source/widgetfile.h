@@ -14,7 +14,7 @@ class WidgetFindReplace;
 class WidgetLineNumber;
 class WidgetPdfViewer;
 class WidgetPdfDocument;
-class WidgetSimpleOutput;
+class TaskWindow;
 class WidgetLineNumber;
 class SyntaxHighlighter;
 class MainWindow;
@@ -107,7 +107,7 @@ private:
     WidgetFindReplace * _widgetFindReplace;
     WidgetLineNumber * widgetLineNumber;
     WidgetPdfViewer * _widgetPdfViewer;
-    WidgetSimpleOutput * _widgetSimpleOutput;
+    TaskWindow * _widgetSimpleOutput;
     WidgetLineNumber * _widgetLineNumber;
     Hunspell * _spellChecker;
     SyntaxHighlighter * _syntaxHighlighter;

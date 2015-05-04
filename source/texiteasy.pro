@@ -16,8 +16,8 @@ APPLICATION_NAME = \\\"'TexitEasy'\\\"
 VERSION = \\\"'0.20.0'\\\"
 VERSION_HEX = 0x002000
 
-#CONFIG += c++11
-#QMAKE_CXXFLAGS += -std=c++0x
+CONFIG += c++11
+QMAKE_CXXFLAGS += -std=c++0x
 
 
 #DEFINES += PORTABLE_EXECUTABLE
@@ -95,7 +95,10 @@ SOURCES += main.cpp\
     pdfsynchronizer.cpp \
     textdocument.cpp \
     svnhelper.cpp \
-    latexoutputfilter.cpp
+    latexoutputfilter.cpp \
+    taskpane/taskmodel.cpp \
+    taskpane/taskwindow.cpp \
+    taskpane/task.cpp
 
 HEADERS  += mainwindow.h \
     widgetlinenumber.h \
@@ -166,7 +169,11 @@ HEADERS  += mainwindow.h \
     pdfsynchronizer.h \
     textdocument.h \
     svnhelper.h \
-    latexoutputfilter.h
+    latexoutputfilter.h \
+    taskpane/taskmodel.h \
+    taskpane/taskwindow.h \
+    taskpane/task.h \
+    taskpane/icontext.h
 
 FORMS    += mainwindow.ui \
     dialogwelcome.ui \

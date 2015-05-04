@@ -3,7 +3,7 @@
 #include "minisplitter.h"
 #include "widgettextedit.h"
 #include "widgetconsole.h"
-#include "widgetsimpleoutput.h"
+#include "taskpane/taskwindow.h"
 #include "widgetfindreplace.h"
 #include "widgetpdfdocument.h"
 #include "widgetpdfviewer.h"
@@ -46,7 +46,7 @@ WidgetFile::WidgetFile(MainWindow *parent) :
     _widgetLineNumber   ->setWidgetTextEdit(_widgetTextEdit);
     _widgetTextEdit     ->setWidgetLineNumber(_widgetLineNumber);
     _widgetConsole      = new WidgetConsole();
-    _widgetSimpleOutput = new WidgetSimpleOutput(this);
+    _widgetSimpleOutput = new TaskWindow();
     _widgetSimpleOutput ->setWidgetTextEdit(_widgetTextEdit);
 
     _horizontalSplitter = new MiniSplitter(Qt::Horizontal);
@@ -118,7 +118,7 @@ WidgetFile::WidgetFile(MainWindow *parent) :
     _editorSplitter->setBackgroundColor(ConfigManager::Instance.getTextCharFormats("line-number").foreground().color());
     _verticalSplitter->addWidget(_editorSplitter);
     _verticalSplitter->addWidget(this->_widgetFindReplace);
-    _verticalSplitter->addWidget(this->_widgetSimpleOutput);
+    _verticalSplitter->addWidget(this->_widgetSimpleOutput->outputWidget());
     _verticalSplitter->addWidget(this->_widgetConsole);
 
     _verticalSplitter->setCollapsible(3,true);
@@ -148,7 +148,7 @@ WidgetFile::WidgetFile(MainWindow *parent) :
     _widgetConsole->setBuilder(_widgetTextEdit->getCurrentFile()->getBuilder());
     _widgetConsole->setMaximumHeight(0);
     _widgetSimpleOutput->setBuilder(_widgetTextEdit->getCurrentFile()->getBuilder());
-    _widgetSimpleOutput->setMaximumHeight(0);
+    _widgetSimpleOutput->outputWidget()->setMaximumHeight(0);
     _widgetTextEdit->selectAll();
     _widgetTextEdit->textCursor().setBlockCharFormat(ConfigManager::Instance.getTextCharFormats("normal"));
     QTextCursor cur(_widgetTextEdit->textCursor());

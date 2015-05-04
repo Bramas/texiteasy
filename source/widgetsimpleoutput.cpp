@@ -5,6 +5,7 @@
 #include "widgetfile.h"
 #include "mainwindow.h"
 #include "filemanager.h"
+#include "taskpane/taskwindow.h"
 
 #include <QHeaderView>
 #include <QDebug>

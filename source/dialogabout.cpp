@@ -28,6 +28,7 @@ DialogAbout::DialogAbout(QWidget *parent) :
             "- SyncTeX ( <a href='http://itexmac.sourceforge.net/SyncTeX.html'>url</a> (C) Jerome Laurens - Licence: GPL)<br>"
             "- Texmaker ( <a href='http://www.xm1math.net/texmaker/'>url</a> (C) Pascal Brachet - Licence: GPL)<br>"
             "- Texstudio ( <a href='http://texstudio.sourceforge.net/'>url</a> - Licence: GPL)<br>"
+            "- Qt Creator ( <a href='http://qt.io/'>url</a> - Licence: GPL)<br>"
             "- Hunspell ( <a href='http://hunspell.sourceforge.net/'>url</a> - Licence GPL)<br>"
             "- miniz ( <a href='https://code.google.com/p/miniz/'>url</a> - public domain)";
 
