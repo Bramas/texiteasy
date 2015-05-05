@@ -56,10 +56,10 @@ public:
     QString categoryDisplayName(Id categoryId) const;
     void addCategory(Id categoryId, const QString &categoryName);
 
-    QList<Task> tasks(Id categoryId = 0) const;
+    QList<Task> tasks(Id categoryId = "") const;
     void addTask(const Task &task);
     void removeTask(const Task &task);
-    void clearTasks(Id categoryId = 0);
+    void clearTasks(Id categoryId = "");
     void updateTaskFileName(unsigned int id, const QString &fileName);
     void updateTaskLineNumber(unsigned int id, int line);
 
