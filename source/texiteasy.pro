@@ -16,8 +16,8 @@ APPLICATION_NAME = \\\"'TexitEasy'\\\"
 VERSION = \\\"'0.20.0'\\\"
 VERSION_HEX = 0x002000
 
-CONFIG += c++11
-QMAKE_CXXFLAGS += -std=c++0x
+#CONFIG += c++11
+#QMAKE_CXXFLAGS += -std=c++0x
 
 
 #DEFINES += PORTABLE_EXECUTABLE

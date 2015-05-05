@@ -201,12 +201,12 @@ TaskWindow::TaskWindow() : d(new TaskWindowPrivate)
             this, SLOT(openTask(uint)));
             */
 
-    connect(d->m_filter, &TaskFilterModel::rowsRemoved,
-            [this]() { emit setBadgeNumber(d->m_filter->rowCount()); });
-    connect(d->m_filter, &TaskFilterModel::rowsInserted,
-            [this]() { emit setBadgeNumber(d->m_filter->rowCount()); });
-    connect(d->m_filter, &TaskFilterModel::modelReset,
-            [this]() { emit setBadgeNumber(d->m_filter->rowCount()); });
+    connect(d->m_filter, SIGNAL(rowsRemoved(QModelIndex,int,int)),
+            this, SLOT(emitBadgeNumber()));
+    connect(d->m_filter, SIGNAL(rowsInserted(QModelIndex,int,int)),
+            this, SLOT(emitBadgeNumber()));
+    connect(d->m_filter, SIGNAL(modelReset()),
+            this, SLOT(emitBadgeNumber()));
 }
 
 TaskWindow::~TaskWindow()
@@ -219,7 +219,10 @@ TaskWindow::~TaskWindow()
     delete d;
 }
 
-
+void TaskWindow::emitBadgeNumber()
+{
+    emit setBadgeNumber(d->m_filter->rowCount());
+}
 /*
 static ITaskHandler *handler(QAction *action)
 {

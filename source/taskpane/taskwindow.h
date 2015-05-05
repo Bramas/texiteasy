@@ -111,6 +111,7 @@ signals:
     void setBadgeNumber(int number);
 
 private slots:
+    void emitBadgeNumber();
     void addTask(const Task &task);
     void addCategory(Id categoryId, const QString &displayName, bool visible);
     void removeTask(const Task &task);
