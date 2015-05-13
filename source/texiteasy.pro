@@ -243,7 +243,13 @@ win32 {
 
 }
 unix:!mac{
-    LIBS += -lz -L/usr/local/lib -lpoppler-qt4
+
+    LIBS += -lz
+    lessThan(QT_MAJOR_VERSION, 5) {
+        LIBS += -L/usr/local/lib -lpoppler-qt4
+    } else {
+        LIBS += -L/usr/local/lib -lpoppler-qt5
+    }
     DEFINES += OS_LINUX
     LAST_VERSION_URL = \\\"'http://texiteasy.com/downloads/latest_version/linux'\\\"
     TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com/downloads/latest/linux'\\\"

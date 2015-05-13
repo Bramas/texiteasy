@@ -6,7 +6,7 @@
 #include <QNetworkReply>
 #include <QMessageBox>
 
-#ifndef OS_LINUX
+#if QT_VERSION >= QT_VERSION_CHECK(5,0,0)
 #include <QUrlQuery>
 #endif
 
@@ -28,7 +28,7 @@ void DialogSendFeedback::accept()
 {
     QUrl url("http://texiteasy.com/feedbacks/create");
 
-#ifdef OS_LINUX
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
     url.addQueryItem("data[Feedback][email]", this->ui->lineEdit->text());
     url.addQueryItem("data[Feedback][message]", this->ui->plainTextEdit->toPlainText());
     url.addQueryItem("data[Feedback][soft_id]", ConfigManager::Instance.softId());
