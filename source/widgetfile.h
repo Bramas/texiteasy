@@ -113,6 +113,7 @@ private:
     SyntaxHighlighter * _syntaxHighlighter;
     MainWindow * _window;
     WidgetFile * _masterFile;
+    int _consoleHeight, _problemsHeight;
 };
 
 Q_DECLARE_METATYPE(WidgetFile*)

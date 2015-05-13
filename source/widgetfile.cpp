@@ -53,6 +53,7 @@ WidgetFile::WidgetFile(MainWindow *parent) :
     _verticalSplitter = new MiniSplitter(Qt::Vertical);
 
 
+    _consoleHeight = _problemsHeight = 70;
 
 
     QGridLayout * layout = new QGridLayout();
@@ -234,9 +235,9 @@ void WidgetFile::openConsole()
         closeErrorTable();
     }
     QList<int> sizes = this->verticalSplitter()->sizes();
-    sizes.replace(0, sizes[0] - 60 + sizes[3]);
+    sizes.replace(0, sizes[0] - _consoleHeight + sizes[3]);
     sizes.replace(2, 0);
-    sizes.replace(3, 60);
+    sizes.replace(3, _consoleHeight);
     this->verticalSplitter()->widget(3)->setMaximumHeight(height()*2/3);
     this->verticalSplitter()->setSizes(sizes);
     emit verticalSplitterChanged();
@@ -253,8 +254,8 @@ void WidgetFile::openErrorTable()
         closeConsole();
     }
     QList<int> sizes = this->verticalSplitter()->sizes();
-    sizes.replace(0, sizes[0] - 60 + sizes[3]);
-    sizes.replace(2, 60);
+    sizes.replace(0, sizes[0] - _problemsHeight + sizes[3]);
+    sizes.replace(2, _problemsHeight);
     sizes.replace(3, 0);
     this->verticalSplitter()->widget(2)->setMaximumHeight(height()*2/3);
     this->verticalSplitter()->setSizes(sizes);
@@ -268,6 +269,7 @@ void WidgetFile::closeConsole()
         return;
     }
     QList<int> sizes = this->verticalSplitter()->sizes();
+    _consoleHeight = sizes[3];
     sizes.replace(0, sizes[0] + sizes[3]);
     sizes.replace(3, 0);
     this->verticalSplitter()->widget(3)->setMaximumHeight(0);
@@ -282,6 +284,7 @@ void WidgetFile::closeErrorTable()
         return;
     }
     QList<int> sizes = this->verticalSplitter()->sizes();
+    _problemsHeight = sizes[2];
     sizes.replace(0, sizes[0] + sizes[2]);
     sizes.replace(2, 0);
     this->verticalSplitter()->widget(2)->setMaximumHeight(0);
