@@ -369,11 +369,14 @@ void TaskWindow::openTask(unsigned int id)
 
 void TaskWindow::triggerDefaultHandler(const QModelIndex &index)
 {
+    qDebug()<<index.isValid();
     if (!index.isValid())
         return;
     Task task(d->m_model->task(index));
+    qDebug()<<task.isNull();
     if (task.isNull())
         return;
+    qDebug()<<task.file.trimmed().isEmpty();
     if (task.file.trimmed().isEmpty())
         return;
 
@@ -385,6 +388,8 @@ void TaskWindow::triggerDefaultHandler(const QModelIndex &index)
             found = true;
         }
     }
+    qDebug()<<_widgetTextEdit->getCurrentFile()->getFilename();
+    qDebug()<<task.file;
     if (!found && _widgetTextEdit->getCurrentFile()->getFilename() != task.file)
         return;
 
@@ -824,6 +829,7 @@ void TaskWindow::setBuilder(Builder *builder)
 void TaskWindow::onError()
 {
     LatexOutputFilter f;
+    f.setSource(_builder->getFile()->getFilename());
     f.run(_builder->output());
     foreach(const LatexLogEntry &logEntry, f.m_infoList)
     {
