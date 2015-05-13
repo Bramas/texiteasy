@@ -199,10 +199,10 @@ private:
             {
                 continue;
             }
-#ifdef OS_MAC
-            QString filePath=QFileInfo(sourceFile).absolutePath()+"/./"+QFileInfo(sourceFile).fileName();
-#else
+#ifdef OS_WINDOWS
             QString filePath=QFileInfo(sourceFile).canonicalFilePath().replace("/", "\\");
+#else
+            QString filePath=QFileInfo(sourceFile).absolutePath()+"/./"+QFileInfo(sourceFile).fileName();
 #endif
             synctex_node_t node = synctex_scanner_input(scanner);
             QString name;
