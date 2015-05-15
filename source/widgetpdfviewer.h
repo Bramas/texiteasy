@@ -23,6 +23,8 @@
 #define WIDGETPDFVIEWER_H
 
 #include <QWidget>
+#include <QMacCocoaViewContainer>
+#include <QMacNativeWidget>
 
 namespace Ui {
 class WidgetPdfViewer;
@@ -31,7 +33,7 @@ class QVBoxLayout;
 
 class WidgetPdfDocument;
 
-class WidgetPdfViewer : public QWidget
+class WidgetPdfViewer : public QMacCocoaViewContainer
 {
     Q_OBJECT
     
@@ -49,6 +51,7 @@ private:
 
     WidgetPdfDocument *_widgetPdfDocument;
     QVBoxLayout * _verticalLayout;
+    QMacNativeWidget * _nativeWidget;
 };
 
 #endif // WIDGETPDFVIEWER_H

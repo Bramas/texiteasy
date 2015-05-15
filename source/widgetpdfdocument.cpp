@@ -38,6 +38,8 @@
 #include "widgetfile.h"
 #include "widgettextedit.h"
 
+
+
 #define ZOOM_UPDATE 500
 #define SYNCTEX_GZ_EXT ".synctex.gz"
 #define SYNCTEX_EXT ".synctex"

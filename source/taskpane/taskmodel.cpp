@@ -80,7 +80,6 @@ bool TaskModel::hasFile(const QModelIndex &index) const
 
 void TaskModel::addCategory(Id categoryId, const QString &categoryName)
 {
-    Q_ASSERT(categoryId);
     CategoryData data;
     data.displayName = categoryName;
     m_categories.insert(categoryId, data);

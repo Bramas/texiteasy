@@ -42,6 +42,8 @@
 #include "dialogsendfeedback.h"
 #include "updatechecker.h"
 
+#include "cocoapdfviewer.h"
+
 #include <QMenu>
 #include <QAction>
 #include <QScrollBar>
@@ -100,7 +102,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->verticalLayout->setSpacing(0);
     ui->verticalLayout->setContentsMargins(0,0,0,0);
     ui->verticalLayout->addWidget(_tabWidget);
-    ui->verticalLayout->addWidget(_emptyWidget);
+    ui->verticalLayout->addWidget(new CocoaPdfViewer(0));
     connect(_emptyWidget, SIGNAL(mouseDoubleClick()), this, SLOT(newFile()));
 
 
@@ -260,6 +262,7 @@ MainWindow::MainWindow(QWidget *parent) :
         Tools::Log("MainWindow: openLastSession()");
         this->openLastSession();
     }
+
 }
 
 MainWindow::~MainWindow()

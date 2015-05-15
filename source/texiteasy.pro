@@ -256,6 +256,7 @@ unix:!mac{
     LATEX_URL = \\\"'http://texiteasy.com/links/latex/linux'\\\"
 }
 mac{
+    QT += macextras
     #DEFINES += LIB_DEPLOY
     INCLUDEPATH += /usr/local/include
     LIBS += -L/usr/local/lib -lz -lpoppler-qt5
@@ -265,6 +266,11 @@ mac{
     TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com/downloads/latest/mac'\\\"
     LATEX_URL = \\\"'http://texiteasy.com/links/latex/mac'\\\"
     #CONFIG += x86 x86_64
+
+    LIBS += -framework Cocoa
+    HEADERS += cocoapdfviewer.h
+    OBJECTIVE_SOURCES += cocoapdfviewer.mm
+
 }
 
 DEFINES += "TEXITEASY_UPDATE_WEBSITE=$${TEXITEASY_UPDATE_WEBSITE}"

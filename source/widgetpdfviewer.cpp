@@ -26,30 +26,6 @@
 #include <QIcon>
 #include <QDebug>
 
-WidgetPdfViewer::WidgetPdfViewer(QWidget *parent) :
-    QWidget(parent),
-    //ui(new Ui::WidgetPdfViewer),
-    _widgetPdfDocument(new WidgetPdfDocument(this))
-{
-    //ui->setupUi(this);
-
-    _verticalLayout = new QVBoxLayout(this);
-    this->setLayout(_verticalLayout);
-    _verticalLayout->addWidget(_widgetPdfDocument);
-    _verticalLayout->setSpacing(0);
-    _verticalLayout->setMargin(0);
-    _verticalLayout->setContentsMargins(0,0,0,0);
-    /*
-    this->ui->pushButtonZoomIn->setVisible(false);
-    this->ui->pushButtonZoomOut->setVisible(false);
-    this->ui->verticalLayout->addWidget(_widgetPdfDocument);
-    this->ui->verticalLayout->setMargin(0);
-    this->ui->verticalLayout->setContentsMargins(0,0,0,0);
-    this->ui->verticalLayout->setSpacing(0);
-    this->setContentsMargins(0,0,0,0);
-    */
-}
-
 WidgetPdfViewer::~WidgetPdfViewer()
 {
 }
@@ -73,7 +49,7 @@ void WidgetPdfViewer::setWidgetPdfDocument(WidgetPdfDocument * widgetPdfDocument
     {
         _widgetPdfDocument->setVisible(false);
     }
-    widgetPdfDocument->setParent(this);
+    widgetPdfDocument->setParent(_nativeWidget);
     _verticalLayout->addWidget(widgetPdfDocument);
 }
 
