@@ -94,7 +94,11 @@ SOURCES += main.cpp\
     textaction.cpp \
     pdfsynchronizer.cpp \
     textdocument.cpp \
-    svnhelper.cpp
+    svnhelper.cpp \
+    latexoutputfilter.cpp \
+    taskpane/taskmodel.cpp \
+    taskpane/taskwindow.cpp \
+    taskpane/task.cpp
 
 HEADERS  += mainwindow.h \
     widgetlinenumber.h \
@@ -164,7 +168,12 @@ HEADERS  += mainwindow.h \
     textaction.h \
     pdfsynchronizer.h \
     textdocument.h \
-    svnhelper.h
+    svnhelper.h \
+    latexoutputfilter.h \
+    taskpane/taskmodel.h \
+    taskpane/taskwindow.h \
+    taskpane/task.h \
+    taskpane/icontext.h
 
 FORMS    += mainwindow.ui \
     dialogwelcome.ui \
@@ -234,7 +243,13 @@ win32 {
 
 }
 unix:!mac{
-    LIBS += -lz -L/usr/local/lib -lpoppler-qt4
+
+    LIBS += -lz
+    lessThan(QT_MAJOR_VERSION, 5) {
+        LIBS += -L/usr/local/lib -lpoppler-qt4
+    } else {
+        LIBS += -L/usr/local/lib -lpoppler-qt5
+    }
     DEFINES += OS_LINUX
     LAST_VERSION_URL = \\\"'http://texiteasy.com/downloads/latest_version/linux'\\\"
     TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com/downloads/latest/linux'\\\"

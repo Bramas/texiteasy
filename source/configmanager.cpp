@@ -37,7 +37,6 @@
 #else
     #include <QStandardPaths>
 #endif
-
 #include <QMapIterator>
 #include <QDir>
 #include <QUrl>

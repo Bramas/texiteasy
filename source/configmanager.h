@@ -155,6 +155,9 @@ public:
     void            setLanguage(QString language)   { QSettings settings; settings.setValue("language", language); applyTranslation(); }
     void            applyTranslation();
 
+    bool            doubleClickToGoToError() { QSettings settings; return settings.value("doubleClickToGoToError", false).toBool(); }
+    void            setDoubleClickToGoToError(bool d) { QSettings settings; return settings.setValue("doubleClickToGoToError", d); }
+
     QStringList     dictionnaries();
     void            setDictionary(QString dico )    { QSettings settings; settings.setValue("defaultDictionary", dico); }
     QString         currentDictionaryFilename()     { return dictionaryPath()+currentDictionary(); }

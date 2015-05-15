@@ -1406,8 +1406,9 @@ void WidgetTextEdit::goToLine(int line, QString stringSelected)
     QTextCursor cursor(this->textCursor());
     cursor.setPosition(this->document()->findBlockByNumber(line - 1).position());
     this->setTextCursor(cursor);
+    ensureCursorVisible();
     this->highlightSyncedLine();
-    if(!stringSelected.isEmpty())
+    if(!stringSelected.isEmpty() && !stringSelected.isEmpty())
     {
         int index;
         if((index = this->document()->findBlockByNumber(line - 1).text().indexOf(stringSelected)) != -1)

@@ -8,4 +8,4 @@ before_install:
 script:
     - cd source
     - qmake texiteasy.pro
-    - make
+    - make -j 4
