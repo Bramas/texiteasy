@@ -68,6 +68,8 @@ WidgetPdfDocument::WidgetPdfDocument(QWidget *parent) :
     _zoom(1)
 
 {
+    this->setMinimumHeight(100);
+    this->setMinimumWidth(50);
     this->setContentsMargins(0,0,0,0);
     this->setMouseTracking(true);
     this->setCursor(Qt::OpenHandCursor);

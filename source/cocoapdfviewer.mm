@@ -24,17 +24,16 @@ WidgetPdfViewer::WidgetPdfViewer(QWidget *parent) :
     //[search.window setAppearance:[NSAppearance appearanceNamed:NSAppearanceNameVibrantLight]];
     //[search setMaterial:NSVisualEffectMaterialLight];
 
-
-    _nativeWidget = new QMacNativeWidget(search);
-    _verticalLayout = new QVBoxLayout(_nativeWidget);
-    _nativeWidget->setLayout(_verticalLayout);
-    _widgetPdfDocument = new WidgetPdfDocument(_nativeWidget);
-    _widgetPdfDocument->setAttribute(Qt::WA_LayoutUsesWidgetRect);
-    _verticalLayout->addWidget(_widgetPdfDocument);
-    _verticalLayout->setSpacing(0);
-    _verticalLayout->setMargin(0);
-    _verticalLayout->setContentsMargins(0,0,0,0);
-
+    //_nativeWidget = new QMacNativeWidget(search);
+    //_verticalLayout = new QVBoxLayout(_nativeWidget);
+    //_nativeWidget->setLayout(_verticalLayout);
+    _widgetPdfDocument = new WidgetPdfDocument(this);
+    //_widgetPdfDocument->setAttribute(Qt::WA_LayoutUsesWidgetRect);
+    //_verticalLayout->addWidget(_widgetPdfDocument);
+    //_verticalLayout->setSpacing(0);
+    //_verticalLayout->setMargin(0);
+    //_verticalLayout->setContentsMargins(0,0,0,0);
+/*
     NSView *nativeWidgetView = reinterpret_cast<NSView *>(_nativeWidget->winId());
 
     //[search setAutoresizesSubviews:YES];
@@ -42,7 +41,7 @@ WidgetPdfViewer::WidgetPdfViewer(QWidget *parent) :
     //[nativeWidgetView setAutoresizesSubviews:YES];
 
     [search addSubview:nativeWidgetView positioned:NSWindowAbove relativeTo:nil];
-    _nativeWidget->show();
+    _nativeWidget->show();*/
     _widgetPdfDocument->show();
     setCocoaView(search);
     // Release our reference, since our super class takes ownership and we
