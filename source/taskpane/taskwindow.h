@@ -61,9 +61,9 @@ public:
 
     void delayedInitialization();
 
-    int taskCount(Id category = 0) const;
-    int warningTaskCount(Id category = 0) const;
-    int errorTaskCount(Id category = 0) const;
+    int taskCount(Id category = "") const;
+    int warningTaskCount(Id category = "") const;
+    int errorTaskCount(Id category = "") const;
 
     void setBuilder(Builder *builder);
     void setWidgetTextEdit(WidgetTextEdit * widgetTextEdit) { _widgetTextEdit = widgetTextEdit; }

@@ -840,7 +840,7 @@ void TaskWindow::onError()
             break;
         case LT_WARNING:
             task.type = Task::Warning;
-            task.icon = QApplication::style()->standardIcon(QStyle::SP_MessageBoxWarning);
+            task.icon = QIcon(QPixmap(":/data/img/warning.png"));//QApplication::style()->standardIcon(QStyle::SP_MessageBoxWarning);
             break;
         case LT_INFO:
         case LT_BADBOX:

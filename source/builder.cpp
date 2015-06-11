@@ -119,7 +119,7 @@ void Builder::builTex(QString command)
     _lastOutput = QString("");
     _simpleOutPut.clear();
     _commands.clear();
-    _basename = this->file->rootBasename();
+    _basename = QFileInfo(file->rootFilename()).fileName();
     process->setWorkingDirectory(this->file->getRootPath());
     if(ConfigManager::Instance.hideAuxFiles())
     {

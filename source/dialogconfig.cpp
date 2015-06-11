@@ -54,6 +54,8 @@ DialogConfig::DialogConfig(MainWindow *parent) :
 
     this->ui->listWidget->setCurrentRow(0);
 
+    this->ui->pushButton_save->setVisible(false);
+
     // Page General
     QString currentLanguage = ConfigManager::Instance.language();
     foreach(QString language, ConfigManager::Instance.languagesList())
@@ -169,7 +171,7 @@ void DialogConfig::save()
     QSettings settings;
     settings.beginGroup("shortcuts");
     QList<QKeySequence> list;
-    for (int row = 0; row < this->ui->tableWidget_keyBinding->rowCount(); ++row) {
+    for (int row = 0; row < _actionsList.count() && row < this->ui->tableWidget_keyBinding->rowCount(); ++row) {
         QAction *action = _actionsList[row];
         list.clear();
         list << QKeySequence(this->ui->tableWidget_keyBinding->item(row, 1)->text());
@@ -180,17 +182,21 @@ void DialogConfig::save()
     ConfigManager::Instance.sendChangedSignal();
 
 }
-void DialogConfig::show()
+void DialogConfig::initShortcutsTable()
 {
-    QSettings settings;
-    settings.beginGroup("theme");
-
     _actionsList.clear();
     this->ui->tableWidget_keyBinding->clear();
     ui->tableWidget_keyBinding->setRowCount(0);
     this->addEditableActions(_mainWindows->findChildren<QAction *>());
     this->addEditableActions(_mainWindows->actions());
+}
 
+void DialogConfig::show()
+{
+    QSettings settings;
+    settings.beginGroup("theme");
+
+    initShortcutsTable();
     // Page Svn
 
     this->ui->checkBox_enableSvn->setChecked(ConfigManager::Instance.isSvnEnable());

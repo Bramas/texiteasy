@@ -37,6 +37,7 @@ public:
     void saveAs(QString filename = "");
     void setMasterFile(WidgetFile * master) { _masterFile = master; }
     bool isEmpty();
+    TaskWindow * taskPane() { return _widgetSimpleOutput; }
     WidgetPdfViewer * widgetPdfViewer() { return _widgetPdfViewer; }
     SyntaxHighlighter * syntaxHighlighter() { return _syntaxHighlighter; }
     MiniSplitter * verticalSplitter() { return _verticalSplitter; }

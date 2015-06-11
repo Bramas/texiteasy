@@ -116,7 +116,7 @@ public:
 
     QString getPath() const { QString s(this->filename); return s.replace(QRegExp("^(([^\\\\\\/]*[\\\\\\/])*)[^\\\\\\/]*$"),"\\1"); }
 
-    QString rootBasename() const { return QFileInfo(rootFilename()).baseName(); }
+    QString rootBasename() const { return QFileInfo(rootFilename()).completeBaseName(); }
     QString getRootPath() const { return QFileInfo(rootFilename()).path(); }
 
     QString rootFilename() const
