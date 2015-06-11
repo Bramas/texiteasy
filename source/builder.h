@@ -43,6 +43,7 @@ public:
     };
     ~Builder();
     void setFile(File * file);
+    File * getFile() { return file; }
 
     const QList<Builder::Output> & simpleOutput() const { return _simpleOutPut; }
     const QString & output() const { return _lastOutput; }
