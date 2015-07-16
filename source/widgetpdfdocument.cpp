@@ -63,7 +63,8 @@ WidgetPdfDocument::WidgetPdfDocument(QWidget *parent) :
     scanner(NULL),
     _scroll(new QScrollBar(Qt::Vertical, this)),
     _widgetTextEdit(0),
-    _zoom(1)
+    _zoom(1),
+    _syncPage(-2)
 
 {
     this->setContentsMargins(0,0,0,0);
@@ -662,7 +663,14 @@ void WidgetPdfDocument::jumpToEditor(int page, const QPoint& pos)
             filename = QFileInfo(filename).canonicalFilePath();
             this->_widgetTextEdit->widgetFile()->window()->open(filename);
             WidgetFile * w = FileManager::Instance.widgetFile(filename);
-            w->widgetTextEdit()->goToLine(synctex_node_line(node));
+            if(w)
+            {
+                w->widgetTextEdit()->goToLine(synctex_node_line(node));
+            }
+            else
+            {
+                this->_widgetTextEdit->goToLine(synctex_node_line(node));
+            }
             break;
         }
     }

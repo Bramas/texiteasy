@@ -106,7 +106,7 @@ bool sortById(const Task &task, unsigned int id)
 
 void TaskModel::addTask(const Task &task)
 {
-    Q_ASSERT(m_categories.keys().contains(task.category));
+    //Q_ASSERT(m_categories.keys().contains(task.category));
     CategoryData &data = m_categories[task.category];
     CategoryData &global = m_categories[0];
 

@@ -204,12 +204,15 @@ private:
 #else
             QString filePath=QFileInfo(sourceFile).absolutePath()+"/./"+QFileInfo(sourceFile).fileName();
 #endif
+            PDF_SYNCHRONIZER_DEBUG(qDebug()<<"SYNC "<<filePath<<" line "<<sourceLine);
             synctex_node_t node = synctex_scanner_input(scanner);
             QString name;
             bool found = false;
             while (node != NULL)
             {
                 name = QString::fromUtf8(synctex_scanner_get_name(scanner, synctex_node_tag(node)));
+                //qDebug()<<filePath;
+                //qDebug()<<name<<"  "<<(name == filePath);
                 if (name == filePath)
                 {
                     found = true;

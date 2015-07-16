@@ -301,7 +301,8 @@ while(index < text.length())
     }
     if(waitingBraceArgument)
     {
-        if(currentChar != ' ' && currentChar != '\t' && (currentChar != '{' || escapedChar) && parenthesisLevel->top() == 0)
+        if(currentChar != ' ' && currentChar != '\t' && (currentChar != '{' || escapedChar) && parenthesisLevel->top() == 0
+                && parenthesisLevel->count() > 1)
         {
             state = previousState;
             waitingBraceArgument = false;
