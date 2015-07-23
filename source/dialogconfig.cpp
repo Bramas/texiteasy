@@ -174,9 +174,14 @@ void DialogConfig::save()
     for (int row = 0; row < _actionsList.count() && row < this->ui->tableWidget_keyBinding->rowCount(); ++row) {
         QAction *action = _actionsList[row];
         list.clear();
-        list << QKeySequence(this->ui->tableWidget_keyBinding->item(row, 1)->text());
+        QStringList strList;
+        foreach(QString s, this->ui->tableWidget_keyBinding->item(row, 1)->text().split(","))
+        {
+            strList << s.trimmed();
+            list << QKeySequence(s.trimmed(), QKeySequence::NativeText);
+        }
         action->setShortcuts(list);
-        settings.setValue(action->text(), action->shortcut());
+        settings.setValue(action->objectName(), strList);
     }
 
     ConfigManager::Instance.sendChangedSignal();
@@ -293,9 +298,20 @@ void DialogConfig::addEditableActions(const QList<QAction *> &actions)
             {
                 continue;
             }
+            QString name = action->text();
+            if(action->objectName() == "actionDefaultCommandLatex")
+            {
+                name = trUtf8("Compilation par défault");
+            }
             this->ui->tableWidget_keyBinding->insertRow(row);
-            this->ui->tableWidget_keyBinding->setItem(row, 0, new QTableWidgetItem(action->text()));
-            this->ui->tableWidget_keyBinding->setItem(row, 1, new QTableWidgetItem(action->shortcut().toString()));
+            this->ui->tableWidget_keyBinding->setItem(row, 0, new QTableWidgetItem(name));
+            QStringList shortcuts;
+            foreach(const QKeySequence &s, action->shortcuts())
+            {
+                shortcuts << s.toString(QKeySequence::NativeText);
+            }
+
+            this->ui->tableWidget_keyBinding->setItem(row, 1, new QTableWidgetItem(shortcuts.join(", ")));
             this->ui->tableWidget_keyBinding->item(row,0)->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
             _actionsList.append(action);
             ++row;

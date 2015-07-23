@@ -75,11 +75,11 @@ void DialogKeySequence::handleKeyEvent(QKeyEvent *e)
     int k2 = m_keySequence[2];
     int k3 = m_keySequence[3];
     switch (m_num) {
-        case 0: k0 = nextKey; k1 = 0; k2 = 0; k3 = 0; break;
-        case 1: k1 = nextKey; k2 = 0; k3 = 0; break;
-        case 2: k2 = nextKey; k3 = 0; break;
-        case 3: k3 = nextKey; break;
-        default: break;
+    default: break;
+    case 3: //k3 = nextKey; break;
+    case 2: //k2 = nextKey; k3 = 0; break;
+    case 1: //k1 = nextKey; k2 = 0; k3 = 0; break;
+    case 0: k0 = nextKey; k1 = 0; k2 = 0; k3 = 0; break;
     }
     ++m_num;
     if (m_num > 3)

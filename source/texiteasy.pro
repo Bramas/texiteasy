@@ -13,8 +13,8 @@ TEMPLATE = app
 
 APPLICATION_NAME = \\\"'TexitEasy'\\\"
 
-VERSION = \\\"'0.20.0'\\\"
-VERSION_HEX = 0x002000
+VERSION = \\\"'0.21.0'\\\"
+VERSION_HEX = 0x002100
 
 #CONFIG += c++11
 #QMAKE_CXXFLAGS += -std=c++0x
@@ -256,7 +256,7 @@ unix:!mac{
     LATEX_URL = \\\"'http://texiteasy.com/links/latex/linux'\\\"
 }
 mac{
-    #DEFINES += LIB_DEPLOY
+    DEFINES += LIB_DEPLOY
     INCLUDEPATH += /usr/local/include
     LIBS += -L/usr/local/lib -lz -lpoppler-qt5
     ICON = texiteasy.icns
