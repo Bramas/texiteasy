@@ -176,7 +176,6 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(&ConfigManager::Instance, SIGNAL(versionIsOutdated()), this, SLOT(addUpdateMenu()));
 
-
     Tools::Log("MainWindow: create reopen");
     QMenu * parentMenu = this->ui->menuReopenWithEncoding;
     foreach(const QString& codec, ConfigManager::CodecsAvailable)
@@ -238,9 +237,14 @@ MainWindow::MainWindow(QWidget *parent) :
         QSettings settings;
         settings.beginGroup("shortcuts");
         foreach(QAction * action, actionsList) {
-            if(!action->text().isEmpty() && settings.contains(action->text()))
+            if(!action->text().isEmpty() && settings.contains(action->objectName()))
             {
-                action->setShortcut(QKeySequence(settings.value(action->text(), QString("")).toString()));
+                QList<QKeySequence> l;
+                foreach(const QString &s, settings.value(action->objectName()).toStringList())
+                {
+                    l << QKeySequence(s, QKeySequence::NativeText);
+                }
+                action->setShortcuts(l);
             }
         }
     }
@@ -407,7 +411,25 @@ void MainWindow::dropEvent(QDropEvent * event)
 
 bool MainWindow::event(QEvent *event)
 {
-    return QMainWindow::event(event);
+    bool ok = QMainWindow::event(event);
+    if(event->type() == QEvent::LanguageChange)
+    {
+        QList<QAction *> actionsList = this->findChildren<QAction *>();
+        QSettings settings;
+        settings.beginGroup("shortcuts");
+        foreach(QAction * action, actionsList) {
+            if(!action->text().isEmpty() && settings.contains(action->objectName()))
+            {
+                QList<QKeySequence> l;
+                foreach(const QString &s, settings.value(action->objectName()).toStringList())
+                {
+                    l << QKeySequence(s, QKeySequence::NativeText);
+                }
+                action->setShortcuts(l);
+            }
+        }
+    }
+    return ok;
 }
 
 
@@ -480,7 +502,12 @@ void MainWindow::initBuildMenu()
     {
         QAction * action = new QAction(name, this->ui->menuOtherBuilder);
         action->setObjectName(name);
-        action->setShortcut(QKeySequence(settings.value(name).toString()));
+        QList<QKeySequence> l;
+        foreach(const QString &s, settings.value(name, QStringList()).toStringList())
+        {
+            l << QKeySequence(s, QKeySequence::NativeText);
+        }
+        action->setShortcuts(l);
         //action->setPriority(QAction::LowPriority);
         /*if(!name.compare(ConfigManager::Instance.defaultLatex()))
         {

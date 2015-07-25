@@ -6,6 +6,7 @@
 #include "widgetfile.h"
 #include "filestructure.h"
 #include "widgettextedit.h"
+#include "taskpane/taskwindow.h"
 
 #include <QPushButton>
 #include <QMenu>
@@ -213,6 +214,7 @@ void WidgetStatusBar::updateStruct()
         connect(action, SIGNAL(triggered()), &FileManager::Instance, SLOT(goToSection()));
         _labelStruct->addAction(action);
     }
+    updateTaskPane();
     QTimer::singleShot(1, this, SLOT(checkStructAction())); // do it after because sometimes it does not work
 }
 void WidgetStatusBar::checkStructAction()
@@ -273,6 +275,20 @@ void WidgetStatusBar::updateButtons()
 
 }
 
+void WidgetStatusBar::updateTaskPane()
+{
+    WidgetFile * w = FileManager::Instance.currentWidgetFile();
+    QString warnings;
+    if(w && w->taskPane()->warningTaskCount())
+    {
+        warnings = " "+QString::number(w->taskPane()->warningTaskCount())+" <img src=\"qrc:/data/img/warning.png\" />";
+    }
+    _labelErrorTable->setText(QString("<a style='font-size:12px; margin-top:-3px; text-decoration:none; color:")+
+                                ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
+                               "' href='#'>"+trUtf8("Erreurs")+warnings+"</a>");
+
+}
+
 void WidgetStatusBar::initTheme()
 {
     this->setStyleSheet("QStatusBar::item { margin-left:4px; border: none;} QStatusBar {padding:0px; height:100px; background: "+
@@ -287,10 +303,7 @@ void WidgetStatusBar::initTheme()
     _labelConsole->setText(QString("<div style='font-size:12px; '><a class='link' style='text-decoration:none; color:")+
                                 ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
                                "' href='#'>"+trUtf8("Console")+"</a></div>");
-    _labelErrorTable->setText(QString("<a style='font-size:12px; margin-top:-3px; text-decoration:none; color:")+
-                                ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
-                               "' href='#'>"+trUtf8("Erreurs")+"</a>");
-
+    updateTaskPane();
     _positionLabel->setStyleSheet(QString("font-size:12px; margin-right:5px; color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color()));
 
 

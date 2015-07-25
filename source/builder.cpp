@@ -25,6 +25,7 @@
 #include <QDebug>
 #include <QtGlobal>
 #include <QSettings>
+#include <QTextCodec>
 #include "configmanager.h"
 
 QString Builder::Error = QObject::tr("Erreur");
@@ -118,7 +119,7 @@ void Builder::builTex(QString command)
     _lastOutput = QString("");
     _simpleOutPut.clear();
     _commands.clear();
-    _basename = this->file->rootBasename();
+    _basename = QFileInfo(file->rootFilename()).fileName();
     process->setWorkingDirectory(this->file->getRootPath());
     if(ConfigManager::Instance.hideAuxFiles())
     {
@@ -185,7 +186,6 @@ void Builder::bibtex()
     QString command = ConfigManager::Instance.bibtexCommand().arg(_basename);//.arg(".texiteasy");//this->file->getPath()).arg();//this->file->getAuxPath());
     qDebug()<<command;
     process->start(command);
-    //process->start(settings.value("latexPath").toString()+"bibtex --include-directory=\""+this->file->getPath()+"\" \""+this->file->getAuxPath()+"/"+_basename+"\"");
 }
 
 void Builder::onError(QProcess::ProcessError processError)
@@ -204,7 +204,6 @@ void Builder::onFinished(int /*exitCode*/, QProcess::ExitStatus exitStatus)
     {
         return;
     }
-    //qDebug()<<_lastOutput;
     this->file->refreshLineNumber();
     if(!checkOutput())
     {
@@ -231,10 +230,17 @@ void Builder::onFinished(int /*exitCode*/, QProcess::ExitStatus exitStatus)
 }
 void Builder::onStandartOutputReady()
 {
-    QString output = this->process->readAllStandardOutput();
+    while(this->process->bytesAvailable())
+    {
+        _lastOutput.append(process->read(1));
+    }
+/*
+    //Old way to do it, but sometimes a character is missing
+    QTextCodec* codec = QTextCodec::codecForUtfText("ISO 8859-1");
+    QString output = codec->toUnicode(this->process->readAllStandardOutput());
+    qDebug()<<output;
     _lastOutput.append(output);
-    output = this->process->readAllStandardError();
-    _lastOutput.append(output);
+*/
     emit outputUpdated(_lastOutput);
 }
 void Builder::hideAuxFiles()

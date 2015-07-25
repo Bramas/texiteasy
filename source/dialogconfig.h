@@ -58,6 +58,7 @@ public slots:
 protected:
     void changeEvent(QEvent *event);
 private:
+    void initShortcutsTable();
     QList<QAction*> _actionsList;
     Ui::DialogConfig *ui;
     QSettings settings;

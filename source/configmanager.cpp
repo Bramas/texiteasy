@@ -37,7 +37,6 @@
 #else
     #include <QStandardPaths>
 #endif
-
 #include <QMapIterator>
 #include <QDir>
 #include <QUrl>
@@ -1054,6 +1053,8 @@ void ConfigManager::checkRevision()
     case 0x001900:
     case 0x001901:
     case 0x002000:
+    case 0x002001:
+    case 0x002100:
 
         break;
     }

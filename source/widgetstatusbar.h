@@ -107,6 +107,7 @@ public slots:
 private slots:
     void checkStructAction();
 private:
+    void updateTaskPane();
     void updateStruct();
     Ui::WidgetStatusBar *ui;
     QToolButton * _pushButtonConsole;

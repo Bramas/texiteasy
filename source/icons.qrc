@@ -10,5 +10,6 @@
         <file>data/img/splitbutton_closetop.png</file>
         <file>data/img/splitbutton_horizontal.png</file>
         <file>data/cursor/whiteBeam.png</file>
+        <file>data/img/warning.png</file>
     </qresource>
 </RCC>
