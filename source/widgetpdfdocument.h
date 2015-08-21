@@ -55,7 +55,7 @@
 
 class File;
 class QImage;
-class WidgetTextEdit;
+class WidgetFile;
 
 struct Link
 {
@@ -77,7 +77,7 @@ public:
     explicit WidgetPdfDocument(QWidget *parent = 0);
     ~WidgetPdfDocument();
     void setFile(File * file) { this->_file = file; this->initDocument(); }
-    void setWidgetTextEdit(WidgetTextEdit * widgetTextEdit) { this->_widgetTextEdit = widgetTextEdit; }
+    void setWidgetFile(WidgetFile * widgetFile) { this->_widgetFile = widgetFile; }
 
 
     /**
@@ -162,7 +162,7 @@ private:
     QRectF _syncRect;
     QTimer _timer;
     QTimer _requestNewResolutionTimer;
-    WidgetTextEdit * _widgetTextEdit;
+    WidgetFile * _widgetFile;
     qreal _zoom;
 
 

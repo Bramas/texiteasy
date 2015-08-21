@@ -39,7 +39,7 @@ WidgetFile::WidgetFile(MainWindow *parent) :
     _syntaxHighlighter  = new SyntaxHighlighter(this);
     _widgetTextEdit     ->setSyntaxHighlighter(_syntaxHighlighter);
     _widgetPdfViewer    = new WidgetPdfViewer();
-    _widgetPdfViewer    ->widgetPdfDocument()->setWidgetTextEdit(_widgetTextEdit);
+    _widgetPdfViewer    ->widgetPdfDocument()->setWidgetFile(this);
     _widgetFindReplace  = new WidgetFindReplace(_widgetTextEdit);
      this->closeFindReplaceWidget();
     _widgetLineNumber   = new WidgetLineNumber(this);

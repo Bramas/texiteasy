@@ -555,9 +555,15 @@ void WidgetTextEdit::addExtraSelections(const QList<QTextEdit::ExtraSelection> &
 void WidgetTextEdit::applyExtraSelection()
 {
     QList<QTextEdit::ExtraSelection> newExtraSelections;
-    foreach(const QList<QTextEdit::ExtraSelection> &s, _extraSelections)
+    foreach(const QList<QTextEdit::ExtraSelection> &selList, _extraSelections)
     {
-        newExtraSelections.append(s);
+        foreach(const QTextEdit::ExtraSelection &s, selList)
+        {
+            if(!s.cursor.isNull() && s.cursor.selectedText().length())
+            {
+                newExtraSelections.append(s);
+            }
+        }
     }
     WIDGET_TEXT_EDIT_PARENT_CLASS::setExtraSelections(newExtraSelections);
 }

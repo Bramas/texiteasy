@@ -110,14 +110,15 @@ void Builder::builTex(QString command)
 
     emit started();
 
+    _lastOutput = QString("");
+    _simpleOutPut.clear();
     if(this->process->state() != QProcess::NotRunning)
     {
         this->process->kill();
         this->process->waitForFinished();
+        emit outputUpdated(trUtf8("Canceled"));
         return;
     }
-    _lastOutput = QString("");
-    _simpleOutPut.clear();
     _commands.clear();
     _basename = QFileInfo(file->rootFilename()).fileName();
     process->setWorkingDirectory(this->file->getRootPath());
@@ -171,15 +172,15 @@ void Builder::bibtex()
         return;
     }
     emit started();
+    QSettings settings;
+    _lastOutput = QString("");
+    _simpleOutPut.clear();
     if(this->process->state() != QProcess::NotRunning)
     {
         this->process->kill();
         this->process->waitForFinished();
         return;
     }
-    QSettings settings;
-    _lastOutput = QString("");
-    _simpleOutPut.clear();
     _basename = this->file->rootBasename();
 
     process->setWorkingDirectory(this->file->getRootPath());
