@@ -100,6 +100,7 @@ public slots:
     void rehighlight();
     void toggleConsole();
     void toggleErrorTable();
+    void toggleWarningPane();
 
     void setCurrent(WidgetFile * widget);
     void setCurrent(int index);

@@ -48,6 +48,7 @@ public:
 
     bool isConsoleOpen(void);
     bool isErrorTableOpen(void);
+    bool isWarningPaneOpen(void);
 
     File * file();
 
@@ -87,12 +88,15 @@ public slots:
     void splitEditor(bool split);
     void openConsole(void);
     void openErrorTable(void);
+    void openWarningPane(void);
 
     void closeErrorTable(void);
     void closeConsole(void);
+    void closeWarningPane(void);
 
     void toggleErrorTable(void);
     void toggleConsole(void);
+    void toggleWarningPane(void);
 
     void openFindReplaceWidget(void);
     void closeFindReplaceWidget(void);
@@ -109,12 +113,13 @@ private:
     WidgetLineNumber * widgetLineNumber;
     WidgetPdfViewer * _widgetPdfViewer;
     TaskWindow * _widgetSimpleOutput;
+    TaskWindow * _warningPane;
     WidgetLineNumber * _widgetLineNumber;
     Hunspell * _spellChecker;
     SyntaxHighlighter * _syntaxHighlighter;
     MainWindow * _window;
     WidgetFile * _masterFile;
-    int _consoleHeight, _problemsHeight;
+    int _consoleHeight, _problemsHeight, _warningPaneHeight;
 };
 
 Q_DECLARE_METATYPE(WidgetFile*)

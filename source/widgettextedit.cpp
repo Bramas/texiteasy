@@ -1071,6 +1071,37 @@ void WidgetTextEdit::matchAll()
     this->_completionEngine->setVisible(false);
     this->matchPar();
     this->matchLat();
+    int pos;
+    if(-1 != (pos = matchRightPar(document()->lastBlock(), ParenthesisInfo::RIGHT_BRACE, document()->lastBlock().length() - 1, 0 )))
+    {
+        QTextEdit::ExtraSelection selection;
+        QTextCharFormat format = ConfigManager::Instance.getTextCharFormats("matched");
+        selection.format = format;
+
+        QTextCursor cursor = textCursor();
+        cursor.setPosition( pos );
+        cursor.setPosition( document()->lastBlock().position() + document()->lastBlock().length() - 1, QTextCursor::KeepAnchor);
+        selection.cursor = cursor;
+
+        QList<QTextEdit::ExtraSelection> selections;
+        selections.append( selection );
+        addExtraSelections(selections, WidgetTextEdit::ParenthesesMatchingSelection);
+    }
+    if(-1 != (pos = matchLeftPar(document()->firstBlock(), ParenthesisInfo::LEFT_BRACE, 0, 0 )))
+    {
+        QTextEdit::ExtraSelection selection;
+        QTextCharFormat format = ConfigManager::Instance.getTextCharFormats("matched");
+        selection.format = format;
+
+        QTextCursor cursor = textCursor();
+        cursor.setPosition( 0 );
+        cursor.setPosition( pos, QTextCursor::KeepAnchor);
+        selection.cursor = cursor;
+
+        QList<QTextEdit::ExtraSelection> selections;
+        selections.append( selection );
+        addExtraSelections(selections, WidgetTextEdit::ParenthesesMatchingSelection);
+    }
 }
 
 void WidgetTextEdit::displayWidgetInsertCommand()
@@ -1141,45 +1172,48 @@ void WidgetTextEdit::matchPar()
             int curPos = textCursor().position() - textBlock.position();
             // Clicked on a left parenthesis?
             if ( info->position <= curPos-1 && info->position + info->length > curPos-1 && !(info->type & ParenthesisInfo::RIGHT) ) {
-                if ( matchLeftPar(textBlock, info->type, i+1, 0 ) )
+                if ( -1 != matchLeftPar(textBlock, info->type, i+1, 0 ) )
                     createParSelection( pos + info->position, info->length );
             }
 
             // Clicked on a right parenthesis?
             if ( info->position <= curPos-1 && info->position + info->length > curPos-1 && (info->type & ParenthesisInfo::RIGHT)) {
-                if ( matchRightPar( textBlock, info->type, i-1, 0 ) )
+                if (-1 != matchRightPar( textBlock, info->type, i-1, 0 ) )
                     createParSelection( pos + info->position, info->length );
             }
         }
     }
 }
-bool WidgetTextEdit::matchLeftPar(	QTextBlock currentBlock, int type, int index, int numLeftPar )
+int WidgetTextEdit::matchLeftPar(	QTextBlock currentBlock, int type, int index, int numLeftPar )
 {
     BlockData *data = static_cast<BlockData *>( currentBlock.userData() );
-    QVector<ParenthesisInfo *> infos = data->parentheses();
-    int docPos = currentBlock.position();
+    if(data)
+    {
+        QVector<ParenthesisInfo *> infos = data->parentheses();
+        int docPos = currentBlock.position();
 
-    // Match in same line?
-    for ( ; index<infos.size(); ++index ) {
-        ParenthesisInfo *info = infos.at(index);
+        // Match in same line?
+        for ( ; index<infos.size(); ++index ) {
+            ParenthesisInfo *info = infos.at(index);
 
-        if ( info->type == type ) {
-            ++numLeftPar;
-            continue;
-        }
-
-        if ( info->type == type + ParenthesisInfo::RIGHT )
-        {
-            if(numLeftPar == 0) {
-                createParSelection( docPos + info->position, info->length );
-                return true;
+            if ( info->type == type ) {
+                ++numLeftPar;
+                continue;
             }
-            else
+
+            if ( info->type == type + ParenthesisInfo::RIGHT )
             {
-                --numLeftPar;
+                if(numLeftPar == 0) {
+                    createParSelection( docPos + info->position, info->length );
+                    return docPos + info->position;
+                }
+                else
+                {
+                    --numLeftPar;
+                }
             }
-        }
 
+        }
     }
 
     // No match yet? Then try next block
@@ -1188,33 +1222,36 @@ bool WidgetTextEdit::matchLeftPar(	QTextBlock currentBlock, int type, int index,
         return matchLeftPar( currentBlock, type, 0, numLeftPar );
 
     // No match at all
-    return false;
+    return -1;
 }
 
-bool WidgetTextEdit::matchRightPar(QTextBlock currentBlock, int type, int index, int numRightPar)
+int WidgetTextEdit::matchRightPar(QTextBlock currentBlock, int type, int index, int numRightPar)
 {
     BlockData *data = static_cast<BlockData *>( currentBlock.userData() );
-    QVector<ParenthesisInfo *> infos = data->parentheses();
-    int docPos = currentBlock.position();
+    if(data)
+    {
+        QVector<ParenthesisInfo *> infos = data->parentheses();
+        int docPos = currentBlock.position();
 
-    // Match in same line?
-    for (int j=index; j>=0; --j ) {
-        ParenthesisInfo *info = infos.at(j);
+        // Match in same line?
+        for (int j=index; j>=0 && j < infos.size(); --j ) {
+            ParenthesisInfo *info = infos.at(j);
 
-        if ( info->type == type ) {
-            ++numRightPar;
-            continue;
-        }
-
-        if ( info->type == type - ParenthesisInfo::RIGHT)
-        {
-            if( numRightPar == 0 ) {
-                createParSelection( docPos + info->position, info->length );
-                return true;
+            if ( info->type == type ) {
+                ++numRightPar;
+                continue;
             }
-            else
+
+            if ( info->type == type - ParenthesisInfo::RIGHT)
             {
-                --numRightPar;
+                if( numRightPar == 0 ) {
+                    createParSelection( docPos + info->position, info->length );
+                    return  docPos + info->position;
+                }
+                else
+                {
+                    --numRightPar;
+                }
             }
         }
     }
@@ -1231,7 +1268,7 @@ bool WidgetTextEdit::matchRightPar(QTextBlock currentBlock, int type, int index,
     }
 
     // No match at all
-    return false;
+    return -1;
 }
 
 void WidgetTextEdit::createParSelection( int pos, int length )

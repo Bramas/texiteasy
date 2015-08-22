@@ -72,6 +72,13 @@ WidgetStatusBar::WidgetStatusBar(QWidget *parent) :
 
     this->addPermanentWidget(_labelErrorTable);
 
+    _labelWarningPane = new QLabel(QString("<a style='text-decoration:none; color:")+
+                                ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
+                               "' href='#'>"+trUtf8("Warning")+"</a>");
+
+
+    this->addPermanentWidget(_labelWarningPane);
+
 
     _positionLabel = new QLabel("<span>"+trUtf8("Ligne %1, Colonne %2").arg("1").arg("1")+"</span>",this);
     _positionLabel->setStyleSheet(QString("font-size:11px; margin-right:5px; color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color()));
@@ -160,6 +167,7 @@ WidgetStatusBar::WidgetStatusBar(QWidget *parent) :
 
     connect(_labelConsole, SIGNAL(linkActivated(QString)), &FileManager::Instance, SLOT(toggleConsole()));
     connect(_labelErrorTable, SIGNAL(linkActivated(QString)), &FileManager::Instance, SLOT(toggleErrorTable()));
+    connect(_labelWarningPane, SIGNAL(linkActivated(QString)), &FileManager::Instance, SLOT(toggleWarningPane()));
     connect(&FileManager::Instance, SIGNAL(verticalSplitterChanged()), this, SLOT(updateButtons()));
 
 
@@ -245,7 +253,15 @@ void WidgetStatusBar::updateButtons()
 
     // udate Console widget and errorTable widget
      QList<int> sizes= FileManager::Instance.currentWidgetFile()->verticalSplitter()->sizes();
-    if(sizes[2] == 0)
+     if(sizes[2] == 0)
+     {
+         _labelWarningPane->setStyleSheet(QString("background-color:transparent"));
+     }
+     else
+     {
+         _labelWarningPane->setStyleSheet(QString("background-color:")+ ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color().darker(200)));
+     }
+    if(sizes[3] == 0)
     {
         _labelErrorTable->setStyleSheet(QString("background-color:transparent"));
     }
@@ -253,7 +269,7 @@ void WidgetStatusBar::updateButtons()
     {
         _labelErrorTable->setStyleSheet(QString("background-color:")+ ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").background().color().darker(200)));
     }
-    if(sizes[3] == 0)
+    if(sizes[4] == 0)
     {
         _labelConsole->setStyleSheet(QString("background-color:transparent"));
     }
@@ -283,9 +299,12 @@ void WidgetStatusBar::updateTaskPane()
     {
         warnings = " "+QString::number(w->taskPane()->warningTaskCount())+" <img src=\"qrc:/data/img/warning.png\" />";
     }
+    _labelWarningPane->setText(QString("<a style='font-size:12px; margin-top:-3px; text-decoration:none; color:")+
+            ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+ "' href='#'>"+trUtf8("Warning")+warnings+"</a>"
+                );
     _labelErrorTable->setText(QString("<a style='font-size:12px; margin-top:-3px; text-decoration:none; color:")+
                                 ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
-                               "' href='#'>"+trUtf8("Erreurs")+warnings+"</a>");
+                               "' href='#'>"+trUtf8("Erreurs")+"</a>");
 
 }
 
@@ -318,6 +337,11 @@ void WidgetStatusBar::initTheme()
     effect->setColor(ConfigManager::Instance.getTextCharFormats("normal").background().color().darker(darkTheme ? 400 : 130));
     effect->setOffset(darkTheme ? -1 : 1, darkTheme ? -1 : 1);
     _labelErrorTable->setGraphicsEffect(effect);
+    effect= new QGraphicsDropShadowEffect(this);
+    effect->setBlurRadius(0);
+    effect->setColor(ConfigManager::Instance.getTextCharFormats("normal").background().color().darker(darkTheme ? 400 : 130));
+    effect->setOffset(darkTheme ? -1 : 1, darkTheme ? -1 : 1);
+    _labelWarningPane->setGraphicsEffect(effect);
     effect= new QGraphicsDropShadowEffect(this);
     effect->setBlurRadius(0);
     effect->setColor(ConfigManager::Instance.getTextCharFormats("normal").background().color().darker(darkTheme ? 400 : 130));

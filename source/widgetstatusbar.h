@@ -122,6 +122,7 @@ private:
 
     QLabel * _labelConsole;
     QLabel * _labelErrorTable;
+    QLabel * _labelWarningPane;
     bool _errorTableOpen, _consoleOpen;
 };
 

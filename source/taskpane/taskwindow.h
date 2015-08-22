@@ -68,6 +68,8 @@ public:
     void setBuilder(Builder *builder);
     void setWidgetTextEdit(WidgetTextEdit * widgetTextEdit) { _widgetTextEdit = widgetTextEdit; }
 
+    void hideCategory(Id category = ""){ setCategoryVisibility(category, false); }
+
     // IOutputPane
     QWidget *outputWidget();
     QList<QWidget *> toolBarWidgets() const;

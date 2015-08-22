@@ -843,14 +843,17 @@ void TaskWindow::onError()
         case LT_ERROR:
             task.type = Task::Error;
             task.icon = QApplication::style()->standardIcon(QStyle::SP_MessageBoxCritical);
+            task.category = "error";
             break;
         case LT_WARNING:
             task.type = Task::Warning;
             task.icon = QIcon(QPixmap(":/data/img/warning.png"));//QApplication::style()->standardIcon(QStyle::SP_MessageBoxWarning);
+            task.category = "warning";
             break;
         case LT_INFO:
         case LT_BADBOX:
             task.type = Task::Unknown;
+            task.category = "notice";
             //task.icon = QApplication::style()->standardIcon(QStyle::SP_MessageBoxInformation);
             break;
         }

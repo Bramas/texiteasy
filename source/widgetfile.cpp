@@ -48,12 +48,16 @@ WidgetFile::WidgetFile(MainWindow *parent) :
     _widgetConsole      = new WidgetConsole();
     _widgetSimpleOutput = new TaskWindow();
     _widgetSimpleOutput ->setWidgetTextEdit(_widgetTextEdit);
+    _widgetSimpleOutput->hideCategory("error");
+    _warningPane = new TaskWindow();
+    _warningPane ->setWidgetTextEdit(_widgetTextEdit);
+    _warningPane->hideCategory("warning");
 
     _horizontalSplitter = new MiniSplitter(Qt::Horizontal);
     _verticalSplitter = new MiniSplitter(Qt::Vertical);
 
 
-    _consoleHeight = _problemsHeight = 70;
+    _warningPaneHeight = _consoleHeight = _problemsHeight = 70;
 
 
     QGridLayout * layout = new QGridLayout();
@@ -120,8 +124,10 @@ WidgetFile::WidgetFile(MainWindow *parent) :
     _verticalSplitter->addWidget(_editorSplitter);
     _verticalSplitter->addWidget(this->_widgetFindReplace);
     _verticalSplitter->addWidget(this->_widgetSimpleOutput->outputWidget());
+    _verticalSplitter->addWidget(this->_warningPane->outputWidget());
     _verticalSplitter->addWidget(this->_widgetConsole);
 
+    _verticalSplitter->setCollapsible(4,true);
     _verticalSplitter->setCollapsible(3,true);
     _verticalSplitter->setCollapsible(2,true);
 
@@ -150,6 +156,8 @@ WidgetFile::WidgetFile(MainWindow *parent) :
     _widgetConsole->setMaximumHeight(0);
     _widgetSimpleOutput->setBuilder(_widgetTextEdit->getCurrentFile()->getBuilder());
     _widgetSimpleOutput->outputWidget()->setMaximumHeight(0);
+    _warningPane->setBuilder(_widgetTextEdit->getCurrentFile()->getBuilder());
+    _warningPane->outputWidget()->setMaximumHeight(0);
     _widgetTextEdit->selectAll();
     _widgetTextEdit->textCursor().setBlockCharFormat(ConfigManager::Instance.getTextCharFormats("normal"));
     QTextCursor cur(_widgetTextEdit->textCursor());
@@ -209,13 +217,22 @@ void WidgetFile::addWidgetPdfViewerToSplitter()
 bool WidgetFile::isConsoleOpen()
 {
     QList<int> sizes = this->verticalSplitter()->sizes();
-    if(sizes[3] > 0)
+    if(sizes[4] > 0)
     {
         return true;
     }
     return false;
 }
 bool WidgetFile::isErrorTableOpen()
+{
+    QList<int> sizes = this->verticalSplitter()->sizes();
+    if(sizes[3] > 0)
+    {
+        return true;
+    }
+    return false;
+}
+bool WidgetFile::isWarningPaneOpen()
 {
     QList<int> sizes = this->verticalSplitter()->sizes();
     if(sizes[2] > 0)
@@ -237,8 +254,9 @@ void WidgetFile::openConsole()
     QList<int> sizes = this->verticalSplitter()->sizes();
     sizes.replace(0, sizes[0] - _consoleHeight + sizes[3]);
     sizes.replace(2, 0);
-    sizes.replace(3, _consoleHeight);
-    this->verticalSplitter()->widget(3)->setMaximumHeight(height()*2/3);
+    sizes.replace(3, 0);
+    sizes.replace(4, _consoleHeight);
+    this->verticalSplitter()->widget(4)->setMaximumHeight(height()*2/3);
     this->verticalSplitter()->setSizes(sizes);
     emit verticalSplitterChanged();
 }
@@ -253,10 +271,38 @@ void WidgetFile::openErrorTable()
     {
         closeConsole();
     }
+    if(isWarningPaneOpen())
+    {
+        closeWarningPane();
+    }
     QList<int> sizes = this->verticalSplitter()->sizes();
-    sizes.replace(0, sizes[0] - _problemsHeight + sizes[3]);
-    sizes.replace(2, _problemsHeight);
+    sizes.replace(0, sizes[0] - _problemsHeight + sizes[2] + sizes[4]);
+    sizes.replace(3, _problemsHeight);
+    sizes.replace(2, 0);
+    sizes.replace(4, 0);
+    this->verticalSplitter()->widget(3)->setMaximumHeight(height()*2/3);
+    this->verticalSplitter()->setSizes(sizes);
+    emit verticalSplitterChanged();
+}
+void WidgetFile::openWarningPane()
+{
+    if(isWarningPaneOpen())
+    {
+        return;
+    }
+    if(isConsoleOpen())
+    {
+        closeConsole();
+    }
+    if(isErrorTableOpen())
+    {
+        closeErrorTable();
+    }
+    QList<int> sizes = this->verticalSplitter()->sizes();
+    sizes.replace(0, sizes[0] - _warningPaneHeight + sizes[3] + sizes[4]);
+    sizes.replace(2, _warningPaneHeight);
     sizes.replace(3, 0);
+    sizes.replace(4, 0);
     this->verticalSplitter()->widget(2)->setMaximumHeight(height()*2/3);
     this->verticalSplitter()->setSizes(sizes);
     emit verticalSplitterChanged();
@@ -269,10 +315,10 @@ void WidgetFile::closeConsole()
         return;
     }
     QList<int> sizes = this->verticalSplitter()->sizes();
-    _consoleHeight = sizes[3];
-    sizes.replace(0, sizes[0] + sizes[3]);
-    sizes.replace(3, 0);
-    this->verticalSplitter()->widget(3)->setMaximumHeight(0);
+    _consoleHeight = sizes[4];
+    sizes.replace(0, sizes[0] + sizes[4]);
+    sizes.replace(4, 0);
+    this->verticalSplitter()->widget(4)->setMaximumHeight(0);
     this->verticalSplitter()->setSizes(sizes);
     emit verticalSplitterChanged();
 }
@@ -284,7 +330,22 @@ void WidgetFile::closeErrorTable()
         return;
     }
     QList<int> sizes = this->verticalSplitter()->sizes();
-    _problemsHeight = sizes[2];
+    _problemsHeight = sizes[3];
+    sizes.replace(0, sizes[0] + sizes[3]);
+    sizes.replace(3, 0);
+    this->verticalSplitter()->widget(3)->setMaximumHeight(0);
+    this->verticalSplitter()->setSizes(sizes);
+    emit verticalSplitterChanged();
+}
+
+void WidgetFile::closeWarningPane()
+{
+    if(!isWarningPaneOpen())
+    {
+        return;
+    }
+    QList<int> sizes = this->verticalSplitter()->sizes();
+    _warningPaneHeight = sizes[2];
     sizes.replace(0, sizes[0] + sizes[2]);
     sizes.replace(2, 0);
     this->verticalSplitter()->widget(2)->setMaximumHeight(0);
@@ -325,6 +386,17 @@ void WidgetFile::toggleErrorTable()
     else
     {
         openErrorTable();
+    }
+}
+void WidgetFile::toggleWarningPane()
+{
+    if(isWarningPaneOpen())
+    {
+        closeWarningPane();
+    }
+    else
+    {
+        openWarningPane();
     }
 }
 void WidgetFile::builTex(QString command)

@@ -326,6 +326,13 @@ void FileManager::toggleErrorTable()
         this->currentWidgetFile()->toggleErrorTable();
     }
 }
+void FileManager::toggleWarningPane()
+{
+    if(this->currentWidgetFile())
+    {
+        this->currentWidgetFile()->toggleWarningPane();
+    }
+}
 void FileManager::setEncoding(QString codec)
 {
     if(this->currentWidgetFile())
