@@ -1055,6 +1055,7 @@ void ConfigManager::checkRevision()
     case 0x002000:
     case 0x002001:
     case 0x002100:
+    case 0x002101:
 
         break;
     }

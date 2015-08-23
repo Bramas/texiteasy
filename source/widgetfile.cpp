@@ -52,6 +52,7 @@ WidgetFile::WidgetFile(MainWindow *parent) :
     _warningPane = new TaskWindow();
     _warningPane ->setWidgetTextEdit(_widgetTextEdit);
     _warningPane->hideCategory("warning");
+    _warningPane->hideCategory("notice");
 
     _horizontalSplitter = new MiniSplitter(Qt::Horizontal);
     _verticalSplitter = new MiniSplitter(Qt::Vertical);
