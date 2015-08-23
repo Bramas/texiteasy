@@ -150,6 +150,7 @@ public:
         CodeSemanticsSelection,
         UndefinedSymbolSelection,
         UnusedSymbolSelection,
+        UnmatchedBrace,
         FakeVimSelection,
         OtherSelection,
         SnippetPlaceholderSelection,

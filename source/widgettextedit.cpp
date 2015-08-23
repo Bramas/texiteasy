@@ -1072,10 +1072,12 @@ void WidgetTextEdit::matchAll()
     this->matchPar();
     this->matchLat();
     int pos;
+    removeExtraSelections(WidgetTextEdit::UnmatchedBrace);
     if(-1 != (pos = matchRightPar(document()->lastBlock(), ParenthesisInfo::RIGHT_BRACE, document()->lastBlock().length() - 1, 0 )))
     {
         QTextEdit::ExtraSelection selection;
-        QTextCharFormat format = ConfigManager::Instance.getTextCharFormats("matched");
+        QTextCharFormat format;
+        format.setForeground(QBrush(QColor(255,100,100,100)));
         selection.format = format;
 
         QTextCursor cursor = textCursor();
@@ -1085,12 +1087,13 @@ void WidgetTextEdit::matchAll()
 
         QList<QTextEdit::ExtraSelection> selections;
         selections.append( selection );
-        addExtraSelections(selections, WidgetTextEdit::ParenthesesMatchingSelection);
+        addExtraSelections(selections, WidgetTextEdit::UnmatchedBrace);
     }
     if(-1 != (pos = matchLeftPar(document()->firstBlock(), ParenthesisInfo::LEFT_BRACE, 0, 0 )))
     {
         QTextEdit::ExtraSelection selection;
-        QTextCharFormat format = ConfigManager::Instance.getTextCharFormats("matched");
+        QTextCharFormat format;
+        format.setForeground(QBrush(QColor(255,100,100,100)));
         selection.format = format;
 
         QTextCursor cursor = textCursor();
@@ -1100,7 +1103,7 @@ void WidgetTextEdit::matchAll()
 
         QList<QTextEdit::ExtraSelection> selections;
         selections.append( selection );
-        addExtraSelections(selections, WidgetTextEdit::ParenthesesMatchingSelection);
+        addExtraSelections(selections, WidgetTextEdit::UnmatchedBrace);
     }
 }
 
