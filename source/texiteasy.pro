@@ -173,7 +173,9 @@ HEADERS  += mainwindow.h \
     taskpane/taskmodel.h \
     taskpane/taskwindow.h \
     taskpane/task.h \
-    taskpane/icontext.h
+    taskpane/icontext.h \
+    iplugin.h \
+    ipane.h
 
 FORMS    += mainwindow.ui \
     dialogwelcome.ui \
@@ -256,7 +258,7 @@ unix:!mac{
     LATEX_URL = \\\"'http://texiteasy.com/links/latex/linux'\\\"
 }
 mac{
-    #DEFINES += LIB_DEPLOY
+    DEFINES += LIB_DEPLOY
     INCLUDEPATH += /usr/local/include
     LIBS += -L/usr/local/lib -lz -lpoppler-qt5
     ICON = texiteasy.icns

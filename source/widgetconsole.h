@@ -25,9 +25,11 @@
 #include <QScrollArea>
 #include <QPlainTextEdit>
 
+#include "ipane.h"
+
 class Builder;
 
-class WidgetConsole : public QPlainTextEdit
+class WidgetConsole : public IPane
 {
     Q_OBJECT
 public:
