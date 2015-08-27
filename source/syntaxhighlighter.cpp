@@ -64,7 +64,7 @@ QStringList initCommandsWithOptions()
 QStringList initMathEnvironment()
 {
     QStringList list;
-    list << "displaymath" << "equation" ;
+    list << "displaymath" << "equation" << "align" << "eqnarray" << "multline" << "gather" << "flalign" << "alignat" << "gathered" << "split" << "aligned" << "alignedat";
     return list;
 }
 

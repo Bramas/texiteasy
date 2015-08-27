@@ -120,7 +120,7 @@ void Builder::builTex(QString command)
         return;
     }
     _commands.clear();
-    _basename = QFileInfo(file->rootFilename()).fileName();
+    _basename = this->file->rootBasename();
     process->setWorkingDirectory(this->file->getRootPath());
     if(ConfigManager::Instance.hideAuxFiles())
     {
