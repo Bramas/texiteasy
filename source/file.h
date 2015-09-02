@@ -163,7 +163,7 @@ public:
         return "";
     }
 
-    Builder * getBuilder() { return this->builder; }
+    Builder * builder() { return this->_builder; }
 
     /**
      * @brief (not used) getViewer
@@ -228,7 +228,7 @@ private:
     QTimer * _autoSaveTimer;
     QList<AssociatedFile> _associatedFiles;
     QList<File*> _openAssociatedFiles;
-    Builder * builder;
+    Builder * _builder;
     QString _codec;
     QString data;
     QString filename;

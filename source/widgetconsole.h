@@ -28,15 +28,21 @@
 #include "ipane.h"
 
 class Builder;
+class WidgetFile;
 
-class WidgetConsole : public IPane
+class WidgetConsole : public QObject, public IPane
 {
     Q_OBJECT
 public:
-    explicit WidgetConsole();
+    explicit WidgetConsole(WidgetFile * widgetFile);
     ~WidgetConsole();
 
-    void setBuilder(Builder * builder);
+
+
+    QString statusbarText() { return "Console"; }
+    QWidget * paneWidget();
+    QObject * getQObject();
+    QAction * action() { return _action; }
     
 signals:
     void requestLine(int);
@@ -47,17 +53,24 @@ public slots:
     void onSuccess(void);
     void setOutput(QString newText);
 
+    void openMyPane();
+    void closeMyPane();
+
 protected:
     //void paintEvent(QPaintEvent *);
-    void mouseMoveEvent(QMouseEvent * event);
     void mousePressEvent(QMouseEvent * event);
 
+private slots:
+    void updateBuilder();
 
 private:
+
     bool _collapsed;
     int _height;
     Builder * _builder;
-    //QPlainTextEdit * _mainWidget;
+    QPlainTextEdit * _mainWidget;
+    WidgetFile * _widgetFile;
+    QAction * _action;
     
 };
 

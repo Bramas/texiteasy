@@ -1265,9 +1265,11 @@ int WidgetTextEdit::matchRightPar(QTextBlock currentBlock, int type, int index, 
 
         // Recalculate correct index first
         BlockData *data = static_cast<BlockData *>( currentBlock.userData() );
-        QVector<ParenthesisInfo *> infos = data->parentheses();
-
-        return matchRightPar( currentBlock, type, infos.size()-1, numRightPar );
+        if(data)
+        {
+            QVector<ParenthesisInfo *> infos = data->parentheses();
+            return matchRightPar( currentBlock, type, infos.size()-1, numRightPar );
+        }
     }
 
     // No match at all
