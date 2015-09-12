@@ -56,7 +56,9 @@ WidgetStatusBar::WidgetStatusBar(QWidget *parent) :
 
 
     _positionLabel = new QLabel("<span>"+trUtf8("Ligne %1, Colonne %2").arg("1").arg("1")+"</span>",this);
-    _positionLabel->setStyleSheet(QString("font-size:11px; margin-right:5px; color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color()));
+    _positionLabel->setStyleSheet(QString("font-size:11px; "
+                                          "margin-right:5px; "
+                                          "color:")+ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color()));
     this->addPermanentWidget(_positionLabel, 0);
 
     QLabel* messageArea = new QLabel(this);
@@ -147,7 +149,8 @@ WidgetStatusBar::WidgetStatusBar(QWidget *parent) :
 
 
 
-    this->setMaximumHeight(25);
+    //this->setMaximumHeight(25);
+    this->setContentsMargins(0,0,0,0);
 }
 
 WidgetStatusBar::~WidgetStatusBar()
@@ -502,7 +505,7 @@ static char outputPaneSettingsKeyC[] = "OutputPaneVisibility";
 static char outputPaneIdKeyC[] = "id";
 static char outputPaneVisibleKeyC[] = "visible";
 static const int numberAreaWidth = 19;
-static const int buttonBorderWidth = 3;
+static const int buttonBorderWidth = 10;
 
 
 OutputPaneToggleButton::OutputPaneToggleButton(int number, const QString &text,
@@ -525,6 +528,7 @@ OutputPaneToggleButton::OutputPaneToggleButton(int number, const QString &text,
     m_flashTimer->setFrameRange(0, 92);
     connect(m_flashTimer, SIGNAL(valueChanged(qreal)), this, SLOT(update()));
     connect(m_flashTimer, SIGNAL(finished()), this, SLOT(update()));
+    this->setMinimumHeight(25);
 }
 
 void OutputPaneToggleButton::updateToolTip()
@@ -540,10 +544,10 @@ QSize OutputPaneToggleButton::sizeHint() const
     QSize s = fontMetrics().size(Qt::TextSingleLine, m_text);
 
     // Expand to account for border image
-    s.rwidth() += numberAreaWidth + 1 + buttonBorderWidth + buttonBorderWidth;
+    s.rwidth() += 1 + buttonBorderWidth + buttonBorderWidth;// + numberAreaWidth;
 
-    if (!m_badgeNumberLabel.text().isNull())
-        s.rwidth() += m_badgeNumberLabel.sizeHint().width() + 1;
+    //if (!m_badgeNumberLabel.text().isNull())
+    //    s.rwidth() += m_badgeNumberLabel.sizeHint().width() + 1;
 
     return s.expandedTo(QApplication::globalStrut());
 }
@@ -613,17 +617,18 @@ void drawCornerImage(const QImage &img, QPainter *painter, const QRect &rect,
 }
 void OutputPaneToggleButton::paintEvent(QPaintEvent*)
 {
+    QPainter p(this);
+    const QFontMetrics fm = fontMetrics();
+    const int baseLine = (height() - fm.height() + 1) / 2 + fm.ascent();
+    /*
     static const QImage panelButton(dpiSpecificImageFile(QStringLiteral(":/data/img/panel_button.png")));
     static const QImage panelButtonHover(dpiSpecificImageFile(QStringLiteral(":/data/img/panel_button_hover.png")));
     static const QImage panelButtonPressed(dpiSpecificImageFile(QStringLiteral(":/data/img/panel_button_pressed.png")));
     static const QImage panelButtonChecked(dpiSpecificImageFile(QStringLiteral(":/data/img/panel_button_checked.png")));
     static const QImage panelButtonCheckedHover(dpiSpecificImageFile(QStringLiteral(":/data/img/panel_button_checked_hover.png")));
 
-    const QFontMetrics fm = fontMetrics();
-    const int baseLine = (height() - fm.height() + 1) / 2 + fm.ascent();
     const int numberWidth = fm.width(m_number);
 
-    QPainter p(this);
 
     QStyleOption styleOption;
     styleOption.initFrom(this);
@@ -644,43 +649,31 @@ void OutputPaneToggleButton::paintEvent(QPaintEvent*)
             image = hovered ? &panelButtonHover : &panelButton;
         if (image)
             drawCornerImage(*image, &p, rect(), numberAreaWidth, buttonBorderWidth, buttonBorderWidth, buttonBorderWidth);
-    }
-    /*else {
-
-        QColor c;
-        if (isChecked()) {
-            c = creatorTheme()->color(hovered ? Theme::BackgroundColorHover
-                                              : Theme::BackgroundColorSelected);
-        } else if (isDown()) {
-            c = creatorTheme()->color(Theme::BackgroundColorSelected);
-        } else {
-            c = creatorTheme()->color(hovered ? Theme::BackgroundColorHover
-                                              : Theme::BackgroundColorDark);
-        }
-        p.fillRect(rect(), c);
     }*/
 
-    /*if (m_flashTimer->state() == QTimeLine::Running)
+    if(isChecked())
     {
-        QColor c = creatorTheme()->color(Theme::OutputPaneButtonFlashColor);
-        c.setAlpha (m_flashTimer->currentFrame());
-        QRect r = (creatorTheme()->widgetStyle() == Theme::StyleFlat)
-                  ? rect() : rect().adjusted(numberAreaWidth, 1, -1, -1);
-        p.fillRect(r, c);
-    }*/
+        p.save();
+        p.setBrush(QBrush(ConfigManager::Instance.getTextCharFormats("selected-line").background().color()));
+        p.setPen(QPen(ConfigManager::Instance.getTextCharFormats("selected-line").background().color().darker(50)));
+        QRect r = rect();
+        r.setBottomRight(r.bottomRight() - QPoint(1,1));
+        p.drawRect(r);
+        p.restore();
+    }
 
     p.setFont(font());
-    p.setPen(QPen(QColor(210,210,210)));
-    p.drawText((numberAreaWidth - numberWidth) / 2, baseLine, m_number);
+    p.setPen(QPen(ConfigManager::Instance.getTextCharFormats("normal").foreground().color()));
+    //p.drawText((numberAreaWidth - numberWidth) / 2, baseLine, m_number);
     if (!isChecked())
-        p.setPen(QPen(QColor(50,50,50)));
-    int leftPart = numberAreaWidth + buttonBorderWidth;
+        p.setPen(QPen(ConfigManager::Instance.getTextCharFormats("normal").foreground().color()));
+    int leftPart = buttonBorderWidth; //numberAreaWidth + buttonBorderWidth;
     int labelWidth = 0;
-    if (!m_badgeNumberLabel.text().isEmpty()) {
+    /*if (!m_badgeNumberLabel.text().isEmpty()) {
         const QSize labelSize = m_badgeNumberLabel.sizeHint();
         labelWidth = labelSize.width() + 3;
         m_badgeNumberLabel.paint(&p, width() - labelWidth, (height() - labelSize.height()) / 2, isChecked());
-    }
+    }*/
     p.drawText(leftPart, baseLine, fm.elidedText(m_text, Qt::ElideRight, width() - leftPart - 1 - labelWidth));
 }
 

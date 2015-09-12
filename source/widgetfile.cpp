@@ -141,7 +141,7 @@ WidgetFile::WidgetFile(MainWindow *parent) :
         pane->paneWidget()->hide();
     }
 
-    //_verticalSplitter->addWidget(this->_widgetFindReplace);
+    _verticalSplitter->addWidget(this->_widgetFindReplace);
     //_verticalSplitter->addWidget(this->_widgetSimpleOutput->outputWidget());
     //_verticalSplitter->addWidget(this->_warningPane->outputWidget());
     //_verticalSplitter->addWidget(this->_widgetConsole->paneWidget());

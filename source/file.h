@@ -191,6 +191,7 @@ public:
     WidgetFile * widgetFile() { return _widgetFile; }
 
     const QMap<QString, QString> & texDirectives(){ return _texDirectives; }
+    void addTexDirective(const QString key, const QString value){ _texDirectives[key] = value; }
 
     void removeAutosaveFile();
 public slots:

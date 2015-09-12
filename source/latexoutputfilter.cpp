@@ -667,7 +667,7 @@ bool LatexOutputFilter::detectError(const QString & strLine, short &dwCookie)
                 m_currentItem.oldline=reLineNumber.cap(2).toInt();
                 m_currentItem.message=m_currentItem.message + reLineNumber.cap(3);
 			}
-            else // if(GetCurrentOutputLine() - m_currentItem.logline > 10)
+            else if(GetCurrentOutputLine() - m_currentItem.logline > 10)
             {
 				dwCookie = Start;
 				flush = true;
