@@ -377,7 +377,7 @@ void TaskWindow::openTask(unsigned int id)
 
 void TaskWindow::triggerDefaultHandler(const QModelIndex &index)
 {
-    //qDebug()<<index.isValid();
+
     if (!index.isValid())
         return;
     Task task(d->m_model->task(index));
@@ -397,18 +397,19 @@ void TaskWindow::triggerDefaultHandler(const QModelIndex &index)
         }
     }
     //qDebug()<<_widgetTextEdit->getCurrentFile()->getFilename();
-    //qDebug()<<task.file;
+    //qDebug()<<task.description<<task.movedLine<<task.line;
     if (!found && _widgetTextEdit->getCurrentFile()->getFilename() != task.file)
         return;
 
     QString err = task.description;
     int line = task.movedLine;
-    QRegExp undefinedCommand("Undefined control sequence.* (\\\\[a-zA-Z]+)");
     QString search("");
+    /*QRegExp undefinedCommand("Undefined control sequence.* (\\\\[a-zA-Z]+)");
+
     if(err.indexOf(undefinedCommand) != -1)
     {
         search = undefinedCommand.capturedTexts().at(1);
-    }
+    }*/
     this->_widgetTextEdit->widgetFile()->window()->open(task.file);
     WidgetFile * w = FileManager::Instance.widgetFile(task.file);
     if(w){
@@ -872,6 +873,7 @@ void TaskWindow::onError()
             task.type = Task::Error;
             task.icon = QApplication::style()->standardIcon(QStyle::SP_MessageBoxCritical);
             task.category = "error";
+            //qDebug()<<logEntry.oldline<<logEntry.logline<<task.movedLine<<task.line;
             break;
         case LT_WARNING:
             task.type = Task::Warning;
@@ -885,6 +887,9 @@ void TaskWindow::onError()
             //task.icon = QApplication::style()->standardIcon(QStyle::SP_MessageBoxInformation);
             break;
         }
-        this->addTask(task);
+        if(_acceptedTaskCategories.contains(task.category))
+        {
+            this->addTask(task);
+        }
     }
 }

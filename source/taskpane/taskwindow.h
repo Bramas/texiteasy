@@ -79,7 +79,7 @@ public:
     void setBuilder(Builder *builder);
     void setWidgetTextEdit(WidgetTextEdit * widgetTextEdit) { _widgetTextEdit = widgetTextEdit; }
 
-    void hideCategory(Id category = ""){ setCategoryVisibility(category, false); }
+    void showCategory(Id category = ""){ _acceptedTaskCategories << category; }
 
     // IOutputPane
     QWidget *outputWidget();
@@ -154,6 +154,7 @@ private:
     bool _openPaneOnError;
     QAction * _action;
     QString _statusbarText;
+    QSet<Id> _acceptedTaskCategories;
 };
 
 

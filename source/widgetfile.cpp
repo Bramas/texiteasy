@@ -50,17 +50,17 @@ WidgetFile::WidgetFile(MainWindow *parent) :
 
     _widgetSimpleOutput = new TaskWindow();
     _widgetSimpleOutput ->setWidgetTextEdit(_widgetTextEdit);
-    _widgetSimpleOutput->hideCategory("error");
-    _widgetSimpleOutput->setStatusbarText(trUtf8("Warning"));
-    _panes.prepend(_widgetSimpleOutput);
+    _widgetSimpleOutput->showCategory("error");
+    _widgetSimpleOutput->openPaneOnError(true);
+    _widgetSimpleOutput->setStatusbarText(trUtf8("Erreurs"));
 
     _warningPane = new TaskWindow();
     _warningPane ->setWidgetTextEdit(_widgetTextEdit);
-    _warningPane->hideCategory("warning");
-    _warningPane->hideCategory("notice");
-    _warningPane->openPaneOnError(true);
-    _warningPane->setStatusbarText(trUtf8("Erreurs"));
+    _warningPane->showCategory("warning");
+    _warningPane->showCategory("notice");
+    _warningPane->setStatusbarText(trUtf8("Warning"));
     _panes.prepend(_warningPane);
+    _panes.prepend(_widgetSimpleOutput);
 
     _panes.prepend(new WidgetConsole(this));
 
