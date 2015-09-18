@@ -32,6 +32,7 @@
 #include <QFontDatabase>
 #include <QRegExp>
 #include <QFileDialog>
+#include <QDesktopServices>
 
 DialogConfig::DialogConfig(MainWindow *parent) :
     QDialog(parent),
@@ -51,6 +52,7 @@ DialogConfig::DialogConfig(MainWindow *parent) :
     connect(this->ui->pushButton_removeLatex, SIGNAL(clicked()), this, SLOT(deleteSelectedLatex()));
     connect(this->ui->pushButton_browseLatexPath, SIGNAL(clicked()), this, SLOT(selectBinDirectory()));
     connect(this->ui->pushButton_svnPath, SIGNAL(clicked()), this, SLOT(selectSvnDirectory()));
+    connect(this->ui->OpenCustoCompletionFolderPushButton, SIGNAL(clicked()), this, SLOT(openCustoCompletionFolder()));
 
     this->ui->listWidget->setCurrentRow(0);
 
@@ -109,6 +111,11 @@ void DialogConfig::changePage(int currentRow)
         //case 1:
             this->ui->stackedWidget->setCurrentIndex(currentRow);
     }
+}
+
+void DialogConfig::openCustoCompletionFolder()
+{
+    QDesktopServices::openUrl(QUrl("file:///" + ConfigManager::Instance.customCompletionFolder()));
 }
 
 void DialogConfig::saveAndClose()
@@ -183,6 +190,17 @@ void DialogConfig::save()
         action->setShortcuts(list);
         settings.setValue(action->objectName(), strList);
     }
+
+    // Page Complétion
+
+    QStringList newCompletionFiles;
+    QListWidgetItem *elem;
+    for (int i=0; i < ui->completionListWidget->count(); i++) {
+        elem = ui->completionListWidget->item(i);
+        if (elem->checkState()==Qt::Checked)
+            newCompletionFiles.append(elem->data(Qt::DecorationRole).toString());
+    }
+    ConfigManager::Instance.setCompletionFiles(newCompletionFiles);
 
     ConfigManager::Instance.sendChangedSignal();
 
@@ -285,6 +303,24 @@ void DialogConfig::show()
         item = new QTableWidgetItem(trUtf8("Raccourci"));
         ui->tableWidget_keyBinding->setHorizontalHeaderItem(1, item);
     }
+
+
+    // Page Completion
+
+    QDir completionDir(":/completion");
+    QStringList completionFiles = ConfigManager::Instance.completionFiles();
+    foreach(const QString& elem, completionDir.entryList(QDir::Files | QDir::Readable)) {
+        QListWidgetItem *item = new QListWidgetItem(elem, ui->completionListWidget);
+        QString filename = ":/completion/"+elem;
+        item->setData(Qt::DecorationRole, filename);
+        item->setFlags(Qt::ItemIsUserCheckable|Qt::ItemIsEnabled);
+        if (completionFiles.contains(filename))
+            item->setCheckState(Qt::Checked);
+        else
+            item->setCheckState(Qt::Unchecked);
+    }
+
+    ui->CustomCompletionFolderLineEdit->setText(ConfigManager::Instance.customCompletionFolder());
 
     QDialog::show();
 }

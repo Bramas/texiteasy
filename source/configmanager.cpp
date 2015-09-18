@@ -98,6 +98,14 @@ const QStringList ConfigManager::DefaultLatexCommands =
 const QStringList ConfigManager::DefaultLatexCommandNames =
         QString("PdfLatex\nXeLatex\nLatexmk\nLatex + dvipdfm\nLatex + dvips + ps2pdf\nMakeIndex").split('\n');
 
+
+const QStringList ConfigManager::DefaultCompletionFiles = QString(
+            ":/completion/tex.cwl\n"
+            ":/completion/latex-document.cwl\n"
+            ":/completion/latex-mathsymbols.cwl\n"
+            ":/completion/amsmath.cwl"
+            ).split('\n');
+
 const QStringList ConfigManager::CodecsAvailable =
         QString("UTF-8\n\nApple Roman\nBig5\nBig5-HKSCS\nCP949\nEUC-JP\nEUC-KR\nGB18030-0\nIBM 850\nIBM 866\nIBM 874\nISO 2022-JP\nISO 8859-*/ISO 8859-1\n-/ISO 8859-2\n-/ISO 8859-3\n-/ISO 8859-4\n-/ISO 8859-5\n-/ISO 8859-6\n-/ISO 8859-7\n-/ISO 8859-8\n-/ISO 8859-9\n-/ISO 8859-10\n-/ISO 8859-13\n-/ISO 8859-14\n-/ISO 8859-15\n-/ISO 8859-16\nIscii-*/Iscii-Bng\n-/Iscii-Dev\n-/Iscii-Gjr\n-/Iscii-Knd\n-/Iscii-Mlm\n-/Iscii-Ori\n-/Iscii-Pnj\n-/Iscii-Tlg\n-/Iscii-Tml\nJIS X 0201\nJIS X 0208\nKOI8-R\nKOI8-U\nShift-JIS\nTIS-620\nTSCII\nUTF-8\nUTF-16\nUTF-16BE\nUTF-16LE\nUTF-32\nUTF-32BE\nUTF-32LE\nWindows-*/Windows-1250\n-/Windows-1251\n-/Windows-1252\n-/Windows-1253\n-/Windows-1254\n-/Windows-1255\n-/Windows-1256\n-/Windows-1257\n-/Windows-1258\n").split('\n');
 
@@ -516,6 +524,22 @@ QStringList ConfigManager::userDictionnary(QString dico)
         list.append(word);
     }
     return list;
+}
+
+QStringList ConfigManager::completionFiles()
+{
+     QSettings settings;
+     QStringList list = settings.value("completionFiles", ConfigManager::DefaultCompletionFiles).toStringList();
+
+     QDir completionDir(customCompletionFolder());
+     foreach(const QString& elem, completionDir.entryList(QDir::Files | QDir::Readable)) {
+        list << customCompletionFolder()+"/"+elem;
+     }
+     return list;
+}
+QString ConfigManager::customCompletionFolder()
+{
+    return dataLocation()+"/completion/";
 }
 
 QStringList ConfigManager::themesList()
@@ -1056,6 +1080,9 @@ void ConfigManager::checkRevision()
     case 0x002001:
     case 0x002100:
     case 0x002101:
+    case 0x002102:
+    case 0x002103:
+        QDir().mkpath(customCompletionFolder());
 
         break;
     }
