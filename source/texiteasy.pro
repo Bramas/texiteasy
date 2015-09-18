@@ -16,7 +16,7 @@ APPLICATION_NAME = \\\"'TexitEasy'\\\"
 VERSION = \\\"'0.21.1'\\\"
 VERSION_HEX = 0x002101
 
-#CONFIG += c++11
+CONFIG += c++11
 #QMAKE_CXXFLAGS += -std=c++0x
 
 
@@ -173,7 +173,9 @@ HEADERS  += mainwindow.h \
     taskpane/taskmodel.h \
     taskpane/taskwindow.h \
     taskpane/task.h \
-    taskpane/icontext.h
+    taskpane/icontext.h \
+    iplugin.h \
+    ipane.h
 
 FORMS    += mainwindow.ui \
     dialogwelcome.ui \

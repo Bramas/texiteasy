@@ -27,23 +27,23 @@
 #include <QSizePolicy>
 #include <QTextBlock>
 #include <QScrollBar>
+#include <QAction>
+#include "widgetfile.h"
 #include "builder.h"
 #include "filemanager.h"
 
-WidgetConsole::WidgetConsole() :
-    QPlainTextEdit(0),
-    //_mainWidget(new QPlainTextEdit()),
-    _builder(0)
+WidgetConsole::WidgetConsole(WidgetFile *widgetFile) :
+    _builder(0),
+    _mainWidget(new QPlainTextEdit(0)),
+    _widgetFile(widgetFile)
 {
+    _action = new QAction(statusbarText(), 0);
+    _action->setCheckable(true);
     _height = 100;
     _collapsed = true;
-    //this->setWidget(_mainWidget);
-    //this->setMaximumHeight(10);
-    this->setMinimumHeight(0);
-    this->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
-    this->setMouseTracking(true);
-    this->setReadOnly(true);
-
+    _mainWidget->setReadOnly(true);
+    this->updateBuilder();
+    connect(_widgetFile, SIGNAL(opened()), this, SLOT(updateBuilder()));
 }
 
 WidgetConsole::~WidgetConsole()
@@ -52,18 +52,21 @@ WidgetConsole::~WidgetConsole()
     qDebug()<<"delete WidgetConsole";
 #endif
 }
-/*
-void WidgetConsole::paintEvent(QPaintEvent *)
-{
-    QPainter painter(this);
 
-    painter.setBrush(QBrush(QColor(200,0,0)));
-    painter.drawRect(0,0,100,100);
-}*/
 
-void WidgetConsole::setBuilder(Builder *builder)
+QWidget * WidgetConsole::paneWidget()
 {
-    this->_builder = builder;
+    return _mainWidget;
+}
+
+QObject * WidgetConsole::getQObject()
+{
+    return this;
+}
+
+void WidgetConsole::updateBuilder()
+{
+    this->_builder = _widgetFile->file()->builder();
     if(!this->_builder || !FileManager::Instance.currentWidgetFile())
     {
         return;
@@ -71,27 +74,30 @@ void WidgetConsole::setBuilder(Builder *builder)
 
     connect(_builder, SIGNAL(error()),this, SLOT(onError()));
     connect(_builder, SIGNAL(success()),this, SLOT(onSuccess()));
-    connect(_builder, SIGNAL(started()), this, SLOT(clear()));
-    connect(_builder, SIGNAL(started()), FileManager::Instance.currentWidgetFile(), SLOT(openConsole()));
-    connect(_builder, SIGNAL(success()), FileManager::Instance.currentWidgetFile(), SLOT(closeConsole()));
+    connect(_builder, SIGNAL(started()), _mainWidget, SLOT(clear()));
+    connect(_builder, SIGNAL(started()), this, SLOT(openMyPane()));
+    connect(_builder, SIGNAL(success()), this, SLOT(closeMyPane()));
     connect(_builder, SIGNAL(outputUpdated(QString)), this, SLOT(setOutput(QString)));
 }
 
-void WidgetConsole::mouseMoveEvent(QMouseEvent * event)
+void WidgetConsole::openMyPane()
 {
-    QPlainTextEdit::mouseMoveEvent(event);
-    if(event->modifiers() == Qt::CTRL)
+    if(FileManager::Instance.currentWidgetFile())
     {
-        this->setCursor(Qt::PointingHandCursor);
-    }
-    else
-    {
-        this->setCursor(Qt::ArrowCursor);
+        FileManager::Instance.currentWidgetFile()->openPane(this);
     }
 }
+void WidgetConsole::closeMyPane()
+{
+    if(FileManager::Instance.currentWidgetFile())
+    {
+        FileManager::Instance.currentWidgetFile()->closePane(this);
+    }
+}
+
 void WidgetConsole::mousePressEvent(QMouseEvent *event)
 {
-    QPlainTextEdit::mousePressEvent(event);
+    /*QPlainTextEdit::mousePressEvent(event);
     if(event->modifiers() == Qt::CTRL)
     {
         //this->setCursor(Qt::PointingHandCursor);
@@ -103,12 +109,12 @@ void WidgetConsole::mousePressEvent(QMouseEvent *event)
             int lineNumber = text.mid(2,firstSpace-2).toInt();
             emit requestLine(lineNumber);
         }
-    }
+    }*/
 }
 
 void WidgetConsole::expand()
 {
-    if(_collapsed || this->maximumHeight()==0)
+    if(_collapsed)
     {
         _collapsed = false;
         //this->setMaximumHeight(_height);
@@ -140,15 +146,15 @@ void WidgetConsole::onSuccess()
 void WidgetConsole::setOutput(QString newText)
 {
     bool atEnd = false;
-    if(this->verticalScrollBar()->value() == this->verticalScrollBar()->maximum())
+    if(_mainWidget->verticalScrollBar()->value() == _mainWidget->verticalScrollBar()->maximum())
     {
         atEnd = true;
     }
-    this->setPlainText(newText);
+    _mainWidget->setPlainText(newText);
     if(atEnd)
     {
         //qDebug()<<this->verticalScrollBar()->maximum();
-        this->verticalScrollBar()->setValue(this->verticalScrollBar()->maximum());
+        _mainWidget->verticalScrollBar()->setValue(_mainWidget->verticalScrollBar()->maximum());
         //this->scroll();
     }
 }

@@ -163,7 +163,7 @@ public:
         return "";
     }
 
-    Builder * getBuilder() { return this->builder; }
+    Builder * builder() { return this->_builder; }
 
     /**
      * @brief (not used) getViewer
@@ -191,6 +191,7 @@ public:
     WidgetFile * widgetFile() { return _widgetFile; }
 
     const QMap<QString, QString> & texDirectives(){ return _texDirectives; }
+    void addTexDirective(const QString key, const QString value){ _texDirectives[key] = value; }
 
     void removeAutosaveFile();
 public slots:
@@ -228,7 +229,7 @@ private:
     QTimer * _autoSaveTimer;
     QList<AssociatedFile> _associatedFiles;
     QList<File*> _openAssociatedFiles;
-    Builder * builder;
+    Builder * _builder;
     QString _codec;
     QString data;
     QString filename;

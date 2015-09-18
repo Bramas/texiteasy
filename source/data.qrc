@@ -13,5 +13,17 @@
         <file>translations/texiteasy_zh.qm</file>
         <file>themes/dark.texiteasy-theme</file>
         <file>themes/light.texiteasy-theme</file>
+        <file>data/img/panel_button_checked_hover.png</file>
+        <file>data/img/panel_button_checked_hover@2x.png</file>
+        <file>data/img/panel_button_checked.png</file>
+        <file>data/img/panel_button_checked@2x.png</file>
+        <file>data/img/panel_button_hover.png</file>
+        <file>data/img/panel_button_hover@2x.png</file>
+        <file>data/img/panel_button_pressed.png</file>
+        <file>data/img/panel_button_pressed@2x.png</file>
+        <file>data/img/panel_button.png</file>
+        <file>data/img/panel_button@2x.png</file>
+        <file>data/img/panel_manage_button.png</file>
+        <file>data/img/panel_manage_button@2x.png</file>
     </qresource>
 </RCC>

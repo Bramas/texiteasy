@@ -41,6 +41,7 @@
 #include <QToolButton>
 #include <QScrollBar>
 #include <QListView>
+#include "ipane.h"
 #include "taskmodel.h"
 typedef QObject IOutputPane;
 typedef QString Id;
@@ -51,7 +52,7 @@ class WidgetTextEdit;
 class TaskWindowPrivate;
 
 // Show issues (warnings or errors) and open the editor on click.
-class TaskWindow : public IOutputPane
+class TaskWindow : public IOutputPane, public IPane
 {
     Q_OBJECT
 
@@ -59,7 +60,17 @@ public:
     TaskWindow();
     virtual ~TaskWindow();
 
+
+    QString statusbarText() { return _statusbarText; }
+    void setStatusbarText(QString text) { _statusbarText = text; }
+    QWidget * paneWidget();
+    QObject * getQObject() { return this; }
+    QAction * action() { return _action; }
+
+
     void delayedInitialization();
+
+    void openPaneOnError(bool b) { _openPaneOnError = b; }
 
     int taskCount(Id category = "") const;
     int warningTaskCount(Id category = "") const;
@@ -68,7 +79,7 @@ public:
     void setBuilder(Builder *builder);
     void setWidgetTextEdit(WidgetTextEdit * widgetTextEdit) { _widgetTextEdit = widgetTextEdit; }
 
-    void hideCategory(Id category = ""){ setCategoryVisibility(category, false); }
+    void showCategory(Id category = ""){ _acceptedTaskCategories << category; }
 
     // IOutputPane
     QWidget *outputWidget();
@@ -99,7 +110,10 @@ public slots:
     void setIconBadgeNumber(int number) { emit setBadgeNumber(number); }
 
 
+private slots:
 
+    void openMyPane();
+    void closeMyPane();
 
 signals:
     void tasksChanged();
@@ -137,6 +151,10 @@ private:
     WidgetTextEdit * _widgetTextEdit;
     Builder * _builder;
     TaskWindowPrivate *d;
+    bool _openPaneOnError;
+    QAction * _action;
+    QString _statusbarText;
+    QSet<Id> _acceptedTaskCategories;
 };
 
 

@@ -20,6 +20,7 @@ class SyntaxHighlighter;
 class MainWindow;
 class File;
 class Hunspell;
+class IPane;
 
 class WidgetFile : public QWidget
 {
@@ -77,26 +78,25 @@ public:
         Q_UNUSED(s);
     }
 
+    QList<IPane*> & panes() { return _panes; }
+
 signals:
     void verticalSplitterChanged();
+    void opened();
 
 public slots:
     WidgetTextEdit * widgetTextEdit() { return _widgetTextEdit; }
     WidgetTextEdit * widgetTextEdit2() { return _widgetTextEdit2; }
 
+    void closeCurrentPane();
+    void openPane(IPane * pane);
+    void closePane(IPane * pane);
+    void togglePane(IPane * pane);
+    bool isPaneOpen(IPane * pane);
+
     bool isEditorSplited();
     void splitEditor(bool split);
-    void openConsole(void);
-    void openErrorTable(void);
-    void openWarningPane(void);
 
-    void closeErrorTable(void);
-    void closeConsole(void);
-    void closeWarningPane(void);
-
-    void toggleErrorTable(void);
-    void toggleConsole(void);
-    void toggleWarningPane(void);
 
     void openFindReplaceWidget(void);
     void closeFindReplaceWidget(void);
@@ -120,6 +120,8 @@ private:
     MainWindow * _window;
     WidgetFile * _masterFile;
     int _consoleHeight, _problemsHeight, _warningPaneHeight;
+    QList<IPane*> _panes;
+    IPane * _currentPane;
 };
 
 Q_DECLARE_METATYPE(WidgetFile*)

@@ -38,7 +38,7 @@ AssociatedFile AssociatedFile::NoAssociation = { AssociatedFile::NONE, QString()
 
 File::File(WidgetFile *widgetFile, WidgetTextEdit* widgetTextEdit, QString filename) :
     _autoSaveTimer(new QTimer),
-    builder(new Builder(this)),
+    _builder(new Builder(this)),
     _codec(""),
     filename(filename),
     _modified(false),
@@ -52,7 +52,7 @@ File::File(WidgetFile *widgetFile, WidgetTextEdit* widgetTextEdit, QString filen
 File::~File()
 {
     removeAutosaveFile();
-    delete builder;
+    delete _builder;
     delete _autoSaveTimer;
 }
 void File::removeAutosaveFile()
