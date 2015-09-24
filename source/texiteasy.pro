@@ -13,8 +13,8 @@ TEMPLATE = app
 
 APPLICATION_NAME = \\\"'TexitEasy'\\\"
 
-VERSION = \\\"'0.21.1'\\\"
-VERSION_HEX = 0x002101
+VERSION = \\\"'0.21.3'\\\"
+VERSION_HEX = 0x002103
 
 CONFIG += c++11
 #QMAKE_CXXFLAGS += -std=c++0x

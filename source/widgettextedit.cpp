@@ -374,6 +374,11 @@ bool WidgetTextEdit::isCursorVisible()
 
 void WidgetTextEdit::onCursorPositionChange()
 {
+    if(_widgetLineNumber)
+    {
+        _widgetLineNumber->removeHighlight();
+    }
+
     this->removeExtraSelections(WidgetTextEdit::ArgumentSelection);
     this->removeExtraSelections(WidgetTextEdit::ParenthesesMatchingSelection);
     _textStruct->environmentPath(textCursor().position());
@@ -1780,6 +1785,20 @@ void WidgetTextEdit::unfold(int start)
     viewport()->update();
     _widgetLineNumber->update();
     //ensureCursorVisible();
+}
+
+void WidgetTextEdit::highlightSearchResult(const QTextCursor &searchResult)
+{
+    // TODO: add Overlay to have a catchy selection
+
+    /*QList<QTextEdit::ExtraSelection> extraSelections;
+    QTextEdit::ExtraSelection selection;
+    selection.format.setUnderlineColor(ConfigManager::Instance.getTextCharFormats("search-result").background().color());
+    selection.format.setUnderlineStyle(QTextCharFormat::SingleUnderline);
+    selection.format.setFontWeight(100);
+    selection.cursor = QTextCursor(searchResult);
+    extraSelections.append(selection);
+    addExtraSelections(extraSelections, WidgetTextEdit::SearchResultSelection);*/
 }
 
 void WidgetTextEdit::goToSection(QString sectionName)

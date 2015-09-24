@@ -1072,7 +1072,6 @@ void ConfigManager::checkRevision()
     case 0x001702:
     case 0x001800:
     case 0x001801:
-        resetThemes();
     case 0x001802:
     case 0x001900:
     case 0x001901:
@@ -1081,8 +1080,9 @@ void ConfigManager::checkRevision()
     case 0x002100:
     case 0x002101:
     case 0x002102:
-    case 0x002103:
         QDir().mkpath(customCompletionFolder());
+    case 0x002103:
+        resetThemes();
 
         break;
     }

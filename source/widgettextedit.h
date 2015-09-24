@@ -110,6 +110,8 @@ public:
     void fold(int start, int end);
     void unfold(int start);
 
+    WidgetLineNumber * lineNumberWidget() { return _widgetLineNumber; }
+    void highlightSearchResult(const QTextCursor &searchResult);
 
     static QScriptValue toScriptValue(QScriptEngine *engine, WidgetTextEdit* const &s)
     {
@@ -157,7 +159,8 @@ public:
         ObjCSelection,
         DebuggerExceptionSelection,
         ArgumentSelection,
-        AllSelection
+        AllSelection,
+        SearchResultSelection
     };
 signals:
     void updateFirstVisibleBlock(int,int);

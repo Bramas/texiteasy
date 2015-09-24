@@ -15,6 +15,7 @@ textedit-border=" foreground(14, 16, 15)  background(58, 60, 50) "
 other=" foreground(218, 205, 217)"
 matched="font(bold )  foreground(242, 230, 100)  background(100, 111, 242) "
 selection=" foreground(248, 248, 242)  background(80, 86, 76) "
+highlighted-linenumber=" foreground(248, 248, 10)"
 
 tab-text="foreground(153, 153, 137)"
 tab-active-text="foreground(178, 178, 160)"
