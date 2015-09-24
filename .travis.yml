@@ -4,8 +4,11 @@ compiler:
   - clang
 
 before_install:
-    - sudo apt-get install qtbase5-dev qt5-qmake qtbase5-dev-tools libpoppler-qt5-dev zlib1g-dev
+    - sudo add-apt-repository --yes ppa:ubuntu-sdk-team/ppa
+    - sudo apt-get update -qq 
+    - sudo apt-get install -qq qtbase5-dev qt5-qmake qtbase5-dev-tools libpoppler-qt5-dev zlib1g-dev libqt5xml5 libqt5network5 libqt5sql5 libqt5script5
+script:
 script:
     - cd source
-    - qmake texiteasy.pro
+    - qmake -qt=qt5 texiteasy.pro
     - make -j 4
