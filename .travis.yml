@@ -4,7 +4,7 @@ compiler:
   - clang
 
 before_install:
-    - sudo apt-get install libqt4-dev qt4-qmake libpoppler-qt4-dev zlib1g-dev
+    - sudo apt-get install qtbase5-dev qt5-qmake qtbase5-dev-tools libpoppler-qt5-dev zlib1g-dev
 script:
     - cd source
     - qmake texiteasy.pro
