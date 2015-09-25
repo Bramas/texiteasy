@@ -570,7 +570,11 @@ QSize OutputPaneToggleButton::sizeHint() const
 QString dpiSpecificImageFile(const QString &fileName)
 {
     // See QIcon::addFile()
-    if (qApp->devicePixelRatio() > 1.0) {
+    qreal ratio = 1.0;
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+    ratio = qApp->devicePixelRatio(); // 2 if retina, 1 otherwise
+#endif
+    if (ratio > 1.0) {
         const QFileInfo fi(fileName);
         const QString at2xfileName = fi.path() + QLatin1Char('/')
                 + fi.completeBaseName() + QStringLiteral("@2x.") + fi.suffix();
@@ -587,7 +591,10 @@ void drawCornerImage(const QImage &img, QPainter *painter, const QRect &rect,
                                   int left, int top, int right, int bottom)
 {
     // source rect for drawImage() calls needs to be specified in DIP unit of the image
-    const qreal imagePixelRatio = img.devicePixelRatio();
+    const qreal imagePixelRatio = 1.0;
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
+    imagePixelRatio = img.devicePixelRatio(); // 2 if retina, 1 otherwise
+#endif
     const qreal leftDIP = left * imagePixelRatio;
     const qreal topDIP = top * imagePixelRatio;
     const qreal rightDIP = right * imagePixelRatio;
