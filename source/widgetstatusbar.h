@@ -7,6 +7,8 @@
 #include <QTimeLine>
 #include <QDebug>
 
+#include "widgetfile.h"
+
 namespace Ui {
 class WidgetStatusBar;
 }
@@ -14,6 +16,11 @@ class QToolButton;
 class QSplitter;
 class QPixmap;
 class QAction;
+class IPane;
+
+
+
+
 
 class WidgetStatusBarButton : public QWidget
 {
@@ -168,5 +175,25 @@ private:
     QList<OutputPaneToggleButton*> _paneLabels;
     bool _errorTableOpen, _consoleOpen;
 };
+
+
+
+
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+
+class Qt4PaneCallback : public QObject
+{
+    Q_OBJECT
+
+public:
+    OutputPaneToggleButton *button;
+    IPane * pane;
+    WidgetFile * widget;
+
+public slots:
+    void onButtonClicked(bool) { widget->togglePane(pane); }
+    void onPaneactionToggled(bool checked) { button->setChecked(checked); }
+};
+#endif
 
 #endif // WIDGETSTATUSBAR_H

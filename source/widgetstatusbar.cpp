@@ -214,6 +214,11 @@ void WidgetStatusBar::checkStructAction()
     }
 }
 
+
+
+
+
+
 void WidgetStatusBar::updateButtons()
 {
     if(!FileManager::Instance.currentWidgetFile())
@@ -238,24 +243,33 @@ void WidgetStatusBar::updateButtons()
 
         OutputPaneToggleButton *button = new OutputPaneToggleButton(index, pane->statusbarText(),
                                                                     pane->action());
-        /*QPushButton * button = new QPushButton(//QString("<div style='margin:0px;'><a class='link' style='text-decoration:none; color:")+
-                                    //ConfigManager::Instance.colorToString(ConfigManager::Instance.getTextCharFormats("normal").foreground().color())+
-                                   "' href='#'>"+
-                                              pane->statusbarText()//+"</a></div>"
-                                              );
-        */
+
         if(widget->isPaneOpen(pane))
         {
             button->setChecked(true);
         }
+
         pane->action()->disconnect();
         this->insertPermanentWidget(index, button, 0);
         _paneLabels << button;
+
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+        Qt4PaneCallback * c = new Qt4PaneCallback();
+        c->pane = pane;
+        c->widget = widget;
+        c->button = button;
+
+        connect(button, SIGNAL(clicked(bool)), c, SLOT(onButtonClicked(bool)));
+        connect(pane->action(), SIGNAL(toggled(bool)), c, SLOT(onPaneactionToggled(bool)));
+        connect(pane->action(), SIGNAL(triggered(bool)), c, SLOT(onPaneactionToggled(bool)));
+
+#else
         connect(button, &OutputPaneToggleButton::clicked, [=](){
             widget->togglePane(pane);
         });
         connect(pane->action(), &QAction::toggled, [=](){ button->setChecked(pane->action()->isChecked()); });
         connect(pane->action(), &QAction::triggered, [=](bool checked){ button->setChecked(checked); });
+#endif
         ++index;
     }
 
