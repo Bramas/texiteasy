@@ -215,7 +215,16 @@ void WidgetStatusBar::checkStructAction()
 }
 
 
-
+#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
+void Qt4PaneCallback::onButtonClicked(bool)
+{
+    widget->togglePane(pane);
+}
+void Qt4PaneCallback::onPaneactionToggled(bool checked)
+{
+    button->setChecked(checked);
+}
+#endif
 
 
 

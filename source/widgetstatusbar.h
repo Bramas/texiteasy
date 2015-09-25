@@ -186,13 +186,14 @@ class Qt4PaneCallback : public QObject
     Q_OBJECT
 
 public:
+    void Qt4PaneCallback() : QObject(0) {}
     OutputPaneToggleButton *button;
     IPane * pane;
     WidgetFile * widget;
 
 public slots:
-    void onButtonClicked(bool) { widget->togglePane(pane); }
-    void onPaneactionToggled(bool checked) { button->setChecked(checked); }
+    void onButtonClicked(bool);
+    void onPaneactionToggled(bool checked);
 };
 #endif
 
