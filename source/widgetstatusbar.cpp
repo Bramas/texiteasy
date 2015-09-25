@@ -577,7 +577,7 @@ QString dpiSpecificImageFile(const QString &fileName)
     if (ratio > 1.0) {
         const QFileInfo fi(fileName);
         const QString at2xfileName = fi.path() + QLatin1Char('/')
-                + fi.completeBaseName() + QStringLiteral("@2x.") + fi.suffix();
+                + fi.completeBaseName() + "@2x." + fi.suffix();
         if (QFile::exists(at2xfileName))
             return at2xfileName;
     }
@@ -591,9 +591,11 @@ void drawCornerImage(const QImage &img, QPainter *painter, const QRect &rect,
                                   int left, int top, int right, int bottom)
 {
     // source rect for drawImage() calls needs to be specified in DIP unit of the image
-    const qreal imagePixelRatio = 1.0;
+
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 0, 0))
-    imagePixelRatio = img.devicePixelRatio(); // 2 if retina, 1 otherwise
+    const qreal imagePixelRatio = img.devicePixelRatio(); // 2 if retina, 1 otherwise
+#else
+    const qreal imagePixelRatio = 1.0;
 #endif
     const qreal leftDIP = left * imagePixelRatio;
     const qreal topDIP = top * imagePixelRatio;
