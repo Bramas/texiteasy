@@ -8,6 +8,7 @@
 #include "widgettextedit.h"
 #include "taskpane/taskwindow.h"
 #include "ipane.h"
+#include "qt4panecallback.h"
 
 #include <QPushButton>
 #include <QMenu>
