@@ -186,7 +186,7 @@ class Qt4PaneCallback : public QObject
     Q_OBJECT
 
 public:
-    void Qt4PaneCallback() : QObject(0) {}
+    Qt4PaneCallback() : QObject(0) {}
     OutputPaneToggleButton *button;
     IPane * pane;
     WidgetFile * widget;

@@ -114,6 +114,17 @@ public:
      */
     QString getFilename() const { return this->filename; }
 
+
+    void setFilename(QString f)
+    {
+        if(!filename.isEmpty())
+        {
+            qWarning()<<"you cannot set a filename for an existing file with the function setFilename";
+            return;
+        }
+        this->filename = f;
+    }
+
     QString getPath() const { QString s(this->filename); return s.replace(QRegExp("^(([^\\\\\\/]*[\\\\\\/])*)[^\\\\\\/]*$"),"\\1"); }
 
     QString rootBasename() const { return QFileInfo(rootFilename()).completeBaseName(); }
