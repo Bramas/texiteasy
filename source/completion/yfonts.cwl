@@ -5,10 +5,10 @@
 \swabfamily
 \frakfamily
 \initfamily
-\textgoth{text}
-\textswab{text}
-\textfrak{text}
-\textinit{text}
+\textgoth{@text}
+\textswab{@text}
+\textfrak{@text}
+\textinit{@text}
 \frakdefault
 \gothdefault
 \swabdefault

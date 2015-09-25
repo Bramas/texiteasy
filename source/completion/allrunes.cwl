@@ -1,11 +1,11 @@
 # allrunes package, available from ctan
 # tbraun, 28.08.2008
-\textarc{text}
-\textara{text}
-\textarn{text}
-\textart{text}
-\textarl{text}
-\textarm{text}
+\textarc{@text}
+\textara{@text}
+\textarn{@text}
+\textart{@text}
+\textarl{@text}
+\textarm{@text}
 \arcfamily
 \arafamily
 \arnfamily
@@ -14,30 +14,30 @@
 \armfamily
 
 # already included in standard latex
-# \textbf{text}
+# \textbf{@text}
 # \bfseries
-# \textmd{text}
+# \textmd{@text}
 # \mdseries
-\textlf{text}
+\textlf{@text}
 \lfseries
 
-\textwil{text}
-\textwol{text}
+\textwil{@text}
+\textwol{@text}
 \withlines
 \withoutlines
 
-\textst{text}
-\textcu{text}
-\textro{text}
+\textst{@text}
+\textcu{@text}
+\textro{@text}
 \straighttwigs
 \curvedtwigs
 \roundedtwigs
 
-\texthi{text}
-\textlo{text}
+\texthi{@text}
+\textlo{@text}
 \hightwigs
 \lowtwigs
 
-\hflip{rune}
-\vflip{rune}
-\turn{rune}
+\hflip{@rune}
+\vflip{@rune}
+\turn{@rune}

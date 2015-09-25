@@ -41,7 +41,7 @@
 \Anglesign
 \Crossedbox
 \Yinyang
-\Yingyang{\Yinyang}
+\Yingyang{@\Yinyang}
 \Pointinghand
 \Explosionsafe
 \Laserbeam
@@ -166,7 +166,7 @@
 \ShortThirty
 \Handwash
 \Dontwash
-\Zodiac{number}
+\Zodiac{@number}
 \Aries
 \Taurus
 \Gemini

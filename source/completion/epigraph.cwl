@@ -2,11 +2,11 @@
 # J. Sundermeyer
 # modified Edson 27-12-2010
 
-\epigraph{text}{source}#n
+\epigraph{@text}{@source}#n
 
 \begin{epigraphs}#n
 \end{epigraphs}#n
-\qitem{text}{source}#n
+\qitem{@text}{@source}#n
 
 \epigraphwidth
 \textflush
@@ -18,9 +18,9 @@
 \beforeepigraphskip
 \afterepigraphskip
 
-\epigraphhead[distance]{text}
-\epigraphhead{text}
+\epigraphhead[@distance]{@text}
+\epigraphhead{@text}
 
-\dropchapter{length}
+\dropchapter{@length}
 \undodrop
 \cleartoevenpage

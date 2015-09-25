@@ -3,6 +3,6 @@
 \begin{TeXtoEPS}
 \endTeXtoEPS
 \end{TeXtoEPS}
-\PSTtoEPS{file}{graphics objects}
-\PSTtoEPS[par]{file}{graphics objects}
+\PSTtoEPS{@file}{@graphics objects}
+\PSTtoEPS[@par]{@file}{@graphics objects}
 \TeXtoEPS

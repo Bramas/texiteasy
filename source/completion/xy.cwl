@@ -3,11 +3,11 @@
 # sdm 28.2.2011
 \ar
 \xymatrix
-\txt{text}
-\frm{}
-\composite{objects}
-\newdir{directional}{composite}
-\SelectTips{cm}{}
+\txt{@text}
+\frm{@}
+\composite{@objects}
+\newdir{@directional}{@composite}
+\SelectTips{@cm}{@}
 \save
 \restore
 \objectstyle

@@ -96,7 +96,7 @@
 \lvert
 \lVert
 \medspace
-\mod{value}
+\mod{@value}
 \mspace{@dimen}
 \negmedspace
 \negthickspace

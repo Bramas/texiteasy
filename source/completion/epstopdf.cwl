@@ -2,7 +2,7 @@
 # http://ctan.org/tex-archive/macros/latex/contrib/epstopdf
 # By astroscion: 2012-02-15
 
-\epstopdfsetup{key-value-list}
+\epstopdfsetup{@key-value-list}
 \OutputFile
 \SourceFile
 \SourceExt
@@ -10,5 +10,5 @@
 \epstopdfDeclareGraphicsRule
 \epstopdfcall
 \noexpand
-\AppendGraphicsExtensions{ext}
-\PrependGraphicsExtensions{ext}
+\AppendGraphicsExtensions{@ext}
+\PrependGraphicsExtensions{@ext}

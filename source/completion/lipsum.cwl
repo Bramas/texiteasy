@@ -1,10 +1,10 @@
 # doncherry/2013-04-25 for lipsum v1.2
-\ChangeLipsumPar{arg}#*
+\ChangeLipsumPar{@arg}#*
 \lipsum
-\lipsum[num]
-\lipsum[%<num%>-%<num%>]
+\lipsum[@num]
+\lipsum[@%<num%>-%<num%>]
 \lipsum*
-\lipsum*[num]
-\lipsum*[%<num%>-%<num%>]
-\setlipsumdefault{num}#*
-\setlipsumdefault{%<num%>-%<num%>}#*
+\lipsum*[@num]
+\lipsum*[@%<num%>-%<num%>]
+\setlipsumdefault{@num}#*
+\setlipsumdefault{@%<num%>-%<num%>}#*

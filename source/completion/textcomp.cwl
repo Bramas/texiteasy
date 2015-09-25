@@ -1,25 +1,25 @@
 # textcomp package
 # tbraun 04/27/2006
 
-\capitalgrave{text}
-\capitalacute{text}
-\capitalcircumflex{text}
-\capitaltilde{text}
-\capitaldieresis{text}
-\capitalhungarumlaut{text}
-\capitalring{text}
-\capitalcaron{text}
-\capitalbreve{text}
-\capitaldotaccent{text}
-\capitalcedilla{text}
-\capitalogonek{text}
-\t{text}
-\capitaltie{text}
-\newtie{text}
-\capitalnewtie{text}
+\capitalgrave{@text}
+\capitalacute{@text}
+\capitalcircumflex{@text}
+\capitaltilde{@text}
+\capitaldieresis{@text}
+\capitalhungarumlaut{@text}
+\capitalring{@text}
+\capitalcaron{@text}
+\capitalbreve{@text}
+\capitaldotaccent{@text}
+\capitalcedilla{@text}
+\capitalogonek{@text}
+\t{@text}
+\capitaltie{@text}
+\newtie{@text}
+\capitalnewtie{@text}
 \textcapitalcompwordmark
 \textascendercompwordmark
-\oldstylenums{number}
+\oldstylenums{@number}
 \textzerooldstyle
 \textoneoldstyle
 \texttwooldstyle

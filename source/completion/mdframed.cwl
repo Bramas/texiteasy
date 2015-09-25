@@ -1,9 +1,9 @@
 ## sdm
-\begin{mdframed}[options]
+\begin{mdframed}[@options]
 \end{mdframed}
-\newmdenv[MDFRAMED OPTIONS]{env}
-\surroundwithmdframed[options]{env}
+\newmdenv[@MDFRAMED OPTIONS]{@env}
+\surroundwithmdframed[@options]{@env}
 \mdflength#*
 \mdfsetup#*
-\mdfdefinestyle{name}{definition}#*
+\mdfdefinestyle{@name}{@definition}#*
 \mdfapptodefinestyle#*

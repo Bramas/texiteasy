@@ -6,9 +6,9 @@
 
 \makenomenclature
 \printnomenclature
-\printnomenclature[space]
-\nomenclature[prefix]{symbol}{description}
-\nomenclature{symbol}{description}
+\printnomenclature[@space]
+\nomenclature[@prefix]{@symbol}{@description}
+\nomenclature{@symbol}{@description}
 \nomrefeq
 \nomrefpage
 \nomrefeqpage

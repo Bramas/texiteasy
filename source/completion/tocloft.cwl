@@ -2,13 +2,13 @@
 # J. Sundermeyer
 # Edson 20-12-2010
 
-\addcontentsline{file}{kind}{title}#n
-\contentsline{kind}{title}{page}#n
-\addtocontents{file}{text}#n
+\addcontentsline{@file}{@kind}{@title}#n
+\contentsline{@kind}{@title}{@page}#n
+\addtocontents{@file}{@text}#n
 
-\tocloftpagestyle{style}#n
+\tocloftpagestyle{@style}#n
 
-\addtocontents{file}{text}
+\addtocontents{@file}{@text}
 
 \cftmarktoc#n
 \cftmarklof#n
@@ -33,10 +33,10 @@
 \cftdot#n
 \cftdotsep#n
 \cftnodots#n
-\cftdotfill{sep}
+\cftdotfill{@sep}
 
-\cftsetpnumwidth{length}#n
-\cftsetrmarg{length}#n
+\cftsetpnumwidth{@length}#n
+\cftsetrmarg{@length}#n
 \cftparskip#n
 
 \cftbeforepartskip#n
@@ -171,15 +171,15 @@
 \cfttabafterpnum#n
 \cftsubtabafterpnum#n
 
-\cftsetindents{entry}{indent}{numwidth}
-\cftpagenumbersoff{entry}#n
-\cftpagenumberson{entry}#n
+\cftsetindents{@entry}{@indent}{@numwidth}
+\cftpagenumbersoff{@entry}#n
+\cftpagenumberson{@entry}#n
 
-\newlistof[within]{entry}{ext}{listofname}#n
-\newlistof{entry}{ext}{listofname}#n
+\newlistof[@within]{@entry}{@ext}{@listofname}#n
+\newlistof{@entry}{@ext}{@listofname}#n
 
 \tocdepth#n
 \lotdepth#n
 \lofdepth#n
-\newlistentry[within]{entry}{ext}{level-1}#n
+\newlistentry[@within]{@entry}{@ext}{@level-1}#n
 

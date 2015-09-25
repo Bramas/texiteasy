@@ -3,10 +3,10 @@
 # http://www.ctan.org/tex-archive/macros/latex/contrib/units/
 # Version: 1998-08-04
 
-\unit[value]{dimension}
-\unit{dimension}
-\unitfrac[value]{%<num%:translatable%>}{%<den%:translatable%>}
-\unitfrac{%<num%:translatable%>}{%<den%:translatable%>}
-\nicefrac[fontcmd]{%<num%:translatable%>}{%<den%:translatable%>}
-\nicefrac{%<num%:translatable%>}{%<den%:translatable%>}
+\unit[@value]{@dimension}
+\unit{@dimension}
+\unitfrac[@value]{@%<num%:translatable%>}{@%<den%:translatable%>}
+\unitfrac{@%<num%:translatable%>}{@%<den%:translatable%>}
+\nicefrac[@fontcmd]{@%<num%:translatable%>}{@%<den%:translatable%>}
+\nicefrac{@%<num%:translatable%>}{@%<den%:translatable%>}
 

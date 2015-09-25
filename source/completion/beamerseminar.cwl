@@ -3,7 +3,7 @@
 \begin{slide}*
 \begin{slide}
 \end{slide}
-\overlay{number}
+\overlay{@number}
 \red
 \blue
 \green
