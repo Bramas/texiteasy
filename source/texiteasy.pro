@@ -98,7 +98,8 @@ SOURCES += main.cpp\
     latexoutputfilter.cpp \
     taskpane/taskmodel.cpp \
     taskpane/taskwindow.cpp \
-    taskpane/task.cpp
+    taskpane/task.cpp \
+    qt4panecallback.cpp
 
 HEADERS  += mainwindow.h \
     widgetlinenumber.h \
@@ -175,7 +176,8 @@ HEADERS  += mainwindow.h \
     taskpane/task.h \
     taskpane/icontext.h \
     iplugin.h \
-    ipane.h
+    ipane.h \
+    qt4panecallback.h
 
 FORMS    += mainwindow.ui \
     dialogwelcome.ui \

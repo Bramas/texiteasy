@@ -179,22 +179,6 @@ private:
 
 
 
-#if QT_VERSION < QT_VERSION_CHECK(5,0,0)
 
-class Qt4PaneCallback : public QObject
-{
-    Q_OBJECT
-
-public:
-    Qt4PaneCallback() : QObject(0) {}
-    OutputPaneToggleButton *button;
-    IPane * pane;
-    WidgetFile * widget;
-
-public slots:
-    void onButtonClicked(bool);
-    void onPaneactionToggled(bool checked);
-};
-#endif
 
 #endif // WIDGETSTATUSBAR_H
