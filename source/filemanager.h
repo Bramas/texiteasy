@@ -98,8 +98,6 @@ public slots:
     void setPdfViewerInItsOwnWidget(bool ownWidget);
     void jumpToPdfFromSource();
     void rehighlight();
-    void toggleConsole();
-    void toggleErrorTable();
 
     void setCurrent(WidgetFile * widget);
     void setCurrent(int index);

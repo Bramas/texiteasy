@@ -3,7 +3,11 @@
 
 #include <QStatusBar>
 #include <QLabel>
+#include <QToolButton>
+#include <QTimeLine>
 #include <QDebug>
+
+#include "widgetfile.h"
 
 namespace Ui {
 class WidgetStatusBar;
@@ -12,6 +16,11 @@ class QToolButton;
 class QSplitter;
 class QPixmap;
 class QAction;
+class IPane;
+
+
+
+
 
 class WidgetStatusBarButton : public QWidget
 {
@@ -85,6 +94,49 @@ QLabel  * _label;
 
 };
 
+
+class BadgeLabel
+{
+public:
+    BadgeLabel();
+    void paint(QPainter *p, int x, int y, bool isChecked);
+    void setText(const QString &text);
+    QString text() const;
+    QSize sizeHint() const;
+
+private:
+    void calculateSize();
+
+    QSize m_size;
+    QString m_text;
+    QFont m_font;
+    static const int m_padding = 6;
+};
+
+class OutputPaneToggleButton : public QToolButton
+{
+    Q_OBJECT
+public:
+    OutputPaneToggleButton(int number, const QString &text, QAction *action,
+                           QWidget *parent = 0);
+    QSize sizeHint() const;
+    void paintEvent(QPaintEvent*);
+    void flash(int count = 3);
+    void setIconBadgeNumber(int number);
+
+private slots:
+    void updateToolTip();
+
+private:
+    void checkStateSet();
+
+    QString m_number;
+    QString m_text;
+    QAction *m_action;
+    QTimeLine *m_flashTimer;
+    BadgeLabel m_badgeNumberLabel;
+};
+
 class WidgetStatusBar : public QStatusBar
 {
     Q_OBJECT
@@ -120,9 +172,13 @@ private:
     WidgetStatusBarButton * _labelStruct;
     WidgetStatusBarButton * _labelSplitEditor;
 
-    QLabel * _labelConsole;
-    QLabel * _labelErrorTable;
+    QList<OutputPaneToggleButton*> _paneLabels;
     bool _errorTableOpen, _consoleOpen;
 };
+
+
+
+
+
 
 #endif // WIDGETSTATUSBAR_H

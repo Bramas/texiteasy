@@ -13,11 +13,11 @@ TEMPLATE = app
 
 APPLICATION_NAME = \\\"'TexitEasy'\\\"
 
-VERSION = \\\"'0.21.0'\\\"
-VERSION_HEX = 0x002100
+VERSION = \\\"'0.21.3'\\\"
+VERSION_HEX = 0x002103
 
-#CONFIG += c++11
-#QMAKE_CXXFLAGS += -std=c++0x
+CONFIG += c++11
+QMAKE_CXXFLAGS += -std=c++0x
 
 
 #DEFINES += PORTABLE_EXECUTABLE
@@ -98,7 +98,8 @@ SOURCES += main.cpp\
     latexoutputfilter.cpp \
     taskpane/taskmodel.cpp \
     taskpane/taskwindow.cpp \
-    taskpane/task.cpp
+    taskpane/task.cpp \
+    qt4panecallback.cpp
 
 HEADERS  += mainwindow.h \
     widgetlinenumber.h \
@@ -173,7 +174,10 @@ HEADERS  += mainwindow.h \
     taskpane/taskmodel.h \
     taskpane/taskwindow.h \
     taskpane/task.h \
-    taskpane/icontext.h
+    taskpane/icontext.h \
+    iplugin.h \
+    ipane.h \
+    qt4panecallback.h
 
 FORMS    += mainwindow.ui \
     dialogwelcome.ui \
@@ -256,7 +260,7 @@ unix:!mac{
     LATEX_URL = \\\"'http://texiteasy.com/links/latex/linux'\\\"
 }
 mac{
-    DEFINES += LIB_DEPLOY
+    #DEFINES += LIB_DEPLOY
     INCLUDEPATH += /usr/local/include
     LIBS += -L/usr/local/lib -lz -lpoppler-qt5
     ICON = texiteasy.icns

@@ -2,6 +2,7 @@
 #include "ui_widgetfindreplace.h"
 #include "widgettextedit.h"
 #include "configmanager.h"
+#include "widgetlinenumber.h"
 #include <QDebug>
 #include <QString>
 #include <QLine>
@@ -133,6 +134,9 @@ bool WidgetFindReplace::find(int from, bool canStartOver, bool backward)
     if(!findResult.isNull())
     {
         _widgetTextEdit->setTextCursor(findResult);
+        _widgetTextEdit->ensureCursorVisible();
+        _widgetTextEdit->lineNumberWidget()->highlightCurrentLine();
+        _widgetTextEdit->highlightSearchResult(findResult);
         return true;
     }
 

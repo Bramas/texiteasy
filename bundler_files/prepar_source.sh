@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="0.21.0"
+VERSION="0.21.3"
 
 #SCRIPT=$(readlink -f $0)
 # Absolute path this script is in, thus /home/user/bin
@@ -14,4 +14,5 @@ mkdir /tmp/texiteasy-$VERSION/share
 cp -r deb/share/* /tmp/texiteasy-$VERSION/share
 cd /tmp
 tar czf $DEST_PATH/texiteasy.tar.gz texiteasy-$VERSION
+rm -r /tmp/texiteasy-$VERSION
 #mv /tmp/texiteasy-0.1.10.tar.gz /tmp/myscript/texiteasy-$VERSION.tar.gz

@@ -4,6 +4,7 @@ compiler:
   - clang
 
 before_install:
+    - sudo apt-get update
     - sudo apt-get install libqt4-dev qt4-qmake libpoppler-qt4-dev zlib1g-dev
 script:
     - cd source

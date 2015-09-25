@@ -41,6 +41,7 @@
 #include "filemanager.h"
 #include "configmanager.h"
 
+#include <QAction>
 #include <QDebug>
 #include <QApplication>
 #include <QStyle>
@@ -125,6 +126,9 @@ static QToolButton *createFilterButton(QIcon icon, const QString &toolTip,
 TaskWindow::TaskWindow() : d(new TaskWindowPrivate)
 {
 
+    _action = new QAction(statusbarText(), 0);
+    _action->setCheckable(true);
+    _openPaneOnError = false;
     d->m_model = new TaskModel(this);
     d->m_filter = new TaskFilterModel(d->m_model);
     d->m_listview = new TaskView;
@@ -264,6 +268,10 @@ QList<QWidget*> TaskWindow::toolBarWidgets() const
     return QList<QWidget*>() << d->m_filterWarningsButton << d->m_categoriesButton;
 }
 
+QWidget *TaskWindow::paneWidget()
+{
+    return d->m_listview;
+}
 QWidget *TaskWindow::outputWidget()
 {
     return d->m_listview;
@@ -369,14 +377,14 @@ void TaskWindow::openTask(unsigned int id)
 
 void TaskWindow::triggerDefaultHandler(const QModelIndex &index)
 {
-    qDebug()<<index.isValid();
+
     if (!index.isValid())
         return;
     Task task(d->m_model->task(index));
-    qDebug()<<task.isNull();
+    //qDebug()<<task.isNull();
     if (task.isNull())
         return;
-    qDebug()<<task.file.trimmed().isEmpty();
+    //qDebug()<<task.file.trimmed().isEmpty();
     if (task.file.trimmed().isEmpty())
         return;
 
@@ -388,19 +396,20 @@ void TaskWindow::triggerDefaultHandler(const QModelIndex &index)
             found = true;
         }
     }
-    qDebug()<<_widgetTextEdit->getCurrentFile()->getFilename();
-    qDebug()<<task.file;
+    //qDebug()<<_widgetTextEdit->getCurrentFile()->getFilename();
+    //qDebug()<<task.description<<task.movedLine<<task.line;
     if (!found && _widgetTextEdit->getCurrentFile()->getFilename() != task.file)
         return;
 
     QString err = task.description;
     int line = task.movedLine;
-    QRegExp undefinedCommand("Undefined control sequence.* (\\\\[a-zA-Z]+)");
     QString search("");
+    /*QRegExp undefinedCommand("Undefined control sequence.* (\\\\[a-zA-Z]+)");
+
     if(err.indexOf(undefinedCommand) != -1)
     {
         search = undefinedCommand.capturedTexts().at(1);
-    }
+    }*/
     this->_widgetTextEdit->widgetFile()->window()->open(task.file);
     WidgetFile * w = FileManager::Instance.widgetFile(task.file);
     if(w){
@@ -812,6 +821,22 @@ TaskWindowContext::TaskWindowContext(QWidget *widget)
 
 
 
+void TaskWindow::openMyPane()
+{
+    if(FileManager::Instance.currentWidgetFile())
+    {
+        FileManager::Instance.currentWidgetFile()->openPane(this);
+    }
+}
+void TaskWindow::closeMyPane()
+{
+    if(FileManager::Instance.currentWidgetFile())
+    {
+        FileManager::Instance.currentWidgetFile()->closePane(this);
+    }
+}
+
+
 void TaskWindow::setBuilder(Builder *builder)
 {
     this->_builder = builder;
@@ -823,6 +848,10 @@ void TaskWindow::setBuilder(Builder *builder)
     connect(_builder, SIGNAL(success()),this, SLOT(onError()));
     //connect(_builder, SIGNAL(success()),this, SLOT(onSuccess()));
     connect(_builder, SIGNAL(started()), this, SLOT(clearContents()));
+    if(_openPaneOnError)
+    {
+        connect(_builder, SIGNAL(error()),this, SLOT(openMyPane()));
+    }
 }
 
 
@@ -843,17 +872,24 @@ void TaskWindow::onError()
         case LT_ERROR:
             task.type = Task::Error;
             task.icon = QApplication::style()->standardIcon(QStyle::SP_MessageBoxCritical);
+            task.category = "error";
+            //qDebug()<<logEntry.oldline<<logEntry.logline<<task.movedLine<<task.line;
             break;
         case LT_WARNING:
             task.type = Task::Warning;
             task.icon = QIcon(QPixmap(":/data/img/warning.png"));//QApplication::style()->standardIcon(QStyle::SP_MessageBoxWarning);
+            task.category = "warning";
             break;
         case LT_INFO:
         case LT_BADBOX:
             task.type = Task::Unknown;
+            task.category = "notice";
             //task.icon = QApplication::style()->standardIcon(QStyle::SP_MessageBoxInformation);
             break;
         }
-        this->addTask(task);
+        if(_acceptedTaskCategories.contains(task.category))
+        {
+            this->addTask(task);
+        }
     }
 }

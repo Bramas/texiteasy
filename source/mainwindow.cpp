@@ -42,6 +42,8 @@
 #include "dialogsendfeedback.h"
 #include "updatechecker.h"
 
+#include <QComboBox>
+#include <QDialogButtonBox>
 #include <QMenu>
 #include <QAction>
 #include <QScrollBar>
@@ -932,12 +934,27 @@ void MainWindow::insertTexDirProgram()
     {
         return;
     }
+    bool ok;
+    QStringList commandNameList = ConfigManager::Instance.latexCommandNames();
+    QString item = QInputDialog::getItem(this, tr("Compilateur pour ce fichier"),
+                                             tr("Compilateur:"), commandNameList, 0, false, &ok);
+
+
+    if(!ok)
+    {
+        return;
+    }
+
     WidgetFile * widget = FileManager::Instance.currentWidgetFile();
     QString t = "%!TEX program = ";
-    t += ConfigManager::Instance.defaultLatex();
+    t += item;
     t += "\n";
     t += widget->widgetTextEdit()->toPlainText();
     widget->widgetTextEdit()->setPlainText(t);
+
+    widget->file()->addTexDirective("program", item);
+    ui->actionDefaultCommandLatex->setText(item);
+
 }
 void MainWindow::insertTexDirSpellCheck()
 {

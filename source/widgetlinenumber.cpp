@@ -47,6 +47,7 @@ WidgetLineNumber::WidgetLineNumber(WidgetFile *parent) :
     this->scrollOffset = 0;
     _isMouseOverUnfolding = false;
     _isMouseOverFolding = false;
+    _highlightCurrentLine = false;
     _foldableLineBegin = 0;
     _foldableLineEnd = 0;
     _unfoldableLine = 0;
@@ -165,6 +166,10 @@ void WidgetLineNumber::paintEvent(QPaintEvent * /*event*/)
                 painter.setPen(QPen(QColor(130,0,0), 2));
             painter.drawLine(right+9, top, right+9, top + widgetTextEdit->document()->findBlockByNumber(l).layout()->boundingRect().height());
             painter.restore();
+        }
+        if(_highlightCurrentLine && l == _currentLine)
+        {
+            painter.setPen(QPen(ConfigManager::Instance.getTextCharFormats("highlighted-linenumber").foreground().color(), 2));
         }
         painter.drawText(5,top, right, widgetTextEdit->document()->findBlockByNumber(l).layout()->boundingRect().height(), Qt::AlignRight,   QString::number(l+1));
 

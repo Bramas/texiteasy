@@ -2,26 +2,26 @@
 # get it from http://www.physics.ox.ac.uk/users/bauke/LaTeX/Tips_und_Tricks/fancyunits/index.html
 # tbraun 27.06.2007
 # basic commands
-\unit{number}{unit commands}
-\addunit{new unit command}{text}
-\pow{number}
-\ufrac{}{}
-\Ufrac{}{}
-\UFrac{}{}
+\unit{@number}{@unit commands}
+\addunit{@new unit command}{@text}
+\pow{@number}
+\ufrac{@}{@}
+\Ufrac{@}{@}
+\UFrac{@}{@}
 \per
-\power{text}{exponent}
-\Square{text}
+\power{@text}{@exponent}
+\Square{@text}
 \Squared
-\cubic{base}
+\cubic{@base}
 \cubed
-\fourth{base}
-\reciprocal{text}
-\rp{text}
-\rpsquare{text}
+\fourth{@base}
+\reciprocal{@text}
+\rp{@text}
+\rpsquare{@text}
 \rpsquared
-\rpcubic{text}
+\rpcubic{@text}
 \rpcubed
-\rpfourth{text}
+\rpfourth{@text}
 
 \metre
 \meter

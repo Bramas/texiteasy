@@ -1,1 +1,1 @@
-\ding{number}
+\ding{@number}

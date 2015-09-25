@@ -4,9 +4,9 @@
 \end{scope}
 \expandafter#*
 \tikzset#*
-\tikzoption{arg1}#*
+\tikzoption{@arg1}#*
 \csname#*
-\tikzaddafternodepathoption{arg1}#*
+\tikzaddafternodepathoption{@arg1}#*
 \tikzparentanchor#*
 \tikzchildanchor#*
 \pgfmatrixcolumnsep#*
@@ -15,9 +15,9 @@
 \tikzpicture#*
 \endtikzpicture#*
 \tikz#*
-\tikzifinpicture{arg1}#*
-\tikzaddtikzonlycommandshortcutlet{arg1}#*
-\tikzaddtikzonlycommandshortcutdef{arg1}#*
+\tikzifinpicture{@arg1}#*
+\tikzaddtikzonlycommandshortcutlet{@arg1}#*
+\tikzaddtikzonlycommandshortcutdef{@arg1}#*
 \path#*
 \draw#*
 \pattern#*
@@ -42,8 +42,8 @@
 \pgfmatrixbegincode#*
 \pgfmatrixendcode#*
 \pgfmatrixemptycode#*
-\tikzdeclarecoordinatesystem{arg1}#*
-\tikzaliascoordinatesystem{arg1}#*
+\tikzdeclarecoordinatesystem{@arg1}#*
+\tikzaliascoordinatesystem{@arg1}#*
 \usetikzlibrary#*
 \begin{tikzpicture}
 \end{tikzpicture}

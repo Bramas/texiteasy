@@ -1,15 +1,15 @@
 # mode: booktabs.sty
 # dani/2006-02-18
 \addlinespace
-\addlinespace[space]
+\addlinespace[@space]
 \bottomrule
-\bottomrule[width]
-\cmidrule{a-b}
-\cmidrule(trim){a-b}
-\cmidrule[width](trim){a-b}
+\bottomrule[@width]
+\cmidrule{@a-b}
+\cmidrule(trim){@a-b}
+\cmidrule[@width](trim){@a-b}
 \midrule
-\midrule[width]
+\midrule[@width]
 \morecmidrules
-\specialrule[width]{abovespace}{belowspace}
+\specialrule[@width]{@abovespace}{@belowspace}
 \toprule
-\toprule[width]
+\toprule[@width]

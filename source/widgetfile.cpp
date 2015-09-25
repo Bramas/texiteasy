@@ -17,6 +17,7 @@
 #include "configmanager.h"
 #include "tools.h"
 #include "svnhelper.h"
+#include "ipane.h"
 
 #include <QPushButton>
 #include <QGridLayout>
@@ -30,6 +31,7 @@ WidgetFile::WidgetFile(MainWindow *parent) :
     QWidget(0),
     _window(parent)
 {
+    _currentPane = 0;
     _masterFile = 0;
     TextDocument * doc = new TextDocument();
     TextDocumentLayout * doclayout = new TextDocumentLayout(doc);
@@ -39,21 +41,35 @@ WidgetFile::WidgetFile(MainWindow *parent) :
     _syntaxHighlighter  = new SyntaxHighlighter(this);
     _widgetTextEdit     ->setSyntaxHighlighter(_syntaxHighlighter);
     _widgetPdfViewer    = new WidgetPdfViewer();
-    _widgetPdfViewer    ->widgetPdfDocument()->setWidgetTextEdit(_widgetTextEdit);
+    _widgetPdfViewer    ->widgetPdfDocument()->setWidgetFile(this);
     _widgetFindReplace  = new WidgetFindReplace(_widgetTextEdit);
      this->closeFindReplaceWidget();
     _widgetLineNumber   = new WidgetLineNumber(this);
     _widgetLineNumber   ->setWidgetTextEdit(_widgetTextEdit);
     _widgetTextEdit     ->setWidgetLineNumber(_widgetLineNumber);
-    _widgetConsole      = new WidgetConsole();
+
     _widgetSimpleOutput = new TaskWindow();
     _widgetSimpleOutput ->setWidgetTextEdit(_widgetTextEdit);
+    _widgetSimpleOutput->showCategory("error");
+    _widgetSimpleOutput->openPaneOnError(true);
+    _widgetSimpleOutput->setStatusbarText(trUtf8("Erreurs"));
+
+    _warningPane = new TaskWindow();
+    _warningPane ->setWidgetTextEdit(_widgetTextEdit);
+    _warningPane->showCategory("warning");
+    _warningPane->showCategory("notice");
+    _warningPane->setStatusbarText(trUtf8("Warning"));
+    _panes.prepend(_warningPane);
+    _panes.prepend(_widgetSimpleOutput);
+
+    _panes.prepend(new WidgetConsole(this));
+
 
     _horizontalSplitter = new MiniSplitter(Qt::Horizontal);
     _verticalSplitter = new MiniSplitter(Qt::Vertical);
 
 
-    _consoleHeight = _problemsHeight = 70;
+    _warningPaneHeight = _consoleHeight = _problemsHeight = 70;
 
 
     QGridLayout * layout = new QGridLayout();
@@ -118,20 +134,38 @@ WidgetFile::WidgetFile(MainWindow *parent) :
     _horizontalSplitter->setBackgroundColor(ConfigManager::Instance.getTextCharFormats("line-number").foreground().color());
     _editorSplitter->setBackgroundColor(ConfigManager::Instance.getTextCharFormats("line-number").foreground().color());
     _verticalSplitter->addWidget(_editorSplitter);
-    _verticalSplitter->addWidget(this->_widgetFindReplace);
-    _verticalSplitter->addWidget(this->_widgetSimpleOutput->outputWidget());
-    _verticalSplitter->addWidget(this->_widgetConsole);
 
-    _verticalSplitter->setCollapsible(3,true);
-    _verticalSplitter->setCollapsible(2,true);
+    foreach(IPane * pane, _panes)
+    {
+        _verticalSplitter->addWidget(pane->paneWidget());
+        pane->paneWidget()->hide();
+    }
+
+    _verticalSplitter->addWidget(this->_widgetFindReplace);
+    //_verticalSplitter->addWidget(this->_widgetSimpleOutput->outputWidget());
+    //_verticalSplitter->addWidget(this->_warningPane->outputWidget());
+    //_verticalSplitter->addWidget(this->_widgetConsole->paneWidget());
+
+    //_verticalSplitter->setCollapsible(4,true);
+    //_verticalSplitter->setCollapsible(3,true);
+    //_verticalSplitter->setCollapsible(2,true);
 
 
     connect(_widgetFindReplace->pushButtonClose(), SIGNAL(clicked()), this, SLOT(closeFindReplaceWidget()));
     connect(_widgetTextEdit,SIGNAL(textChanged()),_widgetLineNumber,SLOT(update()));
-    connect(_widgetTextEdit->getCurrentFile()->getBuilder(), SIGNAL(pdfChanged()),_widgetPdfViewer->widgetPdfDocument(),SLOT(updatePdf()));
-    connect(_widgetTextEdit->getCurrentFile()->getBuilder(), SIGNAL(error()),this,SLOT(openErrorTable()));
-    connect(_widgetTextEdit->getCurrentFile()->getBuilder(), SIGNAL(success()),this,SLOT(closeErrorTable()));
-    connect(_widgetConsole, SIGNAL(requestLine(int)), _widgetTextEdit, SLOT(goToLine(int)));
+    connect(_widgetTextEdit->getCurrentFile()->builder(), SIGNAL(pdfChanged()),_widgetPdfViewer->widgetPdfDocument(),SLOT(updatePdf()));
+
+
+    foreach(IPane * pane, _panes)
+    {
+        const QMetaObject * o = pane->getQObject()->metaObject();
+        if(o->indexOfSignal("requestLine(int)") != -1)
+        {
+            connect(pane->getQObject(), SIGNAL(requestLine(int)), _widgetTextEdit, SLOT(goToLine(int)));
+        }
+    }
+
+
 
 
     connect(doc,SIGNAL(modificationChanged(bool)), this->file(),SLOT(setModified(bool)));
@@ -146,10 +180,8 @@ WidgetFile::WidgetFile(MainWindow *parent) :
     _widgetTextEdit->setText(" ");
 
     _widgetPdfViewer->widgetPdfDocument()->setFile(_widgetTextEdit->getCurrentFile());
-    _widgetConsole->setBuilder(_widgetTextEdit->getCurrentFile()->getBuilder());
-    _widgetConsole->setMaximumHeight(0);
-    _widgetSimpleOutput->setBuilder(_widgetTextEdit->getCurrentFile()->getBuilder());
-    _widgetSimpleOutput->outputWidget()->setMaximumHeight(0);
+    _widgetSimpleOutput->setBuilder(_widgetTextEdit->getCurrentFile()->builder());
+    _warningPane->setBuilder(_widgetTextEdit->getCurrentFile()->builder());
     _widgetTextEdit->selectAll();
     _widgetTextEdit->textCursor().setBlockCharFormat(ConfigManager::Instance.getTextCharFormats("normal"));
     QTextCursor cur(_widgetTextEdit->textCursor());
@@ -206,92 +238,6 @@ void WidgetFile::addWidgetPdfViewerToSplitter()
     }
 }
 
-bool WidgetFile::isConsoleOpen()
-{
-    QList<int> sizes = this->verticalSplitter()->sizes();
-    if(sizes[3] > 0)
-    {
-        return true;
-    }
-    return false;
-}
-bool WidgetFile::isErrorTableOpen()
-{
-    QList<int> sizes = this->verticalSplitter()->sizes();
-    if(sizes[2] > 0)
-    {
-        return true;
-    }
-    return false;
-}
-void WidgetFile::openConsole()
-{
-    if(isConsoleOpen())
-    {
-        return;
-    }
-    if(isErrorTableOpen())
-    {
-        closeErrorTable();
-    }
-    QList<int> sizes = this->verticalSplitter()->sizes();
-    sizes.replace(0, sizes[0] - _consoleHeight + sizes[3]);
-    sizes.replace(2, 0);
-    sizes.replace(3, _consoleHeight);
-    this->verticalSplitter()->widget(3)->setMaximumHeight(height()*2/3);
-    this->verticalSplitter()->setSizes(sizes);
-    emit verticalSplitterChanged();
-}
-
-void WidgetFile::openErrorTable()
-{
-    if(isErrorTableOpen())
-    {
-        return;
-    }
-    if(isConsoleOpen())
-    {
-        closeConsole();
-    }
-    QList<int> sizes = this->verticalSplitter()->sizes();
-    sizes.replace(0, sizes[0] - _problemsHeight + sizes[3]);
-    sizes.replace(2, _problemsHeight);
-    sizes.replace(3, 0);
-    this->verticalSplitter()->widget(2)->setMaximumHeight(height()*2/3);
-    this->verticalSplitter()->setSizes(sizes);
-    emit verticalSplitterChanged();
-}
-
-void WidgetFile::closeConsole()
-{
-    if(!isConsoleOpen())
-    {
-        return;
-    }
-    QList<int> sizes = this->verticalSplitter()->sizes();
-    _consoleHeight = sizes[3];
-    sizes.replace(0, sizes[0] + sizes[3]);
-    sizes.replace(3, 0);
-    this->verticalSplitter()->widget(3)->setMaximumHeight(0);
-    this->verticalSplitter()->setSizes(sizes);
-    emit verticalSplitterChanged();
-}
-
-void WidgetFile::closeErrorTable()
-{
-    if(!isErrorTableOpen())
-    {
-        return;
-    }
-    QList<int> sizes = this->verticalSplitter()->sizes();
-    _problemsHeight = sizes[2];
-    sizes.replace(0, sizes[0] + sizes[2]);
-    sizes.replace(2, 0);
-    this->verticalSplitter()->widget(2)->setMaximumHeight(0);
-    this->verticalSplitter()->setSizes(sizes);
-    emit verticalSplitterChanged();
-}
-
 void WidgetFile::openFindReplaceWidget()
 {
     this->_widgetFindReplace->setMaximumHeight(110);
@@ -305,28 +251,6 @@ void WidgetFile::closeFindReplaceWidget()
     this->_widgetFindReplace->setMinimumHeight(0);
 }
 
-void WidgetFile::toggleConsole()
-{
-    if(isConsoleOpen())
-    {
-        closeConsole();
-    }
-    else
-    {
-        openConsole();
-    }
-}
-void WidgetFile::toggleErrorTable()
-{
-    if(isErrorTableOpen())
-    {
-        closeErrorTable();
-    }
-    else
-    {
-        openErrorTable();
-    }
-}
 void WidgetFile::builTex(QString command)
 {
     if(this->masterFile())
@@ -337,7 +261,7 @@ void WidgetFile::builTex(QString command)
     {
         save();
     }
-    file()->getBuilder()->builTex(command);
+    file()->builder()->builTex(command);
 }
 void WidgetFile::bibtex()
 {
@@ -349,11 +273,11 @@ void WidgetFile::bibtex()
     {
         save();
     }
-    file()->getBuilder()->bibtex();
+    file()->builder()->bibtex();
 }
 void WidgetFile::clean()
 {
-    file()->getBuilder()->clean();
+    file()->builder()->clean();
 }
 bool WidgetFile::isEmpty()
 {
@@ -402,8 +326,6 @@ void WidgetFile::open(QString filename)
     _widgetTextEdit->getCurrentFile()->open(filename);
     Tools::Log("WidgetFile::open: _widgetPdfViewer->widgetPdfDocument()->setFile()");
     _widgetPdfViewer->widgetPdfDocument()->setFile(_widgetTextEdit->getCurrentFile());
-    Tools::Log("WidgetFile::open: _widgetConsole->setBuilder()");
-    _widgetConsole->setBuilder(_widgetTextEdit->getCurrentFile()->getBuilder());
 
 
     _widgetTextEdit->document()->resetRevisions();
@@ -444,11 +366,12 @@ void WidgetFile::open(QString filename)
         connect(a, SIGNAL(triggered()), &FileManager::Instance, SLOT(openAssociatedFile()));
         this->addAction(a);
     }
+    emit opened();
 }
 
 void WidgetFile::setFileToBuild(File *file)
 {
-    widgetTextEdit()->getCurrentFile()->getBuilder()->setFile(file);
+    widgetTextEdit()->getCurrentFile()->builder()->setFile(file);
 }
 
 
@@ -487,6 +410,54 @@ void WidgetFile::setDictionary(QString dico)
     file()->setModified(modified);
     widgetTextEdit()->onCursorPositionChange();
 }
+
+void WidgetFile::closeCurrentPane()
+{
+    if(_currentPane)
+    {
+        closePane(_currentPane);
+    }
+}
+
+void WidgetFile::openPane(IPane * pane)
+{
+    closeCurrentPane();
+    pane->paneWidget()->show();
+    _currentPane = pane;
+    if(!pane->action()->isChecked())
+    {
+        pane->action()->toggle();
+    }
+}
+
+void WidgetFile::closePane(IPane * pane)
+{
+    pane->paneWidget()->hide();
+    _currentPane = 0;
+    if(pane->action()->isChecked())
+    {
+        pane->action()->toggle();
+    }
+}
+
+void WidgetFile::togglePane(IPane * pane)
+{
+    if(isPaneOpen(pane))
+    {
+        closePane(pane);
+    }
+    else
+    {
+        openPane(pane);
+    }
+}
+
+bool WidgetFile::isPaneOpen(IPane * pane)
+{
+    return _currentPane == pane;
+}
+
+
 bool WidgetFile::isEditorSplited()
 {
     return _editorSplitter->sizes().first();

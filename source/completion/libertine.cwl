@@ -1,22 +1,22 @@
 # denisbitouze, 27.10.2012
-\oldstylenums{number}#n
-\oldstylenumsf{number}#n
-\liningnums{number}#n
-\liningnumsf{number}#n
-\tabularnums{number}#n
-\tabularnumsf{number}#n
-\proportionalnums{number}#n
-\proportionalnumsf{number}#n
-\libertine{text}#n
-\libertineSB{text}#n
-\libertineOsF{number}#n
-\libertineLF{number}#n
-\biolinum{text}#n
-\biolinumOsF{number}#n
-\biolinumLF{number}#n
-\libertineGlyph{glyph name}#n
-\biolinumGlyph{glyph name}#n
-\biolinumKeyGlyph{glyph name}#n
+\oldstylenums{@number}#n
+\oldstylenumsf{@number}#n
+\liningnums{@number}#n
+\liningnumsf{@number}#n
+\tabularnums{@number}#n
+\tabularnumsf{@number}#n
+\proportionalnums{@number}#n
+\proportionalnumsf{@number}#n
+\libertine{@text}#n
+\libertineSB{@text}#n
+\libertineOsF{@number}#n
+\libertineLF{@number}#n
+\biolinum{@text}#n
+\biolinumOsF{@number}#n
+\biolinumLF{@number}#n
+\libertineGlyph{@glyph name}#n
+\biolinumGlyph{@glyph name}#n
+\biolinumKeyGlyph{@glyph name}#n
 \LKeyTux#n
 \LKeyWin#n
 \LKeyMenu#n
@@ -55,26 +55,26 @@
 \LKeyPageDown#n
 \LKeyCommand#n
 \LKeyOptionKey#n
-\LKeyF{digit}#n
-\LKeyPad{digit}#n
-\LKey{letter or digit}#n
-\LKeyStrgX{letter or digit}#n
-\LKeyCtrlX{letter or digit}#n
-\LKeyShiftX{letter or digit}#n
-\LKeyAltX{letter or digit}#n
-\LKeyAltGrX{letter or digit}#n
-\LKeyShiftStrgX{letter or digit}#n
-\LKeyShiftCtrlX{letter or digit}#n
-\LKeyShiftAltX{letter or digit}#n
-\LKeyShiftAltGrX{letter or digit}#n
-\LKeyStrgAltX{letter or digit}#n
+\LKeyF{@digit}#n
+\LKeyPad{@digit}#n
+\LKey{@letter or digit}#n
+\LKeyStrgX{@letter or digit}#n
+\LKeyCtrlX{@letter or digit}#n
+\LKeyShiftX{@letter or digit}#n
+\LKeyAltX{@letter or digit}#n
+\LKeyAltGrX{@letter or digit}#n
+\LKeyShiftStrgX{@letter or digit}#n
+\LKeyShiftCtrlX{@letter or digit}#n
+\LKeyShiftAltX{@letter or digit}#n
+\LKeyShiftAltGrX{@letter or digit}#n
+\LKeyStrgAltX{@letter or digit}#n
 \LKeyStrgAltEnt#n
 \LKeyReset#n
-\LKeyCtrlAltX{letter or digit}#n
+\LKeyCtrlAltX{@letter or digit}#n
 \LKeyCtrlAltEnt#n
-\LKeyAltF{1}#n
-\LKeyStrgAltF{digit}#n
-\LKeyCtrlAltF{digit}#n
+\LKeyAltF{@1}#n
+\LKeyStrgAltF{@digit}#n
+\LKeyCtrlAltF{@digit}#n
 \LMouseEmpty#n
 \LMouseN#n
 \LMouseL#n

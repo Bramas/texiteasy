@@ -21,6 +21,7 @@
 
 #include "widgetpdfdocument.h"
 #include "widgettextedit.h"
+#include "widgetfile.h"
 #include "pdfsynchronizer.h"
 #include "mainwindow.h"
 #include <QMouseEvent>
@@ -37,6 +38,8 @@
 #include "filemanager.h"
 #include "widgetfile.h"
 #include "widgettextedit.h"
+
+#include <QApplication>
 
 #define ZOOM_UPDATE 500
 #define SYNCTEX_GZ_EXT ".synctex.gz"
@@ -62,7 +65,7 @@ WidgetPdfDocument::WidgetPdfDocument(QWidget *parent) :
     _pages(0),
     scanner(NULL),
     _scroll(new QScrollBar(Qt::Vertical, this)),
-    _widgetTextEdit(0),
+    _widgetFile(0),
     _zoom(1),
     _syncPage(-2)
 
@@ -661,7 +664,7 @@ void WidgetPdfDocument::jumpToEditor(int page, const QPoint& pos)
         {
             QString filename = QString::fromUtf8(synctex_scanner_get_name(scanner, synctex_node_tag(node)));
             filename = QFileInfo(filename).canonicalFilePath();
-            this->_widgetTextEdit->widgetFile()->window()->open(filename);
+            this->_widgetFile->widgetTextEdit()->widgetFile()->window()->open(filename);
             WidgetFile * w = FileManager::Instance.widgetFile(filename);
             if(w)
             {
@@ -669,7 +672,7 @@ void WidgetPdfDocument::jumpToEditor(int page, const QPoint& pos)
             }
             else
             {
-                this->_widgetTextEdit->goToLine(synctex_node_line(node));
+                this->_widgetFile->widgetTextEdit()->goToLine(synctex_node_line(node));
             }
             break;
         }
@@ -678,14 +681,14 @@ void WidgetPdfDocument::jumpToEditor(int page, const QPoint& pos)
 
 void WidgetPdfDocument::jumpToPdfFromSourceView(int /*top*/)
 {
-    if(!this->_widgetTextEdit->isCursorVisible() && _file)
+    if(!this->_widgetFile->widgetTextEdit()->isCursorVisible() && _file)
     {
-        int centerBlockNumber = this->_widgetTextEdit->centerBlockNumber();
+        int centerBlockNumber = this->_widgetFile->widgetTextEdit()->centerBlockNumber();
         this->jumpToPdfFromSource(centerBlockNumber);
     }
     else
     {
-        this->_widgetTextEdit->highlightSyncedLine();
+        this->_widgetFile->widgetTextEdit()->highlightSyncedLine();
     }
 }
 
@@ -695,7 +698,11 @@ void WidgetPdfDocument::jumpToPdfFromSource(int source_line)
 
     if(source_line == -1)
     {
-        source_line = this->_widgetTextEdit->textCursor().blockNumber();
+        source_line = this->_widgetFile->widgetTextEdit()->textCursor().blockNumber();
+        if(this->_widgetFile->widgetTextEdit2()->hasFocus())
+        {
+            source_line = this->_widgetFile->widgetTextEdit2()->textCursor().blockNumber();
+        }
     }
     QString sourceFile = this->_file->getFilename();
 
@@ -704,10 +711,10 @@ void WidgetPdfDocument::jumpToPdfFromSource(int source_line)
         return;
     }
 
-    _widgetTextEdit->highlightSyncedLine(source_line);
+    _widgetFile->widgetTextEdit()->highlightSyncedLine(source_line);
     source_line = this->_file->getBuildedLine(source_line);
 
-    if(source_line < 0 || source_line >= this->_widgetTextEdit->document()->blockCount())
+    if(source_line < 0 || source_line >= this->_widgetFile->widgetTextEdit()->document()->blockCount())
     {
         return;
     }

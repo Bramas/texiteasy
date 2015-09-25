@@ -57,7 +57,7 @@ bool FileManager::newFile(MainWindow * mainWindow)
     changeConnexions(oldFile);
 
     connect(newFile->file(), SIGNAL(modified(bool)), this, SLOT(sendCurrentFileModified(bool)));
-    connect(newFile->file()->getBuilder(), SIGNAL(pdfChanged()), this, SLOT(ensurePdfViewerIsVisible()));
+    connect(newFile->file()->builder(), SIGNAL(pdfChanged()), this, SLOT(ensurePdfViewerIsVisible()));
     return true;
 }
 void FileManager::changeConnexions(WidgetFile * /*oldFile*/)
@@ -67,7 +67,7 @@ void FileManager::changeConnexions(WidgetFile * /*oldFile*/)
     {
         disconnect(oldFile, SIGNAL(verticalSplitterChanged()), this, SLOT(sendVerticalSplitterChanged()));
         disconnect(oldFile->widgetTextEdit(), SIGNAL(cursorPositionChanged(int,int)), this, SLOT(sendCursorPositionChanged(int,int)));
-        disconnect(oldFile->widgetTextEdit()->getCurrentFile()->getBuilder(), SIGNAL(statusChanged(QString)), this, SLOT(sendMessageFromCurrentFile(QString)));
+        disconnect(oldFile->widgetTextEdit()->getCurrentFile()->builder(), SIGNAL(statusChanged(QString)), this, SLOT(sendMessageFromCurrentFile(QString)));
     }*/
 
     // Connect
@@ -77,7 +77,7 @@ void FileManager::changeConnexions(WidgetFile * /*oldFile*/)
     }
     connect(this->currentWidgetFile(), SIGNAL(verticalSplitterChanged()), this, SLOT(sendVerticalSplitterChanged()));
     connect(this->currentWidgetFile()->widgetTextEdit(), SIGNAL(cursorPositionChanged(int,int)), this, SLOT(sendCursorPositionChanged(int,int)));
-    connect(this->currentWidgetFile()->widgetTextEdit()->getCurrentFile()->getBuilder(), SIGNAL(statusChanged(QString)), this, SLOT(sendMessageFromCurrentFile(QString)));
+    connect(this->currentWidgetFile()->widgetTextEdit()->getCurrentFile()->builder(), SIGNAL(statusChanged(QString)), this, SLOT(sendMessageFromCurrentFile(QString)));
 
 }
 
@@ -98,13 +98,13 @@ void FileManager::createMasterConnexions(WidgetFile * widget, WidgetFile * maste
     master->file()->addOpenAssociatedFile(widget->file());
 
     // update the child
-    connect(master->file()->getBuilder(), SIGNAL(pdfChanged()),widget->widgetPdfViewer()->widgetPdfDocument(),SLOT(updatePdf()));
+    connect(master->file()->builder(), SIGNAL(pdfChanged()),widget->widgetPdfViewer()->widgetPdfDocument(),SLOT(updatePdf()));
 
     widget->setMasterFile(master);
-    widget->file()->getBuilder()->setFile(master->file());
+    widget->file()->builder()->setFile(master->file());
 
     // update the parent
-    connect(widget->file()->getBuilder(), SIGNAL(pdfChanged()),master->widgetPdfViewer()->widgetPdfDocument(),SLOT(updatePdf()));
+    connect(widget->file()->builder(), SIGNAL(pdfChanged()),master->widgetPdfViewer()->widgetPdfDocument(),SLOT(updatePdf()));
 }
 
 void FileManager::deleteMasterConnexions(WidgetFile *widget, AssociatedFile::Type /*type*/)
@@ -121,7 +121,7 @@ void FileManager::deleteMasterConnexions(WidgetFile *widget, AssociatedFile::Typ
     foreach(File * openAssoc, widget->file()->openAssociatedFiles())
     {
 
-        openAssoc->getBuilder()->setFile(openAssoc);
+        openAssoc->builder()->setFile(openAssoc);
         openAssoc->widgetFile()->setMasterFile(0);
     }
 
@@ -310,20 +310,6 @@ void FileManager::rehighlight()
         widgetFile->syntaxHighlighter()->rehighlight();
         widgetFile->widgetTextEdit()->onCursorPositionChange();
         widgetFile->file()->setModified(modified); //because rehighlight call somehow setModify(true) :(
-    }
-}
-void FileManager::toggleConsole()
-{
-    if(this->currentWidgetFile())
-    {
-        this->currentWidgetFile()->toggleConsole();
-    }
-}
-void FileManager::toggleErrorTable()
-{
-    if(this->currentWidgetFile())
-    {
-        this->currentWidgetFile()->toggleErrorTable();
     }
 }
 void FileManager::setEncoding(QString codec)

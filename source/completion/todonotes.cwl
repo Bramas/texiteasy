@@ -3,10 +3,10 @@
 # http://midtiby.blogspot.com/
 # http://www.ctan.org/tex-archive/help/Catalogue/entries/todonotes.html
 
-\todo{text}
-\todo[options]{text}
+\todo{@text}
+\todo[@options]{@text}
 \listoftodos
-\listoftodos[caption]
-\missingfigure{text}
-\missingfigure[options]{text}
+\listoftodos[@caption]
+\missingfigure{@text}
+\missingfigure[@options]{@text}
 

@@ -20,6 +20,7 @@
 //  - use string as input instead of textDocument
 
 #include "latexoutputfilter.h"
+#include <QDebug>
 
 
 using namespace std;
@@ -600,8 +601,10 @@ bool LatexOutputFilter::detectError(const QString & strLine, short &dwCookie)
 			}
 			else if(reTeXError.indexIn(strLine) != -1) {
 				//KILE_DEBUG() << "\tError : " <<  reTeXError.cap(1) << endl;
+                //qDebug() << "\tError : " <<  reTeXError.cap(1) << endl;
 				m_currentItem.message=reTeXError.cap(1);
 				found = true;
+                //flush = true;
 			}
 			else if(rePackageError.indexIn(strLine) != -1) {
 				//KILE_DEBUG() << "\tError : " <<  reTeXError.cap(1) << endl;
@@ -611,6 +614,7 @@ bool LatexOutputFilter::detectError(const QString & strLine, short &dwCookie)
 			if(found && dwCookie != Latex3Error) {  // already handled for Latex3Error above
 				dwCookie = strLine.endsWith('.') ? LineNumber : Error;
 				m_currentItem.logline=GetCurrentOutputLine();
+                //qDebug()<<dwCookie<<LineNumber<<Error;
 			}
 		break;
 
@@ -659,16 +663,17 @@ bool LatexOutputFilter::detectError(const QString & strLine, short &dwCookie)
 			if(reLineNumber.indexIn(strLine) != -1) {
 				dwCookie = Start;
 				flush = true;
-				//KILE_DEBUG() << "\tline number: " << reLineNumber.cap(1) << endl;
+                //qDebug() << "\tline number: " << reLineNumber.cap(1) << endl;
                 m_currentItem.oldline=reLineNumber.cap(2).toInt();
                 m_currentItem.message=m_currentItem.message + reLineNumber.cap(3);
 			}
-			else if(GetCurrentOutputLine() - m_currentItem.logline > 10) {
+            else if(GetCurrentOutputLine() - m_currentItem.logline > 10)
+            {
 				dwCookie = Start;
 				flush = true;
-				//kWarning() << "\tBAILING OUT: did not detect a TeX line number for an error" << endl;
+                //qDebug() << "\tBAILING OUT: did not detect a TeX line number for an error" << endl;
 				m_currentItem.oldline=0;
-			}
+            }
 		break;
 
 		default : break;

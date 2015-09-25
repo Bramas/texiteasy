@@ -1,7 +1,7 @@
 # mode: scrtime.sty
 # dani/2006-02-21
 \thistime
-\thistime[div]
+\thistime[@div]
 \thistime*
-\thistime*[div]
-\settime{value}
+\thistime*[@div]
+\settime{@value}

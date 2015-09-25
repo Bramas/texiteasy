@@ -31,6 +31,7 @@
 #include "widgettextedit.h"
 #include "widgettooltip.h"
 #include "filestructure.h"
+#include "configmanager.h"
 
 bool completionStringLessThan(const QString &s1, const QString &s2)
 {
@@ -63,11 +64,10 @@ CompletionEngine::CompletionEngine(WidgetTextEdit *parent) :
 {
     this->setVisible(false);
 
-
-    this->loadFile(":/completion/tex.cwl");
-    this->loadFile(":/completion/latex-document.cwl");
-    this->loadFile(":/completion/latex-mathsymbols.cwl");
-    this->loadFile(":/completion/amsmath.cwl");
+    foreach(const QString &filename, ConfigManager::Instance.completionFiles())
+    {
+        this->loadFile(filename);
+    }
 
     connect(this, SIGNAL(currentRowChanged(int)), this, SLOT(cellSelected(int)));
     _words.removeDuplicates();

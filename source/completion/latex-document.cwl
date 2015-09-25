@@ -13,7 +13,7 @@
 \arabic{@counter}#*
 \author{@names}
 %<%:TEXSTUDIO-GENERIC-ENVIRONMENT-TEMPLATE%>
-\begin{@env}
+\begin{env}
 \begin{abstract}
 \begin{alltt}
 \begin{array}{@cols}#m
@@ -22,10 +22,10 @@
 \begin{Bmatrix}#m\array
 \begin{center}
 \begin{description}
-\begin{description}{\n}    \item @text{\n}
+\begin{description}{@\n}    \item @text{@\n}
 \begin{displaymath}#\math
 \begin{document}
-\begin{enumerate}{\n}    \item @text{\n}
+\begin{enumerate}{@\n}    \item @text{@\n}
 \begin{equation}#\math
 \begin{eqnarray}#\math,array
 \begin{figure}
@@ -39,7 +39,7 @@
 \begin{footnotesize}
 \begin{Huge}
 \begin{huge}
-\begin{itemize}{\n}    \item @text{\n}
+\begin{itemize}{@\n}    \item @text{@\n}
 \begin{LARGE}
 \begin{Large}
 \begin{large}
@@ -144,9 +144,9 @@
 \botfigrule#*
 \cal
 \caption{@title}
-\caption[short]{title}
-\chapter{title}
-\chapter*{title}
+\caption[@short]{@title}
+\chapter{@title}
+\chapter*{@title}
 \chapter[@short]{@title}
 \chaptermark{@code}#*
 \chaptername{@name}#*
@@ -292,7 +292,7 @@
 \multiput(@xcoord,@ycoord)(@xdelta,@ydelta){@copies}{@object}#*/picture
 \newblock#*
 \newlabel
-\newlength{\length}
+\newlength{@\length}
 \newline
 \newpage
 \newtheorem{@envname}[@numberedlike]{@caption}
@@ -502,7 +502,7 @@
 \left#m
 \left(#m
 \left(%|\right)#m
-\left[%|\right]#m
+\left[@%|\right]#m
 \left\lbrace#m
 \left|%|\right|#m
 \left\|#m

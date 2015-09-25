@@ -17,9 +17,9 @@
 \mathfrak
 \square
 \lozenge
-\mathbb{text}
-\mathfrak{text}
-\mathbf{text}
+\mathbb{@text}
+\mathfrak{@text}
+\mathbf{@text}
 \vartriangleright
 \vartriangleleft
 \trianglerighteq
@@ -29,5 +29,5 @@
 \unlhd
 \rhd
 \unrhd
-\widehat{letter}
-\widetilde{letter}
+\widehat{@letter}
+\widetilde{@letter}

@@ -3,15 +3,15 @@
 \begin{boldequation}*
 \begin{boldequation}
 \end{boldequation}
-\MyLogo{logo text}
+\MyLogo{@logo text}
 \LogoOn
 \LogoOff
-\foilhead[dimension]{frame title}
-\foilhead{frame title}
-\rotatefoilhead[dimension]{frame title}
-\rotatefoilhead{frame title}
+\foilhead[@dimension]{@frame title}
+\foilhead{@frame title}
+\rotatefoilhead[@dimension]{@frame title}
+\rotatefoilhead{@frame title}
 \endfoil
 \FoilTeX
-\bm{text}
-\bmstyle{text}{more text}
+\bm{@text}
+\bmstyle{@text}{@more text}
 

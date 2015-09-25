@@ -1,9 +1,9 @@
 # tbraun 5.01.2007
 # ctan url package
-\url{}
-\urldef{\newurlcmd}\url{}#*
-\DeclareUrlCommand{}{}#*
-\urlstyle{}#*
+\url{@}
+\urldef{@\newurlcmd}\url{@}#*
+\DeclareUrlCommand{@}{@}#*
+\urlstyle{@}#*
 \UrlBreaks#*
 \UrlBigBreaks#*
 \UrlNoBreaks#*

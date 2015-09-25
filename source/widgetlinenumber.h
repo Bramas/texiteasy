@@ -32,6 +32,8 @@ public:
     explicit WidgetLineNumber(WidgetFile *parent);
     void setWidgetTextEdit(WidgetTextEdit * widgetTextEdit);
     void setCurrentLine(int line) { _currentLine = line; }
+    void highlightCurrentLine() { _highlightCurrentLine = true; }
+    void removeHighlight() { _highlightCurrentLine = false; }
 signals:
     
 public slots:
@@ -59,6 +61,7 @@ private:
     int _foldableLineBegin;
     int _foldableLineEnd;
     int _unfoldableLine;
+    bool _highlightCurrentLine;
     bool _isMouseOverFolding;
     bool _isMouseOverUnfolding;
     QRect _foldingHover;

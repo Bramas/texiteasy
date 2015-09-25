@@ -9,9 +9,9 @@
 \fakesubscript
 \fakesuperscript
 
-\vfrac{numerator}{denominator}
+\vfrac{@numerator}{@denominator}
 
-\namedglyph{glyphname}
+\namedglyph{@glyphname}
 
 \showhyphens
 

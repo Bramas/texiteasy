@@ -1,11 +1,11 @@
 \singlespacing
 \onehalfspacing
 \doublespacing
-\SetSinglespace{factor}
+\SetSinglespace{@factor}
 \begin{singlespace}
 \begin{doublespace}
 \begin{onehalfspace}
-\begin{spacing}{factor}
+\begin{spacing}{@factor}
 \end{singlespace}
 \end{doublespace}
 \end{onehalfspace}

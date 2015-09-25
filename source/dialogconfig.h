@@ -43,6 +43,7 @@ public:
     void addEditableActions(const QList<QAction *> & actions);
     ~DialogConfig();
 public slots:
+    void openCustoCompletionFolder(void);
     void selectBinDirectory(void);
     void selectSvnDirectory(void);
     void save(void);

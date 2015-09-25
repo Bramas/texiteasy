@@ -114,6 +114,17 @@ public:
      */
     QString getFilename() const { return this->filename; }
 
+
+    void setFilename(QString f)
+    {
+        if(!filename.isEmpty())
+        {
+            qWarning()<<"you cannot set a filename for an existing file with the function setFilename";
+            return;
+        }
+        this->filename = f;
+    }
+
     QString getPath() const { QString s(this->filename); return s.replace(QRegExp("^(([^\\\\\\/]*[\\\\\\/])*)[^\\\\\\/]*$"),"\\1"); }
 
     QString rootBasename() const { return QFileInfo(rootFilename()).completeBaseName(); }
@@ -163,7 +174,7 @@ public:
         return "";
     }
 
-    Builder * getBuilder() { return this->builder; }
+    Builder * builder() { return this->_builder; }
 
     /**
      * @brief (not used) getViewer
@@ -191,6 +202,7 @@ public:
     WidgetFile * widgetFile() { return _widgetFile; }
 
     const QMap<QString, QString> & texDirectives(){ return _texDirectives; }
+    void addTexDirective(const QString key, const QString value){ _texDirectives[key] = value; }
 
     void removeAutosaveFile();
 public slots:
@@ -228,7 +240,7 @@ private:
     QTimer * _autoSaveTimer;
     QList<AssociatedFile> _associatedFiles;
     QList<File*> _openAssociatedFiles;
-    Builder * builder;
+    Builder * _builder;
     QString _codec;
     QString data;
     QString filename;

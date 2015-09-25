@@ -2,11 +2,11 @@
 # http://www.ctan.org/tex-archive/macros/latex/contrib/mh
 # By astroscion: 2012-03-10
 \begin{empheq}#\math,array
-\begin{empheq}{AMS env name}#\math,array
-\begin{empheq}[markup instructions]{AMS env name}#\math,array
+\begin{empheq}{@AMS env name}#\math,array
+\begin{empheq}[@markup instructions]{@AMS env name}#\math,array
 \end{empheq}
 \fbox
-\empheqset{markup instructions}
+\empheqset{@markup instructions}
 \empheqlbrace
 \empheqrbrace
 \empheqbiglbrace
@@ -39,14 +39,14 @@
 \empheqrceil
 \empheqbiglceil
 \empheqbigrceil
-\shoveleft{arg}
-\shoveleft[dimen]{arg}
-\shoveright{arg}
-\shoveright[dimen]{arg}
-\shadowbox*{arg}
+\shoveleft{@arg}
+\shoveleft[@dimen]{@arg}
+\shoveright{@arg}
+\shoveright[@dimen]{@arg}
+\shadowbox*{@arg}
 \mintagvsep
-\DeclareLeftDelimiter[space adjustment]{delimiter}
-\DeclareRightDelimiter[space adjustment]{delimiter}
+\DeclareLeftDelimiter[@space adjustment]{@delimiter}
+\DeclareRightDelimiter[@space adjustment]{@delimiter}
 \EmphEqdelimitershortfall
 \EmphEqdelimiterfactor
 \EmphEqdisplayheight

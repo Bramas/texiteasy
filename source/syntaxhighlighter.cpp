@@ -64,7 +64,7 @@ QStringList initCommandsWithOptions()
 QStringList initMathEnvironment()
 {
     QStringList list;
-    list << "displaymath" << "equation" ;
+    list << "displaymath" << "equation" << "align" << "eqnarray" << "multline" << "gather" << "flalign" << "alignat" << "gathered" << "split" << "aligned" << "alignedat";
     return list;
 }
 
@@ -720,7 +720,7 @@ while ( leftPos != -1 )
 }
 */
 
-QRegExp leftPattern("(\\\\left[^a-zA-Z]|\\{|\\[|\\()");
+QRegExp leftPattern("(\\\\left[\\\\]{0,1}[^a-zA-Z\\\\]|\\{|\\[|\\()");
 leftPos = text.indexOf( leftPattern );
 while ( leftPos != -1 )
 {
@@ -746,45 +746,55 @@ while ( leftPos != -1 )
     else
     {
         info->type = ParenthesisInfo::LEFT;
-        info->length--;
+        //info->length += 2;
     }
+    leftPos += info->length;
 
     blockData->insertPar( info );
     }
- leftPos = text.indexOf( leftPattern, leftPos+leftPattern.matchedLength() );
+    else
+    {
+        leftPos += leftPattern.matchedLength();
+    }
+ leftPos = text.indexOf( leftPattern, leftPos );
 }
-QRegExp rightPattern("(\\\\right[^a-zA-Z]|\\}|\\]|\\))");
+QRegExp rightPattern("(\\\\right[\\\\]{0,1}[^a-zA-Z\\\\]|\\}|\\]|\\))");
 int rightPos = text.indexOf( rightPattern );
 while ( rightPos != -1 )
 {
     if(   blockData->characterData[rightPos].state != Verbatim
-      && blockData->characterData[rightPos].state != Comment)
+          && blockData->characterData[rightPos].state != Comment
+          )
     {
-    ParenthesisInfo *info = new ParenthesisInfo;
-    QString right = rightPattern.capturedTexts().at(1);
-    info->length = rightPattern.matchedLength();
-    info->position = rightPos;
-    if(!right.compare("}"))
-    {
-        info->type = ParenthesisInfo::RIGHT_BRACE;
-    }
-    else if(!right.compare("]"))
-    {
-        info->type = ParenthesisInfo::RIGHT_CROCHET;
-    }
-    else if(!right.compare(")"))
-    {
-        info->type = ParenthesisInfo::RIGHT_PARENTHESIS;
+        ParenthesisInfo *info = new ParenthesisInfo;
+        QString right = rightPattern.capturedTexts().at(1);
+        info->length = rightPattern.matchedLength();
+        info->position = rightPos;
+        if(!right.compare("}"))
+        {
+            info->type = ParenthesisInfo::RIGHT_BRACE;
+        }
+        else if(!right.compare("]"))
+        {
+            info->type = ParenthesisInfo::RIGHT_CROCHET;
+        }
+        else if(!right.compare(")"))
+        {
+            info->type = ParenthesisInfo::RIGHT_PARENTHESIS;
+        }
+        else
+        {
+            info->type = ParenthesisInfo::RIGHT;
+            //info->length++;
+        }
+        rightPos += info->length;
+        blockData->insertPar( info );
     }
     else
     {
-        info->type = ParenthesisInfo::RIGHT;
-        info->length--;
+        rightPos += rightPattern.matchedLength();
     }
-
-    blockData->insertPar( info );
-    }
-    rightPos = text.indexOf( rightPattern, rightPos + rightPattern.matchedLength() );
+    rightPos = text.indexOf( rightPattern, rightPos);
 }
 
 /*
@@ -958,7 +968,6 @@ if (_widgetFile->spellChecker())
 }
 
 
-
 //DO NOT set current block state to Command -> this may cause out of range index in array. (see case Command in the main switch above)
 if(state == Command)
 {
@@ -973,6 +982,16 @@ blockData->blockEndingState.environment    = currentEnvironment;
 
 // Check if we need to rehighlight the next block
 QTextBlock nextBlock = this->currentBlock().next();
+if(!nextBlock.isValid())
+{
+    if(parenthesisLevel->count() > 1 || parenthesisLevel->top() != 0)
+    {
+        QTextCharFormat f;
+        f.setForeground(QBrush(QColor(255,0,0)));
+        setFormat(0,currentBlock().length(), f);
+    }
+
+}
 if(nextBlock.isValid())
 {
     BlockData * nextData = static_cast<BlockData *>(nextBlock.userData());

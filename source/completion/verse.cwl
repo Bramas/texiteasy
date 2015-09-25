@@ -2,7 +2,7 @@
 # nja 17 July 2007 not submitted
 
 \begin{verse}
-\begin{verse}[length of average line]
+\begin{verse}[@length of average line]
 \end{verse}
 
 \begin{altverse}
@@ -13,7 +13,7 @@
 \begin{patverse*}
 \end{patverse*}
 
-\indentpattern{digits}
+\indentpattern{@digits}
 
 
 \versewidth
@@ -25,21 +25,21 @@
 \stanzaskip
 
 \verselinebreak
-\verselinebreak[length]
-\flagverse{flag}
+\verselinebreak[@length]
+\flagverse{@flag}
 \vleftskip
 \vrightskip
-\poemlines{nth}
+\poemlines{@nth}
 \thepoemline
-\verselinenumfont{font-spec}
+\verselinenumfont{@font-spec}
 \verselinenumbersleft
 \verselinenumbersright
 
-\poemtitle{short}{long}
-\poemtitle*{short}{long}
+\poemtitle{@short}{@long}
+\poemtitle*{@short}{@long}
 \poemtoc
 \poemtitlefont
 \beforepoemtitleskip
 \afterpoemtitleskip
-\poemtitlemark{title}
+\poemtitlemark{@title}
 

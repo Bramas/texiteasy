@@ -374,6 +374,11 @@ bool WidgetTextEdit::isCursorVisible()
 
 void WidgetTextEdit::onCursorPositionChange()
 {
+    if(_widgetLineNumber)
+    {
+        _widgetLineNumber->removeHighlight();
+    }
+
     this->removeExtraSelections(WidgetTextEdit::ArgumentSelection);
     this->removeExtraSelections(WidgetTextEdit::ParenthesesMatchingSelection);
     _textStruct->environmentPath(textCursor().position());
@@ -555,9 +560,15 @@ void WidgetTextEdit::addExtraSelections(const QList<QTextEdit::ExtraSelection> &
 void WidgetTextEdit::applyExtraSelection()
 {
     QList<QTextEdit::ExtraSelection> newExtraSelections;
-    foreach(const QList<QTextEdit::ExtraSelection> &s, _extraSelections)
+    foreach(const QList<QTextEdit::ExtraSelection> &selList, _extraSelections)
     {
-        newExtraSelections.append(s);
+        foreach(const QTextEdit::ExtraSelection &s, selList)
+        {
+            if(!s.cursor.isNull() && s.cursor.selectedText().length())
+            {
+                newExtraSelections.append(s);
+            }
+        }
     }
     WIDGET_TEXT_EDIT_PARENT_CLASS::setExtraSelections(newExtraSelections);
 }
@@ -1065,6 +1076,40 @@ void WidgetTextEdit::matchAll()
     this->_completionEngine->setVisible(false);
     this->matchPar();
     this->matchLat();
+    int pos;
+    removeExtraSelections(WidgetTextEdit::UnmatchedBrace);
+    if(-1 != (pos = matchRightPar(document()->lastBlock(), ParenthesisInfo::RIGHT_BRACE, document()->lastBlock().length() - 1, 0 )))
+    {
+        QTextEdit::ExtraSelection selection;
+        QTextCharFormat format;
+        format.setForeground(QBrush(QColor(255,100,100,100)));
+        selection.format = format;
+
+        QTextCursor cursor = textCursor();
+        cursor.setPosition( pos );
+        cursor.setPosition( document()->lastBlock().position() + document()->lastBlock().length() - 1, QTextCursor::KeepAnchor);
+        selection.cursor = cursor;
+
+        QList<QTextEdit::ExtraSelection> selections;
+        selections.append( selection );
+        addExtraSelections(selections, WidgetTextEdit::UnmatchedBrace);
+    }
+    if(-1 != (pos = matchLeftPar(document()->firstBlock(), ParenthesisInfo::LEFT_BRACE, 0, 0 )))
+    {
+        QTextEdit::ExtraSelection selection;
+        QTextCharFormat format;
+        format.setForeground(QBrush(QColor(255,100,100,100)));
+        selection.format = format;
+
+        QTextCursor cursor = textCursor();
+        cursor.setPosition( 0 );
+        cursor.setPosition( pos, QTextCursor::KeepAnchor);
+        selection.cursor = cursor;
+
+        QList<QTextEdit::ExtraSelection> selections;
+        selections.append( selection );
+        addExtraSelections(selections, WidgetTextEdit::UnmatchedBrace);
+    }
 }
 
 void WidgetTextEdit::displayWidgetInsertCommand()
@@ -1135,45 +1180,48 @@ void WidgetTextEdit::matchPar()
             int curPos = textCursor().position() - textBlock.position();
             // Clicked on a left parenthesis?
             if ( info->position <= curPos-1 && info->position + info->length > curPos-1 && !(info->type & ParenthesisInfo::RIGHT) ) {
-                if ( matchLeftPar(textBlock, info->type, i+1, 0 ) )
+                if ( -1 != matchLeftPar(textBlock, info->type, i+1, 0 ) )
                     createParSelection( pos + info->position, info->length );
             }
 
             // Clicked on a right parenthesis?
             if ( info->position <= curPos-1 && info->position + info->length > curPos-1 && (info->type & ParenthesisInfo::RIGHT)) {
-                if ( matchRightPar( textBlock, info->type, i-1, 0 ) )
+                if (-1 != matchRightPar( textBlock, info->type, i-1, 0 ) )
                     createParSelection( pos + info->position, info->length );
             }
         }
     }
 }
-bool WidgetTextEdit::matchLeftPar(	QTextBlock currentBlock, int type, int index, int numLeftPar )
+int WidgetTextEdit::matchLeftPar(	QTextBlock currentBlock, int type, int index, int numLeftPar )
 {
     BlockData *data = static_cast<BlockData *>( currentBlock.userData() );
-    QVector<ParenthesisInfo *> infos = data->parentheses();
-    int docPos = currentBlock.position();
+    if(data)
+    {
+        QVector<ParenthesisInfo *> infos = data->parentheses();
+        int docPos = currentBlock.position();
 
-    // Match in same line?
-    for ( ; index<infos.size(); ++index ) {
-        ParenthesisInfo *info = infos.at(index);
+        // Match in same line?
+        for ( ; index<infos.size(); ++index ) {
+            ParenthesisInfo *info = infos.at(index);
 
-        if ( info->type == type ) {
-            ++numLeftPar;
-            continue;
-        }
-
-        if ( info->type == type + ParenthesisInfo::RIGHT )
-        {
-            if(numLeftPar == 0) {
-                createParSelection( docPos + info->position, info->length );
-                return true;
+            if ( info->type == type ) {
+                ++numLeftPar;
+                continue;
             }
-            else
+
+            if ( info->type == type + ParenthesisInfo::RIGHT )
             {
-                --numLeftPar;
+                if(numLeftPar == 0) {
+                    createParSelection( docPos + info->position, info->length );
+                    return docPos + info->position;
+                }
+                else
+                {
+                    --numLeftPar;
+                }
             }
-        }
 
+        }
     }
 
     // No match yet? Then try next block
@@ -1182,33 +1230,36 @@ bool WidgetTextEdit::matchLeftPar(	QTextBlock currentBlock, int type, int index,
         return matchLeftPar( currentBlock, type, 0, numLeftPar );
 
     // No match at all
-    return false;
+    return -1;
 }
 
-bool WidgetTextEdit::matchRightPar(QTextBlock currentBlock, int type, int index, int numRightPar)
+int WidgetTextEdit::matchRightPar(QTextBlock currentBlock, int type, int index, int numRightPar)
 {
     BlockData *data = static_cast<BlockData *>( currentBlock.userData() );
-    QVector<ParenthesisInfo *> infos = data->parentheses();
-    int docPos = currentBlock.position();
+    if(data)
+    {
+        QVector<ParenthesisInfo *> infos = data->parentheses();
+        int docPos = currentBlock.position();
 
-    // Match in same line?
-    for (int j=index; j>=0; --j ) {
-        ParenthesisInfo *info = infos.at(j);
+        // Match in same line?
+        for (int j=index; j>=0 && j < infos.size(); --j ) {
+            ParenthesisInfo *info = infos.at(j);
 
-        if ( info->type == type ) {
-            ++numRightPar;
-            continue;
-        }
-
-        if ( info->type == type - ParenthesisInfo::RIGHT)
-        {
-            if( numRightPar == 0 ) {
-                createParSelection( docPos + info->position, info->length );
-                return true;
+            if ( info->type == type ) {
+                ++numRightPar;
+                continue;
             }
-            else
+
+            if ( info->type == type - ParenthesisInfo::RIGHT)
             {
-                --numRightPar;
+                if( numRightPar == 0 ) {
+                    createParSelection( docPos + info->position, info->length );
+                    return  docPos + info->position;
+                }
+                else
+                {
+                    --numRightPar;
+                }
             }
         }
     }
@@ -1219,13 +1270,15 @@ bool WidgetTextEdit::matchRightPar(QTextBlock currentBlock, int type, int index,
 
         // Recalculate correct index first
         BlockData *data = static_cast<BlockData *>( currentBlock.userData() );
-        QVector<ParenthesisInfo *> infos = data->parentheses();
-
-        return matchRightPar( currentBlock, type, infos.size()-1, numRightPar );
+        if(data)
+        {
+            QVector<ParenthesisInfo *> infos = data->parentheses();
+            return matchRightPar( currentBlock, type, infos.size()-1, numRightPar );
+        }
     }
 
     // No match at all
-    return false;
+    return -1;
 }
 
 void WidgetTextEdit::createParSelection( int pos, int length )
@@ -1732,6 +1785,20 @@ void WidgetTextEdit::unfold(int start)
     viewport()->update();
     _widgetLineNumber->update();
     //ensureCursorVisible();
+}
+
+void WidgetTextEdit::highlightSearchResult(const QTextCursor &searchResult)
+{
+    // TODO: add Overlay to have a catchy selection
+
+    /*QList<QTextEdit::ExtraSelection> extraSelections;
+    QTextEdit::ExtraSelection selection;
+    selection.format.setUnderlineColor(ConfigManager::Instance.getTextCharFormats("search-result").background().color());
+    selection.format.setUnderlineStyle(QTextCharFormat::SingleUnderline);
+    selection.format.setFontWeight(100);
+    selection.cursor = QTextCursor(searchResult);
+    extraSelections.append(selection);
+    addExtraSelections(extraSelections, WidgetTextEdit::SearchResultSelection);*/
 }
 
 void WidgetTextEdit::goToSection(QString sectionName)

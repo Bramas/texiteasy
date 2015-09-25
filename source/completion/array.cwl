@@ -4,5 +4,5 @@
 \extratabsurround
 \firsthline
 \lasthline
-\newcolumntype{name}{argument}
+\newcolumntype{@name}{@argument}
 \showcols

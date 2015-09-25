@@ -4,24 +4,24 @@
 # t_hoffmann 31.03.2012
 
 # Numbers
-\num{number}
-\num[options]{number}
-\numlist[options]{numbers}
-\numrange[options]{numbers}{number2}
+\num{@number}
+\num[@options]{@number}
+\numlist[@options]{@numbers}
+\numrange[@options]{@numbers}{@number2}
 
 # Angles
-\ang{angle}
-\ang[options]{angle}
+\ang{@angle}
+\ang[@options]{@angle}
 
 # Units and values
-\SI{value}{unit commands}
-\SI[options]{value}{unit commands}
-\SI{value}[pre-unit]{unit commands}
-\SI[options]{value}[pre-unit]{unit commands}
-\SIlist[options]{values}{unit commands}
-\SIrange[options]{value1}{value2}{unit commands}
+\SI{@value}{@unit commands}
+\SI[@options]{@value}{@unit commands}
+\SI{@value}[@pre-unit]{@unit commands}
+\SI[@options]{@value}[@pre-unit]{@unit commands}
+\SIlist[@options]{@values}{@unit commands}
+\SIrange[@options]{@value1}{@value2}{@unit commands}
 # Declaration
-\DeclareSIUnit{unit}{definition}#d
+\DeclareSIUnit{@unit}{@definition}#d
 # Powers of units
 \Square
 \ssquare
@@ -29,12 +29,12 @@
 \cubic
 \cubed
 \per
-\tothe{power}
-\raiseto{power}
+\tothe{@power}
+\raiseto{@power}
 
 # Units with no values
-\si{unit}
-\si[options]{unit}
+\si{@unit}
+\si[@options]{@unit}
 
 #
 # pre-defined units, prefixes and powers
@@ -269,24 +269,24 @@
 \roentgen
 
 # Defining new units
-\newunit{new unit command}{text}
-\newunit[options]{new unit command}{text}
-\renewunit{new unit command}{text}
-\renewunit[options]{new unit command}{text}
-\provideunit{new unit command}{text}
-\provideunit[options]{new unit command}{text}
-\newpower{power}{num}
-\newpower[post]{power}{num}
-\renewpower{power}{num}
-\renewpower[post]{power}{num}
-\providepower{power}{num}
-\providepower[post]{power}{num}
-\newprefix{prefix}{symbol}{powers-ten}
-\newprefix[binary]{prefix}{symbol}{powers-ten}
-\renewprefix{prefix}{symbol}{powers-ten}
-\renewprefix[binary]{prefix}{symbol}{powers-ten}
-\provideprefix{prefix}{symbol}{powers-ten}
-\provideprefix[binary]{prefix}{symbol}{powers-ten}
+\newunit{@new unit command}{@text}
+\newunit[@options]{@new unit command}{@text}
+\renewunit{@new unit command}{@text}
+\renewunit[@options]{@new unit command}{@text}
+\provideunit{@new unit command}{@text}
+\provideunit[@options]{@new unit command}{@text}
+\newpower{@power}{@num}
+\newpower[@post]{@power}{@num}
+\renewpower{@power}{@num}
+\renewpower[@post]{@power}{@num}
+\providepower{@power}{@num}
+\providepower[@post]{@power}{@num}
+\newprefix{@prefix}{@symbol}{@powers-ten}
+\newprefix[@binary]{@prefix}{@symbol}{@powers-ten}
+\renewprefix{@prefix}{@symbol}{@powers-ten}
+\renewprefix[@binary]{@prefix}{@symbol}{@powers-ten}
+\provideprefix{@prefix}{@symbol}{@powers-ten}
+\provideprefix[@binary]{@prefix}{@symbol}{@powers-ten}
 
 # Package options inside document
 \sisetup

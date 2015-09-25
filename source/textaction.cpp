@@ -446,18 +446,33 @@ bool InputTextAction::execute(QTextCursor clickCursor, WidgetFile *widgetFile, Q
     QFile file(filename);
     if(file.exists())
     {
+        qDebug()<<filename<<" exists";
         widgetFile->window()->open(filename);
         return true;
+    }
+    qDebug()<<filename<<"does not exists";
+    if(filename.right(4) != ".tex")
+    {
+        filename += ".tex";
+        QFile fileTex(filename);
+        if(fileTex.exists())
+        {
+            widgetFile->window()->open(filename);
+            return true;
+        }
+        qDebug()<<filename<<"does not exists";
     }
     WidgetFile * newFile = widgetFile->window()->newFile();
     if(!newFile)
     {
         return false;
     }
-    newFile->saveAs(filename);
+    newFile->file()->setFilename(filename);
+    emit FileManager::Instance.sendFilenameChanged(newFile, filename);
     FileManager::Instance.createMasterConnexions(newFile, widgetFile, AssociatedFile::INPUT);
     newFile->window()->insertTexDirRoot();
-    newFile->save();
+    newFile->file()->setModified(true);
+    //newFile->save();
     return true;
 }
 

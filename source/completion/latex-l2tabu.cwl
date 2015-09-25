@@ -11,6 +11,6 @@
 \end{eqnarray*}
 \end{fussypar}
 \end{sloppypar}
-\centerline{text}
+\centerline{@text}
 \fussy
 \sloppy

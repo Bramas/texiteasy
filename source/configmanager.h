@@ -61,6 +61,8 @@ public:
 
     static const QStringList DefaultLatexCommandNames;
     static const QStringList DefaultLatexCommands;
+    static const QStringList DefaultCompletionFiles;
+
 
     int tabWidth() { QSettings settings; return settings.value("tabWidth", 4).toInt(); }
     void setTabWidth(int tabW) { QSettings settings; settings.setValue("tabWidth", tabW); emit tabWidthChanged(); }
@@ -186,6 +188,11 @@ public:
 
     bool hideAuxFiles() { QSettings settings; return settings.value("builder/hideAuxFiles", true).toBool(); }
     void setHideAuxFiles(bool hide) { QSettings settings; settings.setValue("builder/hideAuxFiles", hide); }
+
+    QString customCompletionFolder();
+    QStringList completionFiles();
+    void setCompletionFiles(QStringList completionFiles) { QSettings settings; settings.setValue("completionFiles", completionFiles); }
+
 
     QStringList latexCommandNames()
                 {  QSettings settings; return settings.value("builder/latexCommandNames").toStringList();  }
