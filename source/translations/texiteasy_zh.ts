@@ -4,12 +4,17 @@
 <context>
     <name>Builder</name>
     <message>
-        <location filename="../builder.cpp" line="198"/>
+        <location filename="../builder.cpp" line="119"/>
+        <source>Canceled</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../builder.cpp" line="199"/>
         <source>Erreur</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../builder.cpp" line="198"/>
+        <location filename="../builder.cpp" line="199"/>
         <source>La compilation n&apos;a pas pu démarrer.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -120,172 +125,187 @@
     </message>
     <message>
         <location filename="../dialogconfig.ui" line="47"/>
+        <source>Complétion</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogconfig.ui" line="52"/>
         <source>Svn</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="77"/>
+        <location filename="../dialogconfig.ui" line="82"/>
         <source>Langage</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="87"/>
+        <location filename="../dialogconfig.ui" line="92"/>
         <source>Dictionnaire par défaut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="97"/>
+        <location filename="../dialogconfig.ui" line="102"/>
         <source>Ouvrir la dernière session au démarrage</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="111"/>
+        <location filename="../dialogconfig.ui" line="116"/>
         <source>Temps entre deux sauvegardes automatiques (sec)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="147"/>
+        <location filename="../dialogconfig.ui" line="152"/>
         <source>Taille du texte</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="157"/>
+        <location filename="../dialogconfig.ui" line="162"/>
         <source>Thème</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="167"/>
+        <location filename="../dialogconfig.ui" line="172"/>
         <source>Police de caractère</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="176"/>
+        <location filename="../dialogconfig.ui" line="181"/>
         <source>Remplacer la police du thème</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="192"/>
+        <location filename="../dialogconfig.ui" line="197"/>
         <source>Indentation avec des espaces</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="206"/>
+        <location filename="../dialogconfig.ui" line="211"/>
         <source>Lageur d&apos;une tabulation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.cpp" line="88"/>
+        <location filename="../dialogconfig.cpp" line="90"/>
         <source>Executables Svn</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.cpp" line="97"/>
+        <location filename="../dialogconfig.cpp" line="99"/>
         <source>Executables Latex</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.cpp" line="283"/>
+        <location filename="../dialogconfig.cpp" line="301"/>
         <source>Action</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.cpp" line="285"/>
+        <location filename="../dialogconfig.cpp" line="303"/>
         <source>Raccourci</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.cpp" line="304"/>
+        <location filename="../dialogconfig.cpp" line="340"/>
         <source>Compilation par défault</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="304"/>
+        <location filename="../dialogconfig.ui" line="309"/>
         <source>Chemin vers les executables latex</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="316"/>
-        <location filename="../dialogconfig.ui" line="480"/>
+        <location filename="../dialogconfig.ui" line="321"/>
+        <location filename="../dialogconfig.ui" line="551"/>
         <source>Parcourir</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="325"/>
+        <location filename="../dialogconfig.ui" line="330"/>
         <source>BibTex</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="332"/>
+        <location filename="../dialogconfig.ui" line="337"/>
         <source>bibtex %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="339"/>
+        <location filename="../dialogconfig.ui" line="344"/>
         <source>Commande Latex par défaut</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="349"/>
+        <location filename="../dialogconfig.ui" line="354"/>
         <source>Cacher les fichiers de compilation</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.cpp" line="278"/>
+        <location filename="../dialogconfig.cpp" line="296"/>
         <source>Nom</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.cpp" line="280"/>
+        <location filename="../dialogconfig.cpp" line="298"/>
         <source>Commande</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="402"/>
+        <location filename="../dialogconfig.ui" line="407"/>
         <source> + </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="412"/>
+        <location filename="../dialogconfig.ui" line="417"/>
         <source> - </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="526"/>
+        <location filename="../dialogconfig.ui" line="597"/>
         <source>Annuler</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="513"/>
+        <location filename="../dialogconfig.ui" line="584"/>
         <source>Valider</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="216"/>
+        <location filename="../dialogconfig.ui" line="221"/>
         <source>$ automatique</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="230"/>
+        <location filename="../dialogconfig.ui" line="235"/>
         <source>Retour à la ligne automatique</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="244"/>
+        <location filename="../dialogconfig.ui" line="249"/>
         <source>Marquer les modifications de texte</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="448"/>
+        <location filename="../dialogconfig.ui" line="475"/>
+        <source>Open</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogconfig.ui" line="501"/>
+        <source>Folder containing custom completion files:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../dialogconfig.ui" line="519"/>
         <source>Chemin vers l&apos;executable Svn</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="488"/>
+        <location filename="../dialogconfig.ui" line="559"/>
         <source>Activer les fonctionnalités Svn</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../dialogconfig.ui" line="539"/>
+        <location filename="../dialogconfig.ui" line="610"/>
         <source>Appliquer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -590,22 +610,22 @@
 <context>
     <name>FileManager</name>
     <message>
-        <location filename="../filemanager.cpp" line="521"/>
+        <location filename="../filemanager.cpp" line="507"/>
         <source>Le fichier %1 à été modifié en dehors de %2. Voulez-vous le charger à nouveau ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../filemanager.cpp" line="523"/>
+        <location filename="../filemanager.cpp" line="509"/>
         <source>Un fichier à été modifié.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../filemanager.cpp" line="530"/>
+        <location filename="../filemanager.cpp" line="516"/>
         <source>Charger à nouveau</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../filemanager.cpp" line="531"/>
+        <location filename="../filemanager.cpp" line="517"/>
         <source>Ignorer</source>
         <translation type="unfinished"></translation>
     </message>
@@ -858,7 +878,7 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="249"/>
-        <location filename="../mainwindow.cpp" line="796"/>
+        <location filename="../mainwindow.cpp" line="798"/>
         <source>Annuler</source>
         <translation type="unfinished"></translation>
     </message>
@@ -968,63 +988,73 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="485"/>
+        <location filename="../mainwindow.cpp" line="487"/>
         <source>&amp;Macros</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="639"/>
+        <location filename="../mainwindow.cpp" line="641"/>
         <source>Ouvrir un fichier</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="690"/>
+        <location filename="../mainwindow.cpp" line="692"/>
         <source>Attention</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="690"/>
+        <location filename="../mainwindow.cpp" line="692"/>
         <source>Le compilateur %1 n&apos;est pas définie, veuillez le créer dans les options.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="783"/>
+        <location filename="../mainwindow.cpp" line="785"/>
         <source>Continuer?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="784"/>
+        <location filename="../mainwindow.cpp" line="786"/>
         <source>Le fichier%1 a été modifié.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="785"/>
+        <location filename="../mainwindow.cpp" line="787"/>
         <source>Voullez-vous sauvegarder les changements?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="792"/>
+        <location filename="../mainwindow.cpp" line="794"/>
         <source>Sauvegarder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="794"/>
+        <location filename="../mainwindow.cpp" line="796"/>
         <source>Ne pas sauvegarder</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="874"/>
+        <location filename="../mainwindow.cpp" line="876"/>
         <source>Nom de l&apos;encodage</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="875"/>
+        <location filename="../mainwindow.cpp" line="877"/>
         <source>Nom de l&apos;encodage: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="998"/>
-        <location filename="../mainwindow.cpp" line="1004"/>
+        <location filename="../mainwindow.cpp" line="939"/>
+        <source>Compilateur pour ce fichier</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="940"/>
+        <source>Compilateur:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.cpp" line="1015"/>
+        <location filename="../mainwindow.cpp" line="1021"/>
         <source>Mettre à jour TexitEasy</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1052,17 +1082,17 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../latexoutputfilter.cpp" line="42"/>
+        <location filename="../latexoutputfilter.cpp" line="43"/>
         <source>BadBox: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../latexoutputfilter.cpp" line="45"/>
+        <location filename="../latexoutputfilter.cpp" line="46"/>
         <source>Warning: </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../latexoutputfilter.cpp" line="48"/>
+        <location filename="../latexoutputfilter.cpp" line="49"/>
         <source>Error: </source>
         <translation type="unfinished"></translation>
     </message>
@@ -1083,7 +1113,7 @@
 <context>
     <name>TaskDelegate</name>
     <message>
-        <location filename="../taskpane/taskwindow.cpp" line="745"/>
+        <location filename="../taskpane/taskwindow.cpp" line="754"/>
         <source>File not found: %1</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1091,18 +1121,18 @@
 <context>
     <name>TaskWindow</name>
     <message>
-        <location filename="../taskpane/taskwindow.cpp" line="134"/>
-        <location filename="../taskpane/taskwindow.h" line="75"/>
+        <location filename="../taskpane/taskwindow.cpp" line="138"/>
+        <location filename="../taskpane/taskwindow.h" line="88"/>
         <source>Issues</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../taskpane/taskwindow.cpp" line="165"/>
+        <location filename="../taskpane/taskwindow.cpp" line="169"/>
         <source>Show Warnings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../taskpane/taskwindow.cpp" line="169"/>
+        <location filename="../taskpane/taskwindow.cpp" line="173"/>
         <source>Filter by categories</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1169,13 +1199,23 @@
 <context>
     <name>WidgetFile</name>
     <message>
-        <location filename="../widgetfile.cpp" line="377"/>
+        <location filename="../widgetfile.cpp" line="55"/>
+        <source>Erreurs</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../widgetfile.cpp" line="61"/>
+        <source>Warning</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../widgetfile.cpp" line="301"/>
         <source>Enregistrer un fichier</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgetfile.cpp" line="432"/>
-        <location filename="../widgetfile.cpp" line="442"/>
+        <location filename="../widgetfile.cpp" line="354"/>
+        <location filename="../widgetfile.cpp" line="364"/>
         <source>Ouvrir </source>
         <translation type="unfinished"></translation>
     </message>
@@ -1297,20 +1337,8 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../widgetstatusbar.cpp" line="65"/>
-        <location filename="../widgetstatusbar.cpp" line="305"/>
-        <source>Console</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../widgetstatusbar.cpp" line="70"/>
-        <location filename="../widgetstatusbar.cpp" line="288"/>
-        <source>Erreurs</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../widgetstatusbar.cpp" line="76"/>
-        <location filename="../widgetstatusbar.cpp" line="183"/>
+        <location filename="../widgetstatusbar.cpp" line="59"/>
+        <location filename="../widgetstatusbar.cpp" line="170"/>
         <source>Ligne %1, Colonne %2</source>
         <translation type="unfinished"></translation>
     </message>
