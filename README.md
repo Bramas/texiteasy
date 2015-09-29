@@ -10,7 +10,7 @@ Features
 - Command completion (with commands defined in the source, \ref your \label, \cite your bibitem and bibfile)
 - Integrated pdf viewer (auto sync during scrolling, reverse sync with Ctrl+Click on the pdf)
 - Spell checker
-- Hide auxilary files
+- Hide auxiliary files
 - Search with regex
 - Splitable editor
 - Quickly open associted files (input, bibliography)
