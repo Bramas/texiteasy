@@ -1081,8 +1081,8 @@ void ConfigManager::checkRevision()
     case 0x002101:
     case 0x002102:
         QDir().mkpath(customCompletionFolder());
-    case 0x002103:
         resetThemes();
+    case 0x002103:
 
         break;
     }
