@@ -266,7 +266,11 @@ void WidgetPdfDocument::initDocument()
     // create document
     try {
         Tools::Log("WidgetPdfDocument::initDocument: Poppler::Document::load( "+_file->getPdfFilename()+" )");
-        _document = Poppler::Document::load(_file->getPdfFilename());
+
+        QFile pdfFile(_file->getPdfFilename());
+        pdfFile.open(QFile::ReadOnly);
+        //calling loadFromData ensures that the file is on readOnly (load lock the file on windows)
+        _document = Poppler::Document::loadFromData(pdfFile.readAll());
     } catch (std::bad_alloc) {
         Tools::Log("WidgetPdfDocument::initDocument: std::bad_alloc");
         return;

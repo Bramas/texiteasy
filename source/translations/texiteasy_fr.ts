@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="fr_FR">
+<TS version="2.1" language="fr_FR">
 <context>
     <name>Builder</name>
     <message>
@@ -346,11 +346,11 @@
     </message>
     <message>
         <source>Install Now</source>
-        <translation>Installer Maintenant</translation>
+        <translation type="vanished">Installer Maintenant</translation>
     </message>
     <message>
         <source>Install Later</source>
-        <translation>Installer plus tard</translation>
+        <translation type="vanished">Installer plus tard</translation>
     </message>
 </context>
 <context>
@@ -738,7 +738,7 @@
     </message>
     <message>
         <source>Options</source>
-        <translation>Options</translation>
+        <translation type="vanished">Options</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="152"/>
@@ -1424,7 +1424,7 @@
     <name>WidgetSimpleOutput</name>
     <message>
         <source>Type</source>
-        <translation>Type</translation>
+        <translation type="vanished">Type</translation>
     </message>
     <message>
         <location filename="../widgetsimpleoutput.cpp" line="18"/>
@@ -1454,11 +1454,11 @@
     </message>
     <message>
         <source>Console</source>
-        <translation>Console</translation>
+        <translation type="vanished">Console</translation>
     </message>
     <message>
         <source>Erreurs</source>
-        <translation>Erreurs</translation>
+        <translation type="vanished">Erreurs</translation>
     </message>
     <message>
         <location filename="../widgetstatusbar.cpp" line="59"/>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="en_US">
+<TS version="2.1" language="en_US">
 <context>
     <name>Builder</name>
     <message>
@@ -730,7 +730,7 @@
     </message>
     <message>
         <source>Options</source>
-        <translation>Options</translation>
+        <translation type="vanished">Options</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="152"/>
@@ -1291,7 +1291,7 @@
     </message>
     <message>
         <source>Si une mise à jour ne s&apos;est pas correctement déroulée, il est conseillé de telecharger la dernière version de TexitEasy directement sur le site officielle.</source>
-        <translation>If an update is not properly done, please consider download the last version of TexitEasy on the website.</translation>
+        <translation type="vanished">If an update is not properly done, please consider download the last version of TexitEasy on the website.</translation>
     </message>
     <message>
         <location filename="../updatechecker.cpp" line="47"/>
@@ -1420,7 +1420,7 @@
     <name>WidgetSimpleOutput</name>
     <message>
         <source>Type</source>
-        <translation>Type</translation>
+        <translation type="vanished">Type</translation>
     </message>
     <message>
         <location filename="../widgetsimpleoutput.cpp" line="18"/>
@@ -1450,11 +1450,11 @@
     </message>
     <message>
         <source>Console</source>
-        <translation>Console</translation>
+        <translation type="vanished">Console</translation>
     </message>
     <message>
         <source>Erreurs</source>
-        <translation>Errors</translation>
+        <translation type="vanished">Errors</translation>
     </message>
     <message>
         <location filename="../widgetstatusbar.cpp" line="59"/>
