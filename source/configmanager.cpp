@@ -215,6 +215,12 @@ void ConfigManager::init(QString in_applicationPath)
     this->applyTranslation();
 
 
+    if(!settings.value("latexFound").toBool())
+    {
+        checkLatexExecutable(); //on windows, may show a dialog, so translations must be applyed
+    }
+
+
 
     //Log::debug(QString("dictionnaryPath : %1").arg(this->dictionaryPath());
     return;
@@ -908,10 +914,6 @@ void ConfigManager::checkRevision()
     documentLocation = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
     programLocation = QStandardPaths::writableLocation(QStandardPaths::ApplicationsLocation);
 #endif
-    if(!settings.value("latexFound").toBool())
-    {
-        checkLatexExecutable();
-    }
     switch(fromVersion)
     {
         case 0x000000:
