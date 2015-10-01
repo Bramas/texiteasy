@@ -220,6 +220,7 @@ void ConfigManager::init(QString in_applicationPath)
         checkLatexExecutable(); //on windows, may show a dialog, so translations must be applyed
     }
 
+    qDebug()<< qgetenv("PROGRAMFILES");
 
 
     //Log::debug(QString("dictionnaryPath : %1").arg(this->dictionaryPath());
@@ -821,6 +822,7 @@ void ConfigManager::checkLatexExecutable()
 
     QString pdflatexCommand = "pdflatex";
 #ifdef OS_WINDOWS
+    programLocation = qgetenv("PROGRAMFILES");
 #ifdef PORTABLE_EXECUTABLE
     QDir dir(_applicationPath);
     dir.cdUp();
@@ -829,6 +831,7 @@ void ConfigManager::checkLatexExecutable()
 #else
     pdflatexCommand = "pdflatex.exe";
     {
+        bool programFilesFolderFound = false;
         QDir dir(programLocation);
         if(dir.exists())
         {
@@ -841,12 +844,39 @@ void ConfigManager::checkLatexExecutable()
                     if(dir.cd("bin"))
                     {
                         settings.setValue("builder/latexPath",dir.path());
+                        programFilesFolderFound = true;
                     }
                 }
 
             }
+        }
+        if(!programFilesFolderFound)
+        {
+            qDebug()<<"latex not found in "<<programLocation;
+            dir = QDir(programLocation);
+            dir.cdUp();
+            dir.cd("Program Files (x86)");
+            if(dir.exists())
+            {
+                QStringList miktexDirs = dir.entryList(QDir::Dirs).filter(QRegExp("miktex",Qt::CaseInsensitive));
+                if(!miktexDirs.isEmpty())
+                {
+                    if(dir.cd(miktexDirs.first()))
+                    {
+                        dir.cd("miktex");
+                        if(dir.cd("bin"))
+                        {
+                            settings.setValue("builder/latexPath",dir.path());
+                            programFilesFolderFound = true;
+                        }
+                    }
 
-
+                }
+            }
+            if(!programFilesFolderFound)
+            {
+                qDebug()<<"Latex not found in "<<programLocation<<"/../Program Files (x86)";
+            }
         }
     }
     {
@@ -1085,6 +1115,7 @@ void ConfigManager::checkRevision()
         QDir().mkpath(customCompletionFolder());
         resetThemes();
     case 0x002103:
+    case 0x002104:
 
         break;
     }
