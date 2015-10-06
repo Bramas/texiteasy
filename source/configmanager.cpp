@@ -32,6 +32,7 @@
 #include <QFileDialog>
 #include <QTranslator>
 #include <QApplication>
+#include <QDirIterator>
 #if QT_VERSION < 0x050000
     #include <QDesktopServices>
 #else
@@ -167,7 +168,7 @@ void ConfigManager::init(QString in_applicationPath)
 #if __MAC_10_6
     if(!settings.contains("latexPath"))
     {
-        settings.setValue("latexPath","/usr/texbin/");
+        settings.setValue("latexPath","/usr/texbin/:/Library/TeX/Distributions/.DefaultTeX/Contents/Programs/texbin:/Library/TeX/texbin");
     }
 #endif
     if(!settings.contains("bibtex"))
@@ -220,7 +221,6 @@ void ConfigManager::init(QString in_applicationPath)
         checkLatexExecutable(); //on windows, may show a dialog, so translations must be applyed
     }
 
-    qDebug()<< qgetenv("PROGRAMFILES");
 
 
     //Log::debug(QString("dictionnaryPath : %1").arg(this->dictionaryPath());
@@ -821,6 +821,7 @@ void ConfigManager::checkLatexExecutable()
 #endif
 
     QString pdflatexCommand = "pdflatex";
+
 #ifdef OS_WINDOWS
     programLocation = qgetenv("PROGRAMFILES");
 #ifdef PORTABLE_EXECUTABLE
@@ -1116,6 +1117,12 @@ void ConfigManager::checkRevision()
         resetThemes();
     case 0x002103:
     case 0x002104:
+        #if __MAC_10_10
+            settings.beginGroup("builder");
+            settings.setValue("latexPath","/usr/texbin/:/Library/TeX/Distributions/.DefaultTeX/Contents/Programs/texbin:/Library/TeX/texbin");
+            settings.endGroup();
+        #endif
+    case 0x002105:
 
         break;
     }

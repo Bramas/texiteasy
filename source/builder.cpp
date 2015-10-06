@@ -79,8 +79,10 @@ bool Builder::setupPathEnvironment(QProcess * process)
     }
     else
     {
-        env.insert("PATH", env.value("PATH") + ":/usr/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/texbin:/sw/bin:"+extraPath);
+        env.insert("PATH", env.value("PATH") + ":/usr/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/texbin:/sw/bin:"+
+                   extraPath);
     }
+    qDebug()<<env.value("PATH");
     process->setProcessEnvironment(env);
 #endif
 #ifdef OS_WINDOWS
