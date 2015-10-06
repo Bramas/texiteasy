@@ -125,6 +125,7 @@ void ConfigManager::init(QString in_applicationPath)
 
     //qDebug()<<"Init ConfigManager";
     _applicationPath = in_applicationPath;
+    _defaultPathEnvironmentVariable = QProcessEnvironment::systemEnvironment().value("PATH");
 
 #ifdef PORTABLE_EXECUTABLE
     _settingsPath = in_applicationPath+"/Settings";

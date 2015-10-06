@@ -65,7 +65,7 @@ bool Builder::setupPathEnvironment()
 bool Builder::setupPathEnvironment(QProcess * process)
 {
     QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-
+    QString defaultPath = ConfigManager::Instance.defaultPathEnvironmentVariable();
 #if PORTABLE_EXECUTABLE
     QDir dir(ConfigManager::Instance.applicationPath()+"/"+ConfigManager::Instance.latexPath());
     QString extraPath = dir.absolutePath();
@@ -75,27 +75,26 @@ bool Builder::setupPathEnvironment(QProcess * process)
 #ifdef OS_MAC
     if (extraPath.isEmpty())
     {
-        env.insert("PATH", env.value("PATH") + ":/usr/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/texbin:/sw/bin");
+        env.insert("PATH", defaultPath + ":/usr/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/texbin:/sw/bin");
     }
     else
     {
-        env.insert("PATH", env.value("PATH") + ":/usr/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/texbin:/sw/bin:"+
+        env.insert("PATH", defaultPath + ":/usr/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/texbin:/sw/bin:"+
                    extraPath);
     }
-    qDebug()<<env.value("PATH");
     process->setProcessEnvironment(env);
 #endif
 #ifdef OS_WINDOWS
     if (!extraPath.isEmpty())
     {
-        env.insert("PATH", env.value("PATH") + ";"+extraPath);
+        env.insert("PATH", defaultPath + ";"+extraPath);
         process->setProcessEnvironment(env);
     }
 #endif
 #ifdef OS_LINUX
     if (!extraPath.isEmpty())
     {
-        env.insert("PATH", env.value("PATH") + ":"+extraPath);
+        env.insert("PATH", defaultPath + ":"+extraPath);
         process->setProcessEnvironment(env);
     }
 #endif

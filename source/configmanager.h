@@ -254,6 +254,8 @@ public:
 
     QString updateFiles();
 
+    QString defaultPathEnvironmentVariable() { return _defaultPathEnvironmentVariable; }
+
     void init(QString in_applicationPath);
 public slots:
     /**
@@ -294,6 +296,7 @@ private:
     QString _pdflatexExe;
     QString _settingsPath;
     QString _applicationPath;
+    QString _defaultPathEnvironmentVariable;
     bool _isFirstLaunch;
 };
 
