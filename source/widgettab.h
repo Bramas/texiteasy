@@ -42,7 +42,7 @@ public:
     void removeTab(int index);
     void removeAll();
 
-    void setCurrentIndex(int index);
+    void setCurrentIndex(int index, bool sendSignal = true);
     void initTheme();
     int currentIndex() const { return _currentIndex; }
     QString currentText() const { if(_currentIndex >= 0 && _currentIndex < _tabsName.count()) return _tabsName.at(_currentIndex); return ""; }

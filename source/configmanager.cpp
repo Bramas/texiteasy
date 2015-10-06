@@ -905,6 +905,8 @@ void ConfigManager::checkRevision()
 
     int fromVersion = settings.value("version_hex",0x000000).toInt();
 
+    _isFirstLaunch = (fromVersion == 0);
+
     QString documentLocation("");
     QString programLocation("");
 #if QT_VERSION < 0x050000

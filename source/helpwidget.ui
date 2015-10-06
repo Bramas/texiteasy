@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>EmptyWidget</class>
- <widget class="QWidget" name="EmptyWidget">
+ <class>HelpWidget</class>
+ <widget class="QWidget" name="HelpWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>808</width>
+    <width>834</width>
     <height>494</height>
    </rect>
   </property>
@@ -271,7 +271,7 @@ background-repeat: none;</string>
        <height>150</height>
       </size>
      </property>
-     <widget class="QLabel" name="label_15">
+     <widget class="QLabel" name="label_Ctrl1">
       <property name="geometry">
        <rect>
         <x>20</x>
@@ -293,7 +293,7 @@ background-repeat:none;
 color:rgb(238, 238, 238)</string>
       </property>
       <property name="text">
-       <string>Ctrl</string>
+       <string notr="true">Ctrl</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -333,7 +333,7 @@ background-repeat:none</string>
        </font>
       </property>
       <property name="text">
-       <string>On \input \ref \cite argument</string>
+       <string>Follow \input \ref \cite argument</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_18">
@@ -376,7 +376,7 @@ background-repeat:none</string>
        <string>+</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label_20">
+     <widget class="QLabel" name="label_Ctrl2">
       <property name="geometry">
        <rect>
         <x>20</x>
@@ -398,7 +398,7 @@ background-repeat:none;
 color:rgb(238, 238, 238)</string>
       </property>
       <property name="text">
-       <string>Ctrl</string>
+       <string notr="true">Ctrl</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -446,7 +446,7 @@ background-repeat:none;
 color:rgb(238, 238, 238)</string>
       </property>
       <property name="text">
-       <string>E</string>
+       <string notr="true">E</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -462,7 +462,7 @@ color:rgb(238, 238, 238)</string>
        <height>0</height>
       </size>
      </property>
-     <widget class="QLabel" name="label_11">
+     <widget class="QLabel" name="label_Ctrl3">
       <property name="geometry">
        <rect>
         <x>0</x>
@@ -484,7 +484,7 @@ background-repeat:none;
 color:rgb(238, 238, 238)</string>
       </property>
       <property name="text">
-       <string>Ctrl</string>
+       <string notr="true">Ctrl</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
