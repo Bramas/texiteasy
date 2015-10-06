@@ -142,6 +142,7 @@
     </property>
     <addaction name="actionAbout"/>
     <addaction name="actionSendFeedback"/>
+    <addaction name="actionDisplayHelp"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -438,6 +439,11 @@
   <action name="actionCheckGrammar">
    <property name="text">
     <string>Vérifier la grammaire</string>
+   </property>
+  </action>
+  <action name="actionDisplayHelp">
+   <property name="text">
+    <string>Afficher l'aide</string>
    </property>
   </action>
  </widget>

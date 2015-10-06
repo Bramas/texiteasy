@@ -25,5 +25,11 @@
         <file>data/img/panel_button@2x.png</file>
         <file>data/img/panel_manage_button.png</file>
         <file>data/img/panel_manage_button@2x.png</file>
+        <file>data/img/tab_example.png</file>
+        <file>data/img/splash_split.png</file>
+        <file>data/img/splash_doc_structur.png</file>
+        <file>data/img/splash_arrow_bottom.png</file>
+        <file>data/img/key.png</file>
+        <file>data/img/pointer.png</file>
     </qresource>
 </RCC>
