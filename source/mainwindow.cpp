@@ -82,7 +82,7 @@ MainWindow::MainWindow(QWidget *parent) :
     _confirmCloseMessageBox(0),
     dialogConfig(new DialogConfig(this)),
     dialogWelcome(new DialogWelcome(this)),
-    _emptyWidget(new WidgetEmpty(0)),
+    _emptyWidget(new EmptyWidget(0)),
     _menuMacrosAction(0)
 {
 

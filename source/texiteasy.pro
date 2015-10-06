@@ -99,7 +99,8 @@ SOURCES += main.cpp\
     taskpane/taskmodel.cpp \
     taskpane/taskwindow.cpp \
     taskpane/task.cpp \
-    qt4panecallback.cpp
+    qt4panecallback.cpp \
+    emptywidget.cpp
 
 HEADERS  += mainwindow.h \
     widgetlinenumber.h \
@@ -177,7 +178,8 @@ HEADERS  += mainwindow.h \
     taskpane/icontext.h \
     iplugin.h \
     ipane.h \
-    qt4panecallback.h
+    qt4panecallback.h \
+    emptywidget.h
 
 FORMS    += mainwindow.ui \
     dialogwelcome.ui \
@@ -191,7 +193,8 @@ FORMS    += mainwindow.ui \
     dialogabout.ui \
     dialogaddlatexcommand.ui \
     dialogmacros.ui \
-    dialogsendfeedback.ui
+    dialogsendfeedback.ui \
+    emptywidget.ui
 
 
 TRANSLATIONS += translations/texiteasy_ar.ts \

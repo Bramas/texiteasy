@@ -32,6 +32,8 @@
 #include <QMainWindow>
 #include <QIcon>
 
+#include "emptywidget.h"
+
 class QMimeData;
 class WidgetTextEdit;
 class WidgetLineNumber;
@@ -55,6 +57,8 @@ namespace Ui {
 class MainWindow;
 }
 
+
+/*
 class WidgetEmpty : public QWidget
 {
     Q_OBJECT
@@ -70,6 +74,8 @@ protected:
         QWidget::mouseMoveEvent(event);
     }
 };
+*/
+
 
 /**
  * @class MainWindow
@@ -154,7 +160,7 @@ private:
     WidgetTab * _tabWidget;
     QVBoxLayout * _verticalLayout;
     WidgetStatusBar * _widgetStatusBar;
-    WidgetEmpty * _emptyWidget;
+    EmptyWidget * _emptyWidget;
     QAction * _menuMacrosAction;
 };
 
