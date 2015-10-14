@@ -183,6 +183,8 @@ public:
     QStringList     userDictionnary(QString dico);
     QString popplerVersion();
 
+    bool isFirstLaunch() { return _isFirstLaunch; }
+
     void checkRevision();
     void recursiveCopy(QString from, QString to, QFile::Permissions permission);
 
@@ -252,6 +254,8 @@ public:
 
     QString updateFiles();
 
+    QString defaultPathEnvironmentVariable() { return _defaultPathEnvironmentVariable; }
+
     void init(QString in_applicationPath);
 public slots:
     /**
@@ -292,6 +296,8 @@ private:
     QString _pdflatexExe;
     QString _settingsPath;
     QString _applicationPath;
+    QString _defaultPathEnvironmentVariable;
+    bool _isFirstLaunch;
 };
 
 

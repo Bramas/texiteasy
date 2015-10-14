@@ -134,6 +134,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     Tools::Log("MainWindow: connect actions");
     // Connect menubar Actions
+    connect(this->ui->actionDisplayHelp, SIGNAL(triggered()), this, SLOT(displayHelp()));
     connect(this->ui->actionLinkSync, SIGNAL(toggled(bool)), &FileManager::Instance, SLOT(setPdfSynchronized(bool)));
     connect(this->ui->actionLinkSync, SIGNAL(toggled(bool)), &ConfigManager::Instance, SLOT(setPdfSynchronized(bool)));
     connect(this->ui->actionPdfViewerInItsOwnWidget, SIGNAL(toggled(bool)), &FileManager::Instance, SLOT(setPdfViewerInItsOwnWidget(bool)));
@@ -360,6 +361,16 @@ void MainWindow::dragLeaveEvent(QDragLeaveEvent * event)
 {
     event->accept();
 }
+
+void MainWindow::displayHelp()
+{
+    this->closeCurrentWidgetFile();
+    FileManager::Instance.setCurrent(0);
+    _tabWidget->setCurrentIndex(-1, false);
+    ui->verticalLayout->addWidget(new HelpWidget(this));
+    _widgetStatusBar->updateButtons();
+}
+
 bool MainWindow::handleMimeData(const QMimeData* mimeData)
 {
     // check for our needed mime type, here a file or a list of files

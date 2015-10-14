@@ -158,6 +158,11 @@ int main(int argc, char *argv[])
         w.open(filename);
     }
 
+    if(FileManager::Instance.count() == 0 && ConfigManager::Instance.isFirstLaunch())
+    {
+        w.displayHelp();
+    }
+
     new UpdateChecker(&w);
 
     PdfSynchronizer::start();

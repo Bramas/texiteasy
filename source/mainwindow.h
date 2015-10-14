@@ -32,6 +32,8 @@
 #include <QMainWindow>
 #include <QIcon>
 
+#include "helpwidget.h"
+
 class QMimeData;
 class WidgetTextEdit;
 class WidgetLineNumber;
@@ -55,6 +57,8 @@ namespace Ui {
 class MainWindow;
 }
 
+
+
 class WidgetEmpty : public QWidget
 {
     Q_OBJECT
@@ -70,6 +74,8 @@ protected:
         QWidget::mouseMoveEvent(event);
     }
 };
+
+
 
 /**
  * @class MainWindow
@@ -89,6 +95,7 @@ public:
     ~MainWindow();
 
 public slots:
+    void displayHelp();
     void proposeUpdateDialog();
     void setWindowModified(bool b);
     WidgetFile *newFile();
@@ -154,7 +161,7 @@ private:
     WidgetTab * _tabWidget;
     QVBoxLayout * _verticalLayout;
     WidgetStatusBar * _widgetStatusBar;
-    WidgetEmpty * _emptyWidget;
+    QWidget * _emptyWidget;
     QAction * _menuMacrosAction;
 };
 

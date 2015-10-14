@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="en_US">
+<TS version="2.0" language="en_US">
 <context>
     <name>Builder</name>
     <message>
-        <location filename="../builder.cpp" line="119"/>
+        <location filename="../builder.cpp" line="120"/>
         <source>Canceled</source>
         <translation>Canceled</translation>
     </message>
     <message>
-        <location filename="../builder.cpp" line="199"/>
+        <location filename="../builder.cpp" line="200"/>
         <source>Erreur</source>
         <translation>Error</translation>
     </message>
     <message>
-        <location filename="../builder.cpp" line="199"/>
+        <location filename="../builder.cpp" line="200"/>
         <source>La compilation n&apos;a pas pu démarrer.</source>
         <translation>The compilation cannot start.</translation>
     </message>
@@ -672,6 +672,61 @@
     </message>
 </context>
 <context>
+    <name>HelpWidget</name>
+    <message>
+        <location filename="../helpwidget.ui" line="14"/>
+        <source>Form</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../helpwidget.ui" line="59"/>
+        <source>Split the editor</source>
+        <translation>Split the editor</translation>
+    </message>
+    <message>
+        <location filename="../helpwidget.ui" line="89"/>
+        <source>Quick access to associated files</source>
+        <translation>Quick access to associated files</translation>
+    </message>
+    <message>
+        <location filename="../helpwidget.ui" line="161"/>
+        <source>Document Structure</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../helpwidget.ui" line="201"/>
+        <source>Instant Sync</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../helpwidget.ui" line="224"/>
+        <source>Detach/Attach Pdf Viewer</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../helpwidget.ui" line="336"/>
+        <source>Follow \input \ref \cite argument</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../helpwidget.ui" line="356"/>
+        <location filename="../helpwidget.ui" line="376"/>
+        <location filename="../helpwidget.ui" line="547"/>
+        <source>+</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../helpwidget.ui" line="424"/>
+        <source>Open a new environment</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../helpwidget.ui" line="527"/>
+        <source>Sync from pdf to source</source>
+        <translation></translation>
+    </message>
+</context>
+<context>
     <name>MacroEngine</name>
     <message>
         <location filename="../macroengine.cpp" line="163"/>
@@ -730,10 +785,10 @@
     </message>
     <message>
         <source>Options</source>
-        <translation type="vanished">Options</translation>
+        <translation>Options</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="152"/>
+        <location filename="../mainwindow.ui" line="153"/>
         <source>Thème</source>
         <translation>Theme</translation>
     </message>
@@ -748,7 +803,7 @@
         <translation>Help</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="148"/>
+        <location filename="../mainwindow.ui" line="149"/>
         <source>View</source>
         <translation>View</translation>
     </message>
@@ -757,32 +812,32 @@
         <translation type="obsolete">Macros</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="176"/>
+        <location filename="../mainwindow.ui" line="177"/>
         <source>Ouvrir</source>
         <translation>Open</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="179"/>
+        <location filename="../mainwindow.ui" line="180"/>
         <source>Ctrl+O</source>
         <translation>Ctrl+O</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="184"/>
+        <location filename="../mainwindow.ui" line="185"/>
         <source>Enregistrer Sous</source>
         <translation>Save as</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="187"/>
+        <location filename="../mainwindow.ui" line="188"/>
         <source>Ctrl+Shift+S</source>
         <translation>Ctrl+Shift+S</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="192"/>
+        <location filename="../mainwindow.ui" line="193"/>
         <source>Enregistrer</source>
         <translation>Save</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="195"/>
+        <location filename="../mainwindow.ui" line="196"/>
         <source>Ctrl+S</source>
         <translation>Ctrl+S</translation>
     </message>
@@ -791,128 +846,133 @@
         <translation type="obsolete">PdfLatex</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="163"/>
+        <location filename="../mainwindow.ui" line="164"/>
         <source>Pdf</source>
         <translation>Pdf</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="203"/>
+        <location filename="../mainwindow.ui" line="204"/>
         <source>Ctrl+B</source>
         <translation>Ctrl+B</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="208"/>
+        <location filename="../mainwindow.ui" line="209"/>
         <source>Préférences</source>
         <translation>Preferences</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="211"/>
+        <location filename="../mainwindow.ui" line="212"/>
         <source>Ctrl+P</source>
         <translation>Ctrl+P</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="225"/>
+        <location filename="../mainwindow.ui" line="226"/>
         <source>Afficher automatiquement le pdf</source>
         <translation>Automatically display the pdf</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="236"/>
+        <location filename="../mainwindow.ui" line="237"/>
         <source>Nouveau</source>
         <translation>New</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="239"/>
+        <location filename="../mainwindow.ui" line="240"/>
         <source>Ctrl+N</source>
         <translation>Ctrl+N</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="361"/>
+        <location filename="../mainwindow.ui" line="362"/>
         <source>Open Pdf</source>
         <translation>Open Pdf</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="366"/>
-        <location filename="../mainwindow.ui" line="371"/>
+        <location filename="../mainwindow.ui" line="367"/>
+        <location filename="../mainwindow.ui" line="372"/>
         <source>UTF-8</source>
         <translation>UTF-8</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="376"/>
+        <location filename="../mainwindow.ui" line="377"/>
         <source>ISO 8859-1</source>
         <translation>ISO 8859-1</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="381"/>
+        <location filename="../mainwindow.ui" line="382"/>
         <source>Autre</source>
         <translation>Other</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="386"/>
+        <location filename="../mainwindow.ui" line="387"/>
         <source>Tex directives</source>
         <translation>Tex directives</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="391"/>
+        <location filename="../mainwindow.ui" line="392"/>
         <source>Compilateur</source>
         <translation>Builder</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="396"/>
+        <location filename="../mainwindow.ui" line="397"/>
         <source>Encodage</source>
         <translation>Encoding</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="411"/>
+        <location filename="../mainwindow.ui" line="412"/>
         <source>Envoyer votre avis</source>
         <translation>Send a feedback</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="416"/>
+        <location filename="../mainwindow.ui" line="417"/>
         <source>Commenter</source>
         <translation>Comment</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="419"/>
+        <location filename="../mainwindow.ui" line="420"/>
         <source>Ctrl+(</source>
         <translation>Ctrl+(</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="424"/>
+        <location filename="../mainwindow.ui" line="425"/>
         <source>Décommenter</source>
         <translation>Uncomment</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="427"/>
+        <location filename="../mainwindow.ui" line="428"/>
         <source>Ctrl+)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="432"/>
+        <location filename="../mainwindow.ui" line="433"/>
         <source>Basculler Commentaire</source>
         <translation>Toggle Comment</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="435"/>
+        <location filename="../mainwindow.ui" line="436"/>
         <source>Ctrl+:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="440"/>
+        <location filename="../mainwindow.ui" line="441"/>
         <source>Vérifier la grammaire</source>
         <translation>Check Grammar</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="446"/>
+        <source>Afficher l&apos;aide</source>
+        <translation>Display help</translation>
     </message>
     <message>
         <source>Ctrl+Shift+E</source>
         <translation type="obsolete">Ctrl+Shift+E</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="244"/>
+        <location filename="../mainwindow.ui" line="245"/>
         <source>Quitter</source>
         <translation>Exit</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="249"/>
-        <location filename="../mainwindow.cpp" line="798"/>
+        <location filename="../mainwindow.ui" line="250"/>
+        <location filename="../mainwindow.cpp" line="809"/>
         <source>Annuler</source>
         <translation>Cancel</translation>
     </message>
@@ -921,7 +981,7 @@
         <translation type="obsolete">Ctrl+Z</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="254"/>
+        <location filename="../mainwindow.ui" line="255"/>
         <source>Refaire</source>
         <translation>Redo</translation>
     </message>
@@ -930,7 +990,7 @@
         <translation type="obsolete">Ctrl+Y</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="259"/>
+        <location filename="../mainwindow.ui" line="260"/>
         <source>Couper</source>
         <translation>Cut</translation>
     </message>
@@ -939,7 +999,7 @@
         <translation type="obsolete">Ctrl+X</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="264"/>
+        <location filename="../mainwindow.ui" line="265"/>
         <source>Copier</source>
         <translation>Copy</translation>
     </message>
@@ -948,7 +1008,7 @@
         <translation type="obsolete">Ctrl+C</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="269"/>
+        <location filename="../mainwindow.ui" line="270"/>
         <source>Coller</source>
         <translation>Paste</translation>
     </message>
@@ -957,57 +1017,57 @@
         <translation type="obsolete">Ctrl+V</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="274"/>
+        <location filename="../mainwindow.ui" line="275"/>
         <source>Rechercher / Remplacer</source>
         <translation>Find / Replace</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="277"/>
+        <location filename="../mainwindow.ui" line="278"/>
         <source>Ctrl+F</source>
         <translation>Ctrl+F</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="282"/>
+        <location filename="../mainwindow.ui" line="283"/>
         <source>Voir le pdf</source>
         <translation>See Pdf</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="285"/>
+        <location filename="../mainwindow.ui" line="286"/>
         <source>Ctrl+D</source>
         <translation>Ctrl+D</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="290"/>
+        <location filename="../mainwindow.ui" line="291"/>
         <source>Ouvrir le dossier thème</source>
         <translation>Open theme folder</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="293"/>
+        <location filename="../mainwindow.ui" line="294"/>
         <source>Ctrl+T</source>
         <translation>Ctrl+T</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="298"/>
+        <location filename="../mainwindow.ui" line="299"/>
         <source>Supprimer l&apos;historique</source>
         <translation>Delete history</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="303"/>
+        <location filename="../mainwindow.ui" line="304"/>
         <source>Bibtex</source>
         <translation>Bibtex</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="306"/>
+        <location filename="../mainwindow.ui" line="307"/>
         <source>Ctrl+Shift+B</source>
         <translation>Ctrl+Shift+B</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="311"/>
+        <location filename="../mainwindow.ui" line="312"/>
         <source>A propos de TexitEasy</source>
         <translation>About TexitEasy</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="356"/>
+        <location filename="../mainwindow.ui" line="357"/>
         <source>Split the editor</source>
         <translation>Split the editor</translation>
     </message>
@@ -1016,12 +1076,12 @@
         <translation type="obsolete">Open</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="401"/>
+        <location filename="../mainwindow.ui" line="402"/>
         <source>Langage</source>
         <translation>Language</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="406"/>
+        <location filename="../mainwindow.ui" line="407"/>
         <source>Fichier Racine</source>
         <translation>Root file</translation>
     </message>
@@ -1034,32 +1094,32 @@
         <translation type="obsolete">Ctrl+E</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="322"/>
+        <location filename="../mainwindow.ui" line="323"/>
         <source>Synchroniser le pdf</source>
         <translation>Synchronize pdf</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="327"/>
+        <location filename="../mainwindow.ui" line="328"/>
         <source>test</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="332"/>
+        <location filename="../mainwindow.ui" line="333"/>
         <source>Ouvrir les derniers documents</source>
         <translation>Open last session</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="335"/>
+        <location filename="../mainwindow.ui" line="336"/>
         <source>Ctrl+Shift+O</source>
         <translation>Ctrl+Shift+O</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="340"/>
+        <location filename="../mainwindow.ui" line="341"/>
         <source>Nettoyer</source>
         <translation>Clean</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="348"/>
+        <location filename="../mainwindow.ui" line="349"/>
         <source>Afficheur pdf séparé</source>
         <translation>Separated Pdf Viewer</translation>
     </message>
@@ -1068,47 +1128,47 @@
         <translation type="obsolete">Open macros editor</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="487"/>
+        <location filename="../mainwindow.cpp" line="498"/>
         <source>&amp;Macros</source>
         <translation>&amp;Macros</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="641"/>
+        <location filename="../mainwindow.cpp" line="652"/>
         <source>Ouvrir un fichier</source>
         <translation>Open a file</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="692"/>
+        <location filename="../mainwindow.cpp" line="703"/>
         <source>Attention</source>
         <translation>Warning</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="692"/>
+        <location filename="../mainwindow.cpp" line="703"/>
         <source>Le compilateur %1 n&apos;est pas définie, veuillez le créer dans les options.</source>
         <translation>The builder %1 is not defined. Please define it in the preferences.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="785"/>
+        <location filename="../mainwindow.cpp" line="796"/>
         <source>Continuer?</source>
         <translation>Continue?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="876"/>
+        <location filename="../mainwindow.cpp" line="887"/>
         <source>Nom de l&apos;encodage</source>
         <translation>Encoding</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="877"/>
+        <location filename="../mainwindow.cpp" line="888"/>
         <source>Nom de l&apos;encodage: </source>
         <translation>Encoding:</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="939"/>
+        <location filename="../mainwindow.cpp" line="950"/>
         <source>Compilateur pour ce fichier</source>
         <translation>Builder for this file</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="940"/>
+        <location filename="../mainwindow.cpp" line="951"/>
         <source>Compilateur:</source>
         <translation>Builder</translation>
     </message>
@@ -1117,22 +1177,22 @@
         <translation type="obsolete">Exit?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="786"/>
+        <location filename="../mainwindow.cpp" line="797"/>
         <source>Le fichier%1 a été modifié.</source>
         <translation>The document%1 has been modified.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="787"/>
+        <location filename="../mainwindow.cpp" line="798"/>
         <source>Voullez-vous sauvegarder les changements?</source>
         <translation>Do you want to save your changes?</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="794"/>
+        <location filename="../mainwindow.cpp" line="805"/>
         <source>Sauvegarder</source>
         <translation>Save</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="796"/>
+        <location filename="../mainwindow.cpp" line="807"/>
         <source>Ne pas sauvegarder</source>
         <translation>Do not save</translation>
     </message>
@@ -1153,8 +1213,8 @@
         <translation type="obsolete">Latex (*.tex *.latex);;BibTex(*.bib)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="1015"/>
-        <location filename="../mainwindow.cpp" line="1021"/>
+        <location filename="../mainwindow.cpp" line="1026"/>
+        <location filename="../mainwindow.cpp" line="1032"/>
         <source>Mettre à jour TexitEasy</source>
         <translation>Update TexitEasy</translation>
     </message>
@@ -1172,12 +1232,12 @@
         <translation>Warning</translation>
     </message>
     <message>
-        <location filename="../configmanager.cpp" line="86"/>
+        <location filename="../configmanager.cpp" line="87"/>
         <source>No Dictionnary</source>
         <translation>No Dictionnary</translation>
     </message>
     <message>
-        <location filename="../configmanager.cpp" line="88"/>
+        <location filename="../configmanager.cpp" line="89"/>
         <source>Latex (*.tex *.latex);;BibTex(*.bib)</source>
         <translation>Latex (*.tex *.latex);;BibTex(*.bib)</translation>
     </message>
@@ -1291,7 +1351,7 @@
     </message>
     <message>
         <source>Si une mise à jour ne s&apos;est pas correctement déroulée, il est conseillé de telecharger la dernière version de TexitEasy directement sur le site officielle.</source>
-        <translation type="vanished">If an update is not properly done, please consider download the last version of TexitEasy on the website.</translation>
+        <translation>If an update is not properly done, please consider download the last version of TexitEasy on the website.</translation>
     </message>
     <message>
         <location filename="../updatechecker.cpp" line="47"/>
@@ -1420,7 +1480,7 @@
     <name>WidgetSimpleOutput</name>
     <message>
         <source>Type</source>
-        <translation type="vanished">Type</translation>
+        <translation>Type</translation>
     </message>
     <message>
         <location filename="../widgetsimpleoutput.cpp" line="18"/>
@@ -1450,11 +1510,11 @@
     </message>
     <message>
         <source>Console</source>
-        <translation type="vanished">Console</translation>
+        <translation>Console</translation>
     </message>
     <message>
         <source>Erreurs</source>
-        <translation type="vanished">Errors</translation>
+        <translation>Errors</translation>
     </message>
     <message>
         <location filename="../widgetstatusbar.cpp" line="59"/>

@@ -512,7 +512,7 @@ void WidgetTab::sendCurrentChanged()
     update();
 }
 
-void WidgetTab::setCurrentIndex(int index)
+void WidgetTab::setCurrentIndex(int index, bool sendSignal)
 {
     if(index == _currentIndex)
     {
@@ -520,7 +520,7 @@ void WidgetTab::setCurrentIndex(int index)
     }
     _currentIndex =  index;
 
-    if(!_currentChangedSignalWillBeSend)
+    if(sendSignal && !_currentChangedSignalWillBeSend)
     {
         _currentChangedSignalWillBeSend = true;
         QTimer::singleShot(0,this, SLOT(sendCurrentChanged()));

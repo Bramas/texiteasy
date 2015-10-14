@@ -13,8 +13,8 @@ TEMPLATE = app
 
 APPLICATION_NAME = \\\"'TexitEasy'\\\"
 
-VERSION = \\\"'0.21.4'\\\"
-VERSION_HEX = 0x002104
+VERSION = \\\"'0.21.5'\\\"
+VERSION_HEX = 0x002105
 
 CONFIG += c++11
 QMAKE_CXXFLAGS += -std=c++0x
@@ -99,7 +99,8 @@ SOURCES += main.cpp\
     taskpane/taskmodel.cpp \
     taskpane/taskwindow.cpp \
     taskpane/task.cpp \
-    qt4panecallback.cpp
+    qt4panecallback.cpp \
+    helpwidget.cpp
 
 HEADERS  += mainwindow.h \
     widgetlinenumber.h \
@@ -177,7 +178,8 @@ HEADERS  += mainwindow.h \
     taskpane/icontext.h \
     iplugin.h \
     ipane.h \
-    qt4panecallback.h
+    qt4panecallback.h \
+    helpwidget.h
 
 FORMS    += mainwindow.ui \
     dialogwelcome.ui \
@@ -191,7 +193,8 @@ FORMS    += mainwindow.ui \
     dialogabout.ui \
     dialogaddlatexcommand.ui \
     dialogmacros.ui \
-    dialogsendfeedback.ui
+    dialogsendfeedback.ui \
+    helpwidget.ui
 
 
 TRANSLATIONS += translations/texiteasy_ar.ts \
@@ -260,7 +263,7 @@ unix:!mac{
     LATEX_URL = \\\"'http://texiteasy.com/links/latex/linux'\\\"
 }
 mac{
-    #DEFINES += LIB_DEPLOY
+    DEFINES += LIB_DEPLOY
     INCLUDEPATH += /usr/local/include
     LIBS += -L/usr/local/lib -lz -lpoppler-qt5
     ICON = texiteasy.icns
