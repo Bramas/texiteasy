@@ -1082,12 +1082,13 @@ void WidgetTextEdit::matchAll()
     {
         QTextEdit::ExtraSelection selection;
         QTextCharFormat format;
-        format.setForeground(QBrush(QColor(255,100,100,100)));
+        format.setForeground(QBrush(QColor(255,255,255)));
+        format.setBackground(QBrush(QColor(255,0,0)));
         selection.format = format;
 
         QTextCursor cursor = textCursor();
         cursor.setPosition( pos );
-        cursor.setPosition( document()->lastBlock().position() + document()->lastBlock().length() - 1, QTextCursor::KeepAnchor);
+        cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
         selection.cursor = cursor;
 
         QList<QTextEdit::ExtraSelection> selections;
@@ -1098,12 +1099,13 @@ void WidgetTextEdit::matchAll()
     {
         QTextEdit::ExtraSelection selection;
         QTextCharFormat format;
-        format.setForeground(QBrush(QColor(255,100,100,100)));
+        format.setForeground(QBrush(QColor(255,255,255)));
+        format.setBackground(QBrush(QColor(255,0,0)));
         selection.format = format;
 
         QTextCursor cursor = textCursor();
-        cursor.setPosition( 0 );
-        cursor.setPosition( pos, QTextCursor::KeepAnchor);
+        cursor.setPosition(pos);
+        cursor.movePosition(QTextCursor::NextCharacter, QTextCursor::KeepAnchor);
         selection.cursor = cursor;
 
         QList<QTextEdit::ExtraSelection> selections;
