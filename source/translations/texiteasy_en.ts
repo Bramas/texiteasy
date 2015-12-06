@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="en_US">
+<TS version="2.1" language="en_US">
 <context>
     <name>Builder</name>
     <message>
@@ -141,7 +141,7 @@
     <message>
         <location filename="../dialogconfig.ui" line="92"/>
         <source>Dictionnaire par défaut</source>
-        <translation>Default dictionnary</translation>
+        <translation>Default dictionary</translation>
     </message>
     <message>
         <location filename="../dialogconfig.ui" line="102"/>
@@ -151,7 +151,7 @@
     <message>
         <location filename="../dialogconfig.ui" line="116"/>
         <source>Temps entre deux sauvegardes automatiques (sec)</source>
-        <translation>Time between two autoSave (seconds)</translation>
+        <translation>Time between two autosaves (seconds)</translation>
     </message>
     <message>
         <location filename="../dialogconfig.ui" line="152"/>
@@ -252,7 +252,7 @@
     <message>
         <location filename="../dialogconfig.ui" line="354"/>
         <source>Cacher les fichiers de compilation</source>
-        <translation>Hide Auxilary files</translation>
+        <translation>Hide Auxiliary files</translation>
     </message>
     <message>
         <location filename="../dialogconfig.cpp" line="296"/>
@@ -443,7 +443,7 @@
     <message>
         <location filename="../dialogmacros.cpp" line="175"/>
         <source>Macro name cannot contains the following characters : &quot;*:&lt;&gt;?\/|</source>
-        <translation>Macro name cannot contains the following characters : &quot;*:&lt;&gt;?\/|</translation>
+        <translation>Macro name cannot contain the following characters : &quot;*:&lt;&gt;?\/|</translation>
     </message>
     <message>
         <location filename="../dialogmacros.cpp" line="245"/>
@@ -561,7 +561,7 @@
     <message>
         <location filename="../dialogtexdownloadassistant.ui" line="55"/>
         <source>Il semblerait que vous que LaTeX ne soit pas installé sur votre ordinateur.</source>
-        <translation>It seems that LaTex is not installed in your computer.</translation>
+        <translation>It seems that LaTex is not installed on your computer.</translation>
     </message>
     <message>
         <location filename="../dialogtexdownloadassistant.ui" line="80"/>
@@ -795,7 +795,7 @@
     <message>
         <location filename="../mainwindow.ui" line="123"/>
         <source>Edition</source>
-        <translation>Edition</translation>
+        <translation>Edit</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="141"/>
@@ -919,7 +919,7 @@
     <message>
         <location filename="../mainwindow.ui" line="412"/>
         <source>Envoyer votre avis</source>
-        <translation>Send a feedback</translation>
+        <translation>Send feedback</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="417"/>
@@ -1347,17 +1347,17 @@
     <message>
         <location filename="../updatechecker.cpp" line="136"/>
         <source>Si une mise à jour ne s&apos;est pas correctement déroulée, il est conseillé de telecharger la dernière version de TexitEasy directement sur le &lt;a href=&apos;</source>
-        <translation>If an update has not been correctly installed, you should download it from the website and install it on your own &lt;a href=&apos;</translation>
+        <translation>If an update has not been installed correctly, you should download the latest version from the &lt;a href=&apos;</translation>
     </message>
     <message>
         <source>Si une mise à jour ne s&apos;est pas correctement déroulée, il est conseillé de telecharger la dernière version de TexitEasy directement sur le site officielle.</source>
-        <translation>If an update is not properly done, please consider download the last version of TexitEasy on the website.</translation>
+        <translation>If an update has not been installed correctly, you should download the latest version from the official website.</translation>
     </message>
     <message>
         <location filename="../updatechecker.cpp" line="47"/>
         <location filename="../updatechecker.cpp" line="66"/>
         <source>Ne plus me prevenir de cette mise à jour</source>
-        <translation>Do not remind me this update</translation>
+        <translation>Do not remind me of this update</translation>
     </message>
 </context>
 <context>
@@ -1441,7 +1441,7 @@
     <message>
         <location filename="../widgetinsertcommand.ui" line="39"/>
         <source>Symboles</source>
-        <translation></translation>
+        <translation>Symbols</translation>
     </message>
     <message>
         <location filename="../widgetinsertcommand.ui" line="67"/>
@@ -1528,7 +1528,7 @@
     <message>
         <location filename="../widgettextedit.cpp" line="318"/>
         <source>Ajouter au dictionnaire</source>
-        <translation>Add word to dictionnary</translation>
+        <translation>Add word to dictionary</translation>
     </message>
 </context>
 <context>
