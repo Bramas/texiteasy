@@ -1855,7 +1855,11 @@ void WidgetTextEdit::comment()
         {
             cursor.insertText("%");
         }
-        cursor.movePosition(QTextCursor::NextBlock);
+        if(!cursor.movePosition(QTextCursor::NextBlock))
+        {
+            //there is no next block
+            break;
+        }
     }
     cursor.endEditBlock();
 }
