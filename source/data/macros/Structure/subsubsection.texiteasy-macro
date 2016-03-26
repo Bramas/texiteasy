@@ -3,7 +3,7 @@
     <trigger>
     	<keys>Tab</keys>
     	<leftWord>
-    		(sssect|sssection|subsubsection)
+    		(sssec|sssect|sssection|subsubsec|subsubsect|subsubsection)
     	</leftWord>
     </trigger>
     <content><![CDATA[\subsubsection{${name}}]]></content>
