@@ -1,0 +1,10 @@
+<macro readOnly="1">
+    <description>Chapter</description>
+    <trigger>
+    	<keys>Tab</keys>
+    	<leftWord>
+    		(ch|cha|cha|chap|chapt|chapte|chapter)
+    	</leftWord>
+    </trigger>
+    <content><![CDATA[\chapter{${name}}]]></content>
+</macro>
