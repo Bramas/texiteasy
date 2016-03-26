@@ -3,7 +3,7 @@
     <trigger>
     	<keys>Tab</keys>
     	<leftWord>
-    		(ch|cha|cha|chap|chapt|chapte|chapter)
+    		(chap|chapter)
     	</leftWord>
     </trigger>
     <content><![CDATA[\chapter{${name}}]]></content>
