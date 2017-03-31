@@ -36,6 +36,7 @@
 #include "dialogdownloadupdate.h"
 #include "tools.h"
 #include "pdfsynchronizer.h"
+#include "widgetfile.h"
 #include <QSettings>
 #include <QFontDatabase>
 #include <QDebug>
@@ -84,19 +85,11 @@ void upgrade()
 int main(int argc, char *argv[])
 {
     qputenv("QT_LOGGING_RULES", "qt.network.ssl.warning=false");
+    qRegisterMetaTypeStreamOperators<WidgetFileState>("WidgetFileState");
 #ifdef OS_WINDOWS
      QDir dir(QFileInfo(argv[0]).path());  // e.g. appdir
      dir.cd("PlugIns");  // e.g. appdir/PlugIns
      QCoreApplication::setLibraryPaths(QStringList(dir.absolutePath()));
-#endif
-
-#ifdef OS_MAC
-#ifdef LIB_DEPLOY
-     QDir dir(QFileInfo(argv[0]).path());  // e.g. appdir/Contents/MacOS
-     dir.cdUp();
-     dir.cd("PlugIns");  // e.g. appdir/Contents/PlugIns
-     QCoreApplication::setLibraryPaths(QStringList(dir.absolutePath()));
-#endif
 #endif
 
      Application a("TexitEasy",argc, argv);

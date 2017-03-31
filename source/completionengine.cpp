@@ -32,6 +32,7 @@
 #include "widgettooltip.h"
 #include "filestructure.h"
 #include "configmanager.h"
+#include "widgetfile.h"
 
 bool completionStringLessThan(const QString &s1, const QString &s2)
 {
@@ -350,6 +351,11 @@ void CompletionEngine::addCustomWordFromSource()
 void CompletionEngine::parseBibtexFile()
 {
     QStringList bibtexFiles = this->_widgetTextEdit->getCurrentFile()->bibtexFiles();
+    WidgetFile * master = this->_widgetTextEdit->widgetFile()->masterFile();
+    if(master)
+    {
+        bibtexFiles.append(master->file()->bibtexFiles());
+    }
     if(bibtexFiles.isEmpty())
     {
         return;

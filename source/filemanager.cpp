@@ -376,6 +376,9 @@ void FileManager::close(WidgetFile *widget)
     {
         return;
     }
+
+    widget->saveState();
+
     this->deleteMasterConnexions(widget);
     widget->addWidgetPdfViewerToSplitter();
     if(_currentWidgetFileId >= id && _currentWidgetFileId != 0)

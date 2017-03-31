@@ -13,8 +13,8 @@ TEMPLATE = app
 
 APPLICATION_NAME = \\\"'TexitEasy'\\\"
 
-VERSION = \\\"'0.21.6'\\\"
-VERSION_HEX = 0x002106
+VERSION = \\\"'0.22.0'\\\"
+VERSION_HEX = 0x002200
 
 CONFIG += c++11
 QMAKE_CXXFLAGS += -std=c++0x
@@ -100,7 +100,8 @@ SOURCES += main.cpp\
     taskpane/taskwindow.cpp \
     taskpane/task.cpp \
     qt4panecallback.cpp \
-    helpwidget.cpp
+    helpwidget.cpp \
+    paneautocorrector.cpp
 
 HEADERS  += mainwindow.h \
     widgetlinenumber.h \
@@ -179,7 +180,8 @@ HEADERS  += mainwindow.h \
     iplugin.h \
     ipane.h \
     qt4panecallback.h \
-    helpwidget.h
+    helpwidget.h \
+    paneautocorrector.h
 
 FORMS    += mainwindow.ui \
     dialogwelcome.ui \
@@ -263,19 +265,16 @@ unix:!mac{
     LATEX_URL = \\\"'http://texiteasy.com/links/latex/linux'\\\"
 }
 mac{
-    #DEFINES += LIB_DEPLOY
-    QMAKE_MAC_SDK = macosx10.11
+    QMAKE_MAC_SDK = macosx10.12
 
     # including the whole folder can make errors so now, on mac, just include the needed library include folder (for the lib folder too)
-    #INCLUDEPATH += /usr/local/include
-    INCLUDEPATH += /usr/local/Cellar/poppler/0.40.0/include/
-    LIBS += -L/usr/local/Cellar/zlib/1.2.8/lib -lz -L/usr/local/Cellar/poppler/0.40.0/lib -lpoppler-qt5
+    INCLUDEPATH += /usr/local/Cellar/poppler/0.53.0/include
+    LIBS += -lz -L/usr/local/Cellar/poppler/0.53.0/lib  -lpoppler-qt5
     ICON = texiteasy.icns
     DEFINES += OS_MAC
     LAST_VERSION_URL = \\\"'http://texiteasy.com/downloads/latest_version/mac'\\\"
     TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com/downloads/latest/mac'\\\"
     LATEX_URL = \\\"'http://texiteasy.com/links/latex/mac'\\\"
-    #CONFIG += x86 x86_64
 
 }
 

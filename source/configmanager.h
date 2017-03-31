@@ -35,6 +35,7 @@
 #include <QDir>
 
 class QWidget;
+struct WidgetFileState;
 
 class ConfigManager : public QObject
 {
@@ -140,6 +141,12 @@ public:
     void            setOpenLastSessionAtStartup(bool open) { QSettings settings; settings.setValue("openLastSessionAtStartup", open); }
     bool            openLastSessionAtStartup() { QSettings settings; return settings.value("openLastSessionAtStartup", true).toBool(); }
 
+    void saveWidgetFileState(const QString &filename, const WidgetFileState &state);
+    WidgetFileState widgetFileState(const QString &filename);
+    bool widgetFileStateExists(const QString &filename);
+
+    QStringList     panes() { QSettings settings; return settings.value("panes").toStringList(); }
+    void            setPanes(QStringList p) { QSettings settings; return settings.setValue("panes", p); }
 
     bool            isDollarAuto() {  QSettings settings; return settings.value("dollarAuto", true).toBool();  }
     void            setDollarAuto(bool b) {  QSettings settings; settings.setValue("dollarAuto", b);  }

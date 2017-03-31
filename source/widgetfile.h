@@ -28,6 +28,9 @@ class WidgetFile : public QWidget
 public:
     explicit WidgetFile(MainWindow *parent = 0);
     ~WidgetFile();
+
+
+
     void initTheme();
 
     void builTex(QString command);
@@ -37,6 +40,7 @@ public:
     void save();
     void saveAs(QString filename = "");
     void setMasterFile(WidgetFile * master) { _masterFile = master; }
+    void saveState();
     bool isEmpty();
     TaskWindow * taskPane() { return _widgetSimpleOutput; }
     WidgetPdfViewer * widgetPdfViewer() { return _widgetPdfViewer; }
@@ -122,9 +126,45 @@ private:
     int _consoleHeight, _problemsHeight, _warningPaneHeight;
     QList<IPane*> _panes;
     IPane * _currentPane;
+
+
+};
+Q_DECLARE_METATYPE(WidgetFile*)
+
+
+struct WidgetFileState {
+    int editor1Position;
+    int editor2Position;
+    QList<int> horizontalSplitterSizes;
+    QPoint pdfPosition;
+    qreal pdfZoom;
+
+    friend QDataStream& operator<<(QDataStream& out, const WidgetFileState& v) {
+        out << v.editor1Position
+            << v.editor2Position
+            << v.horizontalSplitterSizes
+            << v.pdfPosition
+            << v.pdfZoom;
+        return out;
+    }
+
+    friend QDataStream& operator>>(QDataStream& in, WidgetFileState& v) {
+
+        in  >> v.editor1Position
+            >> v.editor2Position
+            >> v.horizontalSplitterSizes
+            >> v.pdfPosition
+            >> v.pdfZoom;
+
+        return in;
+    }
+
 };
 
-Q_DECLARE_METATYPE(WidgetFile*)
+
+Q_DECLARE_METATYPE(WidgetFileState)
+
+
 
 
 #endif // WIDGETFILE_H

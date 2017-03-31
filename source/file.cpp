@@ -363,7 +363,7 @@ void File::lookForAssociatedFiles()
     }
 
     // Look for input tex Files
-    QRegExp patternInput("\\\\input\\{([^\\}]*)\\}");
+    QRegExp patternInput("\\\\(input|include)\\{([^\\}]*)\\}");
     index = -1;
     while((index = this->data.indexOf(patternInput, index + 1)) != -1)
     {

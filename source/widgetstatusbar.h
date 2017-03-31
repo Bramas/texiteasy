@@ -171,6 +171,7 @@ private:
     WidgetStatusBarButton * _labelDictionary;
     WidgetStatusBarButton * _labelStruct;
     WidgetStatusBarButton * _labelSplitEditor;
+    WidgetFile * _currentWidgetFile;
 
     QList<OutputPaneToggleButton*> _paneLabels;
     bool _errorTableOpen, _consoleOpen;

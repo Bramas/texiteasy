@@ -18,6 +18,7 @@
 #include "tools.h"
 #include "svnhelper.h"
 #include "ipane.h"
+#include "paneautocorrector.h"
 
 #include <QPushButton>
 #include <QGridLayout>
@@ -63,6 +64,8 @@ WidgetFile::WidgetFile(MainWindow *parent) :
     _panes.prepend(_widgetSimpleOutput);
 
     _panes.prepend(new WidgetConsole(this));
+    if(ConfigManager::Instance.panes().contains("Auto Corrector"))
+        _panes.prepend(new PaneAutoCorrector(this));
 
 
     _horizontalSplitter = new MiniSplitter(Qt::Horizontal);
@@ -312,6 +315,21 @@ void WidgetFile::saveAs(QString filename)
         emit FileManager::Instance.sendFilenameChanged(this, filename);
     }
 }
+void WidgetFile::saveState()
+{
+    if(file()->isUntitled()) return;
+
+    WidgetFileState state;
+    state.editor1Position = _widgetTextEdit->textCursor().position();
+    state.editor2Position = _widgetTextEdit2->textCursor().position();
+    state.horizontalSplitterSizes = _horizontalSplitter->sizes();
+    state.pdfPosition = _widgetPdfViewer->widgetPdfDocument()->pdfOffset();
+    state.pdfZoom = _widgetPdfViewer->widgetPdfDocument()->zoom();
+
+    ConfigManager::Instance.saveWidgetFileState(file()->getFilename(), state);
+
+}
+
 void WidgetFile::reload()
 {
     if(!this->file()->isUntitled())
@@ -327,6 +345,17 @@ void WidgetFile::open(QString filename)
     Tools::Log("WidgetFile::open: _widgetPdfViewer->widgetPdfDocument()->setFile()");
     _widgetPdfViewer->widgetPdfDocument()->setFile(_widgetTextEdit->getCurrentFile());
 
+    if(ConfigManager::Instance.widgetFileStateExists(filename))
+    {
+        WidgetFileState state = ConfigManager::Instance.widgetFileState(filename);
+        _horizontalSplitter->setSizes(state.horizontalSplitterSizes);
+
+
+        widgetTextEdit()->setTextCursorPosition(state.editor1Position);
+        widgetTextEdit2()->setTextCursorPosition(state.editor2Position);
+        widgetPdfViewer()->widgetPdfDocument()->setZoom(state.pdfZoom);
+        widgetPdfViewer()->widgetPdfDocument()->setPdfOffset(state.pdfPosition);
+    }
 
     _widgetTextEdit->document()->resetRevisions();
 
@@ -511,3 +540,6 @@ void WidgetFile::splitEditor(bool split)
     sizes[1] = _editorSplitter->height();
     _editorSplitter->setSizes(sizes);
 }
+
+
+

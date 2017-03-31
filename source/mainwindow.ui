@@ -97,6 +97,7 @@
     <addaction name="menuTexDirectives"/>
     <addaction name="separator"/>
     <addaction name="actionSettings"/>
+    <addaction name="actionCloseTab"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuBuild">
@@ -444,6 +445,14 @@
   <action name="actionDisplayHelp">
    <property name="text">
     <string>Afficher l'aide</string>
+   </property>
+  </action>
+  <action name="actionCloseTab">
+   <property name="text">
+    <string>Fermer l'onglet</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+W</string>
    </property>
   </action>
  </widget>

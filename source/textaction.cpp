@@ -551,7 +551,7 @@ QTextCursor InputTextAction::match(QTextCursor clickCursor, WidgetFile *widgetFi
     clickCursor.setPosition(left+block.position(), QTextCursor::KeepAnchor);
 
     QString command = clickCursor.selectedText();
-    if(command != "\\input")
+    if(command != "\\input" && command != "\\include" )
     {
         return QTextCursor();
     }

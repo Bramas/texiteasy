@@ -63,7 +63,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>4</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="pageGeneral">
     <widget class="QWidget" name="formLayoutWidget_2">
@@ -252,6 +252,20 @@
         </item>
         <item row="8" column="1">
          <widget class="QCheckBox" name="checkBoxBlockChangeMarker">
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+        <item row="9" column="0">
+         <widget class="QLabel" name="label_19">
+          <property name="text">
+           <string>Activer le panneau d'auto correction</string>
+          </property>
+         </widget>
+        </item>
+        <item row="9" column="1">
+         <widget class="QCheckBox" name="checkBoxEnableAutoCorrector">
           <property name="text">
            <string/>
           </property>

@@ -175,6 +175,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(this->ui->actionTexDirRoot, SIGNAL(triggered()), this, SLOT(insertTexDirRoot()));
     connect(this->ui->actionTexDirSpellChecker, SIGNAL(triggered()), this, SLOT(insertTexDirSpellCheck()));
     connect(this->ui->actionSendFeedback, SIGNAL(triggered()), this, SLOT(openSendFeedbackDialog()));
+    connect(this->ui->actionCloseTab, SIGNAL(triggered()), this, SLOT(closeCurrentTab()));
     connect(&FileManager::Instance, SIGNAL(filenameChanged(QString)), this, SLOT(onFilenameChanged(QString)));
 
     connect(&ConfigManager::Instance, SIGNAL(versionIsOutdated()), this, SLOT(addUpdateMenu()));
@@ -704,9 +705,6 @@ void MainWindow::open(QString filename, int cursorPosition, QPoint pdfPosition, 
             }
         }
 
-        current->widgetTextEdit()->setTextCursorPosition(cursorPosition);
-        current->widgetPdfViewer()->widgetPdfDocument()->setZoom(pdfZoom);
-        current->widgetPdfViewer()->widgetPdfDocument()->setPdfOffset(pdfPosition);
         QTimer::singleShot(1,current->widgetTextEdit(), SLOT(setFocus()));
 
     }
@@ -862,6 +860,13 @@ bool MainWindow::closeTab(int index, QString ** filename)
     }
     return true;
 }
+void MainWindow::closeCurrentTab()
+{
+    if(_tabWidget->count()) {
+        closeTab(_tabWidget->currentIndex());
+    }
+}
+
 void MainWindow::clearLastOpened()
 {
     QSettings settings;

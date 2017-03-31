@@ -49,7 +49,7 @@ QStringList initTextBlockCommands()
 QStringList initOtherBlockCommands()
 {
     QStringList list;
-    list << "cite" << "ref" << "label" << "begin" << "end" << "input" << "includegraphics"
+    list << "cite" << "ref" << "label" << "begin" << "end" << "input" << "include" << "includegraphics"
          << "bibliographystyle" << "bibliography" << "usepackage" << "newcommand" << "renewcommand"
          << "newtheorem" << "bibitem" << "hypersetup";
     return list;

@@ -43,6 +43,7 @@ public:
     File * file(int index);
     WidgetFile * widgetFile(QString filename);
     WidgetFile * widgetFile(int index) { return _widgetFiles.at(index); }
+    bool contains(WidgetFile * f) { return _widgetFiles.contains(f); }
     void setMainWindow(MainWindow * m) { _mainWindow = m; }
     MainWindow * mainWindow() { return _mainWindow; }
     bool handleMimeData(const QMimeData * mimeData);

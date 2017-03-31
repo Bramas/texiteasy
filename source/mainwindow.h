@@ -119,6 +119,8 @@ public slots:
      * @param widget
      * @return true if the widget can be closed safely
      */
+
+    void closeCurrentTab();
     bool widgetFileCanBeClosed(WidgetFile * widget);
     void addFilenameToLastOpened(QString filename);
     void onFilenameChanged(QString filename);

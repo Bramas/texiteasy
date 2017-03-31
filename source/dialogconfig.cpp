@@ -172,7 +172,11 @@ void DialogConfig::save()
     ConfigManager::Instance.setUsingSpaceIndentation(this->ui->checkBoxIndentationUsingSpace->isChecked());
     ConfigManager::Instance.setTabWidth(this->ui->spinBoxTabWidth->value());
     ConfigManager::Instance.setBlockChangeMarkerEnable(this->ui->checkBoxBlockChangeMarker->isChecked());
-
+    if(this->ui->checkBoxEnableAutoCorrector->isChecked()) {
+        ConfigManager::Instance.setPanes(QStringList("Auto Corrector"));
+    } else {
+        ConfigManager::Instance.setPanes(QStringList());
+    }
     // Page Shortcut
 
     QSettings settings;
@@ -302,6 +306,9 @@ void DialogConfig::show()
         ui->tableWidget_keyBinding->setHorizontalHeaderItem(0, item);
         item = new QTableWidgetItem(trUtf8("Raccourci"));
         ui->tableWidget_keyBinding->setHorizontalHeaderItem(1, item);
+    }
+    if(ConfigManager::Instance.panes().contains("Auto Corrector")) {
+        this->ui->checkBoxEnableAutoCorrector->setChecked(true);
     }
 
 

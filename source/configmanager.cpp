@@ -50,6 +50,9 @@
 #include <QDateTime>
 #include <QUuid>
 #include <QCryptographicHash>
+#include <QUrlQuery>
+
+#include "widgetfile.h"
 
 
 #ifdef OS_LINUX
@@ -86,7 +89,7 @@ QString uniqueId()
 ConfigManager ConfigManager::Instance;
 QString ConfigManager::NoDictionnary = QObject::trUtf8("No Dictionnary");
 
-QString ConfigManager::Extensions = QObject::trUtf8("Latex (*.tex *.latex);;BibTex(*.bib)");
+QString ConfigManager::Extensions = QObject::trUtf8("Latex (*.tex *.latex *.sty *.cls);;BibTex(*.bib)");
 
 QString ConfigManager::MacroSuffix = ".texiteasy-macro";
 const QStringList ConfigManager::DefaultLatexCommands =
@@ -241,6 +244,26 @@ QString ConfigManager::popplerVersion()
 ConfigManager::~ConfigManager()
 {
     delete this->textCharFormats;
+}
+
+void ConfigManager::saveWidgetFileState(const QString &filename, const WidgetFileState &state)
+{
+    QSettings settings;
+    settings.beginGroup("widgetStates");
+    settings.setValue(QUrl::toPercentEncoding(filename), QVariant::fromValue(state));
+}
+WidgetFileState ConfigManager::widgetFileState(const QString &filename)
+{
+    QSettings settings;
+    settings.beginGroup("widgetStates");
+    return settings.value(QUrl::toPercentEncoding(filename)).value<WidgetFileState>();
+}
+bool ConfigManager::widgetFileStateExists(const QString &filename)
+{
+    QSettings settings;
+    settings.beginGroup("widgetStates");
+    return settings.contains(QUrl::toPercentEncoding(filename)) && settings.value(QUrl::toPercentEncoding(filename)).isValid();
+
 }
 
 QString ConfigManager::textCharFormatToString(QTextCharFormat charFormat, QTextCharFormat defaultFormat)

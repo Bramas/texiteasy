@@ -29,7 +29,7 @@ WidgetStatusBar::WidgetStatusBar(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setContextMenuPolicy(Qt::PreventContextMenu);
-
+    _currentWidgetFile = 0;
 
 
 
@@ -228,6 +228,11 @@ void WidgetStatusBar::updateButtons()
         _labelDictionary->setEnabled(false);
         return;
     }
+    if(_currentWidgetFile && FileManager::Instance.contains(_currentWidgetFile))
+        foreach(IPane * pane, _currentWidgetFile->panes())
+        {
+            pane->action()->disconnect();
+        }
 
     foreach(OutputPaneToggleButton *b, _paneLabels)
     {
@@ -236,12 +241,10 @@ void WidgetStatusBar::updateButtons()
     }
     _paneLabels.clear();
 
-    WidgetFile * widget = FileManager::Instance.currentWidgetFile();
+    WidgetFile * widget = _currentWidgetFile = FileManager::Instance.currentWidgetFile();
     int index = 1;
     foreach(IPane * pane, widget->panes())
     {
-
-
         OutputPaneToggleButton *button = new OutputPaneToggleButton(index, pane->statusbarText(),
                                                                     pane->action());
 
@@ -250,7 +253,6 @@ void WidgetStatusBar::updateButtons()
             button->setChecked(true);
         }
 
-        pane->action()->disconnect();
         this->insertPermanentWidget(index, button, 0);
         _paneLabels << button;
 

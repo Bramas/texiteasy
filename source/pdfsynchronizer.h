@@ -10,6 +10,7 @@
 #include <QRectF>
 #include <QPoint>
 #include <QPainterPath>
+#include <QChar>
 
 #include "synctex_parser.h"
 
@@ -202,8 +203,9 @@ private:
 #ifdef OS_WINDOWS
             QString filePath=QFileInfo(sourceFile).canonicalFilePath().replace("/", "\\");
 #else
-            QString filePath=QFileInfo(sourceFile).absolutePath()+"/./"+QFileInfo(sourceFile).fileName();
+            QString filePath=QFileInfo(sourceFile).absolutePath()+"/"+QFileInfo(sourceFile).fileName();
 #endif
+            filePath = filePath.normalized(QString::NormalizationForm_D, QChar::Unicode_6_3);
             PDF_SYNCHRONIZER_DEBUG(qDebug()<<"SYNC "<<filePath<<" line "<<sourceLine);
             synctex_node_t node = synctex_scanner_input(scanner);
             QString name;
@@ -211,9 +213,12 @@ private:
             while (node != NULL)
             {
                 name = QString::fromUtf8(synctex_scanner_get_name(scanner, synctex_node_tag(node)));
+                QString cleanName = name;
+                cleanName.replace("/./", "/");
+                cleanName = cleanName.normalized(QString::NormalizationForm_D, QChar::Unicode_6_3);
                 //qDebug()<<filePath;
-                //qDebug()<<name<<"  "<<(name == filePath);
-                if (name == filePath)
+                //qDebug()<<cleanName<<"  "<<(cleanName == filePath);
+                if (cleanName == filePath)
                 {
                     found = true;
                     break;
