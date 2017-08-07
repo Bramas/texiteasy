@@ -310,7 +310,7 @@
     <message>
         <location filename="../dialogconfig.ui" line="584"/>
         <source>Valider</source>
-        <translation>Submit</translation>
+        <translation>Ok</translation>
     </message>
     <message>
         <source>Annler</source>
