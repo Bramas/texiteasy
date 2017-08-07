@@ -31,12 +31,12 @@
     <name>DialogAbout</name>
     <message>
         <location filename="../dialogabout.ui" line="14"/>
-        <source>A propos de TexitEasy</source>
-        <translation>About TexitEasy</translation>
+        <source>A propos de TeXItEasy</source>
+        <translation>About TeXItEasy</translation>
     </message>
 </context>
 <context>
-    <name>DialogAddLatexCommand</name>
+    <name>DialogAddLaTeXCommand</name>
     <message>
         <location filename="../dialogaddlatexcommand.ui" line="14"/>
         <source>Dialog</source>
@@ -130,7 +130,7 @@
     </message>
     <message>
         <location filename="../dialogconfig.ui" line="52"/>
-        <source>Svn</source>
+        <source>SVN</source>
         <translation></translation>
     </message>
     <message>
@@ -200,13 +200,13 @@
     </message>
     <message>
         <location filename="../dialogconfig.cpp" line="90"/>
-        <source>Executables Svn</source>
-        <translation>Svn binaries</translation>
+        <source>Executables SVN</source>
+        <translation>SVN binaries</translation>
     </message>
     <message>
         <location filename="../dialogconfig.cpp" line="99"/>
-        <source>Executables Latex</source>
-        <translation>Latex binaries</translation>
+        <source>Executables LaTeX</source>
+        <translation>LaTeX binaries</translation>
     </message>
     <message>
         <location filename="../dialogconfig.cpp" line="301"/>
@@ -225,8 +225,8 @@
     </message>
     <message>
         <location filename="../dialogconfig.ui" line="309"/>
-        <source>Chemin vers les executables latex</source>
-        <translation>Path to latex binaries</translation>
+        <source>Chemin vers les executables LaTeX</source>
+        <translation>Path to LaTeX binaries</translation>
     </message>
     <message>
         <location filename="../dialogconfig.ui" line="321"/>
@@ -236,8 +236,8 @@
     </message>
     <message>
         <location filename="../dialogconfig.ui" line="330"/>
-        <source>BibTex</source>
-        <translation>BibTex</translation>
+        <source>BibTeX</source>
+        <translation>BibTeX</translation>
     </message>
     <message>
         <location filename="../dialogconfig.ui" line="337"/>
@@ -246,8 +246,8 @@
     </message>
     <message>
         <location filename="../dialogconfig.ui" line="344"/>
-        <source>Commande Latex par défaut</source>
-        <translation>Default Latex command</translation>
+        <source>Commande LaTeX par défaut</source>
+        <translation>Default LaTeX command</translation>
     </message>
     <message>
         <location filename="../dialogconfig.ui" line="354"/>
@@ -286,13 +286,13 @@
     </message>
     <message>
         <location filename="../dialogconfig.ui" line="519"/>
-        <source>Chemin vers l&apos;executable Svn</source>
-        <translation>Path to Svn binaries</translation>
+        <source>Chemin vers l&apos;executable SVN</source>
+        <translation>Path to SVN binaries</translation>
     </message>
     <message>
         <location filename="../dialogconfig.ui" line="559"/>
-        <source>Activer les fonctionnalités Svn</source>
-        <translation>Enable Svn features</translation>
+        <source>Activer les fonctionnalités SVN</source>
+        <translation>Enable SVN features</translation>
     </message>
     <message>
         <location filename="../dialogconfig.ui" line="597"/>
@@ -300,12 +300,12 @@
         <translation>Cancel</translation>
     </message>
     <message>
-        <source>Pdflatex</source>
-        <translation type="obsolete">Pdflatex</translation>
+        <source>PDFLaTeX</source>
+        <translation>PDFLaTeX</translation>
     </message>
     <message>
-        <source>Bibtex</source>
-        <translation type="obsolete">Bibtex</translation>
+        <source>BibTeX</source>
+        <translation type="obsolete">BibTeX</translation>
     </message>
     <message>
         <location filename="../dialogconfig.ui" line="584"/>
@@ -331,8 +331,8 @@
     </message>
     <message>
         <location filename="../dialogdownloadupdate.ui" line="33"/>
-        <source>TexitEasy</source>
-        <translation>TexitEasy</translation>
+        <source>TeXItEasy</source>
+        <translation>TeXItEasy</translation>
     </message>
     <message>
         <location filename="../dialogdownloadupdate.ui" line="62"/>
@@ -556,17 +556,17 @@
     <message>
         <location filename="../dialogtexdownloadassistant.ui" line="14"/>
         <source>Assistant de Téléchargement LaTeX</source>
-        <translation>LaTex Download Assistant</translation>
+        <translation>LaTeX Download Assistant</translation>
     </message>
     <message>
         <location filename="../dialogtexdownloadassistant.ui" line="55"/>
         <source>Il semblerait que vous que LaTeX ne soit pas installé sur votre ordinateur.</source>
-        <translation>It seems that LaTex is not installed on your computer.</translation>
+        <translation>It seems that LaTeX is not installed on your computer.</translation>
     </message>
     <message>
         <location filename="../dialogtexdownloadassistant.ui" line="80"/>
         <source>Il est bien installé, je vais indiquer le dossier dans les options</source>
-        <translation>LaTex is installed, I will set the path to it in the preferences</translation>
+        <translation>LaTeX is installed, I will set the path to it in the preferences</translation>
     </message>
     <message>
         <location filename="../dialogtexdownloadassistant.ui" line="93"/>
@@ -575,13 +575,13 @@
     </message>
     <message>
         <location filename="../dialogtexdownloadassistant.ui" line="106"/>
-        <source>Télécharger Latex et l&apos;installer sur mon ordinateur</source>
-        <translation>Download LaTex and install now</translation>
+        <source>Télécharger LaTeX et l&apos;installer sur mon ordinateur</source>
+        <translation>Download LaTeX and install now</translation>
     </message>
     <message>
         <location filename="../dialogtexdownloadassistant.ui" line="153"/>
-        <source>Redémarrer TexitEasy</source>
-        <translation>Restart TexitEasy</translation>
+        <source>Redémarrer TeXItEasy</source>
+        <translation>Restart TeXItEasy</translation>
     </message>
     <message>
         <location filename="../dialogtexdownloadassistant.cpp" line="105"/>
@@ -700,7 +700,7 @@
     </message>
     <message>
         <location filename="../helpwidget.ui" line="224"/>
-        <source>Detach/Attach Pdf Viewer</source>
+        <source>Detach/Attach PDF Viewer</source>
         <translation></translation>
     </message>
     <message>
@@ -722,7 +722,7 @@
     </message>
     <message>
         <location filename="../helpwidget.ui" line="527"/>
-        <source>Sync from pdf to source</source>
+        <source>Sync from PDF to source</source>
         <translation></translation>
     </message>
 </context>
@@ -745,8 +745,8 @@
     <name>MainWindow</name>
     <message>
         <location filename="../mainwindow.ui" line="17"/>
-        <source>TexitEasy</source>
-        <translation>TexitEasy</translation>
+        <source>TeXItEasy</source>
+        <translation>TeXItEasy</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="55"/>
@@ -842,13 +842,13 @@
         <translation>Ctrl+S</translation>
     </message>
     <message>
-        <source>PdfLatex</source>
-        <translation type="obsolete">PdfLatex</translation>
+        <source>PDFLaTeX</source>
+        <translation type="obsolete">PDFLaTeX</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="164"/>
-        <source>Pdf</source>
-        <translation>Pdf</translation>
+        <source>PDF</source>
+        <translation>PDF</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="204"/>
@@ -867,8 +867,8 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="226"/>
-        <source>Afficher automatiquement le pdf</source>
-        <translation>Automatically display the pdf</translation>
+        <source>Afficher automatiquement le PDF</source>
+        <translation>Automatically display the PDF</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="237"/>
@@ -882,8 +882,8 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="362"/>
-        <source>Open Pdf</source>
-        <translation>Open Pdf</translation>
+        <source>Open PDF</source>
+        <translation>Open PDF</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="367"/>
@@ -1028,8 +1028,8 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="283"/>
-        <source>Voir le pdf</source>
-        <translation>See Pdf</translation>
+        <source>Voir le PDF</source>
+        <translation>Display PDF</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="286"/>
@@ -1053,8 +1053,8 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="304"/>
-        <source>Bibtex</source>
-        <translation>Bibtex</translation>
+        <source>BibTeX</source>
+        <translation>BibTeX</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="307"/>
@@ -1063,8 +1063,8 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="312"/>
-        <source>A propos de TexitEasy</source>
-        <translation>About TexitEasy</translation>
+        <source>A propos de TeXItEasy</source>
+        <translation>About TeXItEasy</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="357"/>
@@ -1095,8 +1095,8 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="323"/>
-        <source>Synchroniser le pdf</source>
-        <translation>Synchronize pdf</translation>
+        <source>Synchroniser le PDF</source>
+        <translation>Synchronize PDF</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="328"/>
@@ -1120,8 +1120,8 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="349"/>
-        <source>Afficheur pdf séparé</source>
-        <translation>Separated Pdf Viewer</translation>
+        <source>Afficheur PDF séparé</source>
+        <translation>Separated PDF Viewer</translation>
     </message>
     <message>
         <source>Ouvrir l&apos;éditeur de macros</source>
@@ -1209,14 +1209,14 @@
         <translation type="obsolete">Save and quit</translation>
     </message>
     <message>
-        <source>Latex (*.tex *.latex);;BibTex(*.bib)</source>
-        <translation type="obsolete">Latex (*.tex *.latex);;BibTex(*.bib)</translation>
+        <source>LaTeX (*.tex *.latex);;BibTeX(*.bib)</source>
+        <translation type="obsolete">LaTeX (*.tex *.latex);;BibTeX(*.bib)</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="1026"/>
         <location filename="../mainwindow.cpp" line="1032"/>
-        <source>Mettre à jour TexitEasy</source>
-        <translation>Update TexitEasy</translation>
+        <source>Mettre à jour TeXItEasy</source>
+        <translation>Update TeXItEasy</translation>
     </message>
 </context>
 <context>
@@ -1238,8 +1238,8 @@
     </message>
     <message>
         <location filename="../configmanager.cpp" line="89"/>
-        <source>Latex (*.tex *.latex);;BibTex(*.bib)</source>
-        <translation>Latex (*.tex *.latex);;BibTex(*.bib)</translation>
+        <source>LaTeX (*.tex *.latex);;BibTeX(*.bib)</source>
+        <translation>LaTeX (*.tex *.latex);;BibTeX(*.bib)</translation>
     </message>
     <message>
         <location filename="../latexoutputfilter.cpp" line="43"/>
@@ -1346,11 +1346,11 @@
     </message>
     <message>
         <location filename="../updatechecker.cpp" line="136"/>
-        <source>Si une mise à jour ne s&apos;est pas correctement déroulée, il est conseillé de telecharger la dernière version de TexitEasy directement sur le &lt;a href=&apos;</source>
+        <source>Si une mise à jour ne s&apos;est pas correctement déroulée, il est conseillé de telecharger la dernière version de TeXItEasy directement sur le &lt;a href=&apos;</source>
         <translation>If an update has not been installed correctly, you should download the latest version from the &lt;a href=&apos;</translation>
     </message>
     <message>
-        <source>Si une mise à jour ne s&apos;est pas correctement déroulée, il est conseillé de telecharger la dernière version de TexitEasy directement sur le site officielle.</source>
+        <source>Si une mise à jour ne s&apos;est pas correctement déroulée, il est conseillé de telecharger la dernière version de TeXItEasy directement sur le site officielle.</source>
         <translation>If an update has not been installed correctly, you should download the latest version from the official website.</translation>
     </message>
     <message>
