@@ -8,7 +8,7 @@
 #include "widgettextedit.h"
 #include "taskpane/taskwindow.h"
 #include "ipane.h"
-#include "qt4panecallback.h"
+#include "qt5panecallback.h"
 
 #include <QPushButton>
 #include <QMenu>
@@ -255,7 +255,7 @@ void WidgetStatusBar::updateButtons()
         _paneLabels << button;
 
 #if QT_VERSION < QT_VERSION_CHECK(5,0,0)
-        Qt4PaneCallback * c = new Qt4PaneCallback();
+        Qt5PaneCallback * c = new Qt5PaneCallback();
         c->pane = pane;
         c->widget = widget;
         c->button = button;

@@ -1,5 +1,5 @@
-#ifndef QT4PANECALLBACK_H
-#define QT4PANECALLBACK_H
+#ifndef QT5PANECALLBACK_H
+#define QT5PANECALLBACK_H
 
 #include <QObject>
 
@@ -11,11 +11,11 @@ class IPane;
 class OutputPaneToggleButton;
 class WidgetFile;
 
-class Qt4PaneCallback : public QObject
+class Qt5PaneCallback : public QObject
 {
     Q_OBJECT
 public:
-    explicit Qt4PaneCallback(QObject *parent = 0);
+    explicit Qt5PaneCallback(QObject *parent = 0);
 
 
     OutputPaneToggleButton *button;
@@ -31,4 +31,4 @@ public slots:
 
 //#endif
 
-#endif // QT4PANECALLBACK_H
+#endif // QT5PANECALLBACK_H

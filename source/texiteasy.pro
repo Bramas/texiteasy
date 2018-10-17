@@ -99,7 +99,7 @@ SOURCES += main.cpp\
     taskpane/taskmodel.cpp \
     taskpane/taskwindow.cpp \
     taskpane/task.cpp \
-    qt4panecallback.cpp \
+    qt5panecallback.cpp \
     helpwidget.cpp
 
 HEADERS  += mainwindow.h \
@@ -178,7 +178,7 @@ HEADERS  += mainwindow.h \
     taskpane/icontext.h \
     iplugin.h \
     ipane.h \
-    qt4panecallback.h \
+    qt5panecallback.h \
     helpwidget.h
 
 FORMS    += mainwindow.ui \
@@ -253,7 +253,7 @@ unix:!mac{
 
     LIBS += -lz
     lessThan(QT_MAJOR_VERSION, 5) {
-        LIBS += -L/usr/local/lib -lpoppler-qt4
+        LIBS += -L/usr/local/lib -lpoppler-qt5
     } else {
         LIBS += -L/usr/local/lib -lpoppler-qt5
     }

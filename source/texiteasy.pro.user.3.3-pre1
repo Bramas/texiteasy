@@ -81,14 +81,14 @@
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Make</value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
-      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.MakeStep</value>
-      <valuelist type="QVariantList" key="Qt4ProjectManager.MakeStep.AutomaticallyAddedMakeArguments">
+      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt5ProjectManager.MakeStep</value>
+      <valuelist type="QVariantList" key="Qt5ProjectManager.MakeStep.AutomaticallyAddedMakeArguments">
        <value type="QString">-w</value>
        <value type="QString">-r</value>
       </valuelist>
-      <value type="bool" key="Qt4ProjectManager.MakeStep.Clean">false</value>
-      <value type="QString" key="Qt4ProjectManager.MakeStep.MakeArguments"></value>
-      <value type="QString" key="Qt4ProjectManager.MakeStep.MakeCommand"></value>
+      <value type="bool" key="Qt5ProjectManager.MakeStep.Clean">false</value>
+      <value type="QString" key="Qt5ProjectManager.MakeStep.MakeArguments"></value>
+      <value type="QString" key="Qt5ProjectManager.MakeStep.MakeCommand"></value>
      </valuemap>
      <value type="int" key="ProjectExplorer.BuildStepList.StepsCount">2</value>
      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Compiler</value>
@@ -100,14 +100,14 @@
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Make</value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
-      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.MakeStep</value>
-      <valuelist type="QVariantList" key="Qt4ProjectManager.MakeStep.AutomaticallyAddedMakeArguments">
+      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt5ProjectManager.MakeStep</value>
+      <valuelist type="QVariantList" key="Qt5ProjectManager.MakeStep.AutomaticallyAddedMakeArguments">
        <value type="QString">-w</value>
        <value type="QString">-r</value>
       </valuelist>
-      <value type="bool" key="Qt4ProjectManager.MakeStep.Clean">true</value>
-      <value type="QString" key="Qt4ProjectManager.MakeStep.MakeArguments">clean</value>
-      <value type="QString" key="Qt4ProjectManager.MakeStep.MakeCommand"></value>
+      <value type="bool" key="Qt5ProjectManager.MakeStep.Clean">true</value>
+      <value type="QString" key="Qt5ProjectManager.MakeStep.MakeArguments">clean</value>
+      <value type="QString" key="Qt5ProjectManager.MakeStep.MakeCommand"></value>
      </valuemap>
      <value type="int" key="ProjectExplorer.BuildStepList.StepsCount">1</value>
      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Nettoyer</value>
@@ -119,9 +119,9 @@
     <valuelist type="QVariantList" key="ProjectExplorer.BuildConfiguration.UserEnvironmentChanges"/>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Debug</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4BuildConfiguration</value>
-    <value type="int" key="Qt4ProjectManager.Qt4BuildConfiguration.BuildConfiguration">2</value>
-    <value type="bool" key="Qt4ProjectManager.Qt4BuildConfiguration.UseShadowBuild">true</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt5ProjectManager.Qt5BuildConfiguration</value>
+    <value type="int" key="Qt5ProjectManager.Qt5BuildConfiguration.BuildConfiguration">2</value>
+    <value type="bool" key="Qt5ProjectManager.Qt5BuildConfiguration.UseShadowBuild">true</value>
    </valuemap>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.1">
     <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/Users/quentinbramas/Projects/texiteasy/build/texiteasy/qt5.3.0_clang64/release</value>
@@ -140,14 +140,14 @@
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Make</value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
-      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.MakeStep</value>
-      <valuelist type="QVariantList" key="Qt4ProjectManager.MakeStep.AutomaticallyAddedMakeArguments">
+      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt5ProjectManager.MakeStep</value>
+      <valuelist type="QVariantList" key="Qt5ProjectManager.MakeStep.AutomaticallyAddedMakeArguments">
        <value type="QString">-w</value>
        <value type="QString">-r</value>
       </valuelist>
-      <value type="bool" key="Qt4ProjectManager.MakeStep.Clean">false</value>
-      <value type="QString" key="Qt4ProjectManager.MakeStep.MakeArguments"></value>
-      <value type="QString" key="Qt4ProjectManager.MakeStep.MakeCommand"></value>
+      <value type="bool" key="Qt5ProjectManager.MakeStep.Clean">false</value>
+      <value type="QString" key="Qt5ProjectManager.MakeStep.MakeArguments"></value>
+      <value type="QString" key="Qt5ProjectManager.MakeStep.MakeCommand"></value>
      </valuemap>
      <value type="int" key="ProjectExplorer.BuildStepList.StepsCount">2</value>
      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Compiler</value>
@@ -159,14 +159,14 @@
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Make</value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
-      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.MakeStep</value>
-      <valuelist type="QVariantList" key="Qt4ProjectManager.MakeStep.AutomaticallyAddedMakeArguments">
+      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt5ProjectManager.MakeStep</value>
+      <valuelist type="QVariantList" key="Qt5ProjectManager.MakeStep.AutomaticallyAddedMakeArguments">
        <value type="QString">-w</value>
        <value type="QString">-r</value>
       </valuelist>
-      <value type="bool" key="Qt4ProjectManager.MakeStep.Clean">true</value>
-      <value type="QString" key="Qt4ProjectManager.MakeStep.MakeArguments">clean</value>
-      <value type="QString" key="Qt4ProjectManager.MakeStep.MakeCommand"></value>
+      <value type="bool" key="Qt5ProjectManager.MakeStep.Clean">true</value>
+      <value type="QString" key="Qt5ProjectManager.MakeStep.MakeArguments">clean</value>
+      <value type="QString" key="Qt5ProjectManager.MakeStep.MakeCommand"></value>
      </valuemap>
      <value type="int" key="ProjectExplorer.BuildStepList.StepsCount">1</value>
      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Nettoyer</value>
@@ -178,9 +178,9 @@
     <valuelist type="QVariantList" key="ProjectExplorer.BuildConfiguration.UserEnvironmentChanges"/>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Release</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4BuildConfiguration</value>
-    <value type="int" key="Qt4ProjectManager.Qt4BuildConfiguration.BuildConfiguration">0</value>
-    <value type="bool" key="Qt4ProjectManager.Qt4BuildConfiguration.UseShadowBuild">true</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt5ProjectManager.Qt5BuildConfiguration</value>
+    <value type="int" key="Qt5ProjectManager.Qt5BuildConfiguration.BuildConfiguration">0</value>
+    <value type="bool" key="Qt5ProjectManager.Qt5BuildConfiguration.UseShadowBuild">true</value>
    </valuemap>
    <value type="int" key="ProjectExplorer.Target.BuildConfigurationCount">2</value>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.DeployConfiguration.0">
@@ -236,12 +236,12 @@
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">texiteasy</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/Users/quentinbramas/Projects/texiteasy/texiteasy-repository/source/texiteasy.pro</value>
-    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.CommandLineArguments"></value>
-    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.ProFile">texiteasy.pro</value>
-    <value type="bool" key="Qt4ProjectManager.Qt4RunConfiguration.UseDyldImageSuffix">false</value>
-    <value type="bool" key="Qt4ProjectManager.Qt4RunConfiguration.UseTerminal">false</value>
-    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.UserWorkingDirectory"></value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt5ProjectManager.Qt5RunConfiguration:/Users/quentinbramas/Projects/texiteasy/texiteasy-repository/source/texiteasy.pro</value>
+    <value type="QString" key="Qt5ProjectManager.Qt5RunConfiguration.CommandLineArguments"></value>
+    <value type="QString" key="Qt5ProjectManager.Qt5RunConfiguration.ProFile">texiteasy.pro</value>
+    <value type="bool" key="Qt5ProjectManager.Qt5RunConfiguration.UseDyldImageSuffix">false</value>
+    <value type="bool" key="Qt5ProjectManager.Qt5RunConfiguration.UseTerminal">false</value>
+    <value type="QString" key="Qt5ProjectManager.Qt5RunConfiguration.UserWorkingDirectory"></value>
     <value type="uint" key="RunConfiguration.QmlDebugServerPort">3768</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
@@ -278,14 +278,14 @@
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Make</value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
-      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.MakeStep</value>
-      <valuelist type="QVariantList" key="Qt4ProjectManager.MakeStep.AutomaticallyAddedMakeArguments">
+      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt5ProjectManager.MakeStep</value>
+      <valuelist type="QVariantList" key="Qt5ProjectManager.MakeStep.AutomaticallyAddedMakeArguments">
        <value type="QString">-w</value>
        <value type="QString">-r</value>
       </valuelist>
-      <value type="bool" key="Qt4ProjectManager.MakeStep.Clean">false</value>
-      <value type="QString" key="Qt4ProjectManager.MakeStep.MakeArguments"></value>
-      <value type="QString" key="Qt4ProjectManager.MakeStep.MakeCommand"></value>
+      <value type="bool" key="Qt5ProjectManager.MakeStep.Clean">false</value>
+      <value type="QString" key="Qt5ProjectManager.MakeStep.MakeArguments"></value>
+      <value type="QString" key="Qt5ProjectManager.MakeStep.MakeCommand"></value>
      </valuemap>
      <value type="int" key="ProjectExplorer.BuildStepList.StepsCount">2</value>
      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Compiler</value>
@@ -297,14 +297,14 @@
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Make</value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
-      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.MakeStep</value>
-      <valuelist type="QVariantList" key="Qt4ProjectManager.MakeStep.AutomaticallyAddedMakeArguments">
+      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt5ProjectManager.MakeStep</value>
+      <valuelist type="QVariantList" key="Qt5ProjectManager.MakeStep.AutomaticallyAddedMakeArguments">
        <value type="QString">-w</value>
        <value type="QString">-r</value>
       </valuelist>
-      <value type="bool" key="Qt4ProjectManager.MakeStep.Clean">true</value>
-      <value type="QString" key="Qt4ProjectManager.MakeStep.MakeArguments">clean</value>
-      <value type="QString" key="Qt4ProjectManager.MakeStep.MakeCommand"></value>
+      <value type="bool" key="Qt5ProjectManager.MakeStep.Clean">true</value>
+      <value type="QString" key="Qt5ProjectManager.MakeStep.MakeArguments">clean</value>
+      <value type="QString" key="Qt5ProjectManager.MakeStep.MakeCommand"></value>
      </valuemap>
      <value type="int" key="ProjectExplorer.BuildStepList.StepsCount">1</value>
      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Nettoyer</value>
@@ -316,9 +316,9 @@
     <valuelist type="QVariantList" key="ProjectExplorer.BuildConfiguration.UserEnvironmentChanges"/>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Debug</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4BuildConfiguration</value>
-    <value type="int" key="Qt4ProjectManager.Qt4BuildConfiguration.BuildConfiguration">2</value>
-    <value type="bool" key="Qt4ProjectManager.Qt4BuildConfiguration.UseShadowBuild">true</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt5ProjectManager.Qt5BuildConfiguration</value>
+    <value type="int" key="Qt5ProjectManager.Qt5BuildConfiguration.BuildConfiguration">2</value>
+    <value type="bool" key="Qt5ProjectManager.Qt5BuildConfiguration.UseShadowBuild">true</value>
    </valuemap>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.1">
     <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/Users/quentinbramas/Projects/texiteasy/build/release</value>
@@ -337,14 +337,14 @@
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Make</value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
-      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.MakeStep</value>
-      <valuelist type="QVariantList" key="Qt4ProjectManager.MakeStep.AutomaticallyAddedMakeArguments">
+      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt5ProjectManager.MakeStep</value>
+      <valuelist type="QVariantList" key="Qt5ProjectManager.MakeStep.AutomaticallyAddedMakeArguments">
        <value type="QString">-w</value>
        <value type="QString">-r</value>
       </valuelist>
-      <value type="bool" key="Qt4ProjectManager.MakeStep.Clean">false</value>
-      <value type="QString" key="Qt4ProjectManager.MakeStep.MakeArguments"></value>
-      <value type="QString" key="Qt4ProjectManager.MakeStep.MakeCommand"></value>
+      <value type="bool" key="Qt5ProjectManager.MakeStep.Clean">false</value>
+      <value type="QString" key="Qt5ProjectManager.MakeStep.MakeArguments"></value>
+      <value type="QString" key="Qt5ProjectManager.MakeStep.MakeCommand"></value>
      </valuemap>
      <value type="int" key="ProjectExplorer.BuildStepList.StepsCount">2</value>
      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Compiler</value>
@@ -356,14 +356,14 @@
       <value type="bool" key="ProjectExplorer.BuildStep.Enabled">true</value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Make</value>
       <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
-      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.MakeStep</value>
-      <valuelist type="QVariantList" key="Qt4ProjectManager.MakeStep.AutomaticallyAddedMakeArguments">
+      <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt5ProjectManager.MakeStep</value>
+      <valuelist type="QVariantList" key="Qt5ProjectManager.MakeStep.AutomaticallyAddedMakeArguments">
        <value type="QString">-w</value>
        <value type="QString">-r</value>
       </valuelist>
-      <value type="bool" key="Qt4ProjectManager.MakeStep.Clean">true</value>
-      <value type="QString" key="Qt4ProjectManager.MakeStep.MakeArguments">clean</value>
-      <value type="QString" key="Qt4ProjectManager.MakeStep.MakeCommand"></value>
+      <value type="bool" key="Qt5ProjectManager.MakeStep.Clean">true</value>
+      <value type="QString" key="Qt5ProjectManager.MakeStep.MakeArguments">clean</value>
+      <value type="QString" key="Qt5ProjectManager.MakeStep.MakeCommand"></value>
      </valuemap>
      <value type="int" key="ProjectExplorer.BuildStepList.StepsCount">1</value>
      <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Nettoyer</value>
@@ -375,9 +375,9 @@
     <valuelist type="QVariantList" key="ProjectExplorer.BuildConfiguration.UserEnvironmentChanges"/>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">Release</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4BuildConfiguration</value>
-    <value type="int" key="Qt4ProjectManager.Qt4BuildConfiguration.BuildConfiguration">0</value>
-    <value type="bool" key="Qt4ProjectManager.Qt4BuildConfiguration.UseShadowBuild">true</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt5ProjectManager.Qt5BuildConfiguration</value>
+    <value type="int" key="Qt5ProjectManager.Qt5BuildConfiguration.BuildConfiguration">0</value>
+    <value type="bool" key="Qt5ProjectManager.Qt5BuildConfiguration.UseShadowBuild">true</value>
    </valuemap>
    <value type="int" key="ProjectExplorer.Target.BuildConfigurationCount">2</value>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.DeployConfiguration.0">
@@ -433,12 +433,12 @@
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DefaultDisplayName">texiteasy</value>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName"></value>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:/Users/quentinbramas/Projects/texiteasy/texiteasy-repository/source/texiteasy.pro</value>
-    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.CommandLineArguments"></value>
-    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.ProFile">texiteasy.pro</value>
-    <value type="bool" key="Qt4ProjectManager.Qt4RunConfiguration.UseDyldImageSuffix">false</value>
-    <value type="bool" key="Qt4ProjectManager.Qt4RunConfiguration.UseTerminal">false</value>
-    <value type="QString" key="Qt4ProjectManager.Qt4RunConfiguration.UserWorkingDirectory"></value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt5ProjectManager.Qt5RunConfiguration:/Users/quentinbramas/Projects/texiteasy/texiteasy-repository/source/texiteasy.pro</value>
+    <value type="QString" key="Qt5ProjectManager.Qt5RunConfiguration.CommandLineArguments"></value>
+    <value type="QString" key="Qt5ProjectManager.Qt5RunConfiguration.ProFile">texiteasy.pro</value>
+    <value type="bool" key="Qt5ProjectManager.Qt5RunConfiguration.UseDyldImageSuffix">false</value>
+    <value type="bool" key="Qt5ProjectManager.Qt5RunConfiguration.UseTerminal">false</value>
+    <value type="QString" key="Qt5ProjectManager.Qt5RunConfiguration.UserWorkingDirectory"></value>
     <value type="uint" key="RunConfiguration.QmlDebugServerPort">3768</value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
