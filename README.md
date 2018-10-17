@@ -26,19 +26,19 @@ Build on Linux
 
 ### Ubuntu
 
-    svn checkout https://github.com/Bramas/texiteasy/trunk/source
-    sudo apt-get install libqt4-dev qt4-qmake libpoppler-qt4-dev zlib1g-dev
-    cd source
+    git clone https://github.com/Bramas/texiteasy.git
+    sudo apt-get install libqt5-dev qt5-qmake libpoppler-qt5-dev zlib1g-dev
+    cd texiteasy/source
     qmake texiteasy.pro
     make
 
 ### ArchLinux
 
-	sudo pacman -S make gcc qt4 poppler-qt4 zlib texlive-core
+	sudo pacman -S make gcc qt5 poppler-qt5 zlib texlive-core
 	wget https://github.com/Bramas/texiteasy/archive/master.tar.gz
 	tar -zxf master.tar.gz
 	cd texiteasy-master/source
-	qmake-qt4 texiteasy.pro
+	qmake-qt5 texiteasy.pro
 	make
 
 optional but usefull:

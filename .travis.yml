@@ -5,7 +5,7 @@ compiler:
 
 before_install:
     - sudo apt-get update
-    - sudo apt-get install libqt4-dev qt4-qmake libpoppler-qt4-dev zlib1g-dev
+    - sudo apt-get install libqt5-dev qt5-qmake libpoppler-qt5-dev zlib1g-dev
 script:
     - cd source
     - qmake texiteasy.pro
