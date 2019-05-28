@@ -79,22 +79,21 @@ bool Builder::setupPathEnvironment(QProcess * process)
     }
     else
     {
-        env.insert("PATH", defaultPath + ":/usr/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/texbin:/sw/bin:"+
-                   extraPath);
+        env.insert("PATH", extraPath + ":" + defaultPath + ":/usr/bin:/usr/sbin:/sbin:/usr/local/bin:/usr/texbin:/sw/bin");
     }
     process->setProcessEnvironment(env);
 #endif
 #ifdef OS_WINDOWS
     if (!extraPath.isEmpty())
     {
-        env.insert("PATH", defaultPath + ";"+extraPath);
+        env.insert("PATH", extraPath + ";" + defaultPath);
         process->setProcessEnvironment(env);
     }
 #endif
 #ifdef OS_LINUX
     if (!extraPath.isEmpty())
     {
-        env.insert("PATH", defaultPath + ":"+extraPath);
+        env.insert("PATH", extraPath + ":" + defaultPath);
         process->setProcessEnvironment(env);
     }
 #endif

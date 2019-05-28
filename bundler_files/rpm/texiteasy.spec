@@ -44,8 +44,6 @@ BuildRequires: libqt4-devel >= 4.7
 BuildRequires: libpoppler-qt4-devel
 %endif
 %endif
-Requires:       texlive-latex
-
 
 
 %description
