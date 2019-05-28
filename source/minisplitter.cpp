@@ -64,11 +64,13 @@ MiniSplitterHandle::~MiniSplitterHandle()
 }
 void MiniSplitterHandle::resizeEvent(QResizeEvent *event)
 {
+    //qDebug()<<event->
+    /*
     if (orientation() == Qt::Horizontal)
         setContentsMargins(2, 0, 2, 0);
     else
         setContentsMargins(0, 2, 0, 2);
-    setMask(QRegion(contentsRect()));
+    setMask(QRegion(contentsRect())); */
     QSplitterHandle::resizeEvent(event);
 }
 

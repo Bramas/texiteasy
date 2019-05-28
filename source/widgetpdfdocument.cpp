@@ -66,8 +66,8 @@ WidgetPdfDocument::WidgetPdfDocument(QWidget *parent) :
     scanner(NULL),
     _scroll(new QScrollBar(Qt::Vertical, this)),
     _widgetFile(0),
-    _zoom(1),
-    _syncPage(-2)
+    _syncPage(-2),
+    _zoom(1)
 
 {
     this->setContentsMargins(0,0,0,0);

@@ -326,7 +326,7 @@ FileStructure::~FileStructure()
 #ifdef DEBUG_DESTRUCTOR
     qDebug()<<"delete FileStructure";
 #endif
-    delete this->blockIndentations;
+    delete[] this->blockIndentations;
     structureInfo->clear();
     delete structureInfo;
 }
@@ -339,7 +339,7 @@ void FileStructure::updateStructure()
         delete in;
     }
     this->structureInfo->clear();
-    delete this->blockIndentations;
+    delete[] this->blockIndentations;
     this->blockIndentations = new BlockIndentation[this->widgetTextEdit->document()->blockCount()];
 
     int textBlockIndex = 0;
