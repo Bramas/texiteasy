@@ -114,9 +114,10 @@ WidgetPdfDocument::~WidgetPdfDocument()
 
 bool WidgetPdfDocument::event(QEvent * event)
 {
-
+// detected a bug in this function, tried to add a test
+// that event is not null
 #if QT_VERSION > QT_VERSION_CHECK(5,2,0)
-    if (event->type() == QEvent::NativeGesture)
+    if (event && event->type() == QEvent::NativeGesture)
         return gestureEvent(dynamic_cast<QNativeGestureEvent*>(event));
 #endif
     return QWidget::event(event);
