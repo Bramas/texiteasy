@@ -33,6 +33,7 @@
 #include <QRegExp>
 #include <QFileDialog>
 #include <QDesktopServices>
+#include <QAction>
 
 DialogConfig::DialogConfig(MainWindow *parent) :
     QDialog(parent),

@@ -4,17 +4,26 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql xml network script
+
 CONFIG += qt
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
+equals(QT_MAJOR_VERSION, 5):greaterThan(QT_MINOR_VERSION, 6) {
+QT += core gui widgets sql xml network concurrent core-private script
+equals(INTERNALBROWSER,yes){
+QT += webenginewidgets
+}  
+} else {
+message("Qt>=5.7 is required.")
+}
+
 
 TARGET = texiteasy
 TEMPLATE = app
 
 APPLICATION_NAME = \\\"'TexitEasy'\\\"
 
-VERSION = \\\"'0.22.1'\\\"
-VERSION_HEX = 0x002201
+VERSION = \\\"'0.23.0'\\\"
+VERSION_HEX = 0x002300
 
 CONFIG += c++11
 QMAKE_CXXFLAGS += -std=c++0x

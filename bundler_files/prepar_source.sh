@@ -1,11 +1,11 @@
 #!/bin/bash
 
-VERSION="0.21.6"
+VERSION="0.23.0"
 
 #SCRIPT=$(readlink -f $0)
 # Absolute path this script is in, thus /home/user/bin
 #DEST_PATH=$(dirname $SCRIPT)
-DEST_PATH="/Users/quentinbramas/Documents"
+DEST_PATH="/home/quentin"
 echo "DEST_PATH = $DEST_PATH"
 
 mkdir /tmp/texiteasy-$VERSION

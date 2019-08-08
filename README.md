@@ -27,7 +27,7 @@ Build on Linux
 ### Ubuntu
 
     svn checkout https://github.com/Bramas/texiteasy/trunk/source
-    sudo apt-get install libqt4-dev qt4-qmake libpoppler-qt4-dev zlib1g-dev
+    sudo apt-get install libqt5gui5 libqt5network5 libqt5script5 qt5-qmake libpoppler-qt5-dev zlib1g-dev
     cd source
     qmake texiteasy.pro
     make

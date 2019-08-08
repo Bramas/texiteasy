@@ -1009,10 +1009,11 @@ void MainWindow::insertTexDirRoot()
 
 void MainWindow::initTheme()
 {
-    QPalette Pal(palette());
-    Pal.setColor(QPalette::Background, ConfigManager::Instance.getTextCharFormats("line-number").background().color());
-    this->setAutoFillBackground(true);
-    this->setPalette(Pal);
+    //QPalette Pal(palette());
+    //Pal.setColor(QPalette::Background, ConfigManager::Instance.getTextCharFormats("line-number").background().color());
+    //this->setAutoFillBackground(true);
+    //this->setPalette(Pal);
+    //this->setStyleSheet("QMenu { background-color: white }");
     FileManager::Instance.initTheme();
     _widgetStatusBar->initTheme();
     _tabWidget->initTheme();
