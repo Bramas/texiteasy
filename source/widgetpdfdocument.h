@@ -35,6 +35,7 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QDebug>
+#include <QPainterPath>
 
 #if QT_VERSION > QT_VERSION_CHECK(5,2,0)
 #    include <QNativeGestureEvent>

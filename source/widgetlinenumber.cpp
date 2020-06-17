@@ -128,7 +128,7 @@ void WidgetLineNumber::paintEvent(QPaintEvent * /*event*/)
     painter.setPen(defaultPen);
 
     int right           = this->width() - 8 - _zeroWidth - 5 - 4;
-    int fontHeight      = fm.height();
+    //int fontHeight      = fm.height();
     int l               = this->firstVisibleBlock = this->widgetTextEdit->firstVisibleBlockNumber();
     this->scrollOffset  = this->widgetTextEdit->contentOffsetTop();
 

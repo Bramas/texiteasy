@@ -22,8 +22,8 @@ TEMPLATE = app
 
 APPLICATION_NAME = \\\"'TexitEasy'\\\"
 
-VERSION = \\\"'0.23.0'\\\"
-VERSION_HEX = 0x002300
+VERSION = \\\"'0.26.3'\\\"
+VERSION_HEX = 0x002603
 
 CONFIG += c++11
 QMAKE_CXXFLAGS += -std=c++0x
@@ -221,6 +221,7 @@ CODECFORTR = UTF-8
 isEmpty( PREFIX ) {
     PREFIX=/usr
 }
+
 DEFINES += PREFIX=\\\"$${PREFIX}\\\"
 target.path = $${PREFIX}/bin
 
@@ -260,6 +261,9 @@ win32 {
     #TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com/posts/download_latest/win_portable'\\\"
 
 }
+
+
+
 unix:!mac{
 
     LIBS += -lz
@@ -272,13 +276,39 @@ unix:!mac{
     LAST_VERSION_URL = \\\"'http://texiteasy.com/downloads/latest_version/linux'\\\"
     TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com/downloads/latest/linux'\\\"
     LATEX_URL = \\\"'http://texiteasy.com/links/latex/linux'\\\"
+
+
+    UI_DIR = .ui
+    MOC_DIR = .moc
+    OBJECTS_DIR = .obj
+
+    isEmpty( DESKTOPDIR ) {
+        DESKTOPDIR=/usr/share/applications
+    }
+    isEmpty( ICONDIR ) {
+        ICONDIR=/usr/share/pixmaps
+    }
+
+    desktop.path = $${DESKTOPDIR}
+    desktop.files = utilities/texiteasy.desktop
+    INSTALLS += desktop
+
+    icon.path = $${ICONDIR}
+    icon.files = utilities/texiteasy.png
+    INSTALLS += icon
+
+
+    utilities.path = $${PREFIX}/share/texiteasy/dictionaries
+    utilities.files = data/dictionaries/*
+    INSTALLS += utilities
+
 }
 mac{
-    QMAKE_MAC_SDK = macosx10.12
+    QMAKE_MAC_SDK = macosx #macosx10.12
 
     # including the whole folder can make errors so now, on mac, just include the needed library include folder (for the lib folder too)
-    INCLUDEPATH += /usr/local/Cellar/poppler/0.53.0/include
-    LIBS += -lz -L/usr/local/Cellar/poppler/0.53.0/lib  -lpoppler-qt5
+    INCLUDEPATH += /usr/local/opt/poppler/include
+    LIBS += -lz -L/usr/local/opt/poppler/lib  -lpoppler-qt5
     ICON = texiteasy.icns
     DEFINES += OS_MAC
     LAST_VERSION_URL = \\\"'http://texiteasy.com/downloads/latest_version/mac'\\\"

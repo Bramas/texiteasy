@@ -12,10 +12,10 @@ public:
     virtual QObject * getQObject() = 0;
     virtual QAction * action() = 0;
 
-    virtual void beforeOpen(bool * cancelOpen) {}
+    virtual void beforeOpen(bool * cancelOpen) {(void)cancelOpen;}
     virtual void afterOpen() {}
 
-    virtual void beforeClose(bool * cancelClose) {}
+    virtual void beforeClose(bool * cancelClose) {(void)cancelClose;}
     virtual void afterClose() {}
 
 };

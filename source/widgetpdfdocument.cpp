@@ -65,8 +65,8 @@ WidgetPdfDocument::WidgetPdfDocument(QWidget *parent) :
     _pages(0),
     scanner(NULL),
     _scroll(new QScrollBar(Qt::Vertical, this)),
-    _widgetFile(0),
     _syncPage(-2),
+    _widgetFile(0),
     _zoom(1)
 
 {
@@ -444,7 +444,8 @@ QImage * WidgetPdfDocument::page(int page)
 }
 void WidgetPdfDocument::goToPage(int page, int top, int height)
 {
-    if(!_file) return;
+    if(!_file)     return;
+    if(!_document) return;
 
     page = min(page,this->_document->numPages()-1);
 

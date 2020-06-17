@@ -89,7 +89,9 @@ QString uniqueId()
 ConfigManager ConfigManager::Instance;
 QString ConfigManager::NoDictionnary = QObject::trUtf8("No Dictionnary");
 
-QString ConfigManager::Extensions = QObject::trUtf8("Latex (*.tex *.latex *.sty *.cls);;BibTex(*.bib)");
+QString ConfigManager::Extensions = QObject::trUtf8(
+            "Latex (*.tex *.latex *.sty *.cls *.bib)"
+            ";;Other (*.*)");
 
 QString ConfigManager::MacroSuffix = ".texiteasy-macro";
 const QStringList ConfigManager::DefaultLatexCommands =
@@ -583,11 +585,7 @@ QStringList ConfigManager::themesList()
 QString ConfigManager::dictionaryPath()
 {
 #ifdef OS_MAC
-    #ifdef LIB_DEPLOY
-        return QApplication::applicationDirPath()+"/../Resources/dictionaries/";
-    #else
-        return QApplication::applicationDirPath()+"/../../../../Resources/dictionaries/";
-    #endif
+    return QApplication::applicationDirPath()+"/../Resources/dictionaries/";
 #else
 #ifdef OS_LINUX
     return "/usr/share/texiteasy/dictionaries/";
@@ -1149,6 +1147,10 @@ void ConfigManager::checkRevision()
             settings.endGroup();
         #endif
     case 0x002105:
+    case 0x002300:
+    case 0x002600:
+    case 0x002601:
+    case 0x002602:
 
         break;
     }

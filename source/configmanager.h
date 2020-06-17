@@ -214,7 +214,7 @@ public:
 
     void    setDefaultLatex(QString name) {  QSettings settings; settings.setValue("builder/defaultLatex", name);  }
     QString defaultLatex() {  QSettings settings; return settings.value("builder/defaultLatex").toString();  }
-    QString latexCommand(QString name = QString::null);
+    QString latexCommand(QString name = QString());
 
 
     QString bibtexCommand(bool fullPath = false) { QSettings settings; return (fullPath ? settings.value("builder/latexPath").toString()+"/" : QString(""))+settings.value("builder/bibtex").toString(); }
