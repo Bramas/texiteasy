@@ -593,11 +593,7 @@ QStringList ConfigManager::themesList()
 QString ConfigManager::dictionaryPath()
 {
 #ifdef OS_MAC
-    #ifdef LIB_DEPLOY
-        return QApplication::applicationDirPath()+"/../Resources/dictionaries/";
-    #else
-        return QApplication::applicationDirPath()+"/../../../../Resources/dictionaries/";
-    #endif
+    return QApplication::applicationDirPath()+"/../Resources/dictionaries/";
 #else
 #ifdef OS_LINUX
     return "/usr/share/texiteasy/dictionaries/";
@@ -1170,7 +1166,7 @@ void ConfigManager::checkRevision()
     case 0x002205:
     case 0x002206:
     case 0x002207:
-    case 0x00230:
+    case 0x002300:
     case 0x002301:
     case 0x002302:
     case 0x002303:
@@ -1193,7 +1189,6 @@ void ConfigManager::checkRevision()
     case 0x002600:
     case 0x002601:
     case 0x002602:
-
 
         break;
     }

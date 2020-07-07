@@ -444,7 +444,8 @@ QImage * WidgetPdfDocument::page(int page)
 }
 void WidgetPdfDocument::goToPage(int page, int top, int height)
 {
-    if(!_file) return;
+    if(!_file)     return;
+    if(!_document) return;
 
     page = min(page,this->_document->numPages()-1);
 
