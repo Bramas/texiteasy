@@ -214,13 +214,14 @@ public:
 
     void    setDefaultLatex(QString name) {  QSettings settings; settings.setValue("builder/defaultLatex", name);  }
     QString defaultLatex() {  QSettings settings; return settings.value("builder/defaultLatex").toString();  }
-    QString latexCommand(QString name = QString::null);
+    QString latexCommand(QString name = QString());
 
 
     QString bibtexCommand(bool fullPath = false) { QSettings settings; return (fullPath ? settings.value("builder/latexPath").toString()+"/" : QString(""))+settings.value("builder/bibtex").toString(); }
     QString pdflatexCommand(bool fullPath = false) { QSettings settings; return (fullPath ? settings.value("builder/latexPath").toString() : QString(""))+settings.value("builder/pdflatex").toString(); }
     QString latexPath() { QSettings settings; return settings.value("builder/latexPath").toString(); }
     QString svnPath() { QSettings settings; return settings.value("svn/path", "").toString(); }
+    QString gitPath() { QSettings settings; return settings.value("git/path", "").toString(); }
     QString applicationPath() { return _applicationPath; }
 
     QString commandDatabaseFilename() { QSettings settings; return settings.value("commandDatabaseFilename").toString(); }
@@ -231,6 +232,9 @@ public:
     void setSvnPath(QString path) { QSettings settings; settings.setValue("svn/path", path); }
     void setSvnEnable(bool enable) { QSettings settings; settings.setValue("svn/enable", enable); }
     bool isSvnEnable() { QSettings settings; return settings.value("svn/enable", true).toBool(); }
+    void setGitPath(QString path) { QSettings settings; settings.setValue("git/path", path); }
+    void setGitEnable(bool enable) { QSettings settings; settings.setValue("git/enable", enable); }
+    bool isGitEnable() { QSettings settings; return settings.value("git/enable", true).toBool(); }
     void setBlockChangeMarkerEnable(bool enable) { QSettings settings; return settings.setValue("blockChangeMarkerEnable", enable); }
     bool isBlockChangeMarkerEnable() { QSettings settings; return settings.value("blockChangeMarkerEnable", true).toBool(); }
 

@@ -17,6 +17,7 @@
 #include "configmanager.h"
 #include "tools.h"
 #include "svnhelper.h"
+#include "githelper.h"
 #include "ipane.h"
 #include "paneautocorrector.h"
 
@@ -361,6 +362,9 @@ void WidgetFile::open(QString filename)
 
     if(ConfigManager::Instance.isSvnEnable()) {
         connect(new SvnHelper(filename), SIGNAL(uncommittedLines(QList<int>)), widgetTextEdit()->document(), SLOT(setUncommittedLines(QList<int>)));
+    }
+    if(ConfigManager::Instance.isGitEnable()) {
+        connect(new GitHelper(filename), SIGNAL(uncommittedLines(QList<int>)), widgetTextEdit()->document(), SLOT(setUncommittedLines(QList<int>)));
     }
 
     Tools::Log("WidgetFile::open: resolve tex directives");

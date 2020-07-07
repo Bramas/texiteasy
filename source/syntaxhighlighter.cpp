@@ -358,7 +358,7 @@ while(index < text.length())
         {
             previousState = Text;
             state = Command;
-            commandBuffer = QString::null;
+            commandBuffer = QString();
             setFormat(index, 1, formatCommand);
         }
         break;
@@ -442,7 +442,7 @@ while(index < text.length())
         {
             previousState = Math;
             state = Command;
-            commandBuffer = QString::null;
+            commandBuffer = QString();
             setFormat(index, 1, formatCommandInMathMode);
         }
         break;
@@ -938,7 +938,7 @@ if (_widgetFile->spellChecker())
 
     while (i < text.length())
     {
-        buffer = QString::null;
+        buffer = QString();
         ch = text.at( i );
         while ((blockData->characterData[i].state == Text) && (!isWordSeparator(ch)))
         {

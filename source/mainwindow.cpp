@@ -650,7 +650,11 @@ void MainWindow::open()
     QSettings settings;
     //get the filname
 
-    QString filename = QFileDialog::getOpenFileName(this,tr("Ouvrir un fichier"), ConfigManager::Instance.lastFolder(), ConfigManager::Extensions);
+    QString filename = QFileDialog::getOpenFileName(
+                this,
+                tr("Ouvrir un fichier"),
+                ConfigManager::Instance.lastFolder(),
+                ConfigManager::Extensions);
     if(filename.isEmpty())
     {
         return;

@@ -89,7 +89,9 @@ QString uniqueId()
 ConfigManager ConfigManager::Instance;
 QString ConfigManager::NoDictionnary = QObject::trUtf8("No Dictionnary");
 
-QString ConfigManager::Extensions = QObject::trUtf8("Latex (*.tex *.latex *.sty *.cls);;BibTex(*.bib)");
+QString ConfigManager::Extensions = QObject::trUtf8(
+            "Latex (*.tex *.latex *.sty *.cls *.bib)"
+            ";;Other (*.*)");
 
 QString ConfigManager::MacroSuffix = ".texiteasy-macro";
 const QStringList ConfigManager::DefaultLatexCommands =
@@ -212,6 +214,14 @@ void ConfigManager::init(QString in_applicationPath)
     if(!settings.contains("diff"))
     {
         settings.setValue("diff", "svn diff %1 --diff-cmd=diff  -x \"--strip-trailing-cr\"");
+    }
+    settings.endGroup();
+
+
+    settings.beginGroup("git");
+    if(!settings.contains("diff"))
+    {
+        settings.setValue("diff", "git diff --ignore-cr-at-eol %1");
     }
     settings.endGroup();
 
@@ -1149,6 +1159,41 @@ void ConfigManager::checkRevision()
             settings.endGroup();
         #endif
     case 0x002105:
+    case 0x002106:
+    case 0x002107:
+    case 0x002108:
+    case 0x002200:
+    case 0x002201:
+    case 0x002202:
+    case 0x002203:
+    case 0x002204:
+    case 0x002205:
+    case 0x002206:
+    case 0x002207:
+    case 0x00230:
+    case 0x002301:
+    case 0x002302:
+    case 0x002303:
+    case 0x002304:
+    case 0x002305:
+    case 0x002306:
+    case 0x002307:
+    case 0x002400:
+    case 0x002401:
+    case 0x002402:
+    case 0x002403:
+    case 0x002404:
+    case 0x002405:
+    case 0x002406:
+    case 0x002407:
+    case 0x002500:
+    case 0x002501:
+    case 0x002502:
+    case 0x002503:
+    case 0x002600:
+    case 0x002601:
+    case 0x002602:
+
 
         break;
     }

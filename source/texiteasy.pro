@@ -22,8 +22,8 @@ TEMPLATE = app
 
 APPLICATION_NAME = \\\"'TexitEasy'\\\"
 
-VERSION = \\\"'0.23.0'\\\"
-VERSION_HEX = 0x002300
+VERSION = \\\"'0.26.2'\\\"
+VERSION_HEX = 0x002602
 
 CONFIG += c++11
 QMAKE_CXXFLAGS += -std=c++0x
@@ -39,6 +39,7 @@ DEFINES += "APPLICATION_NAME=$${APPLICATION_NAME}"
 #DEFINES += DEBUG_DESTRUCTOR
 
 SOURCES += main.cpp\
+    githelper.cpp \
         mainwindow.cpp \
     widgetlinenumber.cpp \
     widgettextedit.cpp \
@@ -113,6 +114,7 @@ SOURCES += main.cpp\
     paneautocorrector.cpp
 
 HEADERS  += mainwindow.h \
+    githelper.h \
     widgetlinenumber.h \
     widgettextedit.h \
     syntaxhighlighter.h \
@@ -221,6 +223,7 @@ CODECFORTR = UTF-8
 isEmpty( PREFIX ) {
     PREFIX=/usr
 }
+
 DEFINES += PREFIX=\\\"$${PREFIX}\\\"
 target.path = $${PREFIX}/bin
 
@@ -260,6 +263,9 @@ win32 {
     #TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com/posts/download_latest/win_portable'\\\"
 
 }
+
+
+
 unix:!mac{
 
     LIBS += -lz
@@ -272,6 +278,32 @@ unix:!mac{
     LAST_VERSION_URL = \\\"'http://texiteasy.com/downloads/latest_version/linux'\\\"
     TEXITEASY_UPDATE_WEBSITE = \\\"'http://texiteasy.com/downloads/latest/linux'\\\"
     LATEX_URL = \\\"'http://texiteasy.com/links/latex/linux'\\\"
+
+
+    UI_DIR = .ui
+    MOC_DIR = .moc
+    OBJECTS_DIR = .obj
+
+    isEmpty( DESKTOPDIR ) {
+        DESKTOPDIR=/usr/share/applications
+    }
+    isEmpty( ICONDIR ) {
+        ICONDIR=/usr/share/pixmaps
+    }
+
+    desktop.path = $${DESKTOPDIR}
+    desktop.files = utilities/texiteasy.desktop
+    INSTALLS += desktop
+
+    icon.path = $${ICONDIR}
+    icon.files = utilities/texiteasy.png
+    INSTALLS += icon
+
+
+    utilities.path = $${PREFIX}/share/texiteasy/dictionaries
+    utilities.files = data/dictionaries/*
+    INSTALLS += utilities
+
 }
 mac{
     QMAKE_MAC_SDK = macosx10.12
