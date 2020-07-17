@@ -39,6 +39,7 @@ DEFINES += "APPLICATION_NAME=$${APPLICATION_NAME}"
 #DEFINES += DEBUG_DESTRUCTOR
 
 SOURCES += main.cpp\
+    githelper.cpp \
         mainwindow.cpp \
     widgetlinenumber.cpp \
     widgettextedit.cpp \
@@ -113,6 +114,7 @@ SOURCES += main.cpp\
     paneautocorrector.cpp
 
 HEADERS  += mainwindow.h \
+    githelper.h \
     widgetlinenumber.h \
     widgettextedit.h \
     syntaxhighlighter.h \
