@@ -80,10 +80,19 @@ void File::save(QString filename, bool recursively)
     {
         return;
     }
+
+    // do not saved if
+    if(lastSaved() < fileInfo().lastModified())
+    {
+        FileManager::Instance.onFileSystemChanged(widgetFile());
+        return;
+    }
+
     if(!filename.isEmpty() && !this->_texDirectives.contains("root"))
     {
         this->setRootFilename(this->filename);
     }
+
     if(_modified)
     {
         this->data = this->_widgetTextEdit->toPlainText();
@@ -188,6 +197,7 @@ const QString File::open(QString filename, QString codec)
         data += "\n";
         data += buffer;
     }
+    data += "\n";
 
     this->findTexDirectives(); // find directive before look for associative files
     if(_codec.isEmpty() && codec.isEmpty() && _texDirectives.contains("encoding"))

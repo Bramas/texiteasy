@@ -977,6 +977,9 @@ bool WidgetTextEdit::selectNextArgument()
 
 void WidgetTextEdit::wheelEvent(QWheelEvent * event)
 {
+    WIDGET_TEXT_EDIT_PARENT_CLASS::wheelEvent(event);
+    return;
+    /*
 
     if(event->modifiers() & (Qt::ControlModifier))
     {
@@ -1008,6 +1011,7 @@ void WidgetTextEdit::wheelEvent(QWheelEvent * event)
         WIDGET_TEXT_EDIT_PARENT_CLASS::wheelEvent(event);
     }
     //update();
+    */
 }
 void WidgetTextEdit::setBlockLeftMargin(const QTextBlock &/*textBlock*/, int leftMargin)
 {

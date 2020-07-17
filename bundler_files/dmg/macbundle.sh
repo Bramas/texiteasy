@@ -2,7 +2,7 @@
 #cp Info.plist ../../../build/Qt_5_1_1_clang_64bit-Release/texiteasy.app/Contents/Info.plist
 
 #BUILD_PATH=../../../build/release
-BUILD_PATH=../../build/texiteasy-brew_qt_5_16-Debug
+BUILD_PATH=../../build/texiteasy-brew_qt_5_16-Release
 
 sudo sed "/VERSION_NUMBER/s//$1/" Info.plist > $BUILD_PATH/texiteasy.app/Contents/Info.plist
 
@@ -14,12 +14,13 @@ sudo sed "/VERSION_NUMBER/s//$1/" Info.plist > $BUILD_PATH/texiteasy.app/Content
 mkdir $BUILD_PATH/texiteasy.app/Contents/Resources/dictionaries
 cp ../../source/data/dictionaries/* $BUILD_PATH/texiteasy.app/Contents/Resources/dictionaries
 
+macdeployqt $BUILD_PATH/texiteasy.app
+
 pushd $BUILD_PATH/texiteasy.app/Contents/Frameworks
 install_name_tool -id "@executable_path/../Frameworks/libpoppler.97.dylib" libpoppler.97.dylib
 install_name_tool -change libpoppler.97.dylib "@executable_path/../Frameworks/libpoppler.97.dylib" libpoppler-qt5.1.dylib
 popd
 
-/usr/local/bin/macdeployqt $BUILD_PATH/texiteasy.app
 
 mkdir /tmp/texiteasy
 rm -r /tmp/texiteasy/*

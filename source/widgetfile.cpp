@@ -426,12 +426,15 @@ void WidgetFile::setDictionary(QString dico)
     }
     else
     {
-        _spellChecker = new Hunspell((ConfigManager::Instance.dictionaryPath() + _dictionary).toLatin1()+".aff",
-                                     (ConfigManager::Instance.dictionaryPath() + _dictionary).toLatin1()+".dic");
-        QTextCodec *codec = QTextCodec::codecForName(spellCheckerEncoding().toLatin1());
-        foreach(const QString & word, ConfigManager::Instance.userDictionnary(_dictionary))
+        if(QFile((ConfigManager::Instance.dictionaryPath() + _dictionary).toLatin1()+".aff").exists())
         {
-            _spellChecker->add(codec->fromUnicode(word).data());
+            _spellChecker = new Hunspell((ConfigManager::Instance.dictionaryPath() + _dictionary).toLatin1()+".aff",
+                                         (ConfigManager::Instance.dictionaryPath() + _dictionary).toLatin1()+".dic");
+            QTextCodec *codec = QTextCodec::codecForName(spellCheckerEncoding().toLatin1());
+            foreach(const QString & word, ConfigManager::Instance.userDictionnary(_dictionary))
+            {
+                _spellChecker->add(codec->fromUnicode(word).data());
+            }
         }
     }
     bool modified = file()->isModified();
