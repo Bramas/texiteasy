@@ -105,6 +105,7 @@ SOURCES += main.cpp\
     pdfsynchronizer.cpp \
     textdocument.cpp \
     svnhelper.cpp \
+    githelper.cpp \
     latexoutputfilter.cpp \
     taskpane/taskmodel.cpp \
     taskpane/taskwindow.cpp \
@@ -183,6 +184,7 @@ HEADERS  += mainwindow.h \
     pdfsynchronizer.h \
     textdocument.h \
     svnhelper.h \
+    githelper.h \
     latexoutputfilter.h \
     taskpane/taskmodel.h \
     taskpane/taskwindow.h \
