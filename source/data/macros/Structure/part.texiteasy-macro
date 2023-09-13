@@ -1,0 +1,10 @@
+<macro readOnly="1">
+    <description>Part</description>
+    <trigger>
+    	<keys>Tab</keys>
+    	<leftWord>
+    		(part)
+    	</leftWord>
+    </trigger>
+    <content><![CDATA[\part{${name}}]]></content>
+</macro>

@@ -3,7 +3,7 @@
     <trigger>
     	<keys>Tab</keys>
     	<leftWord>
-    		(sec|sect|secti|sectio|section)
+    		(sec|sect|section)
     	</leftWord>
     </trigger>
     <content><![CDATA[\section{${name}}]]></content>

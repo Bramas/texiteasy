@@ -1,0 +1,10 @@
+<macro readOnly="1">
+    <description>Subparagraph</description>
+    <trigger>
+    	<keys>Tab</keys>
+    	<leftWord>
+    		(spar|sparagraph|subpar|subparagraph)
+    	</leftWord>
+    </trigger>
+    <content><![CDATA[\subparagraph{${name}}]]></content>
+</macro>
